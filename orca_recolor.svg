@@ -1,0 +1,299 @@
+<svg id="orca_logo" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="100 150 650 650">
+    <defs>
+        <style>
+
+#orca_logo {
+    width: min(600px, 98vw);
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    background: #01121E; 
+}
+
+/* SVG barvy a základní styly */
+#orca_logo .color1 {
+    fill: #00121c;
+}
+
+#orca_logo .color2 {
+    fill: #031a2a;
+}
+
+#orca_logo .color3 {
+    fill: #092f46;
+}
+
+#orca_logo .color4 {
+    fill: #0f4663;
+}
+
+#orca_logo .color5 {
+    fill: #3ca4c5;
+}
+
+#orca_logo .color6 {
+    fill: #8ed2e8;
+}
+
+
+
+/* Načítací animace pro kosatku - postupně podle pořadí prvků */
+#orca_logo {
+    animation: infiniteGlow 6s linear infinite, cyclicBuild 12s linear infinite;
+}
+
+/* Cyklická animace loaderu - postupné zjevení a mizení zleva doprava */
+#orca_logo g > * {
+    transform-origin: 50% 50%;
+    transform-box: fill-box;
+}
+
+#orca_logo g > *:nth-child(1) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0s; }
+#orca_logo g > *:nth-child(2) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.06s; }
+#orca_logo g > *:nth-child(3) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.12s; }
+#orca_logo g > *:nth-child(4) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.18s; }
+#orca_logo g > *:nth-child(5) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.24s; }
+#orca_logo g > *:nth-child(6) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.3s; }
+#orca_logo g > *:nth-child(7) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.36s; }
+#orca_logo g > *:nth-child(8) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.42s; }
+#orca_logo g > *:nth-child(9) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.48s; }
+#orca_logo g > *:nth-child(10) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.54s; }
+#orca_logo g > *:nth-child(11) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.6s; }
+#orca_logo g > *:nth-child(12) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.66s; }
+#orca_logo g > *:nth-child(13) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.72s; }
+#orca_logo g > *:nth-child(14) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.78s; }
+#orca_logo g > *:nth-child(15) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.84s; }
+#orca_logo g > *:nth-child(16) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.9s; }
+#orca_logo g > *:nth-child(17) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 0.96s; }
+#orca_logo g > *:nth-child(18) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.02s; }
+#orca_logo g > *:nth-child(19) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.08s; }
+#orca_logo g > *:nth-child(20) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.14s; }
+#orca_logo g > *:nth-child(21) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.2s; }
+#orca_logo g > *:nth-child(22) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.26s; }
+#orca_logo g > *:nth-child(23) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.32s; }
+#orca_logo g > *:nth-child(24) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.38s; }
+#orca_logo g > *:nth-child(25) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.44s; }
+#orca_logo g > *:nth-child(26) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.5s; }
+#orca_logo g > *:nth-child(27) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.56s; }
+#orca_logo g > *:nth-child(28) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.62s; }
+#orca_logo g > *:nth-child(29) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.68s; }
+#orca_logo g > *:nth-child(30) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.74s; }
+#orca_logo g > *:nth-child(31) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.8s; }
+#orca_logo g > *:nth-child(32) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.86s; }
+#orca_logo g > *:nth-child(33) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.92s; }
+#orca_logo g > *:nth-child(34) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 1.98s; }
+#orca_logo g > *:nth-child(35) { animation: cyclicDrawIn 6s ease-in-out infinite; animation-delay: 2.04s; }
+
+/* Keyframe animace */
+@keyframes cyclicDrawIn {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    40% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+    60% {
+        opacity: 0.9;
+        transform: scale(0.98);
+    }
+    80% {
+        opacity: 0.4;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+@keyframes cyclicBuild {
+    0% {
+        filter: drop-shadow(0 0 50px rgba(142, 210, 232, 0.2));
+    }
+    40% {
+        filter: drop-shadow(0 0 120px rgba(142, 210, 232, 0.6));
+    }
+    50% {
+        filter: drop-shadow(0 0 200px rgba(142, 210, 232, 0.8));
+    }
+    60% {
+        filter: drop-shadow(0 0 100px rgba(142, 210, 232, 0.4));
+    }
+    70% {
+        filter: drop-shadow(0 0 50px rgba(142, 210, 232, 0.2));
+    }
+    100% {
+        filter: drop-shadow(0 0 50px rgba(142, 210, 232, 0.2));
+    }
+}
+
+@keyframes finalGlow {
+    0% {
+        filter: drop-shadow(0 0 0px rgba(142, 210, 232, 0));
+    }
+    47% {
+        filter: drop-shadow(0 0 0px rgba(142, 210, 232, 0));
+    }
+    50% {
+        filter: drop-shadow(0 0 80px rgba(142, 210, 232, 0.3));
+    }
+    55% {
+        filter: drop-shadow(0 0 150px rgba(142, 210, 232, 0.5));
+    }
+    60% {
+        filter: drop-shadow(0 0 200px rgba(142, 210, 232, 0.7));
+    }
+    70% {
+        filter: drop-shadow(0 0 300px rgba(142, 210, 232, 0.8));
+    }
+    80% {
+        filter: drop-shadow(0 0 180px rgba(142, 210, 232, 0.6));
+    }
+    100% {
+        filter: drop-shadow(0 0 120px rgba(142, 210, 232, 0.4));
+    }
+}
+
+@keyframes infiniteGlow {
+    0% {
+        filter: drop-shadow(0 0 120px rgba(142, 210, 232, 0.4));
+    }
+    25% {
+        filter: drop-shadow(0 0 200px rgba(142, 210, 232, 0.6));
+    }
+    50% {
+        filter: drop-shadow(0 0 350px rgba(142, 210, 232, 0.8));
+    }
+    75% {
+        filter: drop-shadow(0 0 250px rgba(142, 210, 232, 0.5));
+    }
+    100% {
+        filter: drop-shadow(0 0 120px rgba(142, 210, 232, 0.4));
+    }
+}
+
+@keyframes titleGlow {
+    0% {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(142, 210, 232, 0.2);
+    }
+    100% {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(142, 210, 232, 0.6);
+    }
+}
+
+@keyframes titlePulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    25% {
+        transform: scale(1.02);
+        opacity: 0.9;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+    }
+    75% {
+        transform: scale(1.02);
+        opacity: 0.9;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes shimmer {
+    0%, 100% {
+        filter: brightness(1) saturate(1);
+    }
+    50% {
+        filter: brightness(1.2) saturate(1.3);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.02);
+        opacity: 0.9;
+    }
+}
+
+
+
+/* Mobilní responsivita */
+@media (max-width: 768px) {
+    h1 {
+        font-size: 3rem;
+        letter-spacing: 6px;
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 2.2rem;
+        letter-spacing: 4px;
+        margin-bottom: 1rem;
+    }
+    
+    .container {
+        width: 95vw;
+    }
+}
+
+        </style>
+    </defs>
+    <g>
+        <!-- LEVÁ ČÁST - OCAS A ZADNÍ PLOUTVE -->
+        <path class="color1" d="M188.42,542.96c9.22-20.28,21.4-35.78,32.66-47.13l-88.41,76.36s2.64,46.25,26.67,77.53l16.6-64.93c1.83-11.68,5.39-26.21,12.49-41.83Z"/>
+        <path class="color6" d="M188.42,542.96c-7.1,15.62-10.66,30.14-12.49,41.83,2.78-10.91,34.13-30.44,65.33-47.5,30.96-16.92,61.77-31.41,64.44-32.66-21.49-8.74-42.97-17.49-64.46-26.23-5.53,4.08-12.65,9.83-20.18,17.43-11.25,11.36-23.43,26.85-32.66,47.13Z"/>
+        <path class="color1" d="M175.93,584.79c-1.35,10.13,20.05,47.79,22.1,62.85,2.05,15.06,3.52,45.73,3.52,45.73,0,0,9.46-41.38,7.42-59.08-.03-.22-.04-.44-.06-.66-1.71-17.49,8.82-35.76,12.26-39.43,2.38-6.11,14.26-36.88,20.11-56.9-31.21,17.06-62.55,36.58-65.33,47.5Z"/>
+        <path class="color2" d="M175.93,584.79l-16.6,64.93,42.22,43.64s-1.47-30.67-3.52-45.73c-2.05-15.06-23.45-52.72-22.1-62.85Z"/>
+        <path class="color2" d="M126.64,781.97s6.11-10.29,8.83-14.4c8.44-12.78,19.89-20.15,25.65-23.86,13.47-8.67,15.91-5.65,23.91-13.31,8.35-8.01,12.38-17.46,13.68-21.98,2.33-8.1,2.85-15.05,2.85-15.05-68.68,41.92-74.91,88.6-74.91,88.6Z"/>
+        <path class="color2" d="M126.64,781.97s6.24-46.69,74.91-88.6l-42.22-43.64s-49.38,53.39-32.7,132.25Z"/>
+        <path class="color5" d="M241.27,537.29c-5.85,20.02-17.73,50.79-20.11,56.9-.27.7-.42,1.08-.42,1.08,43.5-57.53,133.82-70.77,133.82-70.77-16.28-6.63-32.56-13.25-48.85-19.88-2.67,1.25-33.48,15.74-64.44,32.66Z"/>
+
+        <!-- STŘEDNÍ ČÁST - HLAVNÍ TĚLO KOSATKY -->
+        <path class="color1" d="M241.25,478.4c27.17-16.1,50.08-29.09,66.95-38.5,0,0,49.03-27.34,70.37-32.69l-141.19-4.76s0,0,0,0l-104.71,169.74,88.41-76.36c7.53-7.6,14.64-13.35,20.18-17.43Z"/>
+        <path class="color2" d="M237.37,402.45s-59.3,33.05-91.51,68.45c0,0-15.94,48.14-13.2,101.29l104.71-169.74h0Z"/>
+        <path class="color2" d="M201.55,693.36c20.35,19.65,34.53,17.04,34.53,17.04,19.08-3.79,37.89-3.13,51.94-1.52,8.51.97,16.31,2.44,23.33,4.16-7.22-17.77-17.14-28.45-23.35-34.11-18.82-17.12-41.67-23.45-41.67-23.45-6.44-1.78-11.67-2.46-18.81-6.64-9-5.26-14.76-12.41-18.29-17.82l-.32,2.6c.02.22.04.44.06.66,2.05,17.69-7.42,59.08-7.42,59.08Z"/>
+        <path class="color2" d="M387.91,407.52l-9.34-.31c-21.33,5.34-70.37,32.69-70.37,32.69-16.87,9.41-39.79,22.41-66.95,38.5,21.49,8.74,42.97,17.49,64.46,26.23,16.28,6.63,32.56,13.25,48.85,19.88l12.69-39.15,20.66-77.83Z"/>
+        <path class="color3" d="M352.62,337.79c-43.34,20.92-81.74,43.05-115.25,64.66h0s141.19,4.76,141.19,4.76l9.34.31,44.65-104.41c-25.4,9.82-52.17,21.27-79.93,34.67Z"/>
+        <path class="color3" d="M347.88,266.43c-38.02-42.52-91.44-87.57-91.44-87.57,0,0,35.74,48,20.54,143.87,47.11-26.56,87.65-36.33,87.65-36.33,0,0-6.5-8.08-16.75-19.97Z"/>
+        <path class="color4" d="M237.37,402.45c33.51-21.61,71.92-43.74,115.25-64.66,27.76-13.4,54.53-24.86,79.93-34.67-6.82-.61-18.74-1.73-34.08-5.46-14.25-3.47-25.77-7.81-33.84-11.25,0,0-40.54,9.77-87.65,36.33-49.64,27.99-106.59,74.63-131.12,148.17,32.21-35.41,91.51-68.45,91.51-68.45Z"/>
+        <path class="color4" d="M347.88,266.43c6.07,6.79,11.75,13.51,16.75,19.97,9.43-3.89,21.15-7.7,34.9-10.02,6.63-1.12,12.86-1.75,18.59-2.05,0,0-60.13-83.19-161.67-95.47,0,0,53.42,45.04,91.44,87.57Z"/>
+        <path class="color6" d="M364.63,286.4c8.07,3.44,19.59,7.78,33.84,11.25,15.34,3.73,27.26,4.85,34.08,5.46,0,0,33.71-3.51,55.7-4.65,9.63-.5,41.6-2.16,69.11,2.04,1.79.27,3.72.6,5.76.98h0s-43.47-19.31-145.02-27.14c-5.72.3-11.95.93-18.59,2.05-13.74,2.33-25.47,6.14-34.9,10.02Z"/>
+        <polygon class="color2" points="329.67 597.45 329.67 597.45 329.67 597.45 329.67 597.45"/>
+        <polygon class="color4" points="237.37 402.45 237.38 402.45 237.37 402.45 237.37 402.45"/>
+        <polygon class="color1" points="367.24 485.36 519.74 443.17 387.91 407.52 367.24 485.36"/>
+        <polygon class="color2" points="387.91 407.52 519.74 443.17 485.92 376.09 387.91 407.52"/>
+        <polygon class="color4" points="432.56 303.12 387.91 407.52 485.92 376.09 432.56 303.12"/>
+
+        <!-- PRAVÁ ČÁST - HLAVA A PŘEDNÍ PLOUTVE -->
+        <path class="color2" d="M519.74,443.17l-190.07,154.28s77.01-3.95,137.83-67.75c.7-.74,1.4-1.49,2.1-2.25,19.58-21.12,37.35-48.56,50.14-84.28Z"/>
+        <path class="color2" d="M476.23,529.37s7.82,57-8.03,75.5c0,0,59.99-14.55,93.41-82.47,0,0,0,0,0,0-24.71,3.05-53.31,5.66-85.38,6.97,0,0,0,0,0,0Z"/>
+        <path class="color3" d="M367.24,485.36l-12.69,39.15c-5.87,42.96-24.88,72.94-24.88,72.94h0s190.07-154.28,190.07-154.28l-152.49,42.19Z"/>
+        <path class="color1" d="M608.42,397.48c-2.52-.29-5.44-.4-8.66-.08-7.77.76-13.93,3.65-18.16,6.28,1.81,5.3,5.54,7.79,5.54,7.79,0,0,5.94,4.48,12.95,10.51,0,0,0,0,0,0,3.58.84,12.43,2.38,22.28-1.53.84-.34,1.64-.7,2.41-1.07-.16-2.7-1.67-16.14-16.35-21.9Z"/>
+        <path class="color1" d="M581.6,403.68c-1.26.78-2.35,1.54-3.26,2.22-13.87-2.83-29.06-6.63-45.23-11.76-17.59-5.59-33.35-11.82-47.19-18.05h0l33.81,67.08,67.4-31.69s-3.73-2.49-5.54-7.79Z"/>
+        <path class="color3" d="M519.74,443.17s83.6,2.34,102.74,5.08c-2.59-3.98-5.69-8.27-9.38-12.69-4.46-5.35-8.91-9.85-13.01-13.57-7.01-6.03-12.95-10.51-12.95-10.51l-67.4,31.69Z"/>
+        <path class="color3" d="M664.28,396.49c-26.06-19.34-71.5-39.02-115.28-55.29-43.95-16.34-86.22-29.24-105.52-34.92-3.47-1.02-6.2-1.81-8.07-2.35-1.86-.53-2.86-.81-2.86-.81l53.37,72.97s.02-.04.04-.06c.48-.75,6.85-9.6,40.65-13.96,35.31-4.56,56.79.33,70.07,14.02,13.28,13.69,11.74,21.39,11.74,21.39,14.69,5.76,16.2,19.2,16.35,21.9.02.31.02.48.02.48,15.75-5.7,31.5-11.4,47.25-17.1,0,0,0,0,0,0-.38-.34-.77-.68-1.17-1.02-2.03-1.74-4.23-3.49-6.59-5.24,0,0,0,0,0,0Z"/>
+        <path class="color4" d="M488.25,298.46c-21.99,1.14-55.7,4.65-55.7,4.65.58.14,1.61.4,2.86.81,1.86.53,4.59,1.32,8.07,2.35,19.3,5.69,61.57,18.59,105.52,34.92,43.78,16.27,89.22,35.95,115.28,55.29h0s0,0,0,0c2.36,1.75,4.56,3.5,6.59,5.24-2.82-4.77-13.41-51.4-14.44-55.94-38.21-30.12-72.25-40.4-93.3-44.33-2.04-.38-3.97-.7-5.76-.98-27.51-4.2-59.48-2.54-69.11-2.04Z"/>
+        <path class="color2" d="M713.02,435.99c-5.97-5.19-13.39-11.47-22.13-18.51-4.29-3.46-8.9-7.09-13.83-10.89-1.64-1.26-3.31-2.54-5.02-3.83-15.75,5.7-31.5,11.4-47.25,17.1,0,0,0-.18-.02-.48-.77.37-1.56.73-2.41,1.07-9.86,3.91-18.7,2.37-22.28,1.53,0,0,0,0,0,0,4.1,3.72,8.55,8.21,13.01,13.57,3.69,4.42,6.79,8.72,9.38,12.69,1.14.22,2.39.47,3.74.73,5.43,1.07,12.44,2.45,20.58,4.06,22.33,4.44,33.49,6.66,37.41,7.63,0,0,22.3,5.52,45.49,13.94,0,0,7.52-3.3,8.63-6.42,2.31-6.49-5.93-15.37-25.3-32.21Z"/>
+        <path class="color3" d="M739.66,452.57c-19.5-46.02-55.68-81.6-55.68-81.6-6.55-6.44-15.84-15.22-27.55-25.17,1.03,4.53,11.62,51.16,14.44,55.94.4.34.79.68,1.17,1.02,0,0,0,0,0,0,1.71,1.29,3.38,2.57,5.02,3.83,3.22,2.4,7.25,5.52,13.77,10.83.02.02.04.03.06.05,8.75,7.05,16.16,13.32,22.13,18.51,19.37,16.84,27.61,25.72,25.3,32.21.79-.9,1.82-2.3,2.47-4.21.77-2.27,1.21-5.89-1.12-11.41Z"/>
+        <path class="color5" d="M646.8,453.04c-8.14-1.62-15.15-3-20.58-4.06-1.34-.23-2.59-.44-3.74-.63-.02,0-.04,0-.07-.01-1.99,2.77-53.05,72.4-152.81,79.1-.7.75-1.39,1.51-2.1,2.25,2.94-.1,5.85-.2,8.73-.32,32.07-1.31,60.67-3.92,85.38-6.97,12.66-1.56,24.3-3.24,34.85-4.93,46.38-7.41,75.35-15.45,104.61-28.49,12.07-5.38,21.83-10.55,28.62-14.36-23.19-8.42-45.49-13.94-45.49-13.94-3.92-.97-15.08-3.19-37.41-7.63Z"/>
+        <path class="color6" d="M469.6,527.44c99.76-6.7,150.82-76.33,152.81-79.1.04-.06.07-.09.07-.09-19.14-2.73-102.74-5.08-102.74-5.08-12.79,35.71-30.56,63.16-50.14,84.28Z"/>
+        <path class="color6" d="M533.11,394.13c16.17,5.14,31.36,8.94,45.23,11.76.9-.67,2-1.44,3.26-2.22,4.23-2.63,10.39-5.52,18.16-6.28,3.22-.32,6.15-.21,8.66.08,0,0,1.54-7.7-11.74-21.39-13.28-13.69-34.76-18.57-70.07-14.02-33.8,4.36-40.17,13.21-40.65,13.96-.01.02-.02.04-.04.06h0c13.84,6.23,29.6,12.46,47.19,18.05Z"/>
+    </g>
+</svg>

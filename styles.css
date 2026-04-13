@@ -1,0 +1,723 @@
+/* Reset */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Základní styly */
+:root {
+    --bg-primary: #031A2A;
+    --bg-card: #0a2a3d;
+    --bg-card-hover: #0d3348;
+    --accent: #8ed2e8;
+    --accent-mid: #3ca4c5;
+    --accent-dark: #0f4663;
+    --text-primary: #e0f0f6;
+    --text-secondary: #8ba8b8;
+    --text-muted: #5a7a8a;
+    --green: #0cce6b;
+    --orange: #ffa400;
+    --red: #ff4e42;
+    --radius: 0px;
+    --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: linear-gradient(180deg,
+        #0a3d5c 0%,
+        #072e47 15%,
+        #052436 35%,
+        #031A2A 55%,
+        #021520 75%,
+        #010d16 100%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(14, 68, 98, 0.25) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.section-inner {
+    max-width: min(calc(100vw - 3rem), 1400px);
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+/* ===================== HERO ===================== */
+.hero {
+    text-align: center;
+    padding: 5rem 1.5rem 3rem;
+}
+
+.hero-content {
+    max-width: 700px;
+    margin: 0 auto;
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.hero-logo {
+    width: 180px;
+    height: auto;
+    margin-bottom: 1.5rem;
+    filter: drop-shadow(0 0 40px rgba(142, 210, 232, 0.3));
+    animation: logoGlow 6s ease-in-out infinite;
+}
+
+.hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+    margin-bottom: 1rem;
+}
+
+.hero h1 span {
+    color: var(--accent);
+    font-weight: 300;
+}
+
+.hero-slogan {
+    font-size: 1.35rem;
+    color: var(--text-primary);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.hero-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    line-height: 1.8;
+}
+
+/* ===================== SEKCE ===================== */
+.references,
+.contact {
+    padding: 4rem 0;
+}
+
+.references h2,
+.contact h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-bottom: 2.5rem;
+    letter-spacing: 1px;
+}
+
+/* ===================== FILTER PILLS ===================== */
+.ref-filter {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+}
+
+.filter-pill {
+    padding: 0.38rem 1.2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(142, 210, 232, 0.25);
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.filter-pill:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.filter-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg-primary);
+    font-weight: 600;
+}
+
+/* ===================== REF META (typ + počet stránek) ===================== */
+.ref-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.ref-type-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.18rem 0.55rem;
+    border-radius: 3px;
+}
+
+.ref-type-badge.single {
+    background: rgba(142, 210, 232, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(142, 210, 232, 0.25);
+}
+
+.ref-type-badge.multi {
+    background: rgba(60, 164, 197, 0.1);
+    color: #5ec3df;
+    border: 1px solid rgba(60, 164, 197, 0.25);
+}
+
+.ref-pages-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Skrytá karta při filtrování */
+.ref-card.filter-hidden {
+    display: none;
+}
+
+/* ===================== REFERENCE GRID ===================== */
+.references-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+}
+
+/* ===================== REFERENCE KARTY ===================== */
+.ref-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.3s ease;
+    display: grid;
+    grid-template-columns: minmax(400px, 2fr) 1fr;
+}
+
+.ref-card:hover {
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+}
+
+/* Obrázek reference – scrollovatelný full screenshot 16:9 */
+.ref-image-wrap {
+    position: relative;
+    cursor: pointer;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--accent-dark) 100%);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(142, 210, 232, 0.2) transparent;
+}
+
+.ref-image-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.ref-image-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 26, 42, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    color: var(--accent);
+}
+
+.ref-image-wrap:hover .ref-image-overlay {
+    opacity: 1;
+}
+
+/* Placeholder pro chybějící obrázky */
+.ref-image-wrap img[src=""],
+.ref-image-wrap img:not([src]) {
+    display: none;
+}
+
+/* Tělo karty */
+.ref-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ref-body h3 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.ref-desc {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.ref-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--accent);
+    margin: 0.25rem 0;
+}
+
+.ref-feature svg {
+    flex-shrink: 0;
+    stroke: var(--accent);
+}
+
+.ref-feature strong {
+    color: var(--text-primary);
+}
+
+.ref-design {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.ref-design strong {
+    color: var(--accent-mid);
+}
+
+/* ===================== LIGHTHOUSE SKÓRE ===================== */
+.lighthouse-scores {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0.5rem 0;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.score-circle-wrap {
+    position: relative;
+    width: 52px;
+    height: 52px;
+}
+
+.score-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.score-bg {
+    fill: none;
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 6;
+}
+
+.score-fill {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s ease;
+}
+
+.score-green { stroke: var(--green); }
+.score-orange { stroke: var(--orange); }
+.score-red { stroke: var(--red); }
+
+.score-val {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.score-label {
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.2;
+    max-width: 60px;
+}
+
+/* ===================== TLAČÍTKA ===================== */
+.ref-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: var(--accent-mid);
+    color: var(--bg-primary);
+}
+
+.btn-primary:hover {
+    background: var(--accent);
+    box-shadow: 0 0 20px rgba(142, 210, 232, 0.3);
+}
+
+.btn-outline {
+    border: 1px solid var(--accent-dark);
+    color: var(--accent);
+    background: transparent;
+}
+
+.btn-outline:hover {
+    border-color: var(--accent-mid);
+    background: rgba(60, 164, 197, 0.1);
+}
+
+/* ===================== KONTAKT ===================== */
+.contact {
+    border-top: 1px solid rgba(142, 210, 232, 0.1);
+}
+
+.contact-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.contact-logo {
+    width: 120px;
+    height: auto;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 20px rgba(142, 210, 232, 0.2));
+}
+
+.contact-info h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.contact-info p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.7;
+}
+
+.contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.25s ease;
+}
+
+.contact-link:hover {
+    color: var(--text-primary);
+}
+
+.contact-link svg {
+    flex-shrink: 0;
+}
+
+/* ===================== FOOTER ===================== */
+.site-footer {
+    text-align: center;
+    padding: 2rem 1.5rem;
+    border-top: 1px solid rgba(142, 210, 232, 0.06);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    letter-spacing: 0.02em;
+}
+
+.site-footer p {
+    margin-bottom: 0.35rem;
+}
+
+.site-footer .footer-phone {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.site-footer .footer-phone:hover {
+    color: var(--accent);
+}
+
+/* ===================== LIGHTBOX ===================== */
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox.active {
+    display: flex;
+}
+
+.lightbox-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    animation: fadeIn 0.3s ease;
+}
+
+.lightbox-img-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 90vw;
+    max-height: 85vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.lightbox-img-wrap img {
+    max-width: 100%;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 4px;
+    box-shadow: 0 8px 60px rgba(0, 0, 0, 0.6);
+    animation: lightboxZoomIn 0.3s ease;
+}
+
+.lightbox-close,
+.lightbox-prev,
+.lightbox-next {
+    position: absolute;
+    z-index: 2;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.lightbox-close:hover,
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    color: #fff;
+}
+
+.lightbox-close {
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 2.5rem;
+    line-height: 1;
+}
+
+.lightbox-close:hover {
+    transform: scale(1.2);
+}
+
+.lightbox-prev,
+.lightbox-next {
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 3.5rem;
+    line-height: 1;
+    padding: 0.5rem;
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+    transform: translateY(-50%) scale(1.15);
+}
+
+.lightbox-prev {
+    left: 1.5rem;
+}
+
+.lightbox-next {
+    right: 1.5rem;
+}
+
+.lightbox-counter {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* ===================== ANIMACE ===================== */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes logoGlow {
+    0%, 100% {
+        filter: drop-shadow(0 0 40px rgba(142, 210, 232, 0.3));
+    }
+    50% {
+        filter: drop-shadow(0 0 60px rgba(142, 210, 232, 0.5));
+    }
+}
+
+@keyframes lightboxZoomIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ===================== RESPONSIVITA ===================== */
+@media (max-width: 900px) {
+    .ref-card {
+        grid-template-columns: 1fr;
+    }
+
+    .ref-image-wrap {
+        aspect-ratio: 16 / 9;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 3rem 1.5rem 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero-logo {
+        width: 140px;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .references h2,
+    .contact h2 {
+        font-size: 1.5rem;
+    }
+
+    .contact-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .contact-details {
+        align-items: center;
+    }
+
+    .lighthouse-scores {
+        gap: 0.5rem;
+    }
+
+    .score-circle-wrap {
+        width: 44px;
+        height: 44px;
+    }
+
+    .score-val {
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.6rem;
+    }
+
+    .ref-body {
+        padding: 1.25rem;
+    }
+
+    .ref-body h3 {
+        font-size: 1.15rem;
+    }
+
+    .ref-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .lighthouse-scores {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+}
