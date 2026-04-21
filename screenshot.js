@@ -7,7 +7,7 @@ const https = require('https');
 const sites = [
     { url: 'https://florian-partneri.cz/', name: 'florian-partneri' },
     { url: 'https://www.milenium.cz/', name: 'milenium' },
-    { url: 'http://dev2.leadea.cz/', name: 'dev2-leadea' },
+    { url: 'https://leadea.cz/', name: 'dev2-leadea' },
 ];
 
 function fetchHtml(url) {
