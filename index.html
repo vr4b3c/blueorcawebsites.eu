@@ -72,14 +72,11 @@
 </head>
 <body>
 
-    <div class="top-bar">
-        <p class="hero-subtitle"><strong>Připravujeme pro vás nové webové stránky!</strong> Mezitím se můžete podívat na naše reference.</p>
-    </div>
-
-    <!-- HERO -->
-    <header class="hero">
-        <div class="hero-content">
-            <svg class="hero-logo" xmlns="http://www.w3.org/2000/svg" viewBox="100 150 650 650">
+    <!-- TOPNAV -->
+    <header class="site-header">
+        <div class="site-header-inner">
+            <a href="/" class="site-header-logo" aria-label="BlueOrca Websites – domů">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="100 150 650 650">
                 <g>
                     <path style="fill:#00121c" d="M188.42,542.96c9.22-20.28,21.4-35.78,32.66-47.13l-88.41,76.36s2.64,46.25,26.67,77.53l16.6-64.93c1.83-11.68,5.39-26.21,12.49-41.83Z"/>
                     <path style="fill:#8ed2e8" d="M188.42,542.96c-7.1,15.62-10.66,30.14-12.49,41.83,2.78-10.91,34.13-30.44,65.33-47.5,30.96-16.92,61.77-31.41,64.44-32.66-21.49-8.74-42.97-17.49-64.46-26.23-5.53,4.08-12.65,9.83-20.18,17.43-11.25,11.36-23.43,26.85-32.66,47.13Z"/>
@@ -115,22 +112,116 @@
                     <path style="fill:#8ed2e8" d="M533.11,394.13c16.17,5.14,31.36,8.94,45.23,11.76.9-.67,2-1.44,3.26-2.22,4.23-2.63,10.39-5.52,18.16-6.28,3.22-.32,6.15-.21,8.66.08,0,0,1.54-7.7-11.74-21.39-13.28-13.69-34.76-18.57-70.07-14.02-33.8,4.36-40.17,13.21-40.65,13.96-.01.02-.02.04-.04.06h0c13.84,6.23,29.6,12.46,47.19,18.05Z"/>
                 </g>
             </svg>
-            <h1>BlueOrca <span>Websites</span></h1>
-            <p class="hero-slogan">Konečné řešení webové otázky</p>
-            <p class="hero-tagline">Tvorba webových stránek na míru</p>
-            <div class="hero-contacts">
-                <a href="tel:+420773202288" class="hero-contact-link">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <div class="site-header-text">
+                    <span class="site-header-brand">BlueOrca <em>Websites</em></span>
+                    <span class="site-header-slogan">Tvorba webových stránek na míru</span>
+                </div>
+            </a>
+            <nav class="site-header-nav" aria-label="Kontakt">
+                <a href="tel:+420773202288" class="site-header-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                     +420 773 202 288
                 </a>
-                <a href="mailto:info@blueorcawebsites.eu" class="hero-contact-link">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <a href="mailto:info@blueorcawebsites.eu" class="site-header-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                     info@blueorcawebsites.eu
                 </a>
-            </div>
-            <p class="hero-subtitle" style="display:none"></p>
+            </nav>
+            <!--a href="https://demo.blueorcawebsites.eu" target="_blank" rel="noopener noreferrer" class="site-header-cta external">
+                Vyzkoušet administraci
+            </a-->
         </div>
     </header>
+    <!-- CTA – CMS BlueOrca -->
+    <section class="cta-cms">
+        <div class="section-inner">
+            <div class="cta-slider" data-slider>
+
+                <!-- Slide 1 -->
+                <div class="cta-cms-inner cta-slide" data-slide>
+                    <div class="cta-cms-text">
+                        <p class="cta-cms-label">Vlastní redakční systém</p>
+                        <h2 class="cta-cms-title">Spravujte obsah webu sami.<br>Bez programovátora.</h2>
+                        <p class="cta-cms-desc">Ke každému webu dodáváme ZDARMA redakční systém BlueOrca — přehlednou administraci, kde upravníte texty, obrázky i články bez jediného řádku kódu.</p>
+                        <div class="cta-cms-action">
+                            <a href="https://demo.blueorcawebsites.eu" target="_blank" rel="noopener noreferrer" class="cta-cms-btn external">
+                                Vyzkousit administraci
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                            <p class="cta-cms-note">Bez registrace &nbsp;·&nbsp; Bez závazků</p>
+                        </div>
+                    </div>
+                    <div class="cta-cms-visual" aria-hidden="true">
+                        <div class="cta-cms-visual-frame">
+                            <a href="https://demo.blueorcawebsites.eu" target="_blank">
+                                <img src="assets/images/web/cms-nahled.webp" alt="Ukázka administrace CMS BlueOrca" width="760" height="500" loading="lazy">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2 -->
+                <div class="cta-cms-inner cta-slide" data-slide>
+                    <div class="cta-cms-text">
+                        <p class="cta-cms-label">Nemovitosti &amp; realtní weby</p>
+                        <h2 class="cta-cms-title">Inzeráty, makléři<br>i kalkulačky v jednom.</h2>
+                        <p class="cta-cms-desc">Pro realtní kanceláře budujeme weby s plnou správou nemovitostí, profily makléřů a hypoteční kalkulačkou — vše propojené s vaší administrací.</p>
+                        <div class="cta-cms-action">
+                            <a href="https://demo.blueorcawebsites.eu" target="_blank" rel="noopener noreferrer" class="cta-cms-btn external">
+                                Prohlédnout demo
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                            <p class="cta-cms-note">Bez registrace &nbsp;·&nbsp; Bez závazků</p>
+                        </div>
+                    </div>
+                    <div class="cta-cms-visual" aria-hidden="true">
+                        <div class="cta-cms-visual-frame">
+                            <a href="https://demo.blueorcawebsites.eu" target="_blank">
+                                <img src="assets/images/web/cms-nahled.webp" alt="Ukázka administrace CMS BlueOrca" width="760" height="500" loading="lazy">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3 -->
+                <div class="cta-cms-inner cta-slide" data-slide>
+                    <div class="cta-cms-text">
+                        <p class="cta-cms-label">Rychlost &amp; výkon</p>
+                        <h2 class="cta-cms-title">Lighthouse 100.<br>Na každém webu.</h2>
+                        <p class="cta-cms-desc">Naše weby dosahují plného skóre v Google Lighthouse — rychlé načítání, skvlé SEO a bezproblémová dostupnost pro všechny uživatele i vyhledávače.</p>
+                        <div class="cta-cms-action">
+                            <a href="https://demo.blueorcawebsites.eu" target="_blank" rel="noopener noreferrer" class="cta-cms-btn external">
+                                Vyzkoušet administraci
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                            <p class="cta-cms-note">Bez registrace &nbsp;·&nbsp; Bez závazků</p>
+                        </div>
+                    </div>
+                    <div class="cta-cms-visual" aria-hidden="true">
+                        <div class="cta-cms-visual-frame">
+                            <a href="https://demo.blueorcawebsites.eu" target="_blank">
+                                <img src="assets/images/web/cms-nahled.webp" alt="Ukázka administrace CMS BlueOrca" width="760" height="500" loading="lazy">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <button class="cta-slider-btn cta-slider-btn--prev" aria-label="Předchozí">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
+                <button class="cta-slider-btn cta-slider-btn--next" aria-label="Další">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+                </button>
+                <div class="cta-slider-dots">
+                    <button class="cta-slider-dot" aria-label="Slide 1">CMS systém</button>
+                    <button class="cta-slider-dot" aria-label="Slide 2">Realitní weby</button>
+                    <button class="cta-slider-dot" aria-label="Slide 3">Výkon & SEO</button>
+                </div>
+
+            </div>
+        </div>
+    </section>
 
     <main>
 
@@ -166,7 +257,6 @@
                             <div class="ref-header">
                                 <div class="ref-header-top">
                                     <h3><a href="https://florian-partneri.cz/" target="_blank" rel="noopener noreferrer" class="external">florian-partneri.cz</a></h3>
-                                    <a href="https://florian-partneri.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web s bohatou funkčností</p>
                                 <p class="ref-desc">Web pro realitní kancelář zaměřený na získávání nových poptávek a budování důvěry při prodeji i financování nemovitostí. Návštěvníkům dává rychlý přehled nabídky i jasný další krok ke kontaktu.</p>
@@ -184,10 +274,6 @@
                                         <span class="ref-tag ref-tag-nolink">Články</span>
                                     </span>
                                 </span>
-                            </div>
-                            <div class="ref-row">
-                                <span class="ref-row-label">Administrace</span>
-                                <span class="ref-row-value"><a href="https://demo.blueorcawebsites.eu" target="_blank" rel="noopener noreferrer" title="Redakční systém - pro správu obsahu" class="external">CMS BlueOrca</a></span>
                             </div>
                         </div>
 
@@ -267,7 +353,6 @@
                             <div class="ref-header">
                                 <div class="ref-header-top">
                                     <h3><a href="https://leadea.cz/" target="_blank" rel="noopener noreferrer" class="external">leadea.cz</a></h3>
-                                    <a href="https://leadea.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web s bohatou funkčností</p>
                                 <p class="ref-desc">Web pro firmu s digitálními službami, zaměřený na proměnu návštěvníků v konkrétní poptávky. Klientovi jasně ukazuje nabídku a vede ho k odeslání kontaktu bez zbytečných kroků.</p>
@@ -284,10 +369,6 @@
                                         <a href="https://leadea.cz/blog" target="_blank" rel="noopener noreferrer" class="ref-tag external">Blog</a>
                                     </span>
                                 </span>
-                            </div>
-                            <div class="ref-row">
-                                <span class="ref-row-label">Administrace</span>
-                                <span class="ref-row-value"><a href="https://demo.blueorcawebsites.eu" target="_blank" rel="noopener noreferrer" title="Redakční systém - pro správu obsahu" class="external">CMS BlueOrca</a></span>
                             </div>
                         </div>
 
@@ -365,7 +446,6 @@
                             <div class="ref-header">
                                 <div class="ref-header-top">
                                     <h3><a href="https://www.milenium.cz/" target="_blank" rel="noopener noreferrer" class="external">milenium.cz</a></h3>
-                                    <a href="https://www.milenium.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Jednostránkový web</p>
                                 <p class="ref-desc">Web pro technologickou firmu zaměřený na jasné představení značky a rychlé navázání kontaktu. Jedna silná stránka předá hlavní sdělení bez rušení a podpoří rozhodnutí ozvat se.</p>
@@ -381,10 +461,6 @@
                                         <span class="ref-tag ref-tag-nolink">3D render vesmírné scény</span>
                                     </span>
                                 </span>
-                            </div>
-                            <div class="ref-row">
-                                <span class="ref-row-label">Administrace</span>
-                                <span class="ref-row-value">CMS BlueOrca OnePage</span>
                             </div>
                         </div>
 

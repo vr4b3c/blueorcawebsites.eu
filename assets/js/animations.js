@@ -6,35 +6,7 @@ const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 // Mark document as JS-animated (used by CSS to safely pre-hide elements)
 document.documentElement.classList.add('motion-ready');
 
-if (reduced) {
-    // Just reveal everything the CSS pre-hid
-    document.querySelectorAll(
-        '.hero-logo, .hero h1, .hero-slogan, .hero-tagline, .hero-contacts'
-    ).forEach(function (el) { el.style.opacity = '1'; });
-} else {
-
-    // ── HERO entrance ─────────────────────────────────────────────────────
-
-    animate('.hero-logo',
-        { opacity: [0, 1], scale: [0.82, 1] },
-        { duration: 0.9, ease: [0.16, 1, 0.3, 1] }
-    );
-    animate('.hero h1',
-        { opacity: [0, 1], y: [35, 0] },
-        { duration: 0.7, delay: 0.2, ease: [0.16, 1, 0.3, 1] }
-    );
-    animate('.hero-slogan',
-        { opacity: [0, 1], y: [22, 0] },
-        { duration: 0.6, delay: 0.4, ease: [0.33, 1, 0.68, 1] }
-    );
-    animate('.hero-tagline',
-        { opacity: [0, 1], y: [18, 0] },
-        { duration: 0.6, delay: 0.55, ease: [0.33, 1, 0.68, 1] }
-    );
-    animate('.hero-contacts',
-        { opacity: [0, 1], y: [18, 0] },
-        { duration: 0.6, delay: 0.7, ease: [0.33, 1, 0.68, 1] }
-    );
+if (!reduced) {
 
     // ── Scroll-triggered ──────────────────────────────────────────────────
 

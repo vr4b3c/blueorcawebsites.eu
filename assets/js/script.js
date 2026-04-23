@@ -177,3 +177,42 @@
         });
     });
 })();
+
+// ===================== CTA SLIDER =====================
+(function () {
+    var slider = document.querySelector('[data-slider]');
+    if (!slider) return;
+
+    var slides = Array.from(slider.querySelectorAll('[data-slide]'));
+    var dots   = Array.from(slider.querySelectorAll('.cta-slider-dot'));
+    var btnPrev = slider.querySelector('.cta-slider-btn--prev');
+    var btnNext = slider.querySelector('.cta-slider-btn--next');
+    var current = 0;
+    var autoplayTimer;
+
+    function show(idx) {
+        slides[current].classList.remove('is-active');
+        dots[current].classList.remove('is-active');
+        current = (idx + slides.length) % slides.length;
+        slides[current].classList.add('is-active');
+        dots[current].classList.add('is-active');
+    }
+
+    function next() { show(current + 1); }
+    function prev() { show(current - 1); }
+
+    function resetAutoplay() {
+        clearInterval(autoplayTimer);
+        autoplayTimer = setInterval(next, 6000);
+    }
+
+    // init
+    show(0);
+    resetAutoplay();
+
+    btnNext.addEventListener('click', function () { next(); resetAutoplay(); });
+    btnPrev.addEventListener('click', function () { prev(); resetAutoplay(); });
+    dots.forEach(function (dot, i) {
+        dot.addEventListener('click', function () { show(i); resetAutoplay(); });
+    });
+})();
