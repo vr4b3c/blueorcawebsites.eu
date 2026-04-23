@@ -185,12 +185,20 @@
 
     var slides = Array.from(slider.querySelectorAll('[data-slide]'));
     var dots   = Array.from(slider.querySelectorAll('.cta-slider-dot'));
-    var btnPrev = slider.querySelector('.cta-slider-btn--prev');
-    var btnNext = slider.querySelector('.cta-slider-btn--next');
     var current = 0;
+    var INTERVAL = 6000;
     var autoplayTimer;
+    var remainingTime = INTERVAL;
+    var tickStart = 0;
+    var isPaused = false;
+
+    function clearTimers() {
+        clearTimeout(autoplayTimer);
+        clearInterval(autoplayTimer);
+    }
 
     function show(idx) {
+        if (idx === current) return;
         slides[current].classList.remove('is-active');
         dots[current].classList.remove('is-active');
         current = (idx + slides.length) % slides.length;
@@ -199,20 +207,49 @@
     }
 
     function next() { show(current + 1); }
-    function prev() { show(current - 1); }
 
-    function resetAutoplay() {
-        clearInterval(autoplayTimer);
-        autoplayTimer = setInterval(next, 6000);
+    function startInterval() {
+        clearTimers();
+        remainingTime = INTERVAL;
+        tickStart = Date.now();
+        autoplayTimer = setInterval(function () {
+            next();
+            remainingTime = INTERVAL;
+            tickStart = Date.now();
+        }, INTERVAL);
     }
 
-    // init
-    show(0);
-    resetAutoplay();
+    // init – activate first slide directly (bypasses show() guard)
+    slides[0].classList.add('is-active');
+    dots[0].classList.add('is-active');
+    startInterval();
 
-    btnNext.addEventListener('click', function () { next(); resetAutoplay(); });
-    btnPrev.addEventListener('click', function () { prev(); resetAutoplay(); });
     dots.forEach(function (dot, i) {
-        dot.addEventListener('click', function () { show(i); resetAutoplay(); });
+        dot.addEventListener('click', function () {
+            show(i);
+            remainingTime = INTERVAL; // reset to full cycle on explicit navigation
+            if (!isPaused) {
+                startInterval();
+            }
+        });
+    });
+
+    // Pause on hover – continue from where it stopped
+    slider.addEventListener('mouseenter', function () {
+        if (isPaused) return;
+        isPaused = true;
+        var elapsed = Date.now() - tickStart;
+        remainingTime = Math.max(remainingTime - elapsed, 0);
+        clearTimers();
+    });
+    slider.addEventListener('mouseleave', function () {
+        if (!isPaused) return;
+        isPaused = false;
+        clearTimers();
+        tickStart = Date.now();
+        autoplayTimer = setTimeout(function () {
+            next();
+            startInterval();
+        }, remainingTime);
     });
 })();

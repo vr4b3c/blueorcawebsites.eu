@@ -257,7 +257,7 @@ body::before {
 .contact h2 {
     text-align: center;
     font-size: 1.8rem;
-    font-weight: 400;
+    font-weight: 300;
     color: var(--accent);
     line-height: 1.25;
     margin-bottom: 2rem;
@@ -1056,38 +1056,6 @@ body::before {
 }
 
 /* Prev / Next buttons */
-.cta-slider-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 10;
-    background: rgba(3, 26, 42, 0.7);
-    border: 1px solid rgba(142, 210, 232, 0.25);
-    border-radius: 50%;
-    width: 2.4rem;
-    height: 2.4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent);
-    cursor: pointer;
-    transition: background 0.2s, border-color 0.2s;
-    backdrop-filter: blur(6px);
-}
-
-.cta-slider-btn:hover {
-    background: rgba(60, 164, 197, 0.2);
-    border-color: rgba(142, 210, 232, 0.6);
-}
-
-.cta-slider-btn--prev {
-    left: -1.4rem;
-}
-
-.cta-slider-btn--next {
-    right: -1.4rem;
-}
-
 /* Tab indicators */
 .cta-slider-dots {
     display: flex;
@@ -1145,6 +1113,10 @@ body::before {
 @keyframes ctaTabProgress {
     from { width: 0; }
     to   { width: 100%; }
+}
+
+.cta-slider:hover .cta-slider-dot.is-active::after {
+    animation-play-state: paused;
 }
 
 .cta-cms {
