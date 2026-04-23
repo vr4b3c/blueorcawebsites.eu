@@ -25,22 +25,22 @@ if (reduced) {
     );
     animate('.hero-slogan',
         { opacity: [0, 1], y: [22, 0] },
-        { duration: 0.6, delay: 0.4, ease: 'ease-out' }
+        { duration: 0.6, delay: 0.4, ease: [0.33, 1, 0.68, 1] }
     );
     animate('.hero-tagline',
         { opacity: [0, 1], y: [18, 0] },
-        { duration: 0.6, delay: 0.55, ease: 'ease-out' }
+        { duration: 0.6, delay: 0.55, ease: [0.33, 1, 0.68, 1] }
     );
     animate('.hero-contacts',
         { opacity: [0, 1], y: [18, 0] },
-        { duration: 0.6, delay: 0.7, ease: 'ease-out' }
+        { duration: 0.6, delay: 0.7, ease: [0.33, 1, 0.68, 1] }
     );
 
     // ── Scroll-triggered ──────────────────────────────────────────────────
 
     // Section heading
     inView('.references h2', function (el) {
-        animate(el, { opacity: [0, 1], y: [25, 0] }, { duration: 0.6, ease: 'ease-out' });
+        animate(el, { opacity: [0, 1], y: [25, 0] }, { duration: 0.6, ease: [0.33, 1, 0.68, 1] });
     });
 
     // Filter pills – staggered
@@ -48,7 +48,7 @@ if (reduced) {
         animate(
             el.querySelectorAll('.filter-pill'),
             { opacity: [0, 1], y: [12, 0] },
-            { duration: 0.4, delay: stagger(0.08), ease: 'ease-out' }
+            { duration: 0.4, delay: stagger(0.08), ease: [0.33, 1, 0.68, 1] }
         );
     });
 
@@ -75,7 +75,7 @@ if (reduced) {
         if (header) {
             animate(header,
                 { opacity: [0, 1], y: [18, 0] },
-                { duration: 0.5, delay: 0.18, ease: 'ease-out' }
+                { duration: 0.5, delay: 0.18, ease: [0.33, 1, 0.68, 1] }
             );
         }
 
@@ -84,7 +84,7 @@ if (reduced) {
         if (rows.length) {
             animate(rows,
                 { opacity: [0, 1], x: [16, 0] },
-                { duration: 0.4, delay: stagger(0.07, { start: 0.28 }), ease: 'ease-out' }
+                { duration: 0.4, delay: stagger(0.07, { start: 0.28 }), ease: [0.33, 1, 0.68, 1] }
             );
         }
 
@@ -121,7 +121,7 @@ if (reduced) {
 
     // Footer
     inView('.site-footer', function (el) {
-        animate(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: 'ease-out' });
+        animate(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: [0.33, 1, 0.68, 1] });
     });
 }
 
