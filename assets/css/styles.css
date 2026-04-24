@@ -1221,6 +1221,7 @@ body::before {
 
 @media (prefers-reduced-motion: reduce) {
     .tile-flip-grid { display: none; }
+    .cta-cms-visual { animation: none; }
 }
 
 /* Prev / Next buttons */
@@ -1290,7 +1291,7 @@ body::before {
 }
 
 .cta-cms {
-    padding: 7rem 0;
+    padding: 9rem 0;
     position: relative;
     overflow: hidden;
 }
@@ -1416,6 +1417,12 @@ body::before {
     align-items: center;
     justify-content: flex-end;
     pointer-events: none;
+    animation: ctaFrameFloat 7s ease-in-out infinite;
+}
+
+@keyframes ctaFrameFloat {
+    0%, 100% { transform: translateY(-50%); }
+    50%       { transform: translateY(calc(-50% - 10px)); }
 }
 
 .cta-cms-visual-frame {
