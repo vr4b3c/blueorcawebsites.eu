@@ -1128,7 +1128,7 @@ body::before {
 
 /* ===================== CTA CMS ===================== */
 
-/* Slider wrapper */
+/* Slide wrapper */
 .cta-slider {
     position: relative;
 }
@@ -1141,27 +1141,93 @@ body::before {
     display: block;
 }
 
+/* Text: fade in při zobrazení slidu */
 .cta-slider .cta-slide.is-active .cta-cms-text {
-    animation: ctaFadeInText 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation: ctaTextIn 0.4s ease both;
 }
 
-.cta-slider .cta-slide.is-active .cta-cms-visual {
-    animation: ctaFadeInVisual 1s cubic-bezier(0.22, 1, 0.36, 1) 0.08s both;
-}
-
-@keyframes ctaFadeInText {
-    from { opacity: 0; transform: translateY(12px); }
+@keyframes ctaTextIn {
+    from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes ctaFadeInVisual {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+/* Text: fade out při odchodu */
+.cta-slider .cta-slide.is-text-out .cta-cms-text {
+    animation: ctaTextOut 0.2s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes ctaTextOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-slider .cta-slide.is-active .cta-cms-text,
+    .cta-slider .cta-slide.is-text-out .cta-cms-text { animation: none; }
+}
+
+/* ── Flip-tile přechod: 5×4 dlaždic, každá se překlopí Y-osou ──
+   Přední strana = výřez starého obrázku
+   Zadní strana  = výřez nového obrázku
+   Animace se děje jen na obrázku, slide a text nedotčeny.
+─────────────────────────────────────────────── */
+.tile-flip-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows:    repeat(4, 1fr);
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    overflow: hidden;
+    perspective: 900px;
+}
+
+.tf-tile {
+    position: relative;
+    transform-style: preserve-3d;
+    /* scale(1.015): každá dlaždice přesahuje sousedy o ~1.5% → žádné škvíry */
+    transform: scale(1.015) rotateY(0deg);
+    transition: transform var(--tf-dur, 0.45s) cubic-bezier(0.4, 0, 0.2, 1) var(--tf-delay, 0s);
+    will-change: transform;
+}
+
+.tf-tile.tf-no-anim {
+    transition: none !important;
+}
+
+.tf-tile.is-flipping {
+    transform: scale(1.015) rotateY(-180deg);
+}
+
+.tf-front,
+.tf-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background-repeat: no-repeat;
+    /* Rozlož celý obrázek přes 5 sloupců a 4 řádky */
+    background-size: 500% 400%;
+    background-position:
+        calc(var(--tf-col, 0) * 100% / 4)
+        calc(var(--tf-row, 0) * 100% / 3);
+}
+
+.tf-front { background-image: var(--tf-old, none); }
+.tf-back  { background-image: var(--tf-new, none); transform: rotateY(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+    .tile-flip-grid { display: none; }
 }
 
 /* Prev / Next buttons */
 /* Tab indicators */
 .cta-slider-dots {
+    position: relative;
+    z-index: 10; /* stay above is-leaving slide (z-index:5) */
     display: flex;
     justify-content: flex-start;
     gap: 0;
@@ -1174,7 +1240,7 @@ body::before {
 .cta-slider-dot {
     position: relative;
     z-index: 1;
-    overflow: hidden;
+   /* overflow: hidden; */
     padding: 0.75rem 1.25rem;
     font-size: 0.9rem;
     font-weight: 500;
@@ -1206,12 +1272,12 @@ body::before {
 .cta-slider-dot.is-active::after {
     content: '';
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: 0;
     height: 1px;
     width: 0;
     background: var(--accent-mid);
-    animation: ctaTabProgress 6s linear forwards;
+    animation: ctaTabProgress 10s linear forwards;
 }
 
 @keyframes ctaTabProgress {
