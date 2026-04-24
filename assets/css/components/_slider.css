@@ -1,0 +1,392 @@
+/* ===================== CTA CMS ===================== */
+
+/* Slide wrapper */
+.cta-slider {
+    position: relative;
+}
+
+.cta-slider .cta-slide {
+    display: none;
+}
+
+.cta-slider .cta-slide.is-active {
+    display: block;
+}
+
+/* Text: fade in při zobrazení slidu */
+.cta-slider .cta-slide.is-active .cta-cms-text {
+    animation: ctaTextIn 0.4s ease both;
+}
+
+@keyframes ctaTextIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Text: fade out při odchodu */
+.cta-slider .cta-slide.is-text-out .cta-cms-text {
+    animation: ctaTextOut 0.2s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes ctaTextOut {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(10px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta-slider .cta-slide.is-active .cta-cms-text,
+    .cta-slider .cta-slide.is-text-out .cta-cms-text { animation: none; }
+}
+
+/* ── Flip-tile přechod: 5×4 dlaždic, každá se překlopí Y-osou ──
+   Přední strana = výřez starého obrázku
+   Zadní strana  = výřez nového obrázku
+   Animace se děje jen na obrázku, slide a text nedotčeny.
+─────────────────────────────────────────────── */
+.tile-flip-grid {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows:    repeat(4, 1fr);
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    overflow: hidden;
+    perspective: 900px;
+}
+
+.tf-tile {
+    position: relative;
+    transform-style: preserve-3d;
+    /* scale(1.015): každá dlaždice přesahuje sousedy o ~1.5% → žádné škvíry */
+    transform: scale(1.015) rotateY(0deg);
+    transition: transform var(--tf-dur, 0.45s) cubic-bezier(0.4, 0, 0.2, 1) var(--tf-delay, 0s);
+    will-change: transform;
+}
+
+.tf-tile.tf-no-anim {
+    transition: none !important;
+}
+
+.tf-tile.is-flipping {
+    transform: scale(1.015) rotateY(-180deg);
+}
+
+.tf-front,
+.tf-back {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    background-repeat: no-repeat;
+    /* Rozlož celý obrázek přes 5 sloupců a 4 řádky */
+    background-size: 500% 400%;
+    background-position:
+        calc(var(--tf-col, 0) * 100% / 4)
+        calc(var(--tf-row, 0) * 100% / 3);
+}
+
+.tf-front { background-image: var(--tf-old, none); }
+.tf-back  { background-image: var(--tf-new, none); transform: rotateY(180deg); }
+
+@media (prefers-reduced-motion: reduce) {
+    .tile-flip-grid { display: none; }
+    .cta-cms-visual { animation: none; }
+}
+
+/* Prev / Next buttons */
+/* Tab indicators */
+.cta-slider-dots {
+    position: relative;
+    z-index: 10; /* stay above is-leaving slide (z-index:5) */
+    display: flex;
+    justify-content: flex-start;
+    gap: 0;
+    margin-top: -1px;
+    padding: 0;
+    align-items: stretch;
+    position: relative;
+}
+
+.cta-slider-dot {
+    position: relative;
+    z-index: 1;
+   /* overflow: hidden; */
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(142, 210, 232, 0.8);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0;
+    cursor: pointer;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+}
+
+
+
+
+.cta-slider-dot:hover:not(.is-active) {
+    color: rgba(142, 210, 232, 0.9);
+}
+
+.cta-slider-dot.is-active {
+    background: rgb(8, 32, 50);
+    border-color: rgba(142, 210, 232, 0.2);
+    border-top: 1px solid transparent;
+    color: var(--accent);
+    z-index: 4;
+}
+
+.cta-slider-dot.is-active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    height: 1px;
+    width: 0;
+    background: var(--accent-mid);
+    animation: ctaTabProgress 10s linear forwards;
+}
+
+@keyframes ctaTabProgress {
+    from { width: 0; }
+    to   { width: 100%; }
+}
+
+.cta-slider:hover .cta-slider-dot.is-active::after {
+    animation-play-state: paused;
+}
+
+.cta-cms {
+    padding: 9rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-cms::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(60, 164, 197, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(142, 210, 232, 0.08) 0%, transparent 55%);
+    pointer-events: none;
+}
+
+
+
+.cta-cms-inner {
+    position: relative;
+    z-index: 2;
+    display: block;
+    padding: 3rem 48% 3rem 3.5rem;
+    background: linear-gradient(to top, rgb(8, 32, 50) 0%, rgba(15, 70, 99, 0.55) 100%);
+    border: 1px solid rgba(142, 210, 232, 0.2);
+    border-radius: 0;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(142, 210, 232, 0.1);
+    overflow: visible;
+}
+
+.cta-cms-text {
+    flex: 1;
+    min-width: 0;
+    padding-right: 2.5rem;
+    padding-bottom: 0;
+}
+
+.cta-cms-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 0.6rem;
+}
+
+.cta-cms-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 0.9rem;
+    letter-spacing: -0.01em;
+}
+
+.cta-cms-title br {
+    display: block;
+}
+
+.cta-cms-desc {
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 440px;
+    margin: 0 0 1.5rem;
+
+    strong {color: var(--text-primary);} /* zvýraznění v popisku */
+}
+
+.cta-cms-action {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.cta-cms-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.85rem 1.75rem;
+    background: var(--accent-mid);
+    color: var(--bg-secondary);
+    font-size: 0.95rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 0;
+    white-space: nowrap;
+    transition: background 0.22s ease, box-shadow 0.22s ease, transform 0.15s ease;
+    box-shadow: 0 4px 20px rgba(60, 164, 197, 0.35);
+}
+
+.cta-cms-btn:hover {
+    background: var(--accent);
+    box-shadow: 0 6px 32px rgba(142, 210, 232, 0.45);
+    color: var(--bg-primary); 
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.cta-cms-btn:active {
+    transform: translateY(0);
+}
+
+.cta-cms-btn::after {
+    display: none;
+}
+
+.cta-cms-note {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin: 0;
+    letter-spacing: 0.02em;
+}
+
+/* --- vizuál (screenshot CMS) --- */
+.cta-cms-visual {
+    position: absolute;
+    top: 50%;
+    right: -2%;
+    transform: translateY(-50%);
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    pointer-events: none;
+    animation: ctaFrameFloat 7s ease-in-out infinite;
+}
+
+@keyframes ctaFrameFloat {
+    0%, 100% { transform: translateY(-50%); }
+    50%       { transform: translateY(calc(-50% - 10px)); }
+}
+
+.cta-cms-visual-frame {
+    position: relative;
+    left: -100px;
+    pointer-events: auto;
+    transform:
+        perspective(900px)
+        rotateY(-18deg)
+        rotateX(6deg)
+        rotate(-1.5deg);
+    transform-origin: right center;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow:
+        -8px 16px 60px rgba(0, 0, 0, 0.55),
+        -2px 4px 16px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(142, 210, 232, 0.15);
+    transition: transform 0.4s ease;
+    width: 100%;
+}
+
+.cta-cms-visual-frame:hover {
+    transform:
+        perspective(900px)
+        rotateY(-10deg)
+        rotateX(3deg)
+        rotate(-0.5deg)
+        translateX(4%);
+}
+
+.cta-cms-visual-frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 0;
+}
+
+@media (max-width: 1000px) {
+
+    .cta-cms-visual-frame {
+        left: auto;
+    }
+
+    .cta-cms-inner {
+        padding: 2.5rem 1.75rem;
+    }
+
+    .cta-cms-visual {
+        position: relative;
+        top: unset;
+        right: unset;
+        transform: none;
+        width: 100%;
+        justify-content: center;
+        margin-top: 2rem;
+        pointer-events: auto;
+    }
+
+    .cta-cms-visual-frame {
+        transform: perspective(900px) rotateY(-8deg) rotateX(4deg) rotate(-1deg);
+        transform-origin: center center;
+        max-width: 100%;
+    }
+
+    .cta-cms-visual-frame:hover {
+        transform: perspective(900px) rotateY(-4deg) rotateX(2deg) rotate(-0.5deg);
+    }
+}
+
+@media (max-width: 1024px) {
+    .section-inner,
+    .site-header-inner {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .section-inner,
+    .site-header-inner {
+        padding: 0 1rem;
+    }
+
+
+
+    .cta-cms-title {
+        font-size: 1.55rem;
+    }
+
+    .cta-cms-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
