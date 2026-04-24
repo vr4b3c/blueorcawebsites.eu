@@ -68,10 +68,10 @@ body::before {
 }
 
 .section-inner {
-    max-width: min(calc(100vw - 3rem), 1400px);
+    max-width: 1400px;
     width: 100%;
     margin: 0 auto;
-    padding: 0;
+    padding: 0 2rem;
 }
 
 /* ===================== TOPNAV ===================== */
@@ -96,9 +96,10 @@ body::before {
 }
 
 .site-header-inner {
-    max-width: min(calc(100vw - 3rem), 1400px);
+    max-width: 1400px;
     height: 100%;
     margin: 0 auto;
+    padding: 0 2rem;
     display: flex;
     align-items: center;
     gap: 1.5rem;
@@ -253,6 +254,109 @@ body::before {
     padding: 4rem 0;
 }
 
+/* ===================== VÝHODY ===================== */
+.vyhody {
+    padding: 5rem 0;
+}
+
+.vyhody-heading {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1.25;
+    margin-bottom: 3rem;
+    letter-spacing: 1px;
+}
+
+.vyhody-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+}
+
+.vyhody-box {
+    background: linear-gradient(160deg, rgba(15, 70, 99, 0.6) 0%, rgb(8, 32, 50) 100%);
+    border: 1px solid rgba(142, 210, 232, 0.18);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(142, 210, 232, 0.08);
+    padding: 2rem 1.75rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+}
+
+.vyhody-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(142, 210, 232, 0.4), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.vyhody-box:hover {
+    border-color: rgba(142, 210, 232, 0.35);
+    box-shadow: 0 16px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(142, 210, 232, 0.15);
+    transform: translateY(-3px);
+}
+
+.vyhody-box:hover::before {
+    opacity: 1;
+}
+
+.vyhody-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.8rem;
+    height: 2.8rem;
+    background: rgba(60, 164, 197, 0.12);
+    border: 1px solid rgba(60, 164, 197, 0.25);
+    color: var(--accent-mid);
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+    transition: background 0.25s, border-color 0.25s;
+}
+
+.vyhody-box:hover .vyhody-icon {
+    background: rgba(60, 164, 197, 0.22);
+    border-color: rgba(60, 164, 197, 0.45);
+}
+
+.vyhody-box h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.3;
+}
+
+.vyhody-box p {
+    font-size: 0.86rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin: 0;
+}
+
+@media (max-width: 900px) {
+    .vyhody-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 540px) {
+    .vyhody-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
 .references h2,
 .contact h2 {
     text-align: center;
@@ -345,7 +449,7 @@ body::before {
 
 /* ===================== REFERENCE KARTY ===================== */
 .ref-card {
-    background: var(--bg-card);
+    background: linear-gradient(to top, rgb(8, 32, 50) 0%, rgba(15, 70, 99, 0.55) 100%);
     border-radius: var(--radius);
     overflow: hidden;
     border: 1px solid rgba(142, 210, 232, 0.2);
@@ -1095,7 +1199,7 @@ body::before {
     background: rgb(8, 32, 50);
     border-color: rgba(142, 210, 232, 0.2);
     border-top: 1px solid transparent;
-    color: var(--accent-mid);
+    color: var(--text-primary);
     z-index: 4;
 }
 
@@ -1120,7 +1224,7 @@ body::before {
 }
 
 .cta-cms {
-    padding: 7rem 1.5rem;
+    padding: 7rem 0;
     position: relative;
     overflow: hidden;
 }
@@ -1316,7 +1420,19 @@ body::before {
     }
 }
 
+@media (max-width: 1024px) {
+    .section-inner,
+    .site-header-inner {
+        padding: 0 1.5rem;
+    }
+}
+
 @media (max-width: 600px) {
+    .section-inner,
+    .site-header-inner {
+        padding: 0 1rem;
+    }
+
 
 
     .cta-cms-title {
@@ -1329,10 +1445,124 @@ body::before {
     }
 }
 
+/* ===================== CENÍK ===================== */
+.cenik {
+    padding: 5rem 0;
+}
+
+.cenik-eyebrow {
+    text-align: center;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 0.75rem;
+}
+
+.cenik-heading {
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.9rem;
+}
+
+.cenik-sub {
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    max-width: 560px;
+    margin: 0 auto 2.5rem;
+}
+
+.cenik-box {
+    background: linear-gradient(160deg, rgba(15, 70, 99, 0.6) 0%, rgb(8, 32, 50) 100%);
+    border: 1px solid rgba(142, 210, 232, 0.2);
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(142, 210, 232, 0.1);
+    padding: 2.5rem 3rem;
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.cenik-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-bottom: 2.25rem;
+}
+
+.cenik-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.85rem;
+    font-size: 0.92rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+}
+
+.cenik-list li strong {
+    color: var(--text-primary);
+}
+
+.cenik-check {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.35rem;
+    height: 1.35rem;
+    margin-top: 0.12rem;
+    background: rgba(12, 206, 107, 0.12);
+    border: 1px solid rgba(12, 206, 107, 0.3);
+}
+
+.cenik-check::after {
+    content: '';
+    display: block;
+    width: 0.65rem;
+    height: 0.65rem;
+    background-color: var(--green);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.cenik-cta {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    padding-top: 1.75rem;
+    border-top: 1px solid rgba(142, 210, 232, 0.1);
+}
+
+.cenik-note {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+@media (max-width: 600px) {
+    .cenik-box {
+        padding: 1.75rem 1.25rem;
+    }
+
+    .cenik-heading {
+        font-size: 1.65rem;
+    }
+}
+
 /* ===================== FOOTER ===================== */
 .site-footer {
     text-align: center;
-    padding: 2rem 1.5rem;
+    padding: 2rem 0;
     border-top: 1px solid rgba(142, 210, 232, 0.06);
     color: var(--text-muted);
     font-size: 0.82rem;
