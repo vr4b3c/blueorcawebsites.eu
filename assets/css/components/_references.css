@@ -367,8 +367,8 @@
 
 .ref-row {
     display: flex;
-    gap: 0.5rem;
-    align-items: baseline;
+    flex-direction: column;
+    gap: 0.15rem;
     font-size: 0.82rem;
     padding: 0.2rem 0;
     border-bottom: 1px solid rgba(142, 210, 232, 0.06);
@@ -379,8 +379,6 @@
 }
 
 .ref-row-label {
-    min-width: 120px;
-    flex-shrink: 0;
     color: var(--text-muted);
     font-size: 0.72rem;
     text-transform: uppercase;
