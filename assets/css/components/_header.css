@@ -30,21 +30,16 @@
 }
 
 .site-header-logo {
-    position: relative;
     display: flex;
     height: 100%;
     align-items: center;
-    padding-left: 112px;
+    gap: 0.9rem;
     text-decoration: none;
     flex-shrink: 0;
     transition: opacity 0.2s;
 }
 
-.site-header-logo svg {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
+.site-header-logo-mark {
     width: 100px;
     height: 100px;
     flex-shrink: 0;
@@ -54,14 +49,20 @@
     transition: filter 0.3s ease;
 }
 
-.site-header-logo:hover svg {
+.site-header-logo-wordmark {
+    display: block;
+    width: auto;
+    height: 3.5rem;
+    flex-shrink: 0;
+}
+
+.site-header-logo:hover .site-header-logo-mark {
     filter:
         drop-shadow(0 0 14px rgba(142, 210, 232, 0.35))
         drop-shadow(0 6px 24px rgba(60, 164, 197, 0.2));
 }
 
 .site-header-logo:hover {
-    opacity: 0.85;
     text-decoration: none;
 }
 
