@@ -1,0 +1,30 @@
+{
+  "name": "blue-orca-canvas",
+  "version": "2.0.0",
+  "description": "Modulární canvas background systém pro Blue Orca web",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js",
+    "serve": "python3 -m http.server 8000",
+    "dev": "npm run serve"
+  },
+  "keywords": [
+    "canvas",
+    "animation",
+    "water",
+    "effects",
+    "modular"
+  ],
+  "author": "Blue Orca Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vr4b3c/blue-orca"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {},
+  "dependencies": {}
+}

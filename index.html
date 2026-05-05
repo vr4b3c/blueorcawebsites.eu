@@ -72,6 +72,9 @@
 </head>
 <body>
 
+    <!-- WebGL Ocean Background -->
+    <canvas id="webgl-ocean-background" style="position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:-1;will-change:transform;transform:translateZ(0);"></canvas>
+
     <!-- TOPNAV -->
     <header class="site-header">
         <div class="site-header-inner">
@@ -632,5 +635,7 @@
 
     <script src="assets/js/script.js"></script>
     <script type="module" src="assets/js/animations.js"></script>
+    <script type="module" src="assets/webgl/init-prod.js"></script>
+    <script type="module" src="assets/canvas/init.js"></script>
 </body>
 </html>

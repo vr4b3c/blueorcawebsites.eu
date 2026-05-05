@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas System 2.0 - Demo</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #003366, #001a33);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 10;
+            padding: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .info {
+            background: rgba(0, 51, 102, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .controls {
+            margin: 30px 0;
+        }
+        
+        button {
+            background: rgba(0, 102, 204, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: rgba(0, 102, 204, 1);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-left: 4px solid #00cc66;
+            font-family: monospace;
+        }
+        
+        code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas bude vložen sem automaticky pomocí JavaScriptu -->
+    
+    <div class="content">
+        <h1>🌊 Canvas Background System 2.0</h1>
+        
+        <div class="info">
+            <h2>✨ Nové funkce</h2>
+            <ul>
+                <li><strong>Modulární architektura</strong> - Rozděleno do samostatných modulů</li>
+                <li><strong>Optimalizovaný výkon</strong> - Object pooling, gradient caching</li>
+                <li><strong>Adaptivní kvalita</strong> - Automatické přizpůsobení FPS</li>
+                <li><strong>Lepší udržovatelnost</strong> - Čistý a dokumentovaný kód</li>
+                <li><strong>Zpětná kompatibilita</strong> - Funguje s existujícím kódem</li>
+            </ul>
+        </div>
+        
+        <div class="controls">
+            <h2>🎮 Ovládání</h2>
+            <button onclick="toggleStats()">Toggle FPS Stats</button>
+            <button onclick="toggleRays()">Toggle Light Rays</button>
+            <button onclick="spawnFood()">Spawn Food (Click Canvas)</button>
+            <button onclick="showInfo()">Show System Info</button>
+        </div>
+        
+        <div class="status" id="status">
+            <div>✅ System inicializován</div>
+            <div>📊 FPS: <span id="fps">--</span></div>
+            <div>🎨 Quality: <span id="quality">--</span>%</div>
+            <div>🍎 Food particles: <span id="foodCount">0</span></div>
+        </div>
+        
+        <div class="info">
+            <h2>📖 Jak to funguje</h2>
+            <p>Nový systém je rozdělen do několika modulů:</p>
+            <ul>
+                <li><code>CanvasManager</code> - Správa canvasu a rendering loop</li>
+                <li><code>FoodSystem</code> - Systém částic s object poolingem</li>
+                <li><code>PerformanceMonitor</code> - Monitoring FPS a adaptivní kvalita</li>
+                <li><code>MathUtils</code> - Optimalizované matematické funkce</li>
+                <li>Vrstvy: <code>WaterGradient</code>, <code>LightRays</code></li>
+            </ul>
+            
+            <p><strong>Klikněte kamkoliv na stránku</strong> pro vytvoření částic jídla!</p>
+        </div>
+        
+        <div class="info">
+            <h2>🚀 Integrace</h2>
+            <p>Pro použití v existujícím projektu:</p>
+            <pre><code>&lt;script type="module"&gt;
+    import { createCanvasBackground } from './canvas/index.js';
+    
+    const manager = createCanvasBackground({
+        zIndex: 0,
+        showStats: true,
+        targetFPS: 45
+    });
+    
+    manager.start();
+&lt;/script&gt;</code></pre>
+        </div>
+    </div>
+    
+    <!-- Import as ES6 module -->
+    <script type="module">
+        import { createCanvasBackground, CuriousFishLayer } from './canvas/index.js';
+        
+        // Initialize canvas system
+        const manager = createCanvasBackground({
+            zIndex: 0,
+            showStats: true,
+            targetFPS: 45,
+            debug: false
+        });
+        
+        manager.start();
+        
+        // Store global reference
+        window.canvasManager = manager;
+        
+        // Update status display
+        setInterval(() => {
+            if (manager && manager.performanceMonitor) {
+                document.getElementById('fps').textContent = 
+                    manager.performanceMonitor.getFPS();
+                document.getElementById('quality').textContent = 
+                    Math.round(manager.performanceMonitor.getQuality() * 100);
+                document.getElementById('foodCount').textContent = 
+                    manager.foodSystem.getCount();
+            }
+        }, 500);
+        
+        // Global functions for buttons
+        window.toggleStats = () => {
+            manager.togglePerformanceStats();
+        };
+        
+        // Legacy bubbles toggle removed (use WebGL bubbles)
+        
+        window.toggleRays = () => {
+            const layer = manager.getLayer('lightRays');
+            if (layer) {
+                layer.enabled = !layer.enabled;
+                console.log('Light rays:', layer.enabled ? 'ON' : 'OFF');
+            }
+        };
+        
+        window.spawnFood = (clickX, clickY) => {
+            // Allow optional coordinates (when user clicks on canvas)
+            const x = (typeof clickX === 'number') ? clickX : Math.random() * manager.width;
+            const y = (typeof clickY === 'number') ? clickY : Math.random() * manager.height;
+            manager.foodSystem.spawn(x, y, 1.0);
+            console.log('Food spawned at', x, y);
+
+            // On first food spawn, enable curious fish and slide-in HUD
+            try {
+                let curiousFishLayer = manager.getLayer && manager.getLayer('curiousFish');
+                const hudLayer = manager.getLayer && manager.getLayer('hud');
+
+                // If curious fish layer was not created at startup, create it now
+                if (!curiousFishLayer) {
+                    curiousFishLayer = new CuriousFishLayer();
+                    curiousFishLayer.enabled = false; // will enable below
+                    manager.addLayer('curiousFish', curiousFishLayer);
+                }
+
+                if (curiousFishLayer && !curiousFishLayer.enabled) {
+                    // Enable and initialize curious fish layer
+                    curiousFishLayer.enabled = true;
+                    if (typeof curiousFishLayer.restartGame === 'function') {
+                        curiousFishLayer.restartGame(manager.width || window.innerWidth, manager.height || window.innerHeight);
+                    }
+
+                    // Spawn curious fish off-screen (left or right depending on food X)
+                    const offX = (x < (manager.width / 2)) ? -Math.max(120, curiousFishLayer.config.size * 4) : (manager.width + Math.max(120, curiousFishLayer.config.size * 4));
+                    // Spawn 100px below the canvas bottom (so fish can swim up into view)
+                    const offY = Math.round(manager.height + 100 + (Math.random() - 0.5) * 20);
+
+                    if (curiousFishLayer.fish) {
+                        curiousFishLayer.fish.x = offX;
+                        curiousFishLayer.fish.y = offY;
+                        // give velocity toward the food spawn point
+                        const dx = x - curiousFishLayer.fish.x;
+                        const dy = y - curiousFishLayer.fish.y;
+                        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+                        const speed = curiousFishLayer.config.speed || 3;
+                        curiousFishLayer.fish.velocityX = (dx / dist) * speed;
+                        curiousFishLayer.fish.velocityY = (dy / dist) * speed * 0.6;
+                        // Ensure player control isn't blocking movement
+                        curiousFishLayer.isAttacking = false;
+                        curiousFishLayer.isDancing = false;
+                    }
+                }
+
+                // Do not enable HUD here; HUD will reveal itself when the curious fish
+                // approaches the cursor (handled by CuriousFishLayer).
+            } catch (e) {
+                console.warn('Failed to activate curious fish on feed:', e);
+            }
+        };
+        
+        window.showInfo = () => {
+            console.log('=== Canvas System Info ===');
+            console.log('FPS:', manager.performanceMonitor.getFPS());
+            console.log('Quality:', manager.performanceMonitor.getQuality());
+            console.log('Food particles:', manager.foodSystem.getCount());
+            console.log('Layers:', Array.from(manager.layers.keys()));
+            console.log('Canvas size:', manager.width, 'x', manager.height);
+        };
+        
+        console.log('Canvas Background System 2.0 Demo loaded');
+        console.log('Try clicking anywhere on the page to spawn food particles!');
+    </script>
+</body>
+</html>

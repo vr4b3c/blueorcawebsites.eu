@@ -1,0 +1,172 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 398" width="432" height="398">
+	<defs>
+		<style>
+			path {
+				stroke: rgba(1, 56, 104, 0.2);
+				stroke-width: 1;
+				stroke-miterlimit:10;
+				fill-rule: evenodd;
+				opacity: 1; 			
+			}
+			
+			.r { stroke: #ff0000 !important; stroke-width: 2px !important; }
+			.g { stroke: #00ff00 !important; stroke-width: 2px !important; }
+			.y { stroke: gold !important; stroke-width: 2px !important;} 
+			
+			.c1  { fill: #00050d; } 
+			.c2  { fill: #001429; } 
+			.c3  { fill: #002444; } 
+			.c4  { fill: #003d6b; }
+			.c5  { fill: #005a8f; } 
+			.c6  { fill: #0075b3; } 
+			.c7  { fill: #2a9fd6; } 
+			.c8  { fill: #5ebfeb; } 
+			.c9  { fill: #9cd9f7; } 
+			.c10 { fill: #bce9ffff; } 
+
+/* === ANIMACE RYBY === */
+
+#curious-fish {
+    transform-origin: 50% 50%;
+    animation: fishBody 4s linear infinite;
+}
+
+#oko {
+	// jednou yza 5 vterin animace změny barvy oka na červenou a zpět, jako mrknutí oka
+	animation: eyeBlink 5s steps(1) infinite;
+}
+
+
+/* Ocas */
+#ocas {
+    transform-origin: 120px 210px; /* přibližná pozice kořene ocasu */
+    animation: tailSwing 1.5s linear infinite;
+}
+
+/* Přední ploutev */
+#predni-ploutev {
+    transform-box: fill-box;
+    transform-origin: 100% 0%;
+    animation: frontFin 3s linear infinite;
+}
+
+/* Zadní spodní ploutve */
+#zadni-ploutev {
+    transform-box: fill-box;
+    transform-origin: 100% 0%;
+    animation: rearFin 3s linear infinite;
+}
+
+/* Horní ploutev */
+#horni-ploutev {
+    transform-box: fill-box;
+    transform-origin: 0% 0%;
+    animation: topFin s linear infinite;
+}
+
+/* === KEYFRAMES === */
+
+@keyframes fishBody {
+    0%   { transform: rotate(0deg); }
+    50%  { transform: rotate(1.8deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes tailSwing {
+    0%   { transform: rotate(0deg); }
+    25%  { transform: rotate(2deg); }
+    75%  { transform: rotate(-3deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes frontFin {
+    0%   { transform: rotate(0deg); }
+    40%  { transform: rotate(4deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes rearFin {
+    0%   { transform: rotate(0deg); }
+    40%  { transform: rotate(4deg); }
+    100% { transform: rotate(0deg); }
+}
+
+@keyframes topFin {
+    0%   { transform: rotate(0deg); }
+    60% { transform: rotate(-2deg); }
+    100% { transform: rotate(0deg); }	
+}
+
+@keyframes eyeBlink {
+	0%   { fill: #002444; }
+	10%  { fill: #ff0000; }
+	20%  { fill: #002444; }
+	100% { fill: #002444; }
+
+		</style>
+	</defs>
+	<g id="curious-fish">
+		<g id="cumak">
+			<path id="cumak-17" class="c9" d="m302.16 174.18l15.74-36.61 41.1 49.27z"/>
+			<path id="cumak-20" class="c7" d="m382.03 229.1l-20.57 16.36-56.12 13.08 54.37-51.28z"/>
+			<path id="cumak-21" class="c1" d="m359 186.84l0.71 20.42-57.55-33.08z"/>
+			<path id="cumak-22" class="c6" d="m305.34 258.54l-33.24-32.52 87.61-18.76z"/>
+			<path id="cumak-23" class="c8" d="m272.1 226.02l30.06-51.84 57.55 33.08z"/>
+			<path id="cumak-18" class="c10 " d="m317.9 137.57l109.04 55.97-67.94-6.7z"/>
+			<path id="oko" class="c9" d="m426.58 193.83l-0.62 0.5-66.25 12.93-0.71-20.42z"/>
+			<path id="cumak-19" class="c8 " d="m396.94 217.77l29.02-23.44-66.25 12.93 22.32 21.84z"/>
+		</g>
+
+		<g id="horni-ploutev">
+			<path id="horni-ploutev-1" class="c3" d="m173.66 167.87l-16.73-53.66-17.89-44.43 85.12 52.55z"/>	
+			<path id="horni-ploutev-2" class="c1" d="m156.93 114.21l16.73 53.66-30.58 22.21-11.25-36.06-14.42-47.02-12.98-30-14.43-21.64-10.38-10.67-18.18-15.58-23.36-20.19 25.79 16.98 41.73 22.13 33.44 21.75z"/>
+		</g>
+
+		<g id="predni-ploutev">
+			<path id="predni-ploutev-main" class="c1" d="m361.46 245.46l-16.44 15.87-29.43 34.91-33.46 43.27-40.39 42.4 29.43-62.31 6.92-17.31 27.01-24.73z"/>
+			<path id="predni-ploutev-zadni" class="c3" d="m305.1 277.56l-48.36 0.21-1.73 7.5-17.88 27.7-25.39 36.92 38.65-25.38 27.7-22.22z"/>
+		</g>
+
+		<g id="zadni-ploutev">
+			<path id="zadni-ploutev-3" class="c1" d="m195 262.11l61.74 15.66-3.75 1.73-15.86 9.52-52.22 32.03-57.12 41.53-36.63 26.54z"/>
+			<path id="zadni-ploutev-2" class="c3" d="m195 262.11l-103.84 127.01 23.65-53.36 10.97-27.12 6.34-22.79z"/>
+			<path id="zadni-ploutev-1" class="c1" d="m195 262.11l-55.96-18.38-6.92 42.12z"/>
+		</g>	
+
+		<g id="ocas">
+			<path id="ocas-1" class="c6" d="m143.08 190.08l2.02 22.21-58.47-31.47-84.9-38.63z"/>
+			<path id="ocas-2" class="c2" d="m145.1 212.29l-58.47-31.47-84.9-38.63 17.87 11.44 71.46 64.5z"/>
+			<path id="ocas-3" class="c1" d="m91.06 218.13l-71.46-64.5-17.87-11.44 48.46 76.74 8.66 5.48z"/>
+			<path id="ocas-4" class="c3" d="m139.04 243.73l6.06-31.44-54.04 5.84 11.69 8.22z"/>
+			<path id="ocas-5" class="c1" d="m102.75 226.35l-11.69-8.22-32.21 6.28-8.66 13.55-23.07 48.47-4.62 5.19 13.23-9.94 36.04-30.67z"/>
+			<path id="ocas-6" class="c5" d="m113.95 253.54l-60.87 25.96-30.58 12.12 13.23-9.94 36.04-30.67 30.98-24.66 36.29 17.38z"/>
+			<path id="ocas-7" class="c4 " d="m143.08 190.08l40.76 19.59-38.74 2.62z"/>
+			<path id="ocas-8" class="c2" d="m145.1 212.29l38.74-2.62-44.8 34.06z"/>
+		</g>
+
+
+		<g id="hlava-a-telo">
+			<path id="telo-1" class="c6" d="m284.41 120.71l-60.25 1.62-18.97-42.37 27.9 13.19z"/>
+			<path id="telo-2" class="c5" d="m173.66 167.87l50.5-45.54-3.51 76.67-36.81 10.67-40.76-19.59z"/>
+			<path id="telo-5" class="c2" d="m139.04 243.73l44.8-34.06 25.64 24.98-14.48 27.46z"/>
+			<path id="telo-6" class="c3" d="m183.84 209.67l36.81-10.67-11.17 35.65z"/>
+			<path id="telo-7" class="c8" d="m302.16 174.18l-78-51.85 60.25-1.62 33.49 16.86z"/>
+			<path id="telo-8" class="c7" d="m224.16 122.33l78 51.85-81.51 24.82z"/>
+			<path id="telo-9" class="c1" d="m195.45 261.39l32.87-13.59 28.42 29.97-61.74-15.66z"/>
+			<path id="telo-10" class="c6" d="m195.45 261.39l14.03-26.74 18.84 13.15z"/>
+			<path id="telo-11" class="c7" d="m209.48 234.65l11.17-35.65 51.45 27.02-43.78 21.78z"/>
+			<path id="telo-12" class="c6" d="m220.65 199l81.51-24.82-30.06 51.84z"/>
+			<path id="telo-13" class="c3" d="m228.32 247.8l43.78-21.78-15.36 51.75z"/>
+			<path id="telo-14" class="c7" d="m256.74 277.77l0.07-0.23 48.29 0.03zm48.6-19.23l-48.42 18.62 15.18-51.15z"/>
+			<path id="telo-15" class="c3" d="m256.81 277.54l0.11-0.37 48.42-18.63-0.24 19.02z"/>
+			<path id="telo-16" class="c5" d="m305.1 277.56l0.24-19.02 56.12-13.08z"/>
+			<path id="telo-17" class="c7" d="m224.16 122.33l-18.97-42.37-6.14-3.54-14.93-6.64h-45.08z"/>
+			<path id="telo-18" class="c6" d="m139.04 69.78h45.3l-80.78-34.9-23.94-9.81-41.54-16.15 25.79 16.98 41.73 22.13z"/>			
+		</g>
+
+
+
+
+
+	</g>
+</svg>

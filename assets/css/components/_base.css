@@ -40,14 +40,19 @@ a:hover {
 
 body {
     padding-top: 4.5rem;
-    background: linear-gradient(180deg,
-        #0a3d5c 0%,
-        #072e47 15%,
-        #052436 35%,
-        #031A2A 55%,
-        #021520 75%,
-        #010d16 100%);
-    background-attachment: fixed;
+    /* Fallback background mimicking the WebGL ocean scene:
+       – vertical water gradient (teal top → deep navy bottom)
+       – 5 subtle light-ray cones fanning down from the top */
+    background-color: #000a28;
+    background-image:
+        /* light rays – semi-transparent cones */
+        radial-gradient(ellipse 6%  60% at 13% 0%, rgba(62,164,197,.13) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  55% at 30% 0%, rgba(62,164,197,.10) 0%, transparent 100%),
+        radial-gradient(ellipse 7%  65% at 50% 0%, rgba(62,164,197,.15) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  55% at 70% 0%, rgba(62,164,197,.10) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  60% at 87% 0%, rgba(62,164,197,.13) 0%, transparent 100%),
+        /* water gradient – light surface at top, deep ocean at bottom */
+        linear-gradient(to bottom, #3ca4c5 0%, #155d80 30%, #00395f 60%, #000a28 100%);
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-weight: 400;
@@ -55,16 +60,12 @@ body {
     overflow-x: hidden;
 }
 
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(ellipse at 50% 0%, rgba(14, 68, 98, 0.25) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
+/* Ensure page content sits above WebGL (-1) and 2D canvas (0) layers */
+section,
+main,
+footer {
+    position: relative;
+    z-index: 1;
 }
 
 .section-inner {
