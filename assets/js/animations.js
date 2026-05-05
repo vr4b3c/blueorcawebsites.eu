@@ -1,4 +1,4 @@
-import { inView, animate, stagger } from "https://cdn.jsdelivr.net/npm/motion@latest/+esm";
+import { inView, animate, stagger } from "../js/vendor/motion.js";
 
 // Respect prefers-reduced-motion
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

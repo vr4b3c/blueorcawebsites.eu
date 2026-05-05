@@ -2,11 +2,12 @@
  * LightRaysLayer
  */
 export class LightRaysLayer {
-    constructor(gl) {
+    constructor(gl, options = {}) {
         this.gl = gl;
         this.program = null;
         this.buffers = {};
         this.rays = [];
+        this.options = { rayCount: 5, ...options };
         // Sub-layer toggles
         this.rayBeamsEnabled = true;
         this.sunGlowEnabled = true;
@@ -22,14 +23,19 @@ export class LightRaysLayer {
 
     initRays(width) {
         this.rays = [];
-        const rayCount = 5;
+        const rayCount = this.options.rayCount;
         const spacing = width / (rayCount + 1);
 
         for (let i = 0; i < rayCount; i++) {
             this.rays.push({
                 x: spacing * (i + 1),
                 offset: Math.random() * Math.PI * 2,
-                speed: 0.8 + Math.random() * 0.4
+                speed: 0.8 + Math.random() * 0.4,
+                // Two independent shimmer frequencies per ray — keeps them visually distinct
+                shimFreqA: 0.00018 + Math.random() * 0.00022,
+                shimPhaseA: Math.random() * Math.PI * 2,
+                shimFreqB: 0.00031 + Math.random() * 0.00019,
+                shimPhaseB: Math.random() * Math.PI * 2,
             });
         }
     }
@@ -65,6 +71,11 @@ export class LightRaysLayer {
             uniform float u_sway3;
             uniform float u_sway4;
             uniform float u_sway5;
+            uniform float u_shimmer1; // per-ray shimmer multiplier (0.6–1.0)
+            uniform float u_shimmer2;
+            uniform float u_shimmer3;
+            uniform float u_shimmer4;
+            uniform float u_shimmer5;
             uniform int u_rayBeamsEnabled;
             uniform int u_sunGlowEnabled;
             
@@ -86,12 +97,12 @@ export class LightRaysLayer {
                 
                 // Ray beams (kužely)
                 if (u_rayBeamsEnabled == 1) {
-                    float totalIntensity = 0.0;
-                    totalIntensity += rayIntensity(x, u_ray1, u_sway1);
-                    totalIntensity += rayIntensity(x, u_ray2, u_sway2);
-                    totalIntensity += rayIntensity(x, u_ray3, u_sway3);
-                    totalIntensity += rayIntensity(x, u_ray4, u_sway4);
-                    totalIntensity += rayIntensity(x, u_ray5, u_sway5);
+                    float i1 = rayIntensity(x, u_ray1, u_sway1) * u_shimmer1;
+                    float i2 = rayIntensity(x, u_ray2, u_sway2) * u_shimmer2;
+                    float i3 = rayIntensity(x, u_ray3, u_sway3) * u_shimmer3;
+                    float i4 = rayIntensity(x, u_ray4, u_sway4) * u_shimmer4;
+                    float i5 = rayIntensity(x, u_ray5, u_sway5) * u_shimmer5;
+                    float totalIntensity = i1 + i2 + i3 + i4 + i5;
                     
                     float verticalFade = y; // Silnější nahoře (y=1), slabší dole (y=0)
                     float rayAlpha = totalIntensity * 0.08 * verticalFade;
@@ -139,6 +150,7 @@ export class LightRaysLayer {
                 position: gl.getAttribLocation(p, 'a_position'),
                 rays: this.rays.map((_, i) => gl.getUniformLocation(p, `u_ray${i + 1}`)),
                 sways: this.rays.map((_, i) => gl.getUniformLocation(p, `u_sway${i + 1}`)),
+                shimmers: this.rays.map((_, i) => gl.getUniformLocation(p, `u_shimmer${i + 1}`)),
             };
         }
     }
@@ -218,8 +230,16 @@ export class LightRaysLayer {
             const ray = this.rays[i];
             const sway = Math.sin(currentTime * raySpeed * ray.speed + ray.offset) * 30;
 
+            // Shimmer: product of two slow, incommensurable sinusoids → organic irregular flicker
+            // Range 0.55–1.0 so rays never fully extinguish
+            const shimmer = 0.55 + 0.45 * 0.5 * (
+                (1.0 + Math.sin(currentTime * ray.shimFreqA + ray.shimPhaseA)) *
+                (1.0 + Math.sin(currentTime * ray.shimFreqB + ray.shimPhaseB)) / 4.0
+            );
+
             gl.uniform1f(locs.rays[i], ray.x);
             gl.uniform1f(locs.sways[i], sway);
+            gl.uniform1f(locs.shimmers[i], shimmer);
         }
 
         gl.enableVertexAttribArray(locs.position);

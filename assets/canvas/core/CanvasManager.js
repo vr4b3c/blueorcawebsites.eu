@@ -63,6 +63,7 @@ export class CanvasManager {
         this.handleResize = this.handleResize.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.handleGlobalClick = this.handleGlobalClick.bind(this);
+        this.handleTouch = this.handleTouch.bind(this);
         
         // Setup quality change listener
         this.performanceMonitor.onQualityChange(quality => {
@@ -120,6 +121,8 @@ export class CanvasManager {
         window.addEventListener('resize', this.handleResize);
         this.canvas.addEventListener('click', this.handleClick);
         document.addEventListener('click', this.handleGlobalClick);
+        // Touch: spawn food on tap (passive: false not needed — touchend doesn't scroll)
+        document.addEventListener('touchend', this.handleTouch, { passive: true });
         
         if (this.config.debug) {
                 console.log('Canvas element in DOM:', document.getElementById('canvas-ocean-foreground'));
@@ -320,6 +323,8 @@ export class CanvasManager {
             curiousFishLayer.enabled = true;
             curiousFishLayer.spawnFish();
             curiousFishLayer.gameState = 'playing';
+            // Nudge immediately toward the food — normal findFoodTarget loop takes over from here
+            curiousFishLayer.setTargetPoint(x, y, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
         }
 
         // Check if clicking on a school fish
@@ -332,7 +337,7 @@ export class CanvasManager {
                 const dx = x - shark.x;
                 const dy = y - (shark.baseY || shark.y);
                 if (dx * dx + dy * dy < shark.size * shark.size) {
-                    const isSameSpecies = shark.image?.src?.includes('curiousfish.png');
+                    const isSameSpecies = shark.image?.src?.includes('curiousfish');
                     if (isSameSpecies) {
                         // Always mate with same species
                         curiousFishLayer.startDance(shark);
@@ -361,6 +366,20 @@ export class CanvasManager {
         if (!e.target.closest('#pattern-switcher') && e.target !== this.canvas) {
             this.handleClick(e);
         }
+    }
+
+    /**
+     * Handle touch tap — spawn food at the touch point.
+     * Uses changedTouches so it fires on finger-lift (tap end), not drag.
+     * @param {TouchEvent} e
+     */
+    handleTouch(e) {
+        if (e.changedTouches.length === 0) return;
+        // Ignore multi-touch gestures (pinch-to-zoom etc.)
+        if (e.touches.length > 1) return;
+        const touch = e.changedTouches[0];
+        // Synthesise a minimal object compatible with handleClick
+        this.handleClick({ clientX: touch.clientX, clientY: touch.clientY, stopPropagation: () => {} });
     }
     
     /**

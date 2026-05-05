@@ -1,0 +1,101 @@
+# BLUE ORCA WEBSITES - CMS ROOT .htaccess
+# --- pravidla pro tyto hodnoty:
+# .env:
+# CMS_USE_HTML_EXTENSION=false
+# CMS_USE_DIRECTORY_STRUCTURE=true
+# Napriklad: https://server.com/contacts => https://server.com/web/contacts/index.html
+
+# vedos hosting
+
+RewriteEngine On
+
+# DEMO=1 OPT --- Přesměrování / na /admin — jen při přímé navigaci, ne z iframe (preview v adminu)
+# RewriteCond %{HTTP:Sec-Fetch-Dest} !^iframe$ [NC]
+# RewriteRule ^$ /admin [R=302,L]
+
+# Blokuj přístup do systémových složek
+RewriteRule ^(vendor|src|config|var|tests|docs|bin|_backups)/ - [F,L]
+
+# Blokuj přístup k interním složkám dárkových poukazů
+RewriteRule ^poukaz/(data|lib|config)(/|$) - [F,L]
+
+# Blokuj přístup k _metadata ve web/{site}/
+RewriteRule ^web/[A-Za-z0-9_-]+/_metadata(/|$) - [F,L]
+
+# admin/ složka existuje fyzicky → nech Apache projít přímo
+RewriteRule ^admin-fake(/.*)?$ - [L]
+
+# 4dm1n a publicapi → cms.php (Symfony entry point)
+RewriteRule ^admin(/.*)?$ cms.php [L,QSA]
+RewriteRule ^publicapi(/.*)?$ cms.php [L,QSA]
+
+# Skutečné statické soubory servíruj přímo (CSS, JS, obrázky, fonty...)
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Vše ostatní → index.php (PHP router)
+RewriteRule ^ index.php [L,QSA]
+
+
+
+
+# Security: Prevent access to hidden files (including .env, .git, etc.)
+<FilesMatch "\.(html|css|js|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot|pdf|txt|xml)$">
+    Require all granted
+</FilesMatch>
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# Deny access to sensitive file types that might be in subdirectories
+<FilesMatch "\.(yml|yaml|json|lock|log|md|sh|sql|bak|env)$">
+    Require all denied
+</FilesMatch>
+
+# Security: Prevent access to sensitive configuration files
+<FilesMatch "^(composer\.(json|lock)|\.env.*|\.gitignore|\.gitattributes|phpunit\.xml.*|phpstan\.neon|symfony\.lock)$">
+    Require all denied
+</FilesMatch>
+
+# Security headers — fallback when not set by CDN (e.g. Cloudflare)
+# Duplicate headers are harmless, so safe to keep enabled.
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+
+# Browser & Cloudflare caching
+# mod_headers (FileInfo) je na Vedos hostingu podporováno.
+# mod_expires na Vedos není dostupné – Cache-Control header stačí.
+# Tyto hlavičky čte jak Cloudflare (pro edge cache), tak prohlížeč (pro browser cache).
+<IfModule mod_headers.c>
+    # Admin JS (assets/js/admin/**) → NO long-term cache.
+    <FilesMatch "^assets/js/admin/.*\.js$">
+        Header always set Cache-Control "no-store, no-cache, must-revalidate"
+        Header always set Pragma "no-cache"
+    </FilesMatch>
+
+    # CSS, ostatní JS, obrázky, fonty → immutable
+    <FilesMatch "\.(css|webp|avif|jpg|jpeg|png|gif|ico|woff|woff2|ttf|eot|svg)$">
+        Header always set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    # JS mimo admin → krátká platnost (bez content-hash)
+    <FilesMatch "\.js$">
+        Header always set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+
+    # HTML stránky → revalidace každou hodinu
+    <FilesMatch "\.html$">
+        Header always set Cache-Control "public, max-age=3600, must-revalidate"
+    </FilesMatch>
+</IfModule>
+
+# SSE streams (Server-Sent Events) – disable compression & buffering
+# EventSource/fetch SSE over HTTP/2 + Cloudflare triggers ERR_HTTP2_PROTOCOL_ERROR
+# when gzip buffers the stream. SetEnvIf disables mod_deflate for this URL.
+<IfModule mod_setenvif.c>
+    SetEnvIf Request_URI "health/run-all/events" no-gzip=1 dont-vary=1
+</IfModule>

@@ -77,44 +77,58 @@ export class WaterGradientLayer {
             uniform vec4 u_bottomColor;
             uniform float u_time;
             
-            //
-            // Simple random noise
-            //
             float random(vec2 p) {
                 return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);
             }
-            
-            //
-            // Smooth noise
-            //
-            float noise(vec2 p) {
-                vec2 i = floor(p);
-                vec2 f = fract(p);
-            
-                float a = random(i);
-                float b = random(i + vec2(1.0, 0.0));
-                float c = random(i + vec2(0.0, 1.0));
-                float d = random(i + vec2(1.0, 1.0));
-            
-                vec2 u = f * f * (3.0 - 2.0 * f);
-            
-                return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
+
+            // Underwater caustics: two families of ridged sine waves interfering.
+            // Creates the characteristic bright-network pattern of refracted surface light.
+            float caustics(vec2 uv, float t) {
+                // Aspect-correct: compress Y so patterns aren't too elongated
+                vec2 p = uv * vec2(5.5, 3.5);
+
+                // Family A — drifting diagonally
+                float a1 = abs(sin(p.x * 1.10 + sin(p.y * 0.85 + t * 0.06) * 1.30 + t * 0.04));
+                float a2 = abs(sin(p.y * 0.95 + sin(p.x * 1.20 - t * 0.05) * 1.15 - t * 0.03));
+
+                // Family B — slower, wider, perpendicular bias
+                float b1 = abs(sin(p.x * 0.70 - sin(p.y * 1.30 + t * 0.04) * 0.90 + t * 0.025));
+                float b2 = abs(sin(p.y * 0.80 + sin(p.x * 0.65 - t * 0.03) * 1.05 - t * 0.02));
+
+                // Ridged = 1 - abs(sin(...)), gives bright lines at wave crests
+                float netA = (1.0 - a1) * (1.0 - a2);   // bright nodes where A waves meet
+                float netB = (1.0 - b1) * (1.0 - b2);
+
+                // Blend both families
+                float pattern = max(netA, netB * 0.7);
+
+                // Sharpen: only the brightest intersections are caustic hotspots
+                return pow(pattern, 2.8);
             }
             
             void main() {
                 // Base gradient
-                float t = pow(v_uv.y, 1.6); // makes deep water darker faster
+                float t = pow(v_uv.y, 1.6);
                 vec4 baseColor = mix(u_topColor, u_bottomColor, t);
-            
-                // Light caustics (very fake, but works)
-                float n = noise(v_uv * 6.0 + vec2(u_time * 0.05, u_time * 0.1));
-                float caustics = smoothstep(0.75, 1.0, n);
-                baseColor.rgb += caustics * 0.05;
+
+                // Caustics — visible only in upper portion (near surface), fade to zero at depth
+                float surfaceFade = smoothstep(0.0, 0.65, v_uv.y); // 0 at bottom, 1 near top
+                float c = caustics(v_uv, u_time);
+                // Warm teal tint matching the surface light colour
+                vec3 causticColor = vec3(0.55, 0.88, 1.0);
+                baseColor.rgb += causticColor * c * 0.13 * surfaceFade;
             
                 // Dithering to kill banding
                 float grain = random(gl_FragCoord.xy) * 0.015;
                 baseColor.rgb += grain;
-            
+
+                // Viněta — tmavé okraje, eliptická (širší horizontálně)
+                vec2 vCenter = v_uv - vec2(0.5, 0.5);
+                vCenter.x *= 0.75; // elipsa: méně agresivní na šíři
+                float vDist = length(vCenter) * 1.55;
+                float vignette = 1.0 - smoothstep(0.45, 1.05, vDist);
+                baseColor.rgb *= vignette;
+
                 outColor = baseColor;
             }
         `;

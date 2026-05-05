@@ -232,134 +232,133 @@ export function updateIdleAttack(fish, mouseX, mouseY, currentTimestamp, idleAtt
 }
 
 /**
- * Update school fish attack behavior (direct charge)
- * EXTRACTED AS-IS from CuriousFishLayer lines ~689-808
- * 
- * @param {Object} fish - Fish entity
- * @param {Object} targetSchoolFish - Target school fish
- * @param {Object} fishLayer - Fish layer reference
- * @param {Function} onVictory - Victory callback(target)
- * @param {Function} onDefeat - Defeat callback()
- * @param {Function} spawnHeart - Heart spawn callback
- * @param {number} maxFishSize - Max fish size
- * @param {number} currentTime - Current timestamp
- * @returns {Object} { attackComplete, shouldDie, velocityX, velocityY, targetRotation, targetFlipScale, targetMutations }
+ * Update school fish attack behavior — circle pre-phase then charge.
+ *
+ * @param {Object}        fish             - Curious fish entity
+ * @param {Object}        targetSchoolFish - Target school fish
+ * @param {Object}        fishLayer        - Fish layer reference
+ * @param {Function}      onVictory        - Victory callback(target, newSize)
+ * @param {Function}      onDefeat         - Defeat callback()
+ * @param {Function}      spawnHeart       - Heart spawn callback
+ * @param {Function|null} onBlood          - Blood burst callback(x, y, impactAngle)
+ * @param {number}        maxFishSize      - Max fish size
+ * @param {number}        currentTime      - Current timestamp (ms)
  */
-export function updateSchoolFishAttack(fish, targetSchoolFish, fishLayer, onVictory, onDefeat, spawnHeart, maxFishSize, currentTime) {
+export function updateSchoolFishAttack(fish, targetSchoolFish, fishLayer, onVictory, onDefeat, spawnHeart, onBlood, maxFishSize, currentTime) {
     const target = targetSchoolFish;
     const targetStillExists = fishLayer?.sharks?.includes(target);
-    
+
     if (!targetStillExists) {
-        return {
-            attackComplete: true,
-            shouldDie: false
-        };
+        delete fish._atkPhase;
+        delete fish._atkCircleBaseAngle;
+        delete fish._atkCircleStart;
+        return { attackComplete: true, shouldDie: false };
     }
-    
-    const targetY = target.baseY || target.y;
+
+    const targetY = target.baseY !== undefined ? target.baseY : target.y;
     const targetX = target.x;
-    
-    const targetMutations = {}; // Track mutations to apply to target
-    
-    // Mark target as being attacked - freeze its position
+    const targetMutations = {};
+
     if (!target.isBeingAttacked) {
         targetMutations.isBeingAttacked = true;
         targetMutations.frozenX = targetX;
         targetMutations.frozenY = targetY;
-        console.log('Starting direct attack charge!');
     }
-    
-    // Check sizes to determine behavior
-    const targetIsBigger = target.size > fish.currentSize * 1.2;
+
+    // ── Circle pre-phase: orbit the target before charging ───────────────────
+    if (!fish._atkPhase) {
+        fish._atkPhase = 'circle';
+        fish._atkCircleStart = currentTime;
+        fish._atkCircleBaseAngle = Math.atan2(fish.y - targetY, fish.x - targetX);
+    }
+
+    if (fish._atkPhase === 'circle') {
+        const CIRCLE_DURATION = 1100; // ms
+        const elapsed = currentTime - fish._atkCircleStart;
+        const circleAngle = fish._atkCircleBaseAngle + (elapsed / CIRCLE_DURATION) * Math.PI * 2.2;
+        const circleRadius = (fish.currentSize + target.size) * 1.9;
+
+        const orbitX = targetX + Math.cos(circleAngle) * circleRadius;
+        const orbitY = targetY + Math.sin(circleAngle) * circleRadius;
+        const ox = orbitX - fish.x;
+        const oy = orbitY - fish.y;
+        const od = Math.sqrt(ox * ox + oy * oy);
+        const orbitSpeed = Math.min(od * 0.28, 13);
+
+        const velX = od > 0.5 ? (ox / od) * orbitSpeed : 0;
+        const velY = od > 0.5 ? (oy / od) * orbitSpeed : 0;
+
+        // Always face the target while circling
+        const faceAngle = Math.atan2(targetY - fish.y, targetX - fish.x);
+        let tFlip, tRot;
+        if (faceAngle > Math.PI / 2 || faceAngle < -Math.PI / 2) {
+            tFlip = -1; tRot = Math.PI - faceAngle;
+        } else {
+            tFlip = 1;  tRot = faceAngle;
+        }
+
+        if (elapsed >= CIRCLE_DURATION) fish._atkPhase = 'charge';
+
+        return { attackComplete: false, shouldDie: false, velocityX: velX, velocityY: velY, targetFlipScale: tFlip, targetRotation: tRot, targetMutations };
+    }
+
+    // ── Charge phase ─────────────────────────────────────────────────────────
+    const targetIsBigger         = target.size > fish.currentSize * 1.2;
     const targetIsSlightlyBigger = target.size > fish.currentSize && !targetIsBigger;
-    
-    // Calculate distance and collision
+
     const dx = targetX - fish.x;
     const dy = targetY - fish.y;
     const distance = Math.sqrt(dx * dx + dy * dy);
     const collisionDistance = (fish.currentSize + target.size) * 0.5;
-    
-    // Collision detected!
+
     if (distance < collisionDistance) {
-        console.log('💥 COLLISION!');
-        
-        // If target is bigger, curious fish loses
+        // Blood burst at impact point
+        if (onBlood) {
+            onBlood((fish.x + targetX) / 2, (fish.y + targetY) / 2, Math.atan2(dy, dx));
+        }
+        // Brief red flash on target
+        targetMutations._hitFlashTime = currentTime;
+
+        // Cleanup circle state
+        delete fish._atkPhase;
+        delete fish._atkCircleBaseAngle;
+        delete fish._atkCircleStart;
+
         if (targetIsBigger) {
-            console.log('Target was bigger - curious fish dies!');
             targetMutations.isBeingAttacked = false;
             if (onDefeat) onDefeat();
-            return {
-                attackComplete: true,
-                shouldDie: true,
-                targetMutations
-            };
+            return { attackComplete: true, shouldDie: true, targetMutations };
         } else if (targetIsSlightlyBigger && Math.random() > 0.4) {
-            // 60% chance to lose against slightly bigger
-            console.log('Lost fight against slightly bigger fish!');
             targetMutations.isBeingAttacked = false;
             if (onDefeat) onDefeat();
-            return {
-                attackComplete: true,
-                shouldDie: true,
-                targetMutations
-            };
+            return { attackComplete: true, shouldDie: true, targetMutations };
         } else if (!target.isDying) {
-            // Victory!
-            console.log('Curious fish WINS!');
             targetMutations.isDying = true;
-            
-            // If shark layer provides a bone image, swap target image to bone for death visual
-            if (fishLayer && fishLayer.boneLoaded && fishLayer.boneImage) {
-                targetMutations.image = fishLayer.boneImage;
-            }
-            
-            // mark cause so other layers can behave accordingly
-            targetMutations.killedByCurious = true;
-            targetMutations.deathRotation = 0;
-            targetMutations.deathStartTime = currentTime;
-            targetMutations.isBeingAttacked = false;
-            
-            // Call victory callback with new size and spawn heart
-            if (onVictory) {
-                const newTargetSize = Math.min(fish.targetSize * 1.04, maxFishSize);
-                onVictory(target, newTargetSize);
-            }
+            if (fishLayer?.boneLoaded && fishLayer.boneImage) targetMutations.image = fishLayer.boneImage;
+            targetMutations.killedByCurious  = true;
+            targetMutations.deathRotation    = 0;
+            targetMutations.deathStartTime   = currentTime;
+            targetMutations.isBeingAttacked  = false;
+            if (onVictory) onVictory(target, Math.min(fish.targetSize * 1.04, maxFishSize));
             if (spawnHeart) spawnHeart();
         }
-        
-        return {
-            attackComplete: true,
-            shouldDie: false,
-            targetMutations
-        };
+        return { attackComplete: true, shouldDie: false, targetMutations };
     }
-    
-    // CHARGE STRAIGHT AT TARGET!
-    const attackSpeed = 12.0;
+
+    // Approaching target
+    const attackSpeed = 13.0;
     const velocityX = (dx / distance) * attackSpeed;
     const velocityY = (dy / distance) * attackSpeed;
-    
     const angleToTarget = Math.atan2(dy, dx);
-    
+
     let targetFlipScale, targetRotation;
     if (angleToTarget > Math.PI / 2) {
-        targetFlipScale = -1;
-        targetRotation = Math.PI - angleToTarget;
+        targetFlipScale = -1; targetRotation = Math.PI - angleToTarget;
     } else if (angleToTarget < -Math.PI / 2) {
-        targetFlipScale = -1;
-        targetRotation = -Math.PI - angleToTarget;
+        targetFlipScale = -1; targetRotation = -Math.PI - angleToTarget;
     } else {
-        targetFlipScale = 1;
-        targetRotation = angleToTarget;
+        targetFlipScale = 1;  targetRotation = angleToTarget;
     }
-    
-    return {
-        attackComplete: false,
-        shouldDie: false,
-        velocityX,
-        velocityY,
-        targetRotation,
-        targetFlipScale,
-        targetMutations
-    };
+
+    return { attackComplete: false, shouldDie: false, velocityX, velocityY, targetFlipScale, targetRotation, targetMutations };
 }

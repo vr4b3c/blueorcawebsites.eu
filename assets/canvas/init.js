@@ -14,9 +14,12 @@ import {
 } from './index.js';
 
 import { MasterRenderer } from '../core/MasterRenderer.js';
+import { getDeviceProfile } from './utils/DeviceProfile.js';
 
 export function initCanvasBackground() {
-    
+
+    const { entityBudget: budget } = getDeviceProfile();
+
     const manager = createCanvasBackground({
         zIndex: 0,
         showStats: true,
@@ -34,7 +37,8 @@ export function initCanvasBackground() {
             // shrinkRate: 0.05 // Shrink rate in px/second
         },
         fishConfig: {
-            // schoolCount: 6,      // Number of schools (FishLayer.DEFAULT_CONFIG)
+            schoolDensity: budget.schoolDensity,
+            // schoolCount: 6,      // Number of schools — set null to use density-based auto-scaling
             // size: 1.2,           // Size multiplier (0.5-2x)
             // avoidRadius: 100,    // Radius to avoid mouse cursor
             // showDebug: false     // Debug visualization
@@ -54,8 +58,10 @@ export function initCanvasBackground() {
     const fishLayer = new FishLayer(manager.config.fishConfig || {});
     manager.addLayer('fish', fishLayer);
 
-    // Create MasterRenderer to coordinate both WebGL and Canvas rendering
-    const masterRenderer = new MasterRenderer();
+    // Create MasterRenderer to coordinate both WebGL and Canvas rendering.
+    // canvas2dFPS is device-tier-aware — lower values on weak devices reduce
+    // CPU load while keeping WebGL visuals smooth.
+    const masterRenderer = new MasterRenderer({ canvas2dFPS: budget.canvas2dFPS });
     
     // Register WebGL renderer if it exists
     if (window.webglOceanRenderer) {
@@ -66,6 +72,13 @@ export function initCanvasBackground() {
     // MasterRenderer which cancels that loop — preventing dual rAF loops.
     manager.start();
     masterRenderer.registerCanvasManager(manager);
+
+    // Bridge quality systems: when PerformanceMonitor adjusts Canvas 2D quality,
+    // forward the same multiplier to WebGL particle layers so both subsystems
+    // respond to the same FPS signal.
+    manager.performanceMonitor.onQualityChange(q => {
+        window.webglOceanRenderer?.setQuality(q);
+    });
     
     // Start the unified render loop
     masterRenderer.start();

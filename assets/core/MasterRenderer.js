@@ -8,7 +8,12 @@ import { DebugPanel } from '../canvas/utils/DebugPanel.js';
  * requestAnimationFrame loops competing for CPU time.
  */
 export class MasterRenderer {
-    constructor() {
+    /**
+     * @param {Object} [options]
+     * @param {number} [options.canvas2dFPS=45] - Target FPS for the 2D canvas throttle.
+     *   Lower values on weak devices reduce CPU load while keeping WebGL smooth.
+     */
+    constructor(options = {}) {
         this.webglRenderer = null;
         this.canvasManager = null;
         this.rafId = null;
@@ -21,16 +26,27 @@ export class MasterRenderer {
         this.currentFPS = 60;
         this.fpsLogTime = 0;
 
-        // 2D canvas is throttled to 45fps — fish AI doesn't need 75fps.
+        // 2D canvas is throttled — fish AI doesn't need full display rate.
         // With both canvases rendering every frame (no throttle), 100% of Commits are
         // heavy (both textures, high variance p90=6.81ms), causing Chrome's frame scheduler
-        // to drop into a conservative 3-slot/37ms cadence (27fps). The throttle keeps ~37%
-        // of frames as WebGL-only 'easy' frames that stabilise the compositor pacing.
-        this.canvas2dInterval = 1000 / 45;
+        // to drop into a conservative 3-slot/37ms cadence (27fps). The throttle keeps
+        // WebGL-only 'easy' frames that stabilise the compositor pacing.
+        this.canvas2dInterval = 1000 / (options.canvas2dFPS || 45);
         this.lastCanvas2dTime = 0;
+
+        // Performance tier: 0=Full (WebGL+Canvas), 1=Canvas only (WebGL off), 2=CSS only
+        this.tier = 0;
+        this.lowFpsSince = null;
+        this.LOW_FPS_THRESHOLD = 28;   // FPS below this triggers degradation
+        this.LOW_FPS_DURATION = 5000;  // ms sustained below threshold before dropping a tier
 
         // Debug panel — created on start()
         this.debugPanel = null;
+
+        // Page Visibility API — pause/resume flags
+        this._pausedByVisibility = false;
+        this._visibilityListenerAdded = false;
+        this._onVisibilityChange = null;
         
         this.render = this.render.bind(this);
     }
@@ -66,12 +82,36 @@ export class MasterRenderer {
      */
     start() {
         if (this.isRunning) return;
+        // Sync tier with actually registered renderers
+        if (!this.webglRenderer && this.tier === 0) this.tier = 1;
         this.isRunning = true;
         this.lastTime = performance.now();
         this.fpsUpdateTime = this.lastTime;
         this.frameCount = 0;
         this.debugPanel = new DebugPanel();
         this.rafId = requestAnimationFrame(this.render);
+
+        // Pause the loop when the tab is hidden, resume when visible again.
+        // Prevents wasting CPU/GPU on frames the user will never see and avoids
+        // a large deltaTime spike on resume that would cause physics explosions.
+        if (!this._visibilityListenerAdded) {
+            this._onVisibilityChange = () => {
+                if (document.hidden) {
+                    if (this.isRunning) {
+                        this._pausedByVisibility = true;
+                        this.stop();
+                    }
+                } else if (this._pausedByVisibility) {
+                    this._pausedByVisibility = false;
+                    // Reset lastTime so the first post-resume deltaTime is 0, not huge.
+                    this.lastTime = performance.now();
+                    this.lastCanvas2dTime = this.lastTime;
+                    this.start();
+                }
+            };
+            document.addEventListener('visibilitychange', this._onVisibilityChange);
+            this._visibilityListenerAdded = true;
+        }
     }
     
     /**
@@ -136,6 +176,20 @@ export class MasterRenderer {
             this.currentFPS = Math.round((this.frameCount * 1000) / (currentTime - this.fpsUpdateTime));
             this.frameCount = 0;
             this.fpsUpdateTime = currentTime;
+
+            // Tier degradation: sustained low FPS triggers progressive fallback
+            if (this.tier < 2) {
+                if (this.currentFPS < this.LOW_FPS_THRESHOLD) {
+                    if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
+                    if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+                        this.lowFpsSince = null;
+                        if (this.tier === 0) this.disableWebGL();
+                        else this.disableCanvas();
+                    }
+                } else {
+                    this.lowFpsSince = null;
+                }
+            }
 
             // Log average FPS to console every 5 seconds
             if (currentTime - this.fpsLogTime >= 5000) {
@@ -236,6 +290,31 @@ export class MasterRenderer {
         }
     }
     
+    /**
+     * Tier 1: hide WebGL canvas, let CSS body gradient show through.
+     * Triggered automatically when FPS < LOW_FPS_THRESHOLD for LOW_FPS_DURATION ms.
+     */
+    disableWebGL() {
+        if (this.webglRenderer) {
+            this.webglRenderer.canvas.style.display = 'none';
+            this.webglRenderer = null;
+        }
+        this.tier = 1;
+        console.warn('[MasterRenderer] Tier 1: WebGL disabled — CSS background active');
+    }
+
+    /**
+     * Tier 2: destroy 2D canvas entirely. CSS background only.
+     */
+    disableCanvas() {
+        if (this.canvasManager) {
+            this.canvasManager.destroy();
+            this.canvasManager = null;
+        }
+        this.tier = 2;
+        console.warn('[MasterRenderer] Tier 2: Canvas disabled — CSS background only');
+    }
+
     /**
      * Get current FPS
      * @returns {number}

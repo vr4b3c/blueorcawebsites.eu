@@ -68,12 +68,12 @@ export class CuriousFishLayer {
     static DEFAULT_CONFIG = {
         speed: 5.0,
         maxSpeed: 6.0,
-        size: 30,
+        size: 20,
         maxFishSize: 150,
         followDistance: 50,
         rotationSpeed: 0.12,
         heartSpawnRate: 500,
-        imageSrc: 'assets/images/fish/curiousfish.png',
+        imageSrc: 'assets/images/fish/curiousfish.webp',
         showDebug: false,
         swimAwaySpeed: 3,
         enableBob: true
@@ -126,27 +126,13 @@ export class CuriousFishLayer {
         // Load image once with config path
         this.fishImage.onload = () => {
             this.imageLoaded = true;
+            this._fishDepthCache = this._buildDepthCache(this.fishImage);
             console.log('Curious fish image loaded');
         };
         
         this.fishImage.onerror = () => {
-            console.error('Failed to load curious fish image - using fallback');
-            // Create fallback placeholder image
-            const canvas = document.createElement('canvas');
-            canvas.width = 100;
-            canvas.height = 50;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#ff6b6b';
-            ctx.beginPath();
-            ctx.ellipse(50, 25, 45, 20, 0, 0, Math.PI * 2);
-            ctx.fill();
-            // Draw eye
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(65, 20, 5, 0, Math.PI * 2);
-            ctx.fill();
-            this.fishImage.src = canvas.toDataURL();
-            this.imageLoaded = true;
+            console.error('Failed to load curious fish image:', this.config.imageSrc);
+            this.imageLoaded = false;
         };
         
         this.fishImage.src = this.config.imageSrc;
@@ -165,7 +151,9 @@ export class CuriousFishLayer {
         this.boneImage.src = 'assets/images/fish/fishbone.webp';
 
         this.skeletons = [];
+        this._fishDepthCache = null;
         this.handleMouseMove = this.handleMouseMove.bind(this);
+        this.handleTouchMove = this.handleTouchMove.bind(this);
     }
     
     init(width, height, canvasManager) {
@@ -185,12 +173,20 @@ export class CuriousFishLayer {
         }
         
         document.addEventListener('mousemove', this.handleMouseMove);
+        document.addEventListener('touchmove', this.handleTouchMove, { passive: true });
         console.log('CuriousFishLayer initialized');
     }
     
     handleMouseMove(e) {
         this.mouseX = e.clientX;
         this.mouseY = e.clientY;
+        this.lastMouseMoveTime = Date.now();
+    }
+
+    handleTouchMove(e) {
+        if (e.touches.length === 0) return;
+        this.mouseX = e.touches[0].clientX;
+        this.mouseY = e.touches[0].clientY;
         this.lastMouseMoveTime = Date.now();
     }
     
@@ -201,8 +197,33 @@ export class CuriousFishLayer {
     
     
     render(ctx, currentTime, deltaTime, width, height) {
-        if (!this.enabled || !this.fish || !this.imageLoaded) return;
+        if (!this.enabled || !this.fish) return;
 
+        // Skeleton must render even when fish image is unavailable
+        if (this.fish.isDying) {
+            if (!this.fish.skeletonSpawned) {
+                this.fish.skeletonSpawned = true;
+                this.skeletons.push({
+                    x: this.fish.x,
+                    y: this.fish.y,
+                    flipScale: this.fish.flipScale,
+                    size: this.fish.currentSize,
+                    startTime: Date.now()
+                });
+                // Blood cloud at the point of death
+                const fishLayer = this.manager && this.manager.getLayer('fish');
+                if (fishLayer && fishLayer._spawnBloodBurst) {
+                    fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null);
+                }
+            }
+            this.drawSkeletons(ctx, height);
+            return;
+        }
+        if (this.skeletons.length > 0) {
+            this.drawSkeletons(ctx, height);
+        }
+
+        if (!this.imageLoaded) return;
 
         if (this.danceState) {
             this.updateDance(deltaTime, width, height);
@@ -214,8 +235,8 @@ export class CuriousFishLayer {
             // Draw fish and partner
             this.drawFish(ctx);
             
-            // Draw big heart if in phase 1 (kiss phase) and danceState still exists
-            if (this.danceState && this.danceState.phase === 1 && this.danceState.bigHeart) {
+            // Draw big heart if in phase 2 (kiss phase) and danceState still exists
+            if (this.danceState && this.danceState.phase === 2 && this.danceState.bigHeart) {
                 ctx.save();
                 ctx.globalAlpha = this.danceState.bigHeart.opacity;
                 ctx.fillStyle = '#ff69b4'; // Hot pink
@@ -236,26 +257,7 @@ export class CuriousFishLayer {
             return;
         }
         
-        // Death: show falling skeleton, respawn after it leaves screen
-        if (this.fish.isDying) {
-            if (!this.fish.skeletonSpawned) {
-                this.fish.skeletonSpawned = true;
-                this.skeletons.push({
-                    x: this.fish.x,
-                    y: this.fish.y,
-                    flipScale: this.fish.flipScale,
-                    size: this.fish.currentSize
-                });
-            }
-            // Draw & update skeletons, spawn fish when last one leaves screen
-            this.drawSkeletons(ctx, height);
-            return;
-        }
-
-        // Also update skeletons that may outlive isDying (edge case)
-        if (this.skeletons.length > 0) {
-            this.drawSkeletons(ctx, height);
-        }
+        // isDying and skeleton rendering is now handled above the imageLoaded guard
         
         const currentTimestamp = Date.now();
         let timeSinceMouseMove = currentTimestamp - this.lastMouseMoveTime;
@@ -297,10 +299,16 @@ export class CuriousFishLayer {
                     this.fish.targetSize = newTargetSize;
                 },
                 () => {
-                    // Defeat callback — immediate respawn
-                    this.spawnFish();
+                    // Defeat: trigger skeleton sequence — spawnFish() is called
+                    // by drawSkeletons() once the bone falls off screen
+                    this.fish.isDying = true;
                 },
                 () => this.spawnHeart(),
+                (bx, by, angle) => {
+                    if (fishLayer && fishLayer._spawnBloodBurst) {
+                        fishLayer._spawnBloodBurst(bx, by, (this.fish.currentSize + (this.targetSchoolFish?.size || 30)) * 0.5, angle);
+                    }
+                },
                 this.config.maxFishSize,
                 currentTime
             );
@@ -313,10 +321,16 @@ export class CuriousFishLayer {
             if (attackResult.attackComplete) {
                 this.isAttackingSchoolFish = false;
                 this.targetSchoolFish = null;
+                delete this.fish._atkPhase;
+                delete this.fish._atkCircleBaseAngle;
+                delete this.fish._atkCircleStart;
             } else if (attackResult.shouldDie) {
                 // Fish respawned by defeat callback above
                 this.isAttackingSchoolFish = false;
                 this.targetSchoolFish = null;
+                delete this.fish._atkPhase;
+                delete this.fish._atkCircleBaseAngle;
+                delete this.fish._atkCircleStart;
             } else if (attackResult.velocityX !== undefined) {
                 this.fish.velocityX = attackResult.velocityX;
                 this.fish.velocityY = attackResult.velocityY;
@@ -692,11 +706,14 @@ export class CuriousFishLayer {
     }
     
     drawFish(ctx) {
+        if (!this.imageLoaded || this.fishImage.naturalWidth === 0) return;
+        // Curious fish is always in the closest layer — use original image (tier 3 = no tint)
+        const depthImage = (this._fishDepthCache) ? this._fishDepthCache[3] : this.fishImage;
         // Use extracted renderer module
         drawFishRenderer(
             ctx,
             this.fish,
-            this.fishImage,
+            depthImage,
             this.config,
             this.isAttackingSchoolFish,
             this.targetSchoolFish,
@@ -810,46 +827,67 @@ export class CuriousFishLayer {
         
         // Set game state to playing when fish spawns
         this.gameState = 'playing';
-        console.log('spawnFish(): Set gameState to playing');
 
-        // Stop initial entry velocity after a short time so fish enters gameplay smoothly
-        setTimeout(() => {
-           if (this.fish) { this.fish.velocityX = 0; this.fish.velocityY = 0; }
-        }, 1400);
-
-        // If we have a recorded mouse position, swim softly there; otherwise swim to center.
-        const targetX = (typeof this.mouseX === 'number') ? this.mouseX : Math.round(width / 2);
-        const targetY = (typeof this.mouseY === 'number') ? this.mouseY : Math.round(height / 1.2);
-        // apply an immediate velocity so the fish starts moving even without mouse input
-
-
-        const spawnSpeed = (this.config && (this.config.maxSpeed || this.config.speed)) || 2.0;
-        console.log(width, height, spawnSpeed);
-        console.log(spawnX, spawnY);      
-        console.log(targetX, targetY);
-
-        this.setTargetPoint(Math.round(targetX), Math.round(targetY), { immediate: true, speed: spawnSpeed, hold: true});
+        // Clear any stale forced target from previous life
+        delete this._forcedTarget;
     }
     
+    /**
+     * Pre-render 4 depth-tinted variants of a source image into OffscreenCanvases.
+     * Mirrors FishLayer._buildDepthCache — shared logic kept in sync manually.
+     */
+    _buildDepthCache(sourceImage) {
+        const TIERS = [
+            { sat: 30, bri: 100 },
+            { sat: 55, bri: 100 },
+            { sat: 78, bri: 100 },
+            null  // tier 3: original
+        ];
+        const w = sourceImage.naturalWidth || sourceImage.width;
+        const h = sourceImage.naturalHeight || sourceImage.height;
+        if (!w || !h) return TIERS.map(() => sourceImage);
+
+        return TIERS.map(tier => {
+            if (!tier) return sourceImage;
+            const oc = new OffscreenCanvas(w, h);
+            const octx = oc.getContext('2d');
+            octx.filter = `saturate(${tier.sat}%) brightness(${tier.bri}%)`;
+            octx.drawImage(sourceImage, 0, 0);
+            return oc;
+        });
+    }
+
     drawSkeletons(ctx, height) {
         const FALL_SPEED = 0.8; // px per frame
-        let allGone = true;
-        for (const sk of this.skeletons) {
+        const FALL_DURATION = 3000;  // ms padání
+        const FADE_DURATION = 800;   // ms fadeoutu
+        const now = Date.now();
+        let anyActive = false;
+        this.skeletons = this.skeletons.filter(sk => {
+            const elapsed = now - sk.startTime;
+            if (elapsed > FALL_DURATION + FADE_DURATION) return false; // smazat
+
             sk.y += FALL_SPEED;
-            if (sk.y < height + sk.size * 2) {
-                allGone = false;
-                if (this.boneLoaded && this.boneImage) {
-                    ctx.save();
-                    ctx.translate(sk.x, sk.y);
-                    ctx.scale(sk.flipScale, 1);
-                    const w = sk.size * 2;
-                    const h = w * (this.boneImage.height / this.boneImage.width);
-                    ctx.drawImage(this.boneImage, -w / 2, -h / 2, w, h);
-                    ctx.restore();
-                }
+
+            // Alpha: 1.0 po dobu padání, pak lineárně na 0
+            const alpha = elapsed < FALL_DURATION
+                ? 1.0
+                : 1.0 - (elapsed - FALL_DURATION) / FADE_DURATION;
+
+            if (this.boneLoaded && this.boneImage) {
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.translate(sk.x, sk.y);
+                ctx.scale(sk.flipScale, 1);
+                const w = sk.size * 2;
+                const h = w * (this.boneImage.height / this.boneImage.width);
+                ctx.drawImage(this.boneImage, -w / 2, -h / 2, w, h);
+                ctx.restore();
             }
-        }
-        if (allGone) {
+            anyActive = true;
+            return true;
+        });
+        if (!anyActive && this.fish && this.fish.isDying) {
             this.skeletons = [];
             this.spawnFish();
         }
@@ -860,6 +898,7 @@ export class CuriousFishLayer {
      */
     destroy() {
         document.removeEventListener('mousemove', this.handleMouseMove);
+        document.removeEventListener('touchmove', this.handleTouchMove);
         this.fish = null;
         this.hearts = [];
         this.allFish = [];

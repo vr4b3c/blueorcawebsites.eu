@@ -25,7 +25,13 @@ export class WebGLOceanRenderer {
             enableRays: options.enableRays !== false,
             enableBubbles: options.enableBubbles !== false,
             enablePlankton: options.enablePlankton !== false,
-            profiling: options.profiling || false
+            profiling: options.profiling || false,
+            // Per-layer config overrides (entity counts, etc.)
+            planktonConfig: options.planktonConfig || {},
+            bubblesConfig: options.bubblesConfig || {},
+            raysConfig: options.raysConfig || {},
+            // DPR cap — set by DeviceProfile to prevent memory waste on hi-DPI mobile
+            dprCap: options.dprCap || 1.5,
         };
         
         // Quality settings
@@ -83,19 +89,19 @@ export class WebGLOceanRenderer {
         }
         
         if (this.options.enableRays) {
-            this.raysLayer = new LightRaysLayer(this.gl);
+            this.raysLayer = new LightRaysLayer(this.gl, this.options.raysConfig);
             this.raysLayer.init(width, height);
             this.raysLayer.enabled = true;
         }
         
         if (this.options.enableBubbles) {
-            this.bubblesLayer = new BubblesLayer(this.gl);
+            this.bubblesLayer = new BubblesLayer(this.gl, this.options.bubblesConfig);
             this.bubblesLayer.init(width, height);
             this.bubblesLayer.enabled = true;
         }
         
         if (this.options.enablePlankton) {
-            this.planktonLayer = new PlanktonLayer(this.gl);
+            this.planktonLayer = new PlanktonLayer(this.gl, this.options.planktonConfig);
             this.planktonLayer.init(width, height);
             this.planktonLayer.enabled = true;
         }
@@ -105,7 +111,7 @@ export class WebGLOceanRenderer {
         clearTimeout(this.resizeTimeout);
         
         this.pendingResize = {
-            dpr: Math.min(window.devicePixelRatio || 1, 1.5),
+            dpr: Math.min(window.devicePixelRatio || 1, this.options.dprCap),
             width: window.innerWidth,
             height: window.innerHeight
         };
@@ -122,7 +128,11 @@ export class WebGLOceanRenderer {
         const canvasWidth = Math.floor(width * dpr);
         const canvasHeight = Math.floor(height * dpr);
         this.onResize(canvasWidth, canvasHeight);
-        
+
+        // Keep CSS display size in sync with the viewport (buffer is DPR-scaled internally)
+        this.canvas.style.width = width + 'px';
+        this.canvas.style.height = height + 'px';
+
         this.pendingResize = null;
     }
     
@@ -343,7 +353,7 @@ export class WebGLOceanRenderer {
                         if (enabled && !this.raysLayer.program) this.raysLayer.init(this.canvas.width, this.canvas.height);
                     }
                 } else if (enabled && this.gl) {
-                    this.raysLayer = new LightRaysLayer(this.gl);
+                    this.raysLayer = new LightRaysLayer(this.gl, this.options.raysConfig);
                     this.raysLayer.init(this.canvas.width, this.canvas.height);
                     this.raysLayer.enabled = true;
                 }
@@ -358,7 +368,7 @@ export class WebGLOceanRenderer {
                         if (enabled && !this.bubblesLayer.program) this.bubblesLayer.init(this.canvas.width, this.canvas.height);
                     }
                 } else if (enabled && this.gl) {
-                    this.bubblesLayer = new BubblesLayer(this.gl);
+                    this.bubblesLayer = new BubblesLayer(this.gl, this.options.bubblesConfig);
                     this.bubblesLayer.init(this.canvas.width, this.canvas.height);
                     this.bubblesLayer.enabled = true;
                 }
@@ -373,7 +383,7 @@ export class WebGLOceanRenderer {
                         if (enabled && !this.planktonLayer.program) this.planktonLayer.init(this.canvas.width, this.canvas.height);
                     }
                 } else if (enabled && this.gl) {
-                    this.planktonLayer = new PlanktonLayer(this.gl);
+                    this.planktonLayer = new PlanktonLayer(this.gl, this.options.planktonConfig);
                     this.planktonLayer.init(this.canvas.width, this.canvas.height);
                     this.planktonLayer.enabled = true;
                 }
@@ -383,6 +393,18 @@ export class WebGLOceanRenderer {
     
     getFPS() {
         return this.fps;
+    }
+
+    /**
+     * Apply a quality multiplier to all particle layers.
+     * Called by MasterRenderer to synchronise WebGL quality with the Canvas 2D
+     * PerformanceMonitor so both subsystems respond to the same FPS signal.
+     * @param {number} quality - 0.3–1.0
+     */
+    setQuality(quality) {
+        this.qualityMultiplier = quality;
+        if (this.bubblesLayer) this.bubblesLayer.setQuality(quality);
+        if (this.planktonLayer) this.planktonLayer.setQuality(quality);
     }
     
     destroy() {

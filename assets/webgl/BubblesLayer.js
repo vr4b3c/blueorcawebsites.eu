@@ -2,7 +2,7 @@
  * BubblesLayer
  */
 export class BubblesLayer {
-    constructor(gl) {
+    constructor(gl, config = {}) {
         this.gl = gl;
         this.program = null;
         this.buffers = {};
@@ -13,11 +13,12 @@ export class BubblesLayer {
         this.config = {
             sourceWidthBase: 400,
             minSourceSpacing: 80,
-            minSize: 2,
-            maxSize: 5,
+            minSize: 4,
+            maxSize: 10,
             riseSpeed: 0.3,
             swayAmount: 10,
-            bubblesPerSource: 0.02
+            bubblesPerSource: 0.02,
+            ...config
         };
     }
     
@@ -164,12 +165,28 @@ export class BubblesLayer {
     
     createBuffers() {
         const gl = this.gl;
-        
-        this.buffers.position = gl.createBuffer();
-        this.buffers.size = gl.createBuffer();
-        this.buffers.age = gl.createBuffer();
-        this.buffers.swayPeriod = gl.createBuffer();
-        this.buffers.startX = gl.createBuffer();
+        // Pre-allocate GPU buffers at max capacity — avoids repeated reallocation
+        this.MAX_BUBBLES = 200;
+        const maxN = this.MAX_BUBBLES;
+        // CPU-side reusable typed arrays — no GC pressure per frame
+        this._cpu = {
+            positions:   new Float32Array(maxN * 2),
+            sizes:       new Float32Array(maxN),
+            ages:        new Float32Array(maxN),
+            swayPeriods: new Float32Array(maxN),
+            startXs:     new Float32Array(maxN),
+        };
+        const allocGPU = (byteSize) => {
+            const buf = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferData(gl.ARRAY_BUFFER, byteSize, gl.DYNAMIC_DRAW);
+            return buf;
+        };
+        this.buffers.position  = allocGPU(maxN * 2 * 4);
+        this.buffers.size      = allocGPU(maxN * 4);
+        this.buffers.age       = allocGPU(maxN * 4);
+        this.buffers.swayPeriod = allocGPU(maxN * 4);
+        this.buffers.startX    = allocGPU(maxN * 4);
     }
     
     render(currentTime, deltaTime) {
@@ -196,56 +213,54 @@ export class BubblesLayer {
             return bubble.y + bubble.size >= 0;
         });
         
-        if (this.bubbles.length === 0) return;
-        
-        const positions = new Float32Array(this.bubbles.length * 2);
-        const sizes = new Float32Array(this.bubbles.length);
-        const ages = new Float32Array(this.bubbles.length);
-        const swayPeriods = new Float32Array(this.bubbles.length);
-        const startXs = new Float32Array(this.bubbles.length);
-        
-        for (let i = 0; i < this.bubbles.length; i++) {
+        const n = Math.min(this.bubbles.length, this.MAX_BUBBLES);
+        if (n === 0) return;
+
+        // Fill pre-allocated CPU arrays — zero allocation, no GC
+        const cpu = this._cpu;
+        for (let i = 0; i < n; i++) {
             const b = this.bubbles[i];
-            positions[i * 2] = b.startX;
-            positions[i * 2 + 1] = b.y;
-            sizes[i] = b.size;
-            ages[i] = b.age;
-            swayPeriods[i] = b.swayPeriod;
-            startXs[i] = b.startX;
+            cpu.positions[i * 2]     = b.startX;
+            cpu.positions[i * 2 + 1] = b.y;
+            cpu.sizes[i]       = b.size;
+            cpu.ages[i]        = b.age;
+            cpu.swayPeriods[i] = b.swayPeriod;
+            cpu.startXs[i]     = b.startX;
         }
-        
+
         gl.useProgram(program);
-        
         const locs = this.locs;
         gl.uniform2f(locs.resolution, this.width, this.height);
         gl.uniform1f(locs.swayAmount, this.config.swayAmount);
-        
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
-        gl.bufferData(gl.ARRAY_BUFFER, positions, gl.DYNAMIC_DRAW);
+
+        // Upload only the live portion using bufferSubData (GPU buffer stays same size)
+        const sub = (buf, data, count, stride) => {
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.bufferSubData(gl.ARRAY_BUFFER, 0, data.subarray(0, count * stride));
+        };
+        sub(this.buffers.position,   cpu.positions,   n, 2);
+        sub(this.buffers.size,       cpu.sizes,       n, 1);
+        sub(this.buffers.age,        cpu.ages,        n, 1);
+        sub(this.buffers.swayPeriod, cpu.swayPeriods, n, 1);
+        sub(this.buffers.startX,     cpu.startXs,     n, 1);
+
         gl.enableVertexAttribArray(locs.position);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
         gl.vertexAttribPointer(locs.position, 2, gl.FLOAT, false, 0, 0);
-        
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.size);
-        gl.bufferData(gl.ARRAY_BUFFER, sizes, gl.DYNAMIC_DRAW);
         gl.enableVertexAttribArray(locs.size);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.size);
         gl.vertexAttribPointer(locs.size, 1, gl.FLOAT, false, 0, 0);
-        
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.age);
-        gl.bufferData(gl.ARRAY_BUFFER, ages, gl.DYNAMIC_DRAW);
         gl.enableVertexAttribArray(locs.age);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.age);
         gl.vertexAttribPointer(locs.age, 1, gl.FLOAT, false, 0, 0);
-        
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.swayPeriod);
-        gl.bufferData(gl.ARRAY_BUFFER, swayPeriods, gl.DYNAMIC_DRAW);
         gl.enableVertexAttribArray(locs.swayPeriod);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.swayPeriod);
         gl.vertexAttribPointer(locs.swayPeriod, 1, gl.FLOAT, false, 0, 0);
-        
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.startX);
-        gl.bufferData(gl.ARRAY_BUFFER, startXs, gl.DYNAMIC_DRAW);
         gl.enableVertexAttribArray(locs.startX);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.startX);
         gl.vertexAttribPointer(locs.startX, 1, gl.FLOAT, false, 0, 0);
-        
-        gl.drawArrays(gl.POINTS, 0, this.bubbles.length);
+
+        gl.drawArrays(gl.POINTS, 0, n);
     }
     
     spawnBubble(source) {

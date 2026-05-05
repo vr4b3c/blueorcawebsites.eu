@@ -1,5 +1,9 @@
 {
+  "scripts": {
+    "build": "npx esbuild assets/js/animations.js --bundle --format=iife --minify --outfile=assets/js/dist/animations.js && npx esbuild assets/js/main.js --bundle --format=iife --minify --outfile=assets/js/dist/app.js"
+  },
   "dependencies": {
+    "motion": "^12.38.0",
     "puppeteer": "^24.40.0"
   }
 }

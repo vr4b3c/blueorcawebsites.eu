@@ -69,6 +69,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
+
 </head>
 <body>
 
@@ -104,12 +105,31 @@
     <section class="cta-cms">
         <div class="section-inner">
             <div class="cta-slider" data-slider>
-
+                <!-- Slide 0 -->
+                <div class="cta-cms-inner cta-slide" data-slide>
+                    <div class="cta-cms-text">
+                        <p class="cta-cms-label">Konečné řešení webové otázky</p>
+                        <h2 class="cta-cms-title">Nechte konkurenci plavat. <br><strong>Vy ovládněte oceán internetu!</strong></h2>
+                        <p class="cta-cms-desc">Bleskově rychlé weby, SEO optimalizace, design na míru — a redakční systém zdarma. Žádné kecy, žádné kompromisy. Jen výsledky, které konkurenci nechají za sebou.</p>
+                        <div class="cta-cms-action">
+                            <a href="#kontakt" class="cta-cms-btn">
+                                Chci vědět více
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </a>
+                            <p class="cta-cms-note">Důraz na detail &nbsp;·&nbsp; Až frenetická optimalizace</p>
+                        </div>
+                    </div>
+                    <div class="cta-cms-visual" aria-hidden="true">
+                        <div class="cta-cms-visual-frame no-shadow">
+                            <img src="assets/images/web/banner-orca.png" alt="Ukázka administrace CMS BlueOrca" width="750W" height="600" loading="lazy">
+                        </div>
+                    </div>
+                </div>
                 <!-- Slide 1 -->
                 <div class="cta-cms-inner cta-slide" data-slide>
                     <div class="cta-cms-text">
                         <p class="cta-cms-label">Vlastní redakční systém</p>
-                        <h2 class="cta-cms-title">Spravujte obsah webu sami.<br>Bez programovátora.</h2>
+                        <h2 class="cta-cms-title">Spravujte obsah webu sami.<br><strong>Bez programovátora!</strong></h2>
                         <p class="cta-cms-desc">Ke každému webu dodáváme zdarma redakční systém BlueOrca. Texty, obrázky i články si pak upravíte sami bez čekání na programátora.</p>
                         <div class="cta-cms-action">
                             <a href="#kontakt" class="cta-cms-btn">
@@ -130,7 +150,7 @@
                 <div class="cta-cms-inner cta-slide" data-slide>
                     <div class="cta-cms-text">
                         <p class="cta-cms-label">SEO &amp; výkon</p>
-                        <h2 class="cta-cms-title">Web, který je vidět.<br>A přivádí poptávky.</h2>
+                        <h2 class="cta-cms-title">Web, který je vidět <br><strong>A přivádí poptávky!</strong></h2>
                         <p class="cta-cms-desc">Stavíme rychlé weby, které vyhledávače snadno přečtou a návštěvníky dovedou k akci. Lepší dohledatelnost, vyšší důvěra a víc relevantních kontaktů.</p>
                         <div class="cta-cms-action">
                             <a href="#reference" class="cta-cms-btn">
@@ -150,6 +170,7 @@
                 </div>
 
                 <div class="cta-slider-dots">
+                    <button class="cta-slider-dot" aria-label="Slide 0">Weby na míru</button>
                     <button class="cta-slider-dot" aria-label="Slide 1">Administrace ZDARMA</button>
                     <button class="cta-slider-dot" aria-label="Slide 2">Rychlost & Výkon</button>
                 </div>
@@ -165,11 +186,11 @@
         <div class="section-inner">
             <h2>REFERENCE</h2>
 
-            <!--div class="ref-filter">
+            <div class="ref-filter">
                 <button class="filter-pill active" data-filter="all">Vše</button>
                 <button class="filter-pill" data-filter="single">Jednostránkové</button>
                 <button class="filter-pill" data-filter="multi">Vícestránkové</button>
-            </div-->
+            </div>
 
             <div class="references-grid">
 
@@ -177,10 +198,10 @@
                 <article class="ref-card" data-type="multi">
                     <div class="ref-image-outer">
                         <div class="ref-image-wrap">
-                            <img src="assets/images/reference/florian-partneri-full.webp" alt="Florian & Partneři – celý web" loading="lazy">
+                            <img src="assets/images/reference/florian-partneri-full.webp" alt="Florian & Partneři – celý web" fetchpriority="high">
                         </div>
                         <div class="ref-minimap" aria-hidden="true">
-                            <img class="ref-minimap-img" src="assets/images/reference/florian-partneri-full.webp" alt="">
+                            <img class="ref-minimap-img" src="assets/images/reference/florian-partneri-full.webp" alt="" loading="lazy">
                             <div class="ref-minimap-dim ref-minimap-dim-top"></div>
                             <div class="ref-minimap-indicator"></div>
                             <div class="ref-minimap-dim ref-minimap-dim-bottom"></div>
@@ -193,12 +214,12 @@
                                 <div class="ref-header-top">
                                     <h3><a href="https://florian-partneri.cz/" target="_blank" rel="noopener noreferrer" class="external">florian-partneri.cz</a></h3>
                                 </div>
-                                <p class="ref-subtitle">Vícestránkový web s bohatou funkčností</p>
+                                <p class="ref-subtitle">Vícestránkový web s designem na míru</p>
                                 <p class="ref-desc">Web pro realitní kancelář zaměřený na získávání nových poptávek a budování důvěry při prodeji i financování nemovitostí. Návštěvníkům dává rychlý přehled nabídky i jasný další krok ke kontaktu.</p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Rozsah</span>
-                                <span class="ref-row-value">6 stránek • Inzeráty nemovitostí • Profily makléřů • Články</span>
+                                <span class="ref-row-value">6 unikátních stránek • Inzeráty nemovitostí • Profily makléřů • Články</span>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Speciální funkce</span>
@@ -218,9 +239,9 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
-                                        <span class="score-val">99</span>
+                                        <span class="score-val">96</span>
                                     </div>
                                     <span class="score-label">Výkon</span>
                                 </div>
@@ -228,9 +249,9 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:10.053"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
-                                        <span class="score-val">96</span>
+                                        <span class="score-val">100</span>
                                     </div>
                                     <span class="score-label">Přístup­nost</span>
                                 </div>
@@ -238,9 +259,9 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:10.053"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
-                                        <span class="score-val">96</span>
+                                        <span class="score-val">100</span>
                                     </div>
                                     <span class="score-label">Best Practices</span>
                                 </div>
@@ -248,7 +269,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -257,13 +278,13 @@
                             </div>
 
                             <div class="ref-tech-header">
-                                <p class="ref-tech-label">Hodnoceno nástrojem <a title="Zobrazit měření kvality kódu webu florian-partneri.cz"  href="https://pagespeed.web.dev/analysis/https-florian-partneri-cz/nyiz4qjvtq?form_factor=desktop" target="_blank"  class="external">Google PageSpeed Insights</a></p>
+                                <p class="ref-tech-label">Hodnoceno nástrojem <a title="Zobrazit měření kvality kódu webu florian-partneri.cz"  href="https://pagespeed.web.dev/analysis/https-florian-partneri-cz/ngs4fsi80u?form_factor=desktop" target="_blank"  class="external">Google PageSpeed Insights</a></p>
                             </div>                
                         </div>
 
                         <div class="ref-price">
                             <span class="ref-price-label">Web v podobném rozsahu obvykle od</span>
-                            <span class="ref-price-value">39 900 Kč</span>
+                            <span class="ref-price-value">49 900 Kč</span>
                         </div>
                     </div>
                 </article>
@@ -276,7 +297,7 @@
                             <img src="assets/images/reference/leadea-full.webp" alt="Leadea – celý web" loading="lazy">
                         </div>
                         <div class="ref-minimap" aria-hidden="true">
-                            <img class="ref-minimap-img" src="assets/images/reference/leadea-full.webp" alt="">
+                            <img class="ref-minimap-img" src="assets/images/reference/leadea-full.webp" alt="" loading="lazy">
                             <div class="ref-minimap-dim ref-minimap-dim-top"></div>
                             <div class="ref-minimap-indicator"></div>
                             <div class="ref-minimap-dim ref-minimap-dim-bottom"></div>
@@ -289,12 +310,12 @@
                                 <div class="ref-header-top">
                                     <h3><a href="https://leadea.cz/" target="_blank" rel="noopener noreferrer" class="external">leadea.cz</a></h3>
                                 </div>
-                                <p class="ref-subtitle">Vícestránkový web s bohatou funkčností</p>
+                                <p class="ref-subtitle">Vícestránkový web s designem na míru</p>
                                 <p class="ref-desc">Web pro firmu s digitálními službami, zaměřený na proměnu návštěvníků v konkrétní poptávky. Klientovi jasně ukazuje nabídku a vede ho k odeslání kontaktu bez zbytečných kroků.</p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Rozsah</span>
-                                <span class="ref-row-value">7 stránek • Blog / články</span>
+                                <span class="ref-row-value">7 unikátních stránek • Blog s články</span>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Speciální funkce</span>
@@ -313,9 +334,9 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
-                                        <span class="score-val">99</span>
+                                        <span class="score-val">100</span>
                                     </div>
                                     <span class="score-label">Výkon</span>
                                 </div>
@@ -323,7 +344,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -333,7 +354,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -343,7 +364,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -364,6 +385,96 @@
                 </article>
 
 
+                <!-- Galantérie Máci -->
+                <article class="ref-card" data-type="single">
+                    <div class="ref-image-outer">
+                        <div class="ref-image-wrap">
+                            <img src="assets/images/reference/galanterka-maci-full.webp" alt="Galantérie Máci – celý web" loading="lazy">
+                        </div>
+                        <div class="ref-minimap" aria-hidden="true">
+                            <img class="ref-minimap-img" src="assets/images/reference/galanterka-maci-full.webp" alt="" loading="lazy">
+                            <div class="ref-minimap-dim ref-minimap-dim-top"></div>
+                            <div class="ref-minimap-indicator"></div>
+                            <div class="ref-minimap-dim ref-minimap-dim-bottom"></div>
+                        </div>
+                    </div>
+                    <div class="ref-body">
+
+                        <div class="ref-project">
+                            <div class="ref-header">
+                                <div class="ref-header-top">
+                                    <h3><a href="https://galanterka.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer" class="external">galanterka-maci.cz</a></h3>
+                                </div>
+                                <p class="ref-subtitle">Jednostránkový web s designem na míru&ensp;·&ensp;<span style="opacity:1;font-size:.85em;">Archivováno</span></p>
+                                <p class="ref-desc">Osobitý web pro galanterii vytvořený od základu – logo, design i všechny pluginy na míru. Součástí je Google mapa a interaktivní virtuální prohlídka v barvách webu. Vysoce optimalizovaný a vizuálně ucelený projekt. Bohužel již není aktivní.</p>
+                            </div>
+                            <div class="ref-row">
+                                <span class="ref-row-label">Speciální funkce</span>
+                                <span class="ref-row-value">
+                                    <span class="ref-tags">
+                                        <span class="ref-tag ref-tag-nolink">Design dle představ</span>
+                                        <span class="ref-tag ref-tag-nolink">Google mapa v barvách webu</span>
+                                        <span class="ref-tag ref-tag-nolink">Virtuální prohlídka</span>
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="ref-tech">
+                            <div class="lighthouse-scores">
+                                <div class="score-item">
+                                    <div class="score-circle-wrap">
+                                        <svg class="score-ring" viewBox="0 0 100 100">
+                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                        </svg>
+                                        <span class="score-val">100</span>
+                                    </div>
+                                    <span class="score-label">Výkon</span>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-circle-wrap">
+                                        <svg class="score-ring" viewBox="0 0 100 100">
+                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                        </svg>
+                                        <span class="score-val">100</span>
+                                    </div>
+                                    <span class="score-label">Přístup­nost</span>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-circle-wrap">
+                                        <svg class="score-ring" viewBox="0 0 100 100">
+                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                        </svg>
+                                        <span class="score-val">100</span>
+                                    </div>
+                                    <span class="score-label">Best Practices</span>
+                                </div>
+                                <div class="score-item">
+                                    <div class="score-circle-wrap">
+                                        <svg class="score-ring" viewBox="0 0 100 100">
+                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                        </svg>
+                                        <span class="score-val">100</span>
+                                    </div>
+                                    <span class="score-label">SEO</span>
+                                </div>
+                            </div>
+                            <div class="ref-tech-header">
+                                <p class="ref-tech-label">Hodnoceno nástrojem <a title="Zobrazit měření kvality kódu webu galanterka-maci.cz" href="https://pagespeed.web.dev/analysis/https-galanterka-blueorcawebsites-eu/pj32d809e3?hl=cs&form_factor=desktop" target="_blank" class="external">Google PageSpeed Insights</a></p>
+                            </div>
+                        </div>
+
+                        <div class="ref-price">
+                            <span class="ref-price-label">Web v podobném rozsahu obvykle od</span>
+                            <span class="ref-price-value">14 990 Kč</span>
+                        </div>
+                    </div>
+                </article>       
+
                 <!-- Milenium -->
                 <article class="ref-card" data-type="single">
                     <div class="ref-image-outer ref-image-outer--nocapture">
@@ -382,8 +493,8 @@
                                 <div class="ref-header-top">
                                     <h3><a href="https://www.milenium.cz/" target="_blank" rel="noopener noreferrer" class="external">milenium.cz</a></h3>
                                 </div>
-                                <p class="ref-subtitle">Jednostránkový web</p>
-                                <p class="ref-desc">Web pro technologickou firmu zaměřený na jasné představení značky a rychlé navázání kontaktu. Jedna silná stránka předá hlavní sdělení bez rušení a podpoří rozhodnutí ozvat se.</p>
+                                <p class="ref-subtitle">Jednostránkový web s designem dle představ</p>
+                                <p class="ref-desc">Rozkaz zněl jasně — epicná scéna vycházejícího slunce nad rotující zemí. Animované intro, které okamžitě sdělí, kdo firmu tvoří a co ji pohání. Jeden pohled, žádné řeči navíc — a hned víte, komu zavolat.</p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Rozsah</span>
@@ -393,7 +504,7 @@
                                 <span class="ref-row-label">Speciální funkce</span>
                                 <span class="ref-row-value">
                                     <span class="ref-tags">
-                                        <span class="ref-tag ref-tag-nolink">3D render vesmírné scény</span>
+                                        <span class="ref-tag ref-tag-nolink">3D video vesmírné scény</span>
                                     </span>
                                 </span>
                             </div>
@@ -406,7 +517,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">99</span>
                                     </div>
@@ -416,7 +527,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -426,7 +537,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -436,7 +547,7 @@
                                     <div class="score-circle-wrap">
                                         <svg class="score-ring" viewBox="0 0 100 100">
                                             <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40" style="stroke-dashoffset:2.513"/>
+                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
                                         </svg>
                                         <span class="score-val">100</span>
                                     </div>
@@ -450,7 +561,7 @@
 
                         <div class="ref-price">
                             <span class="ref-price-label">Web v podobném rozsahu obvykle od</span>
-                            <span class="ref-price-value">19 900 Kč</span>
+                            <span class="ref-price-value">14 900 Kč</span>
                         </div>
                     </div>
                 </article>
@@ -633,9 +744,17 @@
         </div>
     </footer>
 
+    <script>
+    document.querySelectorAll('.score-circle-wrap').forEach(wrap => {
+        const val = parseInt(wrap.querySelector('.score-val')?.textContent, 10);
+        const fill = wrap.querySelector('.score-fill');
+        if (!fill || isNaN(val)) return;
+        const circumference = 2 * Math.PI * 40; // r=40, viewBox 100×100
+        fill.style.strokeDashoffset = ((1 - val / 100) * circumference).toFixed(3);
+    });
+    </script>
     <script src="assets/js/script.js"></script>
-    <script type="module" src="assets/js/animations.js"></script>
-    <script type="module" src="assets/webgl/init-prod.js"></script>
-    <script type="module" src="assets/canvas/init.js"></script>
+    <script defer src="assets/js/dist/animations.js"></script>
+    <script defer src="assets/js/dist/app.js"></script>
 </body>
 </html>
