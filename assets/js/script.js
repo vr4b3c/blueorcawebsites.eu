@@ -366,3 +366,49 @@
         }, remainingTime);
     });
 })();
+
+// ===================== HAMBURGER / MOBILE DRAWER =====================
+(function () {
+    var hamburger = document.querySelector('.nav-hamburger');
+    var drawer    = document.querySelector('.mobile-drawer');
+    var overlay   = document.querySelector('.mobile-overlay');
+    if (!hamburger || !drawer || !overlay) return;
+
+    function openDrawer() {
+        drawer.classList.add('is-open');
+        overlay.classList.add('is-open');
+        document.body.classList.add('drawer-open');
+        hamburger.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        overlay.setAttribute('aria-hidden', 'false');
+        // focus first link for accessibility
+        var first = drawer.querySelector('a, button');
+        if (first) first.focus();
+    }
+
+    function closeDrawer() {
+        drawer.classList.remove('is-open');
+        overlay.classList.remove('is-open');
+        document.body.classList.remove('drawer-open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        overlay.setAttribute('aria-hidden', 'true');
+        hamburger.focus();
+    }
+
+    hamburger.addEventListener('click', openDrawer);
+    overlay.addEventListener('click', closeDrawer);
+    drawer.querySelector('.mobile-drawer-close').addEventListener('click', closeDrawer);
+
+    // Close on Escape
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && drawer.classList.contains('is-open')) {
+            closeDrawer();
+        }
+    });
+
+    // Close drawer when a link is clicked (navigation)
+    drawer.querySelectorAll('.mobile-drawer-link').forEach(function (link) {
+        link.addEventListener('click', closeDrawer);
+    });
+})();

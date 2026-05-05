@@ -100,8 +100,32 @@
                 </a>
                 <a href="https://blog.blueorcawebsites.eu/" class="btn-primary" target="_blank" rel="noopener noreferrer">Blog</a>
             </nav>
+            <button class="nav-hamburger" aria-label="Otevřít menu" aria-expanded="false" aria-controls="mobile-drawer">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </header>
+
+    <!-- Mobile drawer -->
+    <div class="mobile-overlay" aria-hidden="true"></div>
+    <nav class="mobile-drawer" id="mobile-drawer" aria-hidden="true" aria-label="Mobilní navigace">
+        <button class="mobile-drawer-close" aria-label="Zavřít menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <a href="tel:+420773202288" class="mobile-drawer-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +420 773 202 288
+        </a>
+        <a href="mailto:info@blueorcawebsites.eu" class="mobile-drawer-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+            info@blueorcawebsites.eu
+        </a>
+        <a href="https://blog.blueorcawebsites.eu/" class="mobile-drawer-link" target="_blank" rel="noopener noreferrer">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8"/><path d="M15 18h-5"/><path d="M10 6h8v4h-8V6Z"/></svg>
+            Blog
+        </a>
+    </nav>
+
     <!-- CTA – CMS BlueOrca -->
     <section class="cta-cms">
         <div class="section-inner">
