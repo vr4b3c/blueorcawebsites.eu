@@ -25,15 +25,11 @@ if (!reduced) {
     });
 
     // ── Reference cards – rich per-element animations ─────────────────────
+    // Card entry (opacity + y) is handled by CSS @keyframes refCardEnter.
+    // inView handles inner-element animations triggered when card first appears.
     inView('.ref-card', function (el) {
 
-        // 1. Card wrapper: slide up + fade
-        animate(el,
-            { opacity: [0, 1], y: [50, 0] },
-            { duration: 0.55, ease: [0.16, 1, 0.3, 1] }
-        );
-
-        // 2. Image: subtle scale reveal
+        // 1. Image: subtle scale reveal
         var img = el.querySelector('.ref-image-wrap');
         if (img) {
             animate(img,
@@ -42,7 +38,7 @@ if (!reduced) {
             );
         }
 
-        // 3. Project title + visit button: slide up
+        // 2. Project title: slide up
         var header = el.querySelector('.ref-header');
         if (header) {
             animate(header,
@@ -51,7 +47,7 @@ if (!reduced) {
             );
         }
 
-        // 4. Info rows: stagger from right
+        // 3. Info rows: stagger from right
         var rows = el.querySelectorAll('.ref-row');
         if (rows.length) {
             animate(rows,
@@ -60,7 +56,7 @@ if (!reduced) {
             );
         }
 
-        // 5. Feature tags: stagger scale-in
+        // 4. Feature tags: stagger scale-in
         var tags = el.querySelectorAll('.ref-tag');
         if (tags.length) {
             animate(tags,
@@ -69,7 +65,7 @@ if (!reduced) {
             );
         }
 
-        // 6. PageSpeed score circles: draw the arc in
+        // 5. PageSpeed score circles: draw the arc in
         el.querySelectorAll('.score-fill').forEach(function (circle) {
             var finalOffset = parseFloat(circle.style.strokeDashoffset);
             if (!isNaN(finalOffset)) {
@@ -80,7 +76,7 @@ if (!reduced) {
             }
         });
 
-        // 7. Score numbers: count up from 0
+        // 6. Score numbers: count up from 0
         el.querySelectorAll('.score-val').forEach(function (val) {
             var target = parseInt(val.textContent, 10);
             if (!isNaN(target)) {
@@ -89,7 +85,7 @@ if (!reduced) {
             }
         });
 
-    }, { margin: '-60px' });
+    }, { margin: '0px' });
 
     // Footer
     inView('.site-footer', function (el) {

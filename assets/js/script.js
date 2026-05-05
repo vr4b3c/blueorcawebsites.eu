@@ -1,21 +1,75 @@
-// ===================== REFERENCE FILTER =====================
+// ===================== REFERENCE THUMB & FILTER =====================
 (function () {
     var pills = document.querySelectorAll('.filter-pill');
-    var cards = document.querySelectorAll('.ref-card');
+    var thumbs = document.querySelectorAll('.ref-thumb');
+    var cards = document.querySelectorAll('.ref-card.ref-detail');
 
+    // --- Activate a reference card by data-ref ---
+    function activateRef(ref) {
+        thumbs.forEach(function (t) { t.classList.remove('active'); });
+        cards.forEach(function (c) { c.classList.remove('active'); });
+
+        var activeThumb = document.querySelector('.ref-thumb[data-ref="' + ref + '"]');
+        var activeCard = document.querySelector('.ref-card.ref-detail[data-ref="' + ref + '"]');
+
+        if (activeThumb && !activeThumb.classList.contains('filter-hidden')) {
+            activeThumb.classList.add('active');
+        }
+        if (activeCard) {
+            activeCard.classList.add('active');
+        }
+    }
+
+    // --- Auto-select first visible thumb ---
+    function selectFirstVisible() {
+        var first = document.querySelector('.ref-thumb:not(.filter-hidden)');
+        if (first) {
+            activateRef(first.getAttribute('data-ref'));
+        } else {
+            thumbs.forEach(function (t) { t.classList.remove('active'); });
+            cards.forEach(function (c) { c.classList.remove('active'); });
+        }
+    }
+
+    // --- Thumb click ---
+    var detailPanel = document.querySelector('.ref-detail-panel');
+    thumbs.forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+            var ref = thumb.getAttribute('data-ref');
+            var alreadyActive = thumb.classList.contains('active');
+            if (alreadyActive) {
+                thumb.classList.remove('active');
+                cards.forEach(function (c) { c.classList.remove('active'); });
+                return;
+            }
+            activateRef(ref);
+            if (detailPanel) {
+                detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        });
+    });
+
+    // --- Filter pills ---
     pills.forEach(function (pill) {
         pill.addEventListener('click', function () {
             pills.forEach(function (p) { p.classList.remove('active'); });
             pill.classList.add('active');
 
             var filter = pill.getAttribute('data-filter');
-            cards.forEach(function (card) {
-                if (filter === 'all' || card.getAttribute('data-type') === filter) {
-                    card.classList.remove('filter-hidden');
+
+            thumbs.forEach(function (thumb) {
+                if (filter === 'all' || thumb.getAttribute('data-type') === filter) {
+                    thumb.classList.remove('filter-hidden');
                 } else {
-                    card.classList.add('filter-hidden');
+                    thumb.classList.add('filter-hidden');
                 }
             });
+
+            // If the currently active thumb is now hidden, switch to first visible
+            var activeThumb = document.querySelector('.ref-thumb.active');
+            if (!activeThumb || activeThumb.classList.contains('filter-hidden')) {
+                selectFirstVisible();
+            }
         });
     });
 })();
