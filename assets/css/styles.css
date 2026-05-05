@@ -19,7 +19,7 @@
     --text-secondary: #8ba8b8;
     --text-muted: #5a7a8a;
     --green: #0cce6b;
-    --orange: #ffa400;
+    --orange: #ffd549;
     --red: #ff4e42;
     --radius: 0;
     --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
@@ -249,6 +249,129 @@ footer {
 
 .site-header-cta::after {
     display: none;
+}
+
+/* ===================== btn-primary ===================== */
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 1rem;
+    background: #1ab8d8;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    border-radius: 0;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 8px rgba(26,184,216,0.25);
+}
+
+/* oceánský shimmer – světelný odraz přejedoucí zleva doprava */
+.btn-primary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255,255,255,0.28) 50%,
+        transparent 70%
+    );
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+.btn-primary:hover {
+    background: #22cee8;
+    color: #fff;
+    box-shadow: 0 0 16px rgba(34,206,232,0.55), inset 0 1px 0 rgba(255,255,255,0.2);
+    text-decoration: none;
+}
+
+.btn-primary:hover::after {
+    left: 160%;
+}
+
+.btn-primary:active {
+    background: #0fa8c5;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
+}
+
+/* ===================== btn-lg ===================== */
+
+.btn-lg {
+    padding: 0.65rem 1.75rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+}
+
+/* ===================== btn-secondary ===================== */
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 1rem;
+    background: #e07800;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border: none;
+    border-radius: 0;
+    white-space: nowrap;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 1px 8px rgba(224,120,0,0.25);
+}
+
+.btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255,255,255,0.22) 50%,
+        transparent 70%
+    );
+    transition: left 0.5s ease;
+    pointer-events: none;
+}
+
+.btn-secondary:hover {
+    background: #f58a00;
+    color: #fff;
+    box-shadow: 0 0 16px rgba(245,138,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15);
+    text-decoration: none;
+}
+
+.btn-secondary:hover::after {
+    left: 160%;
+}
+
+.btn-secondary:active {
+    background: #c96d00;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
 }
 
 @media (max-width: 700px) {
@@ -1461,12 +1584,12 @@ footer {
     font-size: 0.7rem;
 }
 
-.btn-primary {
+.btn-filled {
     background: var(--accent-mid);
     color: var(--bg-primary);
 }
 
-.btn-primary:hover {
+.btn-filled:hover {
     background: var(--accent);
     box-shadow: 0 0 20px rgba(142, 210, 232, 0.3);
 }

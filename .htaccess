@@ -1,7 +1,7 @@
-AuthType Basic
-AuthName "Developer Login"
-AuthUserFile /data/web/virtuals/385273/virtual/www/domains/dev2.blueorcawebsites.eu/.htpasswd
-Require valid-user
+#AuthType Basic
+#AuthName "Developer Login"
+#AuthUserFile /data/web/virtuals/385273/virtual/www/domains/dev2.blueorcawebsites.eu/.htpasswd
+#Require valid-user
 
 RewriteEngine On
 RewriteBase /
