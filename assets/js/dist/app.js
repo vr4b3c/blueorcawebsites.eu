@@ -109,12 +109,15 @@
                 float t = pow(v_uv.y, 1.6);
                 vec4 baseColor = mix(u_topColor, u_bottomColor, t);
 
-                // Caustics \u2014 visible only in upper portion (near surface), fade to zero at depth
+                // Caustics \u2014 visible only in upper portion (near surface), fade to zero at depth.
+                // Early-exit skips the expensive caustics call for deeply-submerged pixels
+                // where the contribution (0.13 * surfaceFade * c) would be below ~1/255.
                 float surfaceFade = smoothstep(0.0, 0.65, v_uv.y); // 0 at bottom, 1 near top
-                float c = caustics(v_uv, u_time);
-                // Warm teal tint matching the surface light colour
-                vec3 causticColor = vec3(0.55, 0.88, 1.0);
-                baseColor.rgb += causticColor * c * 0.13 * surfaceFade;
+                if (surfaceFade > 0.05) {
+                    float c = caustics(v_uv, u_time);
+                    vec3 causticColor = vec3(0.55, 0.88, 1.0);
+                    baseColor.rgb += causticColor * c * 0.13 * surfaceFade;
+                }
             
                 // Dithering to kill banding
                 float grain = random(gl_FragCoord.xy) * 0.015;
@@ -232,6 +235,9 @@
       this.options = { rayCount: 5, ...options };
       this.rayBeamsEnabled = true;
       this.sunGlowEnabled = true;
+      this._raysArr = new Float32Array(5);
+      this._swaysArr = new Float32Array(5);
+      this._shimmersArr = new Float32Array(5);
     }
     init(width, height) {
       this.width = width;
@@ -276,21 +282,10 @@
             
             uniform vec2 u_resolution;
             uniform float u_time;
-            uniform float u_ray1; // x position
-            uniform float u_ray2;
-            uniform float u_ray3;
-            uniform float u_ray4;
-            uniform float u_ray5;
-            uniform float u_sway1; // sway amount
-            uniform float u_sway2;
-            uniform float u_sway3;
-            uniform float u_sway4;
-            uniform float u_sway5;
-            uniform float u_shimmer1; // per-ray shimmer multiplier (0.6\u20131.0)
-            uniform float u_shimmer2;
-            uniform float u_shimmer3;
-            uniform float u_shimmer4;
-            uniform float u_shimmer5;
+            uniform float u_rays[5];   // x positions
+            uniform float u_sways[5];  // sway amounts
+            uniform float u_shimmers[5]; // per-ray shimmer multipliers
+            uniform int u_rayCount;
             uniform int u_rayBeamsEnabled;
             uniform int u_sunGlowEnabled;
             
@@ -312,12 +307,10 @@
                 
                 // Ray beams (ku\u017Eely)
                 if (u_rayBeamsEnabled == 1) {
-                    float i1 = rayIntensity(x, u_ray1, u_sway1) * u_shimmer1;
-                    float i2 = rayIntensity(x, u_ray2, u_sway2) * u_shimmer2;
-                    float i3 = rayIntensity(x, u_ray3, u_sway3) * u_shimmer3;
-                    float i4 = rayIntensity(x, u_ray4, u_sway4) * u_shimmer4;
-                    float i5 = rayIntensity(x, u_ray5, u_sway5) * u_shimmer5;
-                    float totalIntensity = i1 + i2 + i3 + i4 + i5;
+                    float totalIntensity = 0.0;
+                    for (int i = 0; i < u_rayCount; i++) {
+                        totalIntensity += rayIntensity(x, u_rays[i], u_sways[i]) * u_shimmers[i];
+                    }
                     
                     float verticalFade = y; // Siln\u011Bj\u0161\xED naho\u0159e (y=1), slab\u0161\xED dole (y=0)
                     float rayAlpha = totalIntensity * 0.08 * verticalFade;
@@ -359,12 +352,14 @@
         this.locs = {
           resolution: gl2.getUniformLocation(p, "u_resolution"),
           time: gl2.getUniformLocation(p, "u_time"),
+          rayCount: gl2.getUniformLocation(p, "u_rayCount"),
           rayBeamsEnabled: gl2.getUniformLocation(p, "u_rayBeamsEnabled"),
           sunGlowEnabled: gl2.getUniformLocation(p, "u_sunGlowEnabled"),
           position: gl2.getAttribLocation(p, "a_position"),
-          rays: this.rays.map((_, i) => gl2.getUniformLocation(p, `u_ray${i + 1}`)),
-          sways: this.rays.map((_, i) => gl2.getUniformLocation(p, `u_sway${i + 1}`)),
-          shimmers: this.rays.map((_, i) => gl2.getUniformLocation(p, `u_shimmer${i + 1}`))
+          // Array uniforms: get location of first element, upload all with uniform1fv
+          rays: gl2.getUniformLocation(p, "u_rays[0]"),
+          sways: gl2.getUniformLocation(p, "u_sways[0]"),
+          shimmers: gl2.getUniformLocation(p, "u_shimmers[0]")
         };
       }
     }
@@ -421,17 +416,19 @@
       const locs = this.locs;
       gl.uniform2f(locs.resolution, this.width, this.height);
       gl.uniform1f(locs.time, currentTime);
+      gl.uniform1i(locs.rayCount, this.rays.length);
       gl.uniform1i(locs.rayBeamsEnabled, this.rayBeamsEnabled ? 1 : 0);
       gl.uniform1i(locs.sunGlowEnabled, this.sunGlowEnabled ? 1 : 0);
       const raySpeed = 5e-5;
       for (let i = 0; i < this.rays.length; i++) {
         const ray = this.rays[i];
-        const sway = Math.sin(currentTime * raySpeed * ray.speed + ray.offset) * 30;
-        const shimmer = 0.55 + 0.45 * 0.5 * ((1 + Math.sin(currentTime * ray.shimFreqA + ray.shimPhaseA)) * (1 + Math.sin(currentTime * ray.shimFreqB + ray.shimPhaseB)) / 4);
-        gl.uniform1f(locs.rays[i], ray.x);
-        gl.uniform1f(locs.sways[i], sway);
-        gl.uniform1f(locs.shimmers[i], shimmer);
+        this._raysArr[i] = ray.x;
+        this._swaysArr[i] = Math.sin(currentTime * raySpeed * ray.speed + ray.offset) * 30;
+        this._shimmersArr[i] = 0.55 + 0.45 * 0.5 * ((1 + Math.sin(currentTime * ray.shimFreqA + ray.shimPhaseA)) * (1 + Math.sin(currentTime * ray.shimFreqB + ray.shimPhaseB)) / 4);
       }
+      gl.uniform1fv(locs.rays, this._raysArr);
+      gl.uniform1fv(locs.sways, this._swaysArr);
+      gl.uniform1fv(locs.shimmers, this._shimmersArr);
       gl.enableVertexAttribArray(locs.position);
       gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
       gl.vertexAttribPointer(locs.position, 2, gl.FLOAT, false, 0, 0);
@@ -621,6 +618,21 @@
       this.buffers.age = allocGPU(maxN * 4);
       this.buffers.swayPeriod = allocGPU(maxN * 4);
       this.buffers.startX = allocGPU(maxN * 4);
+      const locs = this.locs;
+      this.vao = gl.createVertexArray();
+      gl.bindVertexArray(this.vao);
+      const setupVertexAttribute = (loc, buf, size) => {
+        if (loc < 0) return;
+        gl.enableVertexAttribArray(loc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+      };
+      setupVertexAttribute(locs.position, this.buffers.position, 2);
+      setupVertexAttribute(locs.size, this.buffers.size, 1);
+      setupVertexAttribute(locs.age, this.buffers.age, 1);
+      setupVertexAttribute(locs.swayPeriod, this.buffers.swayPeriod, 1);
+      setupVertexAttribute(locs.startX, this.buffers.startX, 1);
+      gl.bindVertexArray(null);
     }
     render(currentTime, deltaTime) {
       const gl = this.gl;
@@ -633,13 +645,18 @@
         }
       }
       const dt = Math.min(deltaTime, 50);
-      this.bubbles = this.bubbles.filter((bubble) => {
+      let bWrite = 0;
+      for (let bi = 0; bi < this.bubbles.length; bi++) {
+        const bubble = this.bubbles[bi];
         bubble.y -= bubble.riseSpeed * this.config.riseSpeed;
         bubble.age += dt;
         const riseProgress = 1 - bubble.y / this.height;
         bubble.size = bubble.baseSize * (1 - riseProgress * 0.6);
-        return bubble.y + bubble.size >= 0;
-      });
+        if (bubble.y + bubble.size >= 0) {
+          this.bubbles[bWrite++] = bubble;
+        }
+      }
+      this.bubbles.length = bWrite;
       const n = Math.min(this.bubbles.length, this.MAX_BUBBLES);
       if (n === 0) return;
       const cpu = this._cpu;
@@ -665,22 +682,9 @@
       sub(this.buffers.age, cpu.ages, n, 1);
       sub(this.buffers.swayPeriod, cpu.swayPeriods, n, 1);
       sub(this.buffers.startX, cpu.startXs, n, 1);
-      gl.enableVertexAttribArray(locs.position);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
-      gl.vertexAttribPointer(locs.position, 2, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(locs.size);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.size);
-      gl.vertexAttribPointer(locs.size, 1, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(locs.age);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.age);
-      gl.vertexAttribPointer(locs.age, 1, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(locs.swayPeriod);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.swayPeriod);
-      gl.vertexAttribPointer(locs.swayPeriod, 1, gl.FLOAT, false, 0, 0);
-      gl.enableVertexAttribArray(locs.startX);
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.startX);
-      gl.vertexAttribPointer(locs.startX, 1, gl.FLOAT, false, 0, 0);
+      gl.bindVertexArray(this.vao);
       gl.drawArrays(gl.POINTS, 0, n);
+      gl.bindVertexArray(null);
     }
     spawnBubble(source) {
       const baseSize = this.config.minSize + Math.random() * (this.config.maxSize - this.config.minSize);
@@ -714,6 +718,7 @@
     destroy() {
       const gl = this.gl;
       if (this.program) gl.deleteProgram(this.program);
+      if (this.vao) gl.deleteVertexArray(this.vao);
       for (const key in this.buffers) {
         gl.deleteBuffer(this.buffers[key]);
       }
@@ -731,6 +736,7 @@
       this.particles = [];
       this.microParticles = [];
       this.qualityMultiplier = 1;
+      this._lastOpacity = null;
       this.config = {
         swarmCount: 30,
         particlesPerSwarm: 50,
@@ -1095,7 +1101,11 @@
       gl.uniform2f(locs.resolution, this.width, this.height);
       gl.uniform1f(locs.time, currentTime);
       gl.uniform3f(locs.color, 0.45, 0.78, 0.95);
-      gl.uniform1f(locs.opacity, 0.45 * this.qualityMultiplier);
+      const opacity = 0.45 * this.qualityMultiplier;
+      if (this._lastOpacity !== opacity) {
+        gl.uniform1f(locs.opacity, opacity);
+        this._lastOpacity = opacity;
+      }
       gl.bindVertexArray(this.vao);
       const particleCount = Math.floor(this.particles.length * this.qualityMultiplier);
       gl.drawArrays(gl.POINTS, 0, particleCount);
@@ -1157,7 +1167,6 @@
       this.qualityMultiplier = 1;
       this.targetFPS = 50;
       this.lowFpsFrames = 0;
-      this.render = this.render.bind(this);
       this.handleResize = this.handleResize.bind(this);
       this.gradientLayer = null;
       this.raysLayer = null;
@@ -1253,48 +1262,6 @@
         cancelAnimationFrame(this.rafId);
         this.rafId = null;
       }
-    }
-    render(currentTime) {
-      const deltaTime = currentTime - this.lastFrameTime;
-      this.lastFrameTime = currentTime;
-      const profiling = this.options.profiling || false;
-      const times = {};
-      if (profiling) times.start = performance.now();
-      this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-      if (profiling) times.clear = performance.now();
-      if (this.gradientLayer && this.gradientLayer.enabled) {
-        this.gradientLayer.render(currentTime, deltaTime);
-      }
-      if (profiling) times.gradient = performance.now();
-      this.gl.enable(this.gl.BLEND);
-      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-      if (this.raysLayer && this.raysLayer.enabled) {
-        this.raysLayer.render(currentTime, deltaTime);
-      }
-      if (profiling) times.rays = performance.now();
-      if (this.bubblesLayer && this.bubblesLayer.enabled) {
-        this.bubblesLayer.render(currentTime, deltaTime);
-      }
-      if (profiling) times.bubbles = performance.now();
-      if (this.planktonLayer && this.planktonLayer.enabled) {
-        this.planktonLayer.render(currentTime, deltaTime);
-      }
-      if (profiling) {
-        times.plankton = performance.now();
-        times.total = times.plankton - times.start;
-        if (!this._lastProfileLog || currentTime - this._lastProfileLog > 2e3) {
-          console.group("WebGL Performance Profile");
-          console.log(`Total Frame: ${times.total.toFixed(2)}ms`);
-          console.log(`Gradient: ${(times.gradient - times.clear).toFixed(2)}ms`);
-          console.log(`Light Rays: ${(times.rays - times.gradient).toFixed(2)}ms`);
-          console.log(`Bubbles: ${(times.bubbles - times.rays).toFixed(2)}ms`);
-          console.log(`Plankton: ${(times.plankton - times.bubbles).toFixed(2)}ms`);
-          console.groupEnd();
-          this._lastProfileLog = currentTime;
-        }
-      }
-      this.gl.disable(this.gl.BLEND);
-      this.updateFPS(currentTime, deltaTime);
     }
     renderFrame(currentTime, deltaTime) {
       this.lastFrameTime = currentTime;
@@ -2587,6 +2554,8 @@
         verticalAmplitude: 3 + Math.random() * 3,
         depthTier: 3,
         image: curiousFishImage,
+        _imageIndex: 3,
+        // fishImages[3] = curiousfish.webp — O(1) lookup in drawShark
         isDying: false
       };
       if (providedSchoolId) baby.schoolId = providedSchoolId;
@@ -5148,7 +5117,7 @@
         ctx.scale(-1, 1);
       }
       ctx.globalAlpha = 1;
-      const imgIndex = this.fishImages.indexOf(sharkImage);
+      const imgIndex = fishData && fishData._imageIndex !== void 0 ? fishData._imageIndex : this.fishImages.indexOf(sharkImage);
       const tier = fishData && fishData.depthTier !== void 0 ? fishData.depthTier : this.height > 0 ? Math.max(0, Math.min(3, Math.floor(y / this.height * 4))) : 3;
       const drawSrc = imgIndex >= 0 && this._imageDepthCache[imgIndex] ? this._imageDepthCache[imgIndex][tier] : sharkImage;
       if (deathRotation > 0) {
@@ -5180,8 +5149,8 @@
     }
     spawnSchool(width, height) {
       const direction = Math.random() > 0.5 ? 1 : -1;
-      const archetype = this._schoolsSpawned % 3;
-      const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : 3;
+      const archetype = this._schoolsSpawned % 4;
+      const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : archetype === 2 ? 2 : 3;
       let baseSize, schoolImage, fishCountBase;
       if (fishType === 0) {
         schoolImage = this.fishImages[0];
@@ -5213,8 +5182,19 @@
       const safeZoneBottom = height - this.config.verticalMarginBottom;
       const safeZoneHeight = safeZoneBottom - safeZoneTop;
       const tierFraction = (3 - depthTier) / 3;
-      const tierCentreY = safeZoneTop + safeZoneHeight * (0.6 + tierFraction * 0.3);
-      const schoolY = tierCentreY + (Math.random() - 0.5) * safeZoneHeight * 0.2;
+      const tierCentreY = safeZoneTop + safeZoneHeight * (0.1 + tierFraction * 0.8);
+      let schoolY = tierCentreY + (Math.random() - 0.5) * safeZoneHeight * 0.2;
+      if (fishType === 2) {
+        const dasLayer = this.manager && this.manager.getLayer("das");
+        if (dasLayer && dasLayer.fish) {
+          const dasY = dasLayer.fish.y;
+          const avoidBand = 90;
+          if (Math.abs(schoolY - dasY) < avoidBand) {
+            const shift = dasY - schoolY > 0 ? -avoidBand * 1.5 : avoidBand * 1.5;
+            schoolY = Math.max(safeZoneTop + 20, Math.min(safeZoneBottom - 20, schoolY + shift));
+          }
+        }
+      }
       const schoolCenterX = direction > 0 ? -schoolSize * 2 : width + schoolSize * 2;
       const schoolWavePhase = Math.random() * Math.PI * 2;
       const schoolWaveSpeed = 8e-4 + Math.random() * 6e-4;
@@ -5240,6 +5220,8 @@
           verticalPeriod: 5e3 + Math.random() * 5e3,
           age: Math.random() * 1e3,
           image: schoolImage,
+          _imageIndex: fishType,
+          // O(1) lookup in drawShark — invariant: fishType 0/1/2/3 maps directly to fishImages[fishType]
           schoolWavePhase,
           schoolWaveSpeed,
           schoolWaveAmplitude,
@@ -5282,6 +5264,8 @@
           verticalPeriod: 4e3 + Math.random() * 3e3,
           age: Math.random() * 500,
           image: schoolImage,
+          _imageIndex: 1,
+          // fishImages[1] = fish2.webp
           schoolWavePhase,
           schoolWaveSpeed,
           schoolWaveAmplitude,
@@ -5400,7 +5384,7 @@
       this._imageLoaded = false;
       this._depthCache = null;
       this._glitch = {
-        cooldown: 2e3 + Math.random() * 3e3,
+        cooldown: 1e3 + Math.random() * 2e3,
         effect: null,
         // 'freeze'|'tear'|'ghost'
         timer: 0,
@@ -5530,7 +5514,7 @@
           g.effect = null;
           g.speedMul = 1;
           g.data = {};
-          g.cooldown = 4e3 + Math.random() * 6e3;
+          g.cooldown = 1e3 + Math.random() * 2e3;
         }
       } else {
         g.cooldown -= dt;

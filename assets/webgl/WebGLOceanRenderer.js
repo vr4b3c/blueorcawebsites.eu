@@ -40,7 +40,6 @@ export class WebGLOceanRenderer {
         this.lowFpsFrames = 0;
         
         // Bind methods
-        this.render = this.render.bind(this);
         this.handleResize = this.handleResize.bind(this);
         
         // Layer objects

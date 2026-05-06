@@ -26,7 +26,7 @@ export class DasFishLayer {
 
         // WordPress glitch state
         this._glitch = {
-            cooldown: 2000 + Math.random() * 3000,
+            cooldown: 1000 + Math.random() * 2000,
             effect:   null,   // 'freeze'|'tear'|'ghost'
             timer:    0,
             speedMul: 1,
@@ -193,7 +193,7 @@ export class DasFishLayer {
                 g.effect   = null;
                 g.speedMul = 1;
                 g.data     = {};
-                g.cooldown = 4000 + Math.random() * 6000;
+                g.cooldown = 1000 + Math.random() * 2000;
             }
         } else {
             g.cooldown -= dt;

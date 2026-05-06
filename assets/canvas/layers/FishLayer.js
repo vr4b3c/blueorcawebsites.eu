@@ -648,9 +648,9 @@ export class FishLayer {
     spawnSchool(width, height) {
         const direction = Math.random() > 0.5 ? 1 : -1;
 
-        // Cycle through 3 archetypes: 0=shark, 1=normal fish (fish2), 2=curiousfish school
-        const archetype = this._schoolsSpawned % 3;
-        const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : 3;
+        // Cycle through 4 archetypes: 0=shark, 1=fish2, 2=fish1 (tiny dense), 3=curiousfish school
+        const archetype = this._schoolsSpawned % 4;
+        const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : archetype === 2 ? 2 : 3;
         let baseSize, schoolImage, fishCountBase;
 
         // shark.png — biggest: 50-120px, small schools
@@ -708,8 +708,21 @@ export class FishLayer {
         const safeZoneBottom = height - this.config.verticalMarginBottom;
         const safeZoneHeight = safeZoneBottom - safeZoneTop;
         const tierFraction = (3 - depthTier) / 3; // 0 for tier3 (top), 1 for tier0 (bottom)
-        const tierCentreY = safeZoneTop + safeZoneHeight * (0.60 + tierFraction * 0.30);
-        const schoolY = tierCentreY + (Math.random() - 0.5) * safeZoneHeight * 0.20;
+        const tierCentreY = safeZoneTop + safeZoneHeight * (0.10 + tierFraction * 0.80);
+        let schoolY = tierCentreY + (Math.random() - 0.5) * safeZoneHeight * 0.20;
+
+        // Das Y-avoidance — only for the smallest/densest school (fishType === 2, fish1.png)
+        if (fishType === 2) {
+            const dasLayer = this.manager && this.manager.getLayer('das');
+            if (dasLayer && dasLayer.fish) {
+                const dasY = dasLayer.fish.y;
+                const avoidBand = 90;
+                if (Math.abs(schoolY - dasY) < avoidBand) {
+                    const shift = dasY - schoolY > 0 ? -avoidBand * 1.5 : avoidBand * 1.5;
+                    schoolY = Math.max(safeZoneTop + 20, Math.min(safeZoneBottom - 20, schoolY + shift));
+                }
+            }
+        }
 
         const schoolCenterX = direction > 0 ? -schoolSize * 2 : width + schoolSize * 2;
 

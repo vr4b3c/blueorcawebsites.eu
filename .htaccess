@@ -23,22 +23,11 @@ RewriteBase /
     Header always set Referrer-Policy "strict-origin-when-cross-origin"
 </IfModule>
 
-# Browser caching
+# DEV: disable all caching
 <IfModule mod_headers.c>
-    # CSS, images, fonts → long-term cache (1 year)
-    <FilesMatch "\.(css|webp|avif|jpg|jpeg|png|gif|ico|woff|woff2|ttf|eot|svg)$">
-        Header always set Cache-Control "public, max-age=31536000, immutable"
-    </FilesMatch>
-
-    # JS → short-term cache (no content hash)
-    <FilesMatch "\.js$">
-        Header always set Cache-Control "public, max-age=360000, must-revalidate"
-    </FilesMatch>
-
-    # HTML → revalidate every hour
-    <FilesMatch "\.html$">
-        Header always set Cache-Control "public, max-age=360000, must-revalidate"
-    </FilesMatch>
+    Header always set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header always set Pragma "no-cache"
+    Header always set Expires "0"
 </IfModule>
 
 
