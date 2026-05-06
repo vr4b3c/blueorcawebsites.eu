@@ -2515,6 +2515,7 @@
     partner.isIndependent = true;
     partner.isBeingAttacked = false;
     partner.passive = true;
+    partner.bornAt = performance.now();
     partner.speed = Math.max(0.4, (partner.speed || 0.6) * 0.8);
     const babySchoolId = `family_${Date.now()}_${Math.floor(Math.random() * 1e5)}`;
     const babyDirection = partner.direction;
@@ -2529,6 +2530,8 @@
   function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options = {}, config) {
     const babyCount = 3 + Math.floor(Math.random() * 3);
     if (!fishLayer) return 0;
+    const MAX_FISH = 150;
+    if (fishLayer.sharks && fishLayer.sharks.length >= MAX_FISH) return 0;
     const curiousFishImage = fishLayer.fishImages && fishLayer.fishImages[3];
     const promoteNewCurious = !!options.promoteNewCurious;
     const providedSchoolId = options.schoolId;
@@ -2556,13 +2559,14 @@
         image: curiousFishImage,
         _imageIndex: 3,
         // fishImages[3] = curiousfish.webp — O(1) lookup in drawShark
-        isDying: false
+        isDying: false,
+        bornAt: performance.now()
+        // for FishLayer lifespan culling
       };
       if (providedSchoolId) baby.schoolId = providedSchoolId;
       if (fishLayer?.sharks) {
         fishLayer.sharks.push(baby);
       }
-      console.log(`Baby fish ${i + 1} spawned in school!`);
     }
     if (promoteNewCurious && config) {
       const index = Math.floor(Math.random() * Math.min(babyCount, fishLayer.sharks.length));
@@ -3534,15 +3538,17 @@
       this.spawnIcon("exclamation");
     }
     updateHearts(deltaTime) {
-      for (let i = this.hearts.length - 1; i >= 0; i--) {
+      let w = 0;
+      for (let i = 0; i < this.hearts.length; i++) {
         const heart = this.hearts[i];
         heart.age += deltaTime;
         heart.x += heart.velocityX;
         heart.y += heart.velocityY;
-        if (heart.age >= heart.maxAge) {
-          this.hearts.splice(i, 1);
+        if (heart.age < heart.maxAge) {
+          this.hearts[w++] = heart;
         }
       }
+      this.hearts.length = w;
     }
     drawTargetingCrosshair(ctx) {
       if (!this.fish) return;
@@ -3785,10 +3791,12 @@
       const FADE_DURATION = 800;
       const GRAVITY = 2e-4;
       const now = Date.now();
+      let writeIdx = 0;
       let anyActive = false;
-      this.skeletons = this.skeletons.filter((sk) => {
+      for (let i = 0; i < this.skeletons.length; i++) {
+        const sk = this.skeletons[i];
         const elapsed = now - sk.startTime;
-        if (elapsed > FALL_DURATION + FADE_DURATION) return false;
+        if (elapsed > FALL_DURATION + FADE_DURATION) continue;
         const dtSk = now - (sk.lastUpdate || now);
         sk.lastUpdate = now;
         sk.vy += GRAVITY * dtSk;
@@ -3807,8 +3815,9 @@
           ctx.restore();
         }
         anyActive = true;
-        return true;
-      });
+        this.skeletons[writeIdx++] = sk;
+      }
+      this.skeletons.length = writeIdx;
       if (!anyActive && this.fish && this.fish.isDying) {
         this.skeletons = [];
         this.spawnFish();
@@ -4656,6 +4665,10 @@
 
   // assets/canvas/layers/FishLayer.js
   var FishLayer = class _FishLayer {
+    static MAX_FISH = 150;
+    // Hard cap on total fish in the array
+    static MAX_PASSIVE_LIFESPAN = 3e5;
+    // ms — passive/independent fish live max 5 min
     // Single source of truth for fish layer configuration
     static DEFAULT_CONFIG = {
       schoolCount: null,
@@ -4773,6 +4786,16 @@
         this.sharks = [];
         this._schoolsSpawned = 0;
       }
+      if (this.sharks.length > _FishLayer.MAX_FISH) {
+        let culled = 0;
+        for (let i = 0; i < this.sharks.length && this.sharks.length - culled > _FishLayer.MAX_FISH; i++) {
+          const s = this.sharks[i];
+          if (s.passive && s.isIndependent && !s.isDying) {
+            s.isDying = true;
+            culled++;
+          }
+        }
+      }
       const curiousFishLayer = this.manager && this.manager.getLayer("curiousFish");
       const targetedFish = curiousFishLayer && curiousFishLayer.targetSchoolFish;
       this._schoolCentroidsCache.clear();
@@ -4868,6 +4891,9 @@
           }
           this.sharks[writeIndex++] = shark;
           continue;
+        }
+        if (shark.passive && shark.isIndependent && shark.bornAt !== void 0 && currentTime - shark.bornAt > _FishLayer.MAX_PASSIVE_LIFESPAN) {
+          shark.isDying = true;
         }
         if (shark.isDancing) {
           shark.age = (shark.age || 0) + deltaTime;

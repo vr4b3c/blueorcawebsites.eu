@@ -1192,11 +1192,17 @@ body.drawer-open {
 }
 
 .ref-thumbs-arrows {
+    position: absolute;
+    top: 0;
+    left: -2rem;
+    right: -2rem;
+    bottom: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.6rem;
-    padding: 0 0.25rem;
+    pointer-events: none;
+    z-index: 10;
+    padding: 0 0.5rem;
 }
 
 .ref-thumbs-viewport {
@@ -1218,21 +1224,17 @@ body.drawer-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    background: rgba(15, 70, 99, 0.75);
-    border: 1px solid rgba(142, 210, 232, 0.25);
+    background: none;
+    border: none;
     color: var(--accent);
     cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
-    padding: 0;
-    border-radius: 0;
-    backdrop-filter: blur(4px);
+    transition: color 0.2s ease, opacity 0.2s ease;
+    padding: 0.4rem;
+    pointer-events: auto;
 }
 
 .ref-thumbs-arrow:hover:not(:disabled) {
-    background: rgba(142, 210, 232, 0.15);
-    border-color: rgba(142, 210, 232, 0.5);
+    color: #fff;
 }
 
 .ref-thumbs-arrow:disabled {
@@ -1270,7 +1272,7 @@ body.drawer-open {
 
 .ref-thumb.active {
     border-color: rgba(142, 210, 232, 1);
-    background: linear-gradient(160deg, rgba(15, 70, 99, 0.5) 0%, rgba(3, 26, 42, 0.7) 100%);
+    background: linear-gradient(160deg, rgba(15, 70, 99, 0.95) 0%, rgba(3, 26, 42, 0.95) 100%);
     box-shadow: none;
 }
 
@@ -1334,13 +1336,9 @@ body.drawer-open {
         width: 62cqi;
     }
 
-    .ref-thumbs-arrows {
-        padding: 0;
-    }
-
-    .ref-thumbs-arrow {
-        width: 34px;
-        height: 34px;
+    .ref-thumbs-arrow svg {
+        width: 28px;
+        height: 28px;
     }
 }
 

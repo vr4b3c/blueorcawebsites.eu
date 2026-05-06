@@ -341,6 +341,7 @@ export function completeMatingDance(fish, partner, width, height, fishLayer, spa
     partner.isIndependent = true;   // FishLayer: skip centroid + pairwise separation
     partner.isBeingAttacked = false;
     partner.passive       = true;
+    partner.bornAt        = performance.now(); // for FishLayer lifespan culling
     partner.speed         = Math.max(0.4, (partner.speed || 0.6) * 0.8);
     // direction is already set correctly by the nuzzle step — do NOT override it
 
@@ -376,6 +377,10 @@ export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options 
     
     if (!fishLayer) return 0;
 
+    // Respect the global fish cap — skip spawn if already at limit
+    const MAX_FISH = 150;
+    if (fishLayer.sharks && fishLayer.sharks.length >= MAX_FISH) return 0;
+
     const curiousFishImage = fishLayer.fishImages && fishLayer.fishImages[3]; // curiousfish.png
     const promoteNewCurious = !!options.promoteNewCurious;
     const providedSchoolId = options.schoolId;
@@ -404,7 +409,8 @@ export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options 
             depthTier: 3,
             image: curiousFishImage,
             _imageIndex: 3, // fishImages[3] = curiousfish.webp — O(1) lookup in drawShark
-            isDying: false
+            isDying: false,
+            bornAt: performance.now() // for FishLayer lifespan culling
         };
 
         // If a schoolId was provided, assign babies to that school so they flock together
@@ -413,7 +419,6 @@ export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options 
         if (fishLayer?.sharks) {
             fishLayer.sharks.push(baby);
         }
-        console.log(`Baby fish ${i + 1} spawned in school!`);
     }
 
     // If promotion requested, promote a random baby to be the new curious fish

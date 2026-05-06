@@ -570,15 +570,17 @@ export class CuriousFishLayer {
     spawnExclamationMark() { this.spawnIcon('exclamation'); }
     
     updateHearts(deltaTime) {
-        for (let i = this.hearts.length - 1; i >= 0; i--) {
+        let w = 0;
+        for (let i = 0; i < this.hearts.length; i++) {
             const heart = this.hearts[i];
             heart.age += deltaTime;
             heart.x += heart.velocityX;
             heart.y += heart.velocityY;
-            if (heart.age >= heart.maxAge) {
-                this.hearts.splice(i, 1);
+            if (heart.age < heart.maxAge) {
+                this.hearts[w++] = heart;
             }
         }
+        this.hearts.length = w;
     }
     
     drawTargetingCrosshair(ctx) {
@@ -859,10 +861,12 @@ export class CuriousFishLayer {
         const FADE_DURATION = 800;   // ms fadeoutu
         const GRAVITY = 0.0002;      // px/ms² underwater gravity
         const now = Date.now();
+        let writeIdx = 0;
         let anyActive = false;
-        this.skeletons = this.skeletons.filter(sk => {
+        for (let i = 0; i < this.skeletons.length; i++) {
+            const sk = this.skeletons[i];
             const elapsed = now - sk.startTime;
-            if (elapsed > FALL_DURATION + FADE_DURATION) return false; // smazat
+            if (elapsed > FALL_DURATION + FADE_DURATION) continue; // smazat
 
             const dtSk = now - (sk.lastUpdate || now);
             sk.lastUpdate = now;
@@ -887,8 +891,9 @@ export class CuriousFishLayer {
                 ctx.restore();
             }
             anyActive = true;
-            return true;
-        });
+            this.skeletons[writeIdx++] = sk;
+        }
+        this.skeletons.length = writeIdx;
         if (!anyActive && this.fish && this.fish.isDying) {
             this.skeletons = [];
             this.spawnFish();

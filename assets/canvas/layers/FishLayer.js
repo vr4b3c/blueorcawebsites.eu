@@ -5,6 +5,9 @@
 import { drawGlow } from '../utils/GlowCache.js';
 
 export class FishLayer {
+    static MAX_FISH = 150;               // Hard cap on total fish in the array
+    static MAX_PASSIVE_LIFESPAN = 300_000; // ms — passive/independent fish live max 5 min
+
     // Single source of truth for fish layer configuration
     static DEFAULT_CONFIG = {
         schoolCount: null,     // null = auto-scale by viewport (1 school per 250 000 px²)
@@ -142,7 +145,19 @@ export class FishLayer {
             this.sharks = [];
             this._schoolsSpawned = 0;
         }
-        
+
+        // Cull oldest passive/independent fish when total count exceeds hard cap
+        if (this.sharks.length > FishLayer.MAX_FISH) {
+            let culled = 0;
+            for (let i = 0; i < this.sharks.length && this.sharks.length - culled > FishLayer.MAX_FISH; i++) {
+                const s = this.sharks[i];
+                if (s.passive && s.isIndependent && !s.isDying) {
+                    s.isDying = true;
+                    culled++;
+                }
+            }
+        }
+
         // Get targeted fish from curious fish layer
         const curiousFishLayer = this.manager && this.manager.getLayer('curiousFish');
         const targetedFish = curiousFishLayer && curiousFishLayer.targetSchoolFish;
@@ -271,6 +286,12 @@ export class FishLayer {
 
                 this.sharks[writeIndex++] = shark;
                 continue;
+            }
+
+            // Natural lifespan: passive post-mating fish fade out after MAX_PASSIVE_LIFESPAN
+            if (shark.passive && shark.isIndependent && shark.bornAt !== undefined &&
+                    currentTime - shark.bornAt > FishLayer.MAX_PASSIVE_LIFESPAN) {
+                shark.isDying = true;
             }
 
             // Dancing partner: MatingScenario controls position — skip all schooling/movement
