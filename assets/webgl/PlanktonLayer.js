@@ -11,6 +11,7 @@ export class PlanktonLayer {
         this.particles = [];
         this.microParticles = [];
         this.qualityMultiplier = 1.0;
+        this._lastOpacity = null;
         
         this.config = {
             swarmCount: 30,
@@ -422,7 +423,12 @@ export class PlanktonLayer {
         gl.uniform2f(locs.resolution, this.width, this.height);
         gl.uniform1f(locs.time, currentTime);
         gl.uniform3f(locs.color, 0.45, 0.78, 0.95);  // světle modrá
-        gl.uniform1f(locs.opacity, 0.45 * this.qualityMultiplier);
+        // Upload opacity only when the value changes (qualityMultiplier rarely changes)
+        const opacity = 0.45 * this.qualityMultiplier;
+        if (this._lastOpacity !== opacity) {
+            gl.uniform1f(locs.opacity, opacity);
+            this._lastOpacity = opacity;
+        }
 
         gl.bindVertexArray(this.vao);
         const particleCount = Math.floor(this.particles.length * this.qualityMultiplier);

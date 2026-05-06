@@ -168,65 +168,6 @@ export class WebGLOceanRenderer {
         }
     }
     
-    render(currentTime) {
-        const deltaTime = currentTime - this.lastFrameTime;
-        this.lastFrameTime = currentTime;
-        
-        const profiling = this.options.profiling || false;
-        const times = {};
-        
-        if (profiling) times.start = performance.now();
-        
-        this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-        
-        if (profiling) times.clear = performance.now();
-        
-        if (this.gradientLayer && this.gradientLayer.enabled) {
-            this.gradientLayer.render(currentTime, deltaTime);
-        }
-
-        if (profiling) times.gradient = performance.now();
-
-        this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
-
-        if (this.raysLayer && this.raysLayer.enabled) {
-            this.raysLayer.render(currentTime, deltaTime);
-        }
-        
-        if (profiling) times.rays = performance.now();
-
-        if (this.bubblesLayer && this.bubblesLayer.enabled) {
-            this.bubblesLayer.render(currentTime, deltaTime);
-        }
-        
-        if (profiling) times.bubbles = performance.now();
-
-        if (this.planktonLayer && this.planktonLayer.enabled) {
-            this.planktonLayer.render(currentTime, deltaTime);
-        }
-        
-        if (profiling) {
-            times.plankton = performance.now();
-            times.total = times.plankton - times.start;
-            
-            if (!this._lastProfileLog || currentTime - this._lastProfileLog > 2000) {
-                console.group('WebGL Performance Profile');
-                console.log(`Total Frame: ${times.total.toFixed(2)}ms`);
-                console.log(`Gradient: ${(times.gradient - times.clear).toFixed(2)}ms`);
-                console.log(`Light Rays: ${(times.rays - times.gradient).toFixed(2)}ms`);
-                console.log(`Bubbles: ${(times.bubbles - times.rays).toFixed(2)}ms`);
-                console.log(`Plankton: ${(times.plankton - times.bubbles).toFixed(2)}ms`);
-                console.groupEnd();
-                this._lastProfileLog = currentTime;
-            }
-        }
-        
-        this.gl.disable(this.gl.BLEND);
-        
-        this.updateFPS(currentTime, deltaTime);
-    }
-    
     renderFrame(currentTime, deltaTime) {
         this.lastFrameTime = currentTime;
         

@@ -598,7 +598,11 @@ export class FishLayer {
         ctx.globalAlpha = 1.0;
 
         // Pick depth-tinted cached image (0=deep/dark … 3=surface/full colour)
-        const imgIndex = this.fishImages.indexOf(sharkImage);
+        // _imageIndex is set at spawn time for O(1) lookup; fall back to indexOf for
+        // fish objects created externally (e.g. before this optimisation was added).
+        const imgIndex = (fishData && fishData._imageIndex !== undefined)
+            ? fishData._imageIndex
+            : this.fishImages.indexOf(sharkImage);
         const tier = (fishData && fishData.depthTier !== undefined) ? fishData.depthTier
             : (this.height > 0 ? Math.max(0, Math.min(3, Math.floor((y / this.height) * 4))) : 3);
         const drawSrc = (imgIndex >= 0 && this._imageDepthCache[imgIndex])
@@ -738,6 +742,7 @@ export class FishLayer {
                 verticalPeriod: 5000 + Math.random() * 5000,
                 age: Math.random() * 1000,
                 image: schoolImage,
+                _imageIndex: fishType, // O(1) lookup in drawShark (fishType === index into fishImages)
                 schoolWavePhase: schoolWavePhase,
                 schoolWaveSpeed: schoolWaveSpeed,
                 schoolWaveAmplitude: schoolWaveAmplitude,
@@ -782,6 +787,7 @@ export class FishLayer {
                 verticalPeriod:  4000 + Math.random() * 3000,
                 age:             Math.random() * 500,
                 image:           schoolImage,
+                _imageIndex:     1, // fishImages[1] = fish2.webp
                 schoolWavePhase,
                 schoolWaveSpeed,
                 schoolWaveAmplitude,

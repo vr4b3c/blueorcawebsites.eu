@@ -187,6 +187,24 @@ export class BubblesLayer {
         this.buffers.age       = allocGPU(maxN * 4);
         this.buffers.swayPeriod = allocGPU(maxN * 4);
         this.buffers.startX    = allocGPU(maxN * 4);
+
+        // VAO records attribute layout once — render() only calls bindVertexArray + draw
+        // (bufferSubData still updates data each frame, but the pointer setup is free)
+        const locs = this.locs;
+        this.vao = gl.createVertexArray();
+        gl.bindVertexArray(this.vao);
+        const bindAttr = (loc, buf, size) => {
+            if (loc < 0) return;
+            gl.enableVertexAttribArray(loc);
+            gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+            gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+        };
+        bindAttr(locs.position,   this.buffers.position,   2);
+        bindAttr(locs.size,       this.buffers.size,       1);
+        bindAttr(locs.age,        this.buffers.age,        1);
+        bindAttr(locs.swayPeriod, this.buffers.swayPeriod, 1);
+        bindAttr(locs.startX,     this.buffers.startX,     1);
+        gl.bindVertexArray(null);
     }
     
     render(currentTime, deltaTime) {
@@ -202,16 +220,22 @@ export class BubblesLayer {
             }
         }
         
+        // In-place update and compaction — no Array.filter() allocation per frame
         const dt = Math.min(deltaTime, 50);
-        this.bubbles = this.bubbles.filter(bubble => {
+        let bWrite = 0;
+        for (let bi = 0; bi < this.bubbles.length; bi++) {
+            const bubble = this.bubbles[bi];
             bubble.y -= bubble.riseSpeed * this.config.riseSpeed;
             bubble.age += dt;
             
             const riseProgress = 1 - (bubble.y / this.height);
             bubble.size = bubble.baseSize * (1 - riseProgress * 0.6);
             
-            return bubble.y + bubble.size >= 0;
-        });
+            if (bubble.y + bubble.size >= 0) {
+                this.bubbles[bWrite++] = bubble;
+            }
+        }
+        this.bubbles.length = bWrite;
         
         const n = Math.min(this.bubbles.length, this.MAX_BUBBLES);
         if (n === 0) return;
@@ -244,23 +268,10 @@ export class BubblesLayer {
         sub(this.buffers.swayPeriod, cpu.swayPeriods, n, 1);
         sub(this.buffers.startX,     cpu.startXs,     n, 1);
 
-        gl.enableVertexAttribArray(locs.position);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
-        gl.vertexAttribPointer(locs.position, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(locs.size);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.size);
-        gl.vertexAttribPointer(locs.size, 1, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(locs.age);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.age);
-        gl.vertexAttribPointer(locs.age, 1, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(locs.swayPeriod);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.swayPeriod);
-        gl.vertexAttribPointer(locs.swayPeriod, 1, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(locs.startX);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.startX);
-        gl.vertexAttribPointer(locs.startX, 1, gl.FLOAT, false, 0, 0);
-
+        // VAO holds all attribute pointers — no per-frame enableVertexAttribArray calls
+        gl.bindVertexArray(this.vao);
         gl.drawArrays(gl.POINTS, 0, n);
+        gl.bindVertexArray(null);
     }
     
     spawnBubble(source) {
@@ -300,6 +311,7 @@ export class BubblesLayer {
     destroy() {
         const gl = this.gl;
         if (this.program) gl.deleteProgram(this.program);
+        if (this.vao) gl.deleteVertexArray(this.vao);
         for (const key in this.buffers) {
             gl.deleteBuffer(this.buffers[key]);
         }

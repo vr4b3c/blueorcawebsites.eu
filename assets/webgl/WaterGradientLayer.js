@@ -111,12 +111,15 @@ export class WaterGradientLayer {
                 float t = pow(v_uv.y, 1.6);
                 vec4 baseColor = mix(u_topColor, u_bottomColor, t);
 
-                // Caustics — visible only in upper portion (near surface), fade to zero at depth
+                // Caustics — visible only in upper portion (near surface), fade to zero at depth.
+                // Early-exit skips the expensive caustics call for deeply-submerged pixels
+                // where the contribution (0.13 * surfaceFade * c) would be below ~1/255.
                 float surfaceFade = smoothstep(0.0, 0.65, v_uv.y); // 0 at bottom, 1 near top
-                float c = caustics(v_uv, u_time);
-                // Warm teal tint matching the surface light colour
-                vec3 causticColor = vec3(0.55, 0.88, 1.0);
-                baseColor.rgb += causticColor * c * 0.13 * surfaceFade;
+                if (surfaceFade > 0.05) {
+                    float c = caustics(v_uv, u_time);
+                    vec3 causticColor = vec3(0.55, 0.88, 1.0);
+                    baseColor.rgb += causticColor * c * 0.13 * surfaceFade;
+                }
             
                 // Dithering to kill banding
                 float grain = random(gl_FragCoord.xy) * 0.015;
