@@ -11,7 +11,11 @@ export class LightRaysLayer {
         // Sub-layer toggles
         this.rayBeamsEnabled = true;
         this.sunGlowEnabled = true;
-        // Pre-allocated typed arrays for uniform uploads — avoids per-frame GC pressure
+        // Pre-allocated typed arrays for uniform uploads — avoids per-frame GC pressure.
+        // Size is fixed at 5 to match the shader's `uniform float u_rays[5]` declaration.
+        // GLSL ES 3.00 requires compile-time constant array sizes, so 5 is the maximum
+        // supported by the highest device tier (DeviceProfile budget: lightRayCount ≤ 5).
+        // u_rayCount uniform tells the shader loop how many entries are actually active.
         this._raysArr     = new Float32Array(5);
         this._swaysArr    = new Float32Array(5);
         this._shimmersArr = new Float32Array(5);

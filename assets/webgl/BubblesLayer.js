@@ -193,17 +193,17 @@ export class BubblesLayer {
         const locs = this.locs;
         this.vao = gl.createVertexArray();
         gl.bindVertexArray(this.vao);
-        const bindAttr = (loc, buf, size) => {
+        const setupVertexAttribute = (loc, buf, size) => {
             if (loc < 0) return;
             gl.enableVertexAttribArray(loc);
             gl.bindBuffer(gl.ARRAY_BUFFER, buf);
             gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
         };
-        bindAttr(locs.position,   this.buffers.position,   2);
-        bindAttr(locs.size,       this.buffers.size,       1);
-        bindAttr(locs.age,        this.buffers.age,        1);
-        bindAttr(locs.swayPeriod, this.buffers.swayPeriod, 1);
-        bindAttr(locs.startX,     this.buffers.startX,     1);
+        setupVertexAttribute(locs.position,   this.buffers.position,   2);
+        setupVertexAttribute(locs.size,       this.buffers.size,       1);
+        setupVertexAttribute(locs.age,        this.buffers.age,        1);
+        setupVertexAttribute(locs.swayPeriod, this.buffers.swayPeriod, 1);
+        setupVertexAttribute(locs.startX,     this.buffers.startX,     1);
         gl.bindVertexArray(null);
     }
     

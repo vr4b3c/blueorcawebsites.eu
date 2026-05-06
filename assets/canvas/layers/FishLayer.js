@@ -742,7 +742,7 @@ export class FishLayer {
                 verticalPeriod: 5000 + Math.random() * 5000,
                 age: Math.random() * 1000,
                 image: schoolImage,
-                _imageIndex: fishType, // O(1) lookup in drawShark (fishType === index into fishImages)
+                _imageIndex: fishType, // O(1) lookup in drawShark — invariant: fishType 0/1/2/3 maps directly to fishImages[fishType]
                 schoolWavePhase: schoolWavePhase,
                 schoolWaveSpeed: schoolWaveSpeed,
                 schoolWaveAmplitude: schoolWaveAmplitude,
