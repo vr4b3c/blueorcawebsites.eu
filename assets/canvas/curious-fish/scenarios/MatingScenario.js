@@ -403,6 +403,7 @@ export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options 
             verticalAmplitude: 3 + Math.random() * 3,
             depthTier: 3,
             image: curiousFishImage,
+            _imageIndex: 3, // fishImages[3] = curiousfish.webp — O(1) lookup in drawShark
             isDying: false
         };
 
