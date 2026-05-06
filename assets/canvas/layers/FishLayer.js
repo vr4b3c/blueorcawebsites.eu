@@ -191,9 +191,9 @@ export class FishLayer {
             ctx.setLineDash([]); // Reset dash
         }
         
-        // Predation: throttled to every 6 frames — O(n²) so no need to run every frame
-        this._predFrame = ((this._predFrame || 0) + 1) % 6;
-        if (this._predFrame === 0) this._doPredation(currentTime);
+        // Predation disabled — sharks behave like regular school fish
+        // this._predFrame = ((this._predFrame || 0) + 1) % 6;
+        // if (this._predFrame === 0) this._doPredation(currentTime);
 
         // Use swap-and-pop for efficient removal (O(1) instead of O(n))
         let writeIndex = 0;
@@ -216,6 +216,14 @@ export class FishLayer {
                                    * Math.cos(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase)
                                  + shark.verticalAmplitude * (2 * Math.PI / shark.verticalPeriod)
                                    * Math.cos(vPhase * Math.PI * 2);
+                    // Cap velocity so bones don't rocket off screen
+                    const MAX_BONE_V = 0.18; // px/ms
+                    const boneSpd = Math.sqrt(shark.boneVX ** 2 + shark.boneVY ** 2);
+                    if (boneSpd > MAX_BONE_V) {
+                        const scale = MAX_BONE_V / boneSpd;
+                        shark.boneVX *= scale;
+                        shark.boneVY *= scale;
+                    }
                     shark.boneStartTime = currentTime;
                     this._spawnBloodCloud(shark.boneX, shark.boneY, shark.size, currentTime);
                 }
@@ -279,12 +287,10 @@ export class FishLayer {
                 continue;
             }
 
-            // Update position (frozen if being attacked)
+            // Update position
             // Capture previous X to detect near-zero net movement later
             const prevX = shark.x;
-            if (!shark.isBeingAttacked) {
-                shark.x += shark.direction * shark.speed;
-            }
+            shark.x += shark.direction * shark.speed;
             // Apply birth burst velocity (decays to zero over ~60 frames)
             if (shark.burstVX !== undefined) {
                 shark.x += shark.burstVX;
@@ -383,44 +389,68 @@ export class FishLayer {
                 shark.baseY += separationY * 0.04;
             }
             
-            // Food attraction - Use squared distance
+            // Food attraction — only food ahead in travel direction, no direction reversal
             if (this.manager && this.manager.foodLayer && this.manager.foodLayer.getParticles().length > 0) {
                 let nearestFood = null;
-                let nearestDistanceSquared = 150 * 150; // Compare squared distances
-                
+                let nearestDistSq = 220 * 220;
+
                 for (const food of this.manager.foodLayer.getParticles()) {
                     if (food.eaten) continue;
-                    
                     const fdx = food.x - shark.x;
                     const fdy = food.y - currentY;
-                    const fdistSquared = fdx * fdx + fdy * fdy;
-                    
-                    const isAhead = (shark.direction > 0 && fdx > 0) || (shark.direction < 0 && fdx < 0);
-                    
-                    if (isAhead && fdistSquared < nearestDistanceSquared) {
-                        nearestDistanceSquared = fdistSquared;
+                    const fdistSq = fdx * fdx + fdy * fdy;
+                    // Only attract to food that is roughly ahead (same half of screen)
+                    const isAhead = (shark.direction > 0 && fdx > -40) || (shark.direction < 0 && fdx < 40);
+                    if (isAhead && fdistSq < nearestDistSq) {
+                        nearestDistSq = fdistSq;
                         nearestFood = food;
                     }
                 }
-                
+
                 if (nearestFood) {
-                    const attractStrength = 0.15;
                     const fdx = nearestFood.x - shark.x;
                     const fdy = nearestFood.y - currentY;
-                    const fdist = Math.sqrt(nearestDistanceSquared); // Calculate from squared distance
-                    
+                    const fdist = Math.sqrt(nearestDistSq);
+
+                    // Gentle Y steering only — no X override (fish keeps swimming naturally)
                     if (fdist > 0) {
-                        shark.x += (fdx / fdist) * attractStrength;
-                        shark.baseY += (fdy / fdist) * attractStrength * 0.2;
+                        shark.baseY += (fdy / fdist) * 0.3;
                     }
-                    
-                    if (nearestDistanceSquared < 15 * 15) { // Compare squared
-                        console.log('🐟 School fish eating! Distance:', fdist.toFixed(2), 'Size before:', shark.size.toFixed(1));
+
+                    // Speed burst when close
+                    if (fdist < 80) {
+                        shark.speed = Math.min(shark.baseSpeed * 2.0, shark.speed + 0.03);
+                    } else {
+                        shark.speed = Math.max(shark.baseSpeed, shark.speed - 0.02);
+                    }
+
+                    // Eat
+                    if (nearestDistSq < 14 * 14) {
                         nearestFood.eaten = true;
-                        // Grow when eating
-                        shark.size += 0.5;
-                        if (shark.size > 80) shark.size = 80; // Max size for school fish
-                        console.log('Size after:', shark.size.toFixed(1));
+                        shark.size = Math.min(80, shark.size + 0.5);
+                        shark.speed = shark.baseSpeed;
+                    }
+                } else {
+                    shark.speed = Math.max(shark.baseSpeed, shark.speed - 0.02);
+                }
+            }
+
+            // Das lure attraction — same gentle pull as food, but toward kill zone
+            const dasLayer = this.manager && this.manager.getLayer('das');
+            if (dasLayer && dasLayer.fish) {
+                const lure = dasLayer._getLurePos(dasLayer.fish);
+                const ldx = lure.x - shark.x;
+                const ldy = lure.y - currentY;
+                const ldistSq = ldx * ldx + ldy * ldy;
+                const LURE_RANGE = 220 * 220;
+                const isAhead = (shark.direction > 0 && ldx > -40) || (shark.direction < 0 && ldx < 40);
+                if (isAhead && ldistSq < LURE_RANGE) {
+                    const ldist = Math.sqrt(ldistSq);
+                    if (ldist > 0) {
+                        shark.baseY += (ldy / ldist) * 0.3;
+                    }
+                    if (ldist < 80) {
+                        shark.speed = Math.min(shark.baseSpeed * 2.0, shark.speed + 0.03);
                     }
                 }
             }
@@ -490,17 +520,17 @@ export class FishLayer {
                 const age = now - p.birth;
                 if (age >= p.life) continue;
 
-                // Gentle drift — damp quickly, no gravity
+                // Very gentle drift — slow water-like damping
                 p.x  += p.vx;
                 p.y  += p.vy;
-                p.vx *= 0.88;
-                p.vy *= 0.88;
+                p.vx *= 0.97;
+                p.vy *= 0.97;
 
-                // Smooth bell-curve alpha: ramp up first 15%, hold, then fade out
+                // Short fade-in (5%), long hold, fade out last 40%
                 const t = age / p.life;
-                const fadeAlpha = t < 0.15 ? t / 0.15
-                                : t < 0.55 ? 1.0
-                                : 1.0 - (t - 0.55) / 0.45;
+                const fadeAlpha = t < 0.05 ? t / 0.05
+                                : t < 0.60 ? 1.0
+                                : 1.0 - (t - 0.60) / 0.40;
 
                 ctx.globalAlpha = p.alpha * fadeAlpha;
                 ctx.fillStyle   = p.color;
@@ -570,7 +600,7 @@ export class FishLayer {
         // Pick depth-tinted cached image (0=deep/dark … 3=surface/full colour)
         const imgIndex = this.fishImages.indexOf(sharkImage);
         const tier = (fishData && fishData.depthTier !== undefined) ? fishData.depthTier
-            : (this.height > 0 ? Math.min(3, Math.floor((y / this.height) * 4)) : 3);
+            : (this.height > 0 ? Math.max(0, Math.min(3, Math.floor((y / this.height) * 4))) : 3);
         const drawSrc = (imgIndex >= 0 && this._imageDepthCache[imgIndex])
             ? this._imageDepthCache[imgIndex][tier]
             : sharkImage;
@@ -674,7 +704,7 @@ export class FishLayer {
         const safeZoneBottom = height - this.config.verticalMarginBottom;
         const safeZoneHeight = safeZoneBottom - safeZoneTop;
         const tierFraction = (3 - depthTier) / 3; // 0 for tier3 (top), 1 for tier0 (bottom)
-        const tierCentreY = safeZoneTop + safeZoneHeight * (tierFraction * 0.75 + 0.125);
+        const tierCentreY = safeZoneTop + safeZoneHeight * (0.60 + tierFraction * 0.30);
         const schoolY = tierCentreY + (Math.random() - 0.5) * safeZoneHeight * 0.20;
 
         const schoolCenterX = direction > 0 ? -schoolSize * 2 : width + schoolSize * 2;
@@ -717,6 +747,50 @@ export class FishLayer {
     }
 
     /**
+     * Spawn a large school from the right side heading left — used for the intro cinematic.
+     * @param {number} width
+     * @param {number} height
+     * @param {number} targetY  - vertical centre for the school (default: canvas mid)
+     */
+    spawnIntroSchool(width, height, targetY) {
+        const direction = 1; // left → right
+        const schoolImage = this.fishImages[1]; // fish2.webp — small, dense
+        const fishCount = 35 + Math.floor(Math.random() * 20);
+        const baseSize  = 16;
+        const schoolSpeed = 1.4;
+        const centreY = targetY ?? height * 0.60;
+        const schoolId = -1; // special intro ID — does NOT touch _schoolsSpawned
+        const schoolWavePhase = Math.random() * Math.PI * 2;
+        const schoolWaveSpeed = 0.0009;
+        const schoolWaveAmplitude = 12;
+
+        for (let i = 0; i < fishCount; i++) {
+            const sz = baseSize * (0.7 + Math.random() * 0.6);
+            const ox = (Math.random() - 0.5) * sz * 7;
+            const oy = (Math.random() - 0.5) * sz * 3;
+            this.sharks.push({
+                x:               -sz * 3 + ox,
+                baseY:           centreY + oy,
+                size:            sz,
+                speed:           schoolSpeed * (0.9 + Math.random() * 0.2),
+                baseSpeed:       schoolSpeed,
+                schoolId:        schoolId,
+                fishType:        1,
+                depthTier:       1,
+                direction:       direction,
+                verticalAmplitude: 3 + Math.random() * 3,
+                verticalPeriod:  4000 + Math.random() * 3000,
+                age:             Math.random() * 500,
+                image:           schoolImage,
+                schoolWavePhase,
+                schoolWaveSpeed,
+                schoolWaveAmplitude,
+                tailPeriod:      260 + Math.random() * 180,
+            });
+        }
+    }
+
+    /**
      * Spawn a blood cloud of soft round particles that gently expand and fade.
      * @param {number} x
      * @param {number} y
@@ -724,36 +798,28 @@ export class FishLayer {
      * @param {number|null} impactAngle - directional bias (null = full circle)
      */
     _spawnBloodBurst(x, y, size, impactAngle = null, spawnTime = 0) {
-        const PALETTE = ['#8b0000','#a80000','#c01010','#6a0000','#b02000'];
+        const PALETTE = ['#8b0000','#a80000','#c01010','#6a0000','#b02000','#cc0000'];
         const now   = spawnTime;
-        const count = Math.max(22, Math.min(55, Math.floor(size * 0.55)));
+        const count = Math.max(30, Math.min(70, Math.floor(size * 0.65)));
 
         for (let i = 0; i < count; i++) {
-            let angle;
-            if (impactAngle !== null) {
-                // Fan within ±80° of impact direction
-                angle = impactAngle + (Math.random() - 0.5) * Math.PI * 1.6;
-            } else {
-                angle = Math.random() * Math.PI * 2;
-            }
+            const angle = impactAngle !== null
+                ? impactAngle + (Math.random() - 0.5) * Math.PI * 1.6
+                : Math.random() * Math.PI * 2;
 
-            // Two tiers: inner dense slow drops + outer fast micro
-            const isOuter = Math.random() < 0.38;
-            const speed   = isOuter ? 1.8 + Math.random() * 4.5
-                                    : 0.4 + Math.random() * 1.8;
-            const r       = isOuter ? size * (0.018 + Math.random() * 0.032)
-                                    : size * (0.038 + Math.random() * 0.085);
-            const life    = isOuter ? 500  + Math.random() * 500
-                                    : 900  + Math.random() * 700;
+            // Slow, drifting particles — small initial speed, large radius
+            const speed  = 0.15 + Math.random() * 0.55;
+            const r      = size * (0.04 + Math.random() * 0.10);
+            const life   = 3500 + Math.random() * 1500; // 3.5 – 5 s
 
             this.bloodParticles.push({
-                x:      x + (Math.random() - 0.5) * size * 0.25,
-                y:      y + (Math.random() - 0.5) * size * 0.15,
+                x:      x + (Math.random() - 0.5) * size * 0.3,
+                y:      y + (Math.random() - 0.5) * size * 0.2,
                 vx:     Math.cos(angle) * speed,
-                vy:     Math.sin(angle) * speed * 0.55,
+                vy:     Math.sin(angle) * speed * 0.6,
                 radius: r,
                 color:  PALETTE[Math.floor(Math.random() * PALETTE.length)],
-                alpha:  0.55 + Math.random() * 0.40,
+                alpha:  0.45 + Math.random() * 0.40,
                 birth:  now,
                 life,
             });
@@ -826,9 +892,5 @@ export class FishLayer {
         }
     }
 
-    destroy() {
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        this.sharks = [];
-    }
 }
 

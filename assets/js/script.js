@@ -1,53 +1,20 @@
 // ===================== REFERENCE THUMB & FILTER =====================
 (function () {
-    var pills = document.querySelectorAll('.filter-pill');
+    var pills  = document.querySelectorAll('.filter-pill');
     var thumbs = document.querySelectorAll('.ref-thumb');
-    var cards = document.querySelectorAll('.ref-card.ref-detail');
+    var cards  = document.querySelectorAll('.ref-card.ref-detail');
 
-    // --- Activate a reference card by data-ref ---
+    // --- Activate a reference card by data-ref (detail panel only) ---
     function activateRef(ref) {
-        thumbs.forEach(function (t) { t.classList.remove('active'); });
         cards.forEach(function (c) { c.classList.remove('active'); });
-
-        var activeThumb = document.querySelector('.ref-thumb[data-ref="' + ref + '"]');
         var activeCard = document.querySelector('.ref-card.ref-detail[data-ref="' + ref + '"]');
-
-        if (activeThumb && !activeThumb.classList.contains('filter-hidden')) {
-            activeThumb.classList.add('active');
-        }
-        if (activeCard) {
-            activeCard.classList.add('active');
-        }
+        if (activeCard) activeCard.classList.add('active');
     }
 
-    // --- Auto-select first visible thumb ---
-    function selectFirstVisible() {
-        var first = document.querySelector('.ref-thumb:not(.filter-hidden)');
-        if (first) {
-            activateRef(first.getAttribute('data-ref'));
-        } else {
-            thumbs.forEach(function (t) { t.classList.remove('active'); });
-            cards.forEach(function (c) { c.classList.remove('active'); });
-        }
-    }
+    // Expose for coverflow module
+    window.__cfActivateRef = activateRef;
 
-    // --- Thumb click ---
-    var detailPanel = document.querySelector('.ref-detail-panel');
-    thumbs.forEach(function (thumb) {
-        thumb.addEventListener('click', function () {
-            var ref = thumb.getAttribute('data-ref');
-            var alreadyActive = thumb.classList.contains('active');
-            if (alreadyActive) {
-                thumb.classList.remove('active');
-                cards.forEach(function (c) { c.classList.remove('active'); });
-                return;
-            }
-            activateRef(ref);
-            if (detailPanel) {
-                detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
-        });
-    });
+    // Thumb click is handled by coverflow IIFE via event delegation
 
     // --- Filter pills ---
     pills.forEach(function (pill) {
@@ -65,13 +32,221 @@
                 }
             });
 
-            // If the currently active thumb is now hidden, switch to first visible
-            var activeThumb = document.querySelector('.ref-thumb.active');
-            if (!activeThumb || activeThumb.classList.contains('filter-hidden')) {
-                selectFirstVisible();
-            }
+            // Signal position update after filter
+            if (window.__posUpdateAfterFilter) window.__posUpdateAfterFilter();
         });
     });
+})();
+
+// ===================== REFERENCE COVERFLOW =====================
+(function () {
+    var viewport = document.querySelector('.ref-thumbs-viewport');
+    var row      = document.querySelector('.ref-thumbs-row');
+    var prevBtn  = document.querySelector('.ref-thumbs-arrow--prev');
+    var nextBtn  = document.querySelector('.ref-thumbs-arrow--next');
+    if (!viewport) return;
+
+    var activeIdx = 0;
+
+    // 3-D config per relative position (clamped to ±3, beyond that hidden)
+    var posCfg = {
+        '-3': { ry:  54, scale: 0.76, overlay: 0.82 },
+        '-2': { ry:  40, scale: 0.86, overlay: 0.62 },
+        '-1': { ry:  28, scale: 0.94, overlay: 0.30 },
+         '0': { ry:   0, scale: 1.00, overlay: 0 },
+         '1': { ry: -28, scale: 0.94, overlay: 0.30 },
+         '2': { ry: -40, scale: 0.86, overlay: 0.62 },
+         '3': { ry: -54, scale: 0.76, overlay: 0.82 },
+    };
+
+    function getVisible() {
+        return Array.from(row.querySelectorAll('.ref-thumb:not(.filter-hidden)'));
+    }
+
+    function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
+    function wrapIdx(i, n) { return ((i % n) + n) % n; }
+
+    function updatePositions() {
+        var thumbs = getVisible();
+        var n = thumbs.length;
+        if (!n) return;
+
+        activeIdx = wrapIdx(activeIdx, n);
+
+        var vw    = window.innerWidth;
+        // Desktop: 1 active + 2 each side = 5 visible; Tablet/Mobile: 1+1=3
+        var range        = vw < 700 ? 1 : 2;
+        var overlapRatio = vw < 700 ? 0.88 : 0.60;
+
+        var cardW = thumbs[0].offsetWidth;
+        var half  = Math.round(cardW / 2);
+        var step  = cardW * overlapRatio;
+        var cardH = thumbs[0].offsetHeight;
+
+        row.style.height = (cardH + 32) + 'px';
+
+        thumbs.forEach(function (t, i) {
+            // Wrapped relative position so the loop appears infinite
+            var rel = i - activeIdx;
+            if (rel >  Math.floor(n / 2)) rel -= n;
+            if (rel < -Math.floor(n / 2)) rel += n;
+
+            var relC = clamp(rel, -2, 2);
+            var cfg  = posCfg[String(relC)];
+            // Mobile: side cards peek with a steeper angle so only the edge is visible
+            if (range === 1 && Math.abs(relC) === 1) {
+                cfg = { ry: relC < 0 ? 46 : -46, scale: 0.78, overlay: 0.65 };
+            }
+            var tx   = rel * step;
+
+            t.style.transition = 'transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94)';
+            t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
+            t.style.opacity    = 1;
+            t.style.zIndex     = 10 - Math.abs(rel);
+            t.style.left       = 'calc(50% - ' + half + 'px)';
+
+            t.style.setProperty('--cf-overlay', String(cfg.overlay));
+
+            t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+        });
+    }
+
+    function setActive(newIdx) {
+        var thumbs = getVisible();
+        var n = thumbs.length;
+        if (!n) return;
+
+        // Infinite loop wrap
+        activeIdx = wrapIdx(newIdx, n);
+
+        thumbs.forEach(function (t, i) {
+            t.classList.toggle('active', i === activeIdx);
+        });
+
+        if (window.__cfActivateRef) {
+            window.__cfActivateRef(thumbs[activeIdx].getAttribute('data-ref'));
+        }
+
+        updatePositions();
+        updateArrows();
+    }
+
+    function updateArrows() {
+        var n = getVisible().length;
+        // Never disable — infinite loop; disable only if ≤1 item
+        if (prevBtn) prevBtn.disabled = n <= 1;
+        if (nextBtn) nextBtn.disabled = n <= 1;
+    }
+
+    // --- Arrow buttons ---
+    if (prevBtn) prevBtn.addEventListener('click', function () { setActive(activeIdx - 1); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { setActive(activeIdx + 1); });
+
+    // --- Click on a thumb ---
+    var moved = false;
+    row.addEventListener('click', function (e) {
+        if (moved) { moved = false; return; }
+        var t = e.target.closest('.ref-thumb');
+        if (!t || t.classList.contains('filter-hidden')) return;
+        var idx = getVisible().indexOf(t);
+        if (idx === -1) return;
+        setActive(idx);
+        var detailPanel = document.querySelector('.ref-detail-panel');
+        if (detailPanel) detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+
+    // --- Mouse drag (swipe gesture changes active card) ---
+    var dragging  = false;
+    var startX    = 0;
+    var THRESHOLD = 55;
+
+    viewport.addEventListener('mousedown', function (e) {
+        if (e.button !== 0) return;
+        dragging = true;
+        startX   = e.clientX;
+        moved    = false;
+        e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', function (e) {
+        if (!dragging) return;
+        if (Math.abs(e.clientX - startX) > 6) moved = true;
+    });
+
+    document.addEventListener('mouseup', function (e) {
+        if (!dragging) return;
+        dragging = false;
+        if (!moved) return;
+        var dx = e.clientX - startX;
+        if      (dx >  THRESHOLD) setActive(activeIdx - 1);
+        else if (dx < -THRESHOLD) setActive(activeIdx + 1);
+    });
+
+    // --- Touch swipe ---
+    var touchStartX = 0;
+    viewport.addEventListener('touchstart', function (e) {
+        touchStartX = e.touches[0].clientX;
+    }, { passive: true });
+
+    viewport.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - touchStartX;
+        if      (dx >  50) setActive(activeIdx - 1);
+        else if (dx < -50) setActive(activeIdx + 1);
+    }, { passive: true });
+
+    // --- Mouse wheel → prev / next (debounced) ---
+    var wheelCooldown = false;
+    viewport.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        if (wheelCooldown) return;
+        var delta = e.deltaX || e.deltaY;
+        if      (delta > 0) setActive(activeIdx + 1);
+        else if (delta < 0) setActive(activeIdx - 1);
+        wheelCooldown = true;
+        setTimeout(function () { wheelCooldown = false; }, 320);
+    }, { passive: false });
+
+    // --- MutationObserver: sync if .active is toggled externally ---
+    var mo = new MutationObserver(function () {
+        var thumbs = getVisible();
+        var ext = thumbs.findIndex(function (t) { return t.classList.contains('active'); });
+        if (ext !== -1 && ext !== activeIdx) {
+            activeIdx = ext;
+            updatePositions();
+            updateArrows();
+        }
+    });
+    row.querySelectorAll('.ref-thumb').forEach(function (t) {
+        mo.observe(t, { attributes: true, attributeFilter: ['class'] });
+    });
+
+    // --- Init ---
+    (function init() {
+        var thumbs = getVisible();
+        if (thumbs.length) {
+            activeIdx = 0;
+            thumbs[0].classList.add('active');
+            if (window.__cfActivateRef) window.__cfActivateRef(thumbs[0].getAttribute('data-ref'));
+        }
+        updatePositions();
+        updateArrows();
+    })();
+
+    // --- After filter: reset to first visible ---
+    window.__posUpdateAfterFilter = function () {
+        row.querySelectorAll('.ref-thumb').forEach(function (t) { t.classList.remove('active'); });
+        activeIdx = 0;
+        var thumbs = getVisible();
+        if (thumbs.length) {
+            thumbs[0].classList.add('active');
+            if (window.__cfActivateRef) window.__cfActivateRef(thumbs[0].getAttribute('data-ref'));
+        }
+        updatePositions();
+        updateArrows();
+    };
+
+    // --- Recalc on resize ---
+    window.addEventListener('resize', function () { updatePositions(); });
 })();
 
 // ===================== MINIMAP =====================

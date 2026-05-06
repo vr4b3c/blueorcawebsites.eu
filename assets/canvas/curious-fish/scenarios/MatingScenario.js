@@ -183,6 +183,14 @@ function _stepDanceChoreography(danceState, fish, partner, deltaTime, currentTim
  */
 export function updateMatingDance(danceState, fish, partner, deltaTime, width, height, updateRotationAndAnimation, spawnHeart, currentTime) {
     if (!partner) return { ...danceState, completed: true };
+    if (partner.isDying) {
+        // Partner killed mid-dance (e.g. by das) — abort cleanly
+        if (partner.isDancing) {
+            partner.isDancing = false;
+            delete partner.flipX;
+        }
+        return { ...danceState, completed: true };
+    }
 
     const partnerY = partner.baseY !== undefined ? partner.baseY : partner.y;
 
@@ -383,6 +391,7 @@ export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options 
             y: 0,
             direction: (typeof providedDirection !== 'undefined') ? providedDirection : (Math.random() > 0.5 ? 1 : -1),
             speed: 0.3 + Math.random() * 0.3,
+            baseSpeed: 0.3 + Math.random() * 0.3,
             size: 20,
             burstVX: Math.cos(burstAngle) * burstSpeed,
             burstVY: Math.sin(burstAngle) * burstSpeed,
@@ -392,6 +401,7 @@ export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options 
             schoolWaveAmplitude: 8 + Math.random() * 4,
             verticalPeriod: 3000 + Math.random() * 2000,
             verticalAmplitude: 3 + Math.random() * 3,
+            depthTier: 3,
             image: curiousFishImage,
             isDying: false
         };

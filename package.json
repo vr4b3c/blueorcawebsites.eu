@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "build": "npx esbuild assets/js/animations.js --bundle --format=iife --minify --outfile=assets/js/dist/animations.js && npx esbuild assets/js/main.js --bundle --format=iife --minify --outfile=assets/js/dist/app.js && npx esbuild assets/css/styles.css --minify --outfile=assets/css/dist/styles.min.css"
+    "build": "npx esbuild assets/js/animations.js --bundle --format=iife --minify --outfile=assets/js/dist/animations.js && npx esbuild assets/js/main.js --bundle --format=iife --minify --outfile=assets/js/dist/app.js && npx esbuild assets/css/styles.css --minify --outfile=assets/css/dist/styles.min.css",
+    "watch": "npx esbuild assets/js/animations.js --bundle --format=iife --outfile=assets/js/dist/animations.js --watch=forever & npx esbuild assets/js/main.js --bundle --format=iife --outfile=assets/js/dist/app.js --watch=forever & npx esbuild assets/css/styles.css --outfile=assets/css/dist/styles.min.css --watch=forever"
   },
   "dependencies": {
     "motion": "^12.38.0",

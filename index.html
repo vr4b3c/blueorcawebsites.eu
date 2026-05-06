@@ -261,31 +261,49 @@
                 <button class="filter-pill" data-filter="multi">Vícestránkové</button>
             </div>
 
-            <div class="ref-thumbs-row">
-                <button class="ref-thumb" data-ref="florian" data-type="multi">
-                    <div class="ref-thumb-img">
-                        <img src="assets/images/reference/florian-partneri-full.webp" alt="Florian &amp; Partneři – náhled" loading="lazy">
+            <div class="ref-thumbs-track">
+                <div class="ref-thumbs-arrows">
+                    <button class="ref-thumbs-arrow ref-thumbs-arrow--prev" aria-label="Předchozí reference" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <button class="ref-thumbs-arrow ref-thumbs-arrow--next" aria-label="Další reference">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
+                </div>
+                <div class="ref-thumbs-viewport">
+                    <div class="ref-thumbs-row">
+                        <button class="ref-thumb" data-ref="florian" data-type="multi">
+                            <div class="ref-thumb-img">
+                                <img src="assets/images/reference/florian-partneri-full.webp" alt="Florian &amp; Partneři – náhled" loading="lazy">
+                            </div>
+                            <span class="ref-thumb-label">florian-partneri.cz</span>
+                        </button>
+                        <button class="ref-thumb" data-ref="leadea" data-type="multi">
+                            <div class="ref-thumb-img">
+                                <img src="assets/images/reference/leadea-full.webp" alt="Leadea – náhled" loading="lazy">
+                            </div>
+                            <span class="ref-thumb-label">leadea.cz</span>
+                        </button>
+                        <button class="ref-thumb" data-ref="galanterie" data-type="single">
+                            <div class="ref-thumb-img">
+                                <img src="assets/images/reference/galanterka-maci-full.webp" alt="Galantérie Máci – náhled" loading="lazy">
+                            </div>
+                            <span class="ref-thumb-label">galanterka-maci.cz</span>
+                        </button>
+                        <button class="ref-thumb" data-ref="milenium" data-type="single">
+                            <div class="ref-thumb-img">
+                                <img src="assets/images/reference/milenium.webp" alt="Milenium – náhled" loading="lazy">
+                            </div>
+                            <span class="ref-thumb-label">milenium.cz</span>
+                        </button>
+                        <button class="ref-thumb" data-ref="blog" data-type="multi">
+                            <div class="ref-thumb-img">
+                                <img src="assets/images/reference/blog.webp" alt="Blue Orca Blog – náhled" loading="lazy">
+                            </div>
+                            <span class="ref-thumb-label">blog.blueorcawebsites.eu</span>
+                        </button>
                     </div>
-                    <span class="ref-thumb-label">florian-partneri.cz</span>
-                </button>
-                <button class="ref-thumb" data-ref="leadea" data-type="multi">
-                    <div class="ref-thumb-img">
-                        <img src="assets/images/reference/leadea-full.webp" alt="Leadea – náhled" loading="lazy">
-                    </div>
-                    <span class="ref-thumb-label">leadea.cz</span>
-                </button>
-                <button class="ref-thumb" data-ref="galanterie" data-type="single">
-                    <div class="ref-thumb-img">
-                        <img src="assets/images/reference/galanterka-maci-full.webp" alt="Galantérie Máci – náhled" loading="lazy">
-                    </div>
-                    <span class="ref-thumb-label">galanterka-maci.cz</span>
-                </button>
-                <button class="ref-thumb" data-ref="milenium" data-type="single">
-                    <div class="ref-thumb-img">
-                        <img src="assets/images/reference/milenium.webp" alt="Milenium – náhled" loading="lazy">
-                    </div>
-                    <span class="ref-thumb-label">milenium.cz</span>
-                </button>
+                </div>
             </div>
 
             <div class="ref-detail-panel">
@@ -331,52 +349,68 @@
                         </div>
 
                         <div class="ref-tech">
-                            <div class="lighthouse-scores">
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">96</span>
+                            <div class="scores-wrap">
+                                <div class="scores-group">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">96</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Přístup­nost</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Postupy</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">SEO</span>
+                                        </div>
                                     </div>
-                                    <span class="score-label">Výkon</span>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu florian-partneri.cz v Google PageSpeed Insights" href="https://pagespeed.web.dev/analysis/https-florian-partneri-cz/ngs4fsi80u?form_factor=desktop" target="_blank" class="external">Google PageSpeed Insights</a></p>
                                 </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
+                                <div class="scores-group scores-group--sv">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item score-speedvitals">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">98</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
                                     </div>
-                                    <span class="score-label">Přístup­nost</span>
-                                </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
-                                    </div>
-                                    <span class="score-label">Best Practices</span>
-                                </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
-                                    </div>
-                                    <span class="score-label">SEO</span>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu florian-partneri.cz ve SpeedVitals" href="https://speedvitals.com/report/florian-partneri.cz/UZ8X8W" target="_blank" rel="noopener noreferrer" class="external">SpeedVitals</a></p>
                                 </div>
                             </div>
-
-                            <div class="ref-tech-header">
-                                <p class="ref-tech-label">Hodnoceno nástrojem <a title="Zobrazit měření kvality kódu webu florian-partneri.cz"  href="https://pagespeed.web.dev/analysis/https-florian-partneri-cz/ngs4fsi80u?form_factor=desktop" target="_blank"  class="external">Google PageSpeed Insights</a></p>
-                            </div>                
                         </div>
 
                         <div class="ref-price">
@@ -427,52 +461,68 @@
                         </div>
 
                         <div class="ref-tech">
-                            <div class="lighthouse-scores">
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
+                            <div class="scores-wrap">
+                                <div class="scores-group">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Přístup­nost</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Postupy</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">SEO</span>
+                                        </div>
                                     </div>
-                                    <span class="score-label">Výkon</span>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu leadea.cz v Google PageSpeed Insights" href="https://pagespeed.web.dev/analysis/https-leadea-cz/4dua9abvnq?hl=cs&form_factor=desktop" target="_blank" class="external">Google PageSpeed Insights</a></p>
                                 </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
+                                <div class="scores-group scores-group--sv">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item score-speedvitals">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
                                     </div>
-                                    <span class="score-label">Přístup­nost</span>
-                                </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
-                                    </div>
-                                    <span class="score-label">Best Practices</span>
-                                </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
-                                    </div>
-                                    <span class="score-label">SEO</span>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu leadea.cz ve SpeedVitals.com" href="https://speedvitals.com/report/leadea.cz/vhvFQl" target="_blank" rel="noopener noreferrer" class="external">SpeedVitals</a></p>
                                 </div>
                             </div>
-                            <div class="ref-tech-header">
-                                <p class="ref-tech-label">Hodnoceno nástrojem <a title="Zobrazit měření kvality kódu webu leadea.cz"  href="https://pagespeed.web.dev/analysis/https-leadea-cz/4dua9abvnq?hl=cs&form_factor=desktop" target="_blank"  class="external">Google PageSpeed Insights</a></p>
-                            </div>                  
-                            
                         </div>
 
                         <div class="ref-price">
@@ -482,6 +532,98 @@
                     </div>
                 </article>
 
+
+                <!-- Blue Orca Blog -->
+                <article class="ref-card ref-detail" data-type="multi" data-ref="blog">
+                    <div class="ref-image-outer">
+                        <div class="ref-image-wrap">
+                            <img src="assets/images/reference/blog.webp" alt="Blue Orca Blog – celý web" loading="lazy">
+                        </div>
+                    </div>
+                    <div class="ref-body">
+
+                        <div class="ref-project">
+                            <div class="ref-header">
+                                <div class="ref-header-top">
+                                    <h3><a href="https://blog.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer" class="external">blog.blueorcawebsites.eu</a></h3>
+                                    <a href="https://blog.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
+                                </div>
+                                <p class="ref-subtitle">Vícestránkový web&ensp;·&ensp;blog</p>
+                                <p class="ref-desc">Náš vlastní web, sloužící k budování našeho vlastního marketingu pomocí článků a sociálních sítí.</p>
+                            </div>
+                        </div>
+
+                        <div class="ref-tech">
+                            <div class="scores-wrap">
+                                <div class="scores-group">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">99</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Přístup­nost</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Postupy</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">SEO</span>
+                                        </div>
+                                    </div>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu blog.blueorcawebsites.eu v Google PageSpeed Insights" href="https://pagespeed.web.dev/analysis/https-blog-blueorcawebsites-eu/166ew1y2kg?form_factor=desktop" target="_blank" class="external">Google PageSpeed Insights</a></p>
+                                </div>
+                                <div class="scores-group scores-group--sv">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item score-speedvitals">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
+                                    </div>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu blog.blueorcawebsites.eu ve SpeedVitals" href="https://speedvitals.com/report/blog.blueorcawebsites.eu/6t295q" target="_blank" rel="noopener noreferrer" class="external">SpeedVitals</a></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ref-price">
+                            <span class="ref-price-label">Web v podobném rozsahu obvykle od</span>
+                            <span class="ref-price-value">14 990 Kč</span>
+                        </div>
+                    </div>
+                </article>
 
                 <!-- Galantérie Máci -->
                 <article class="ref-card ref-detail" data-type="single" data-ref="galanterie">
@@ -520,50 +662,67 @@
                         </div>
 
                         <div class="ref-tech">
-                            <div class="lighthouse-scores">
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
+                            <div class="scores-wrap">
+                                <div class="scores-group">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Přístup­nost</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Postupy</span>
+                                        </div>
+                                        <div class="score-item">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">SEO</span>
+                                        </div>
                                     </div>
-                                    <span class="score-label">Výkon</span>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu galanterka-maci.cz v Google PageSpeed Insights" href="https://pagespeed.web.dev/analysis/https-galanterka-blueorcawebsites-eu/pj32d809e3?hl=cs&form_factor=desktop" target="_blank" class="external">Google PageSpeed Insights</a></p>
                                 </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
+                                <div class="scores-group scores-group--sv">
+                                    <div class="lighthouse-scores">
+                                        <div class="score-item score-speedvitals">
+                                            <div class="score-circle-wrap">
+                                                <svg class="score-ring" viewBox="0 0 100 100">
+                                                    <circle class="score-bg" cx="50" cy="50" r="40"/>
+                                                    <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
+                                                </svg>
+                                                <span class="score-val">100</span>
+                                            </div>
+                                            <span class="score-label">Výkon</span>
+                                        </div>
                                     </div>
-                                    <span class="score-label">Přístup­nost</span>
+                                    <p class="ref-tech-label"><a title="Zobrazit měření kvality kódu webu galanterka-maci.cz ve SpeedVitals" href="https://speedvitals.com/report/galanterka.blueorcawebsites.eu/UQc1HC" target="_blank" rel="noopener noreferrer" class="external">SpeedVitals</a></p>
                                 </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
-                                    </div>
-                                    <span class="score-label">Best Practices</span>
-                                </div>
-                                <div class="score-item">
-                                    <div class="score-circle-wrap">
-                                        <svg class="score-ring" viewBox="0 0 100 100">
-                                            <circle class="score-bg" cx="50" cy="50" r="40"/>
-                                            <circle class="score-fill score-green" cx="50" cy="50" r="40"/>
-                                        </svg>
-                                        <span class="score-val">100</span>
-                                    </div>
-                                    <span class="score-label">SEO</span>
-                                </div>
-                            </div>
-                            <div class="ref-tech-header">
-                                <p class="ref-tech-label">Hodnoceno nástrojem <a title="Zobrazit měření kvality kódu webu galanterka-maci.cz" href="https://pagespeed.web.dev/analysis/https-galanterka-blueorcawebsites-eu/pj32d809e3?hl=cs&form_factor=desktop" target="_blank" class="external">Google PageSpeed Insights</a></p>
                             </div>
                         </div>
 

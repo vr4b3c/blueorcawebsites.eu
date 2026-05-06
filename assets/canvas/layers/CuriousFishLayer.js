@@ -324,16 +324,10 @@ export class CuriousFishLayer {
             if (attackResult.attackComplete) {
                 this.isAttackingSchoolFish = false;
                 this.targetSchoolFish = null;
-                delete this.fish._atkPhase;
-                delete this.fish._atkCircleBaseAngle;
-                delete this.fish._atkCircleStart;
             } else if (attackResult.shouldDie) {
                 // Fish respawned by defeat callback above
                 this.isAttackingSchoolFish = false;
                 this.targetSchoolFish = null;
-                delete this.fish._atkPhase;
-                delete this.fish._atkCircleBaseAngle;
-                delete this.fish._atkCircleStart;
             } else if (attackResult.velocityX !== undefined) {
                 this.fish.velocityX = attackResult.velocityX;
                 this.fish.velocityY = attackResult.velocityY;
@@ -753,7 +747,7 @@ export class CuriousFishLayer {
         // Check if dance completed
         if (result.completed) {
             const fishLayer = this.manager && this.manager.getLayer('fish');
-            if (fishLayer) {
+            if (fishLayer && this.dancePartner && !this.dancePartner.isDying) {
                 completeMatingDance(
                     this.fish,
                     this.dancePartner,
