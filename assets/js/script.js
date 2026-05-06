@@ -5,10 +5,90 @@
     var cards  = document.querySelectorAll('.ref-card.ref-detail');
 
     // --- Activate a reference card by data-ref (detail panel only) ---
-    function activateRef(ref) {
-        cards.forEach(function (c) { c.classList.remove('active'); });
-        var activeCard = document.querySelector('.ref-card.ref-detail[data-ref="' + ref + '"]');
-        if (activeCard) activeCard.classList.add('active');
+    //
+    // DRUM PRISM: one preserve-3d stage holds both cards as geometric faces.
+    //   Front face (current): rotateX(0)     translateZ(r)  r = h/2
+    //   Top face   (new):     rotateX(-90deg) translateZ(r)
+    //   Stage rotates rotateX(+90deg) as ONE rigid body →
+    //     front face folds downward, top face swings to front.
+    //   CSS Z-sort inside preserve-3d context ensures correct per-pixel depth.
+    //
+    var prismLock = null;
+
+    function activateRef(ref, direction) {
+        var panel       = document.querySelector('.ref-detail-panel');
+        var newCard     = document.querySelector('.ref-card.ref-detail[data-ref="' + ref + '"]');
+        var currentCard = document.querySelector('.ref-card.ref-detail.active');
+        if (!newCard || currentCard === newCard) return;
+
+        var dir = direction || 'right';
+
+        if (prismLock) {
+            clearTimeout(prismLock.timer);
+            prismLock.finish();
+            prismLock = null;
+        }
+
+        if (!currentCard) {
+            newCard.classList.add('active');
+            return;
+        }
+
+        var DUR = 620;
+        var h   = currentCard.offsetHeight;
+        var r   = Math.round(h / 2);   // radius: face center is h/2 from drum axis
+
+        // Build the drum stage
+        // translateZ(-r) offsets the whole drum backward so the front face
+        // sits exactly at z=0 (world space) → no perspective magnification at rest.
+        var stage = document.createElement('div');
+        stage.style.cssText =
+            'position:relative;width:100%;height:' + h + 'px;' +
+            'transform-style:preserve-3d;' +
+            'transform:translateZ(-' + r + 'px) rotateX(0deg);';
+
+        panel.style.minHeight = h + 'px';
+        panel.insertBefore(stage, currentCard);
+        stage.appendChild(currentCard);
+        stage.appendChild(newCard);
+
+        // Front face: current card — at stage-local z=+r which maps to world z=0
+        currentCard.classList.remove('active');
+        currentCard.style.cssText =
+            'display:grid;position:absolute;top:0;left:0;width:100%;height:100%;' +
+            'backface-visibility:hidden;' +
+            'transform:rotateX(0deg) translateZ(' + r + 'px);';
+
+        // Side face: new card perpendicular above (next) or below (prev)
+        // sideAngle=+90 → card sticks above stage (comes from top for "next")
+        // sideAngle=-90 → card sticks below stage (comes from bottom for "prev")
+        var sideAngle = dir === 'right' ? 90 : -90;
+        newCard.style.cssText =
+            'display:grid;position:absolute;top:0;left:0;width:100%;height:100%;' +
+            'backface-visibility:hidden;' +
+            'transform:rotateX(' + sideAngle + 'deg) translateZ(' + r + 'px);';
+
+        void stage.offsetWidth; // flush layout before transition
+
+        // Drum rotates opposite to side face angle so new card ends at world z=0
+        var drumAngle = dir === 'right' ? -90 : 90;
+        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.42,0,0.58,1)';
+        stage.style.transform  = 'translateZ(-' + r + 'px) rotateX(' + drumAngle + 'deg)';
+
+        function finish() {
+            panel.insertBefore(currentCard, stage);
+            panel.insertBefore(newCard, currentCard);
+            panel.removeChild(stage);
+            currentCard.style.cssText = '';
+            newCard.classList.add('active');
+            newCard.style.cssText = '';
+            panel.style.minHeight = '';
+        }
+
+        prismLock = {
+            finish: finish,
+            timer: setTimeout(function () { finish(); prismLock = null; }, DUR + 60)
+        };
     }
 
     // Expose for coverflow module
@@ -116,7 +196,12 @@
         var n = thumbs.length;
         if (!n) return;
 
-        // Infinite loop wrap
+        // Determine direction before wrapping
+        var delta = newIdx - activeIdx;
+        if (delta >  Math.floor(n / 2)) delta -= n;
+        if (delta < -Math.floor(n / 2)) delta += n;
+        var dir = delta >= 0 ? 'right' : 'left';
+
         activeIdx = wrapIdx(newIdx, n);
 
         thumbs.forEach(function (t, i) {
@@ -124,7 +209,7 @@
         });
 
         if (window.__cfActivateRef) {
-            window.__cfActivateRef(thumbs[activeIdx].getAttribute('data-ref'));
+            window.__cfActivateRef(thumbs[activeIdx].getAttribute('data-ref'), dir);
         }
 
         updatePositions();
