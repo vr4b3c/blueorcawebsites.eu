@@ -5,14 +5,7 @@
     var cards  = document.querySelectorAll('.ref-card.ref-detail');
 
     // --- Activate a reference card by data-ref (detail panel only) ---
-    //
-    // DRUM PRISM: one preserve-3d stage holds both cards as geometric faces.
-    //   Front face (current): rotateX(0)     translateZ(r)  r = h/2
-    //   Top face   (new):     rotateX(-90deg) translateZ(r)
-    //   Stage rotates rotateX(+90deg) as ONE rigid body →
-    //     front face folds downward, top face swings to front.
-    //   CSS Z-sort inside preserve-3d context ensures correct per-pixel depth.
-    //
+    // DRUM PRISM: preserve-3d stage with front/top faces, rotates as rigid body
     var prismLock = null;
 
     function activateRef(ref, direction) {
@@ -23,6 +16,7 @@
 
         var dir = direction || 'right';
 
+        // Cancel any running animation
         if (prismLock) {
             clearTimeout(prismLock.timer);
             prismLock.finish();
@@ -34,46 +28,46 @@
             return;
         }
 
-        var DUR = 620;
-        var h   = currentCard.offsetHeight;
-        var r   = Math.round(h / 2);   // radius: face center is h/2 from drum axis
+        var DUR    = 700;
+        var mobile = window.innerWidth < 700;
+        var axis   = mobile ? 'Y' : 'X';
+        var h      = currentCard.offsetHeight;
+        var r      = Math.round(mobile ? currentCard.offsetWidth / 2 : h / 2);
 
-        // Build the drum stage
-        // translateZ(-r) offsets the whole drum backward so the front face
-        // sits exactly at z=0 (world space) → no perspective magnification at rest.
+        // Stage with translateZ(-r) offset to keep front face at z=0
         var stage = document.createElement('div');
         stage.style.cssText =
             'position:relative;width:100%;height:' + h + 'px;' +
             'transform-style:preserve-3d;' +
-            'transform:translateZ(-' + r + 'px) rotateX(0deg);';
+            'transform:translateZ(-' + r + 'px) rotate' + axis + '(0deg);';
 
         panel.style.minHeight = h + 'px';
         panel.insertBefore(stage, currentCard);
         stage.appendChild(currentCard);
         stage.appendChild(newCard);
 
-        // Front face: current card — at stage-local z=+r which maps to world z=0
+        // Front face: current card at z=+r (world z=0)
         currentCard.classList.remove('active');
         currentCard.style.cssText =
             'display:grid;position:absolute;top:0;left:0;width:100%;height:100%;' +
             'backface-visibility:hidden;' +
-            'transform:rotateX(0deg) translateZ(' + r + 'px);';
+            'transform:rotate' + axis + '(0deg) translateZ(' + r + 'px);';
 
-        // Side face: new card perpendicular above (next) or below (prev)
-        // sideAngle=+90 → card sticks above stage (comes from top for "next")
-        // sideAngle=-90 → card sticks below stage (comes from bottom for "prev")
-        var sideAngle = dir === 'right' ? 90 : -90;
+        // Side face: new card perpendicular
+        // Y-axis (mobile): right → side=-90, drum=+90  (card comes from right)
+        // X-axis (desktop): right → side=+90, drum=-90  (card comes from above)
+        var sideAngle = mobile ? (dir === 'right' ? -90 : 90) : (dir === 'right' ? 90 : -90);
         newCard.style.cssText =
             'display:grid;position:absolute;top:0;left:0;width:100%;height:100%;' +
             'backface-visibility:hidden;' +
-            'transform:rotateX(' + sideAngle + 'deg) translateZ(' + r + 'px);';
+            'transform:rotate' + axis + '(' + sideAngle + 'deg) translateZ(' + r + 'px);';
 
-        void stage.offsetWidth; // flush layout before transition
+        void stage.offsetWidth; // force layout
 
-        // Drum rotates opposite to side face angle so new card ends at world z=0
-        var drumAngle = dir === 'right' ? -90 : 90;
-        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.42,0,0.58,1)';
-        stage.style.transform  = 'translateZ(-' + r + 'px) rotateX(' + drumAngle + 'deg)';
+        // Rotate drum to bring new face to front
+        var drumAngle = mobile ? (dir === 'right' ? 90 : -90) : (dir === 'right' ? -90 : 90);
+        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
+        stage.style.transform  = 'translateZ(-' + r + 'px) rotate' + axis + '(' + drumAngle + 'deg)';
 
         function finish() {
             panel.insertBefore(currentCard, stage);
@@ -154,7 +148,6 @@
         activeIdx = wrapIdx(activeIdx, n);
 
         var vw    = window.innerWidth;
-        // Desktop: 1 active + 2 each side = 5 visible; Tablet/Mobile: 1+1=3
         var range        = vw < 700 ? 1 : 2;
         var overlapRatio = vw < 700 ? 0.88 : 0.60;
 
@@ -166,20 +159,18 @@
         row.style.height = (cardH + 32) + 'px';
 
         thumbs.forEach(function (t, i) {
-            // Wrapped relative position so the loop appears infinite
             var rel = i - activeIdx;
             if (rel >  Math.floor(n / 2)) rel -= n;
             if (rel < -Math.floor(n / 2)) rel += n;
 
             var relC = clamp(rel, -2, 2);
             var cfg  = posCfg[String(relC)];
-            // Mobile: side cards peek with a steeper angle so only the edge is visible
             if (range === 1 && Math.abs(relC) === 1) {
                 cfg = { ry: relC < 0 ? 46 : -46, scale: 0.78, overlay: 0.65 };
             }
             var tx   = rel * step;
 
-            t.style.transition = 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)';
+            t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
             t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
             t.style.opacity    = 1;
             t.style.zIndex     = 10 - Math.abs(rel);
@@ -332,6 +323,10 @@
 
     // --- Recalc on resize ---
     window.addEventListener('resize', function () { updatePositions(); });
+
+    // --- Mobile navigation helpers ---
+    window.__cfNext = function () { setActive(activeIdx + 1); };
+    window.__cfPrev = function () { setActive(activeIdx - 1); };
 })();
 
 // ===================== MINIMAP =====================
@@ -829,4 +824,20 @@
         requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+})();
+
+// ===================== MOBILE SWIPE (DETAIL PANEL) =====================
+(function () {
+    var panel = document.querySelector('.ref-detail-panel');
+    if (!panel) return;
+    var startX = 0;
+    panel.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX;
+    }, { passive: true });
+    panel.addEventListener('touchend', function (e) {
+        if (window.innerWidth >= 700) return;
+        var dx = e.changedTouches[0].clientX - startX;
+        if      (dx >  50) { if (window.__cfNext) window.__cfNext(); }
+        else if (dx < -50) { if (window.__cfPrev) window.__cfPrev(); }
+    }, { passive: true });
 })();
