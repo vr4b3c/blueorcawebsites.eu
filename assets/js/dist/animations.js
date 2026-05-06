@@ -3031,74 +3031,8 @@
         { duration: 0.4, delay: tf(0.08), ease: [0.33, 1, 0.68, 1] }
       );
     });
-    Nm(".ref-card", function(el) {
-      var img = el.querySelector(".ref-image-wrap");
-      if (img) {
-        bm(
-          img,
-          { scale: [1.04, 1], opacity: [0, 1] },
-          { duration: 0.65, delay: 0.08, ease: [0.16, 1, 0.3, 1] }
-        );
-      }
-      var header = el.querySelector(".ref-header");
-      if (header) {
-        bm(
-          header,
-          { opacity: [0, 1], y: [18, 0] },
-          { duration: 0.5, delay: 0.18, ease: [0.33, 1, 0.68, 1] }
-        );
-      }
-      var rows = el.querySelectorAll(".ref-row");
-      if (rows.length) {
-        bm(
-          rows,
-          { opacity: [0, 1], x: [16, 0] },
-          { duration: 0.4, delay: tf(0.07, { start: 0.28 }), ease: [0.33, 1, 0.68, 1] }
-        );
-      }
-      var tags = el.querySelectorAll(".ref-tag");
-      if (tags.length) {
-        bm(
-          tags,
-          { opacity: [0, 1], scale: [0.75, 1] },
-          { duration: 0.28, delay: tf(0.05, { start: 0.3 }), ease: [0.34, 1.56, 0.64, 1] }
-        );
-      }
-      el.querySelectorAll(".score-fill").forEach(function(circle) {
-        var finalOffset = parseFloat(circle.style.strokeDashoffset);
-        if (!isNaN(finalOffset)) {
-          bm(
-            circle,
-            { strokeDashoffset: [251.327, finalOffset] },
-            { duration: 1.1, delay: 0.42, ease: [0.16, 1, 0.3, 1] }
-          );
-        }
-      });
-      el.querySelectorAll(".score-val").forEach(function(val) {
-        var target = parseInt(val.textContent, 10);
-        if (!isNaN(target)) {
-          val.textContent = "0";
-          countUp(val, target, 1.1, 0.42);
-        }
-      });
-    }, { margin: "0px" });
     Nm(".site-footer", function(el) {
       bm(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: [0.33, 1, 0.68, 1] });
     });
-  }
-  function countUp(el, target, duration, delay) {
-    setTimeout(function() {
-      var start = performance.now();
-      var ms2 = duration * 1e3;
-      function step(now) {
-        var t = Math.min((now - start) / ms2, 1);
-        el.textContent = Math.round(easeOutCubic(t) * target);
-        if (t < 1) requestAnimationFrame(step);
-      }
-      requestAnimationFrame(step);
-    }, delay * 1e3);
-  }
-  function easeOutCubic(t) {
-    return 1 - Math.pow(1 - t, 3);
   }
 })();

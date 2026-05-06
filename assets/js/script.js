@@ -99,7 +99,7 @@
             }
             var tx   = rel * step;
 
-            t.style.transition = 'transform 0.42s cubic-bezier(0.25,0.46,0.45,0.94)';
+            t.style.transition = 'transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94)';
             t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
             t.style.opacity    = 1;
             t.style.zIndex     = 10 - Math.abs(rel);

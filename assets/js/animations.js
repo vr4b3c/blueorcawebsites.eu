@@ -32,68 +32,7 @@ if (!reduced) {
         );
     });
 
-    // ── Reference cards – rich per-element animations ─────────────────────
-    // Card entry (opacity + y) is handled by CSS @keyframes refCardEnter.
-    // inView handles inner-element animations triggered when card first appears.
-    inView('.ref-card', function (el) {
 
-        // 1. Image: subtle scale reveal
-        var img = el.querySelector('.ref-image-wrap');
-        if (img) {
-            animate(img,
-                { scale: [1.04, 1], opacity: [0, 1] },
-                { duration: 0.65, delay: 0.08, ease: [0.16, 1, 0.3, 1] }
-            );
-        }
-
-        // 2. Project title: slide up
-        var header = el.querySelector('.ref-header');
-        if (header) {
-            animate(header,
-                { opacity: [0, 1], y: [18, 0] },
-                { duration: 0.5, delay: 0.18, ease: [0.33, 1, 0.68, 1] }
-            );
-        }
-
-        // 3. Info rows: stagger from right
-        var rows = el.querySelectorAll('.ref-row');
-        if (rows.length) {
-            animate(rows,
-                { opacity: [0, 1], x: [16, 0] },
-                { duration: 0.4, delay: stagger(0.07, { start: 0.28 }), ease: [0.33, 1, 0.68, 1] }
-            );
-        }
-
-        // 4. Feature tags: stagger scale-in
-        var tags = el.querySelectorAll('.ref-tag');
-        if (tags.length) {
-            animate(tags,
-                { opacity: [0, 1], scale: [0.75, 1] },
-                { duration: 0.28, delay: stagger(0.05, { start: 0.3 }), ease: [0.34, 1.56, 0.64, 1] }
-            );
-        }
-
-        // 5. PageSpeed score circles: draw the arc in
-        el.querySelectorAll('.score-fill').forEach(function (circle) {
-            var finalOffset = parseFloat(circle.style.strokeDashoffset);
-            if (!isNaN(finalOffset)) {
-                animate(circle,
-                    { strokeDashoffset: [251.327, finalOffset] },
-                    { duration: 1.1, delay: 0.42, ease: [0.16, 1, 0.3, 1] }
-                );
-            }
-        });
-
-        // 6. Score numbers: count up from 0
-        el.querySelectorAll('.score-val').forEach(function (val) {
-            var target = parseInt(val.textContent, 10);
-            if (!isNaN(target)) {
-                val.textContent = '0';
-                countUp(val, target, 1.1, 0.42);
-            }
-        });
-
-    }, { margin: '0px' });
 
     // Footer
     inView('.site-footer', function (el) {
