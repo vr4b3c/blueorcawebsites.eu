@@ -136,6 +136,13 @@
                     </g>
                 </svg>
             </a>
+            <nav class="site-page-nav" aria-label="Navigace stránkou">
+                <a href="#uvod" class="site-page-nav-link">Úvod</a>
+                <a href="#reference" class="site-page-nav-link">Reference</a>
+                <a href="#vyhody" class="site-page-nav-link">Proč&nbsp;nás</a>
+                <a href="#cenik" class="site-page-nav-link">Ceník</a>
+                <a href="#kontakt" class="site-page-nav-link">Kontakt</a>
+            </nav>
             <nav class="site-header-nav" aria-label="Kontakt">
                 <a href="tel:+420773202288" class="site-header-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -159,6 +166,12 @@
         <button class="mobile-drawer-close" aria-label="Zavřít menu">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
+        <a href="#uvod" class="mobile-drawer-link">Úvod</a>
+        <a href="#reference" class="mobile-drawer-link">Reference</a>
+        <a href="#vyhody" class="mobile-drawer-link">Proč BlueOrca</a>
+        <a href="#cenik" class="mobile-drawer-link">Ceník</a>
+        <a href="#kontakt" class="mobile-drawer-link">Kontakt</a>
+        <hr class="mobile-drawer-sep">
         <a href="tel:+420773202288" class="mobile-drawer-link">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
             +420 773 202 288
@@ -174,7 +187,7 @@
     </nav>
 
     <!-- CTA – CMS BlueOrca -->
-    <section class="cta-cms">
+    <section class="cta-cms" id="uvod">
         <div class="section-inner">
             <div class="cta-slider" data-slider>
                 <!-- Slide 0 -->
@@ -272,7 +285,7 @@
                 </div>
                 <div class="ref-thumbs-viewport">
                     <div class="ref-thumbs-row">
-                        <button class="ref-thumb" data-ref="florian" data-type="multi">
+                        <button class="ref-thumb active" data-ref="florian" data-type="multi">
                             <div class="ref-thumb-img">
                                 <img src="assets/images/reference/florian-partneri-full.webp" alt="Florian &amp; Partneři – náhled" loading="lazy">
                             </div>
@@ -306,10 +319,19 @@
                 </div>
             </div>
 
-            <div class="ref-detail-panel">
+            <div class="ref-mobile-nav" aria-hidden="true">
+                <button class="ref-mobile-nav-btn ref-mobile-nav-btn--prev" aria-label="Předchozí reference">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <button class="ref-mobile-nav-btn ref-mobile-nav-btn--next" aria-label="Další reference">
+                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+            </div>
+
+            <div class="ref-detail-panel no-transition">
 
                 <!-- Florian & Partneři -->
-                <article class="ref-card ref-detail" data-type="multi" data-ref="florian">
+                <article class="ref-card ref-detail active" data-type="multi" data-ref="florian">
                     <div class="ref-image-outer">
                         <div class="ref-image-wrap">
                             <img src="assets/images/reference/florian-partneri-full.webp" alt="Florian & Partneři – celý web" fetchpriority="high">
@@ -330,11 +352,7 @@
                                     <a href="https://florian-partneri.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web • design na míru</p>
-                                <p class="ref-desc">Web pro realitní kancelář zaměřený na získávání nových poptávek a budování důvěry při prodeji i financování nemovitostí. Návštěvníkům dává rychlý přehled nabídky i jasný další krok ke kontaktu.</p>
-                            </div>
-                            <div class="ref-row">
-                                <span class="ref-row-label">Rozsah</span>
-                                <span class="ref-row-value">6 unikátních stránek • Inzeráty nemovitostí • Profily makléřů • Články</span>
+                                <p class="ref-desc">Robustní web pro realitní tým s designem na míru. Součástí je blog s články, seznam makléřů s profily i katalog nemovitostí s filtrováním, napojením na hypoteční kalkulačku a dále kontaktní a poptávkové formuláře.</p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Speciální funkce</span>
@@ -443,11 +461,7 @@
                                     <a href="https://leadea.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web • design na míru</p>
-                                <p class="ref-desc">Web pro firmu s digitálními službami, zaměřený na proměnu návštěvníků v konkrétní poptávky. Klientovi jasně ukazuje nabídku a vede ho k odeslání kontaktu bez zbytečných kroků. Tento web má příběh — <a href="https://blog.blueorcawebsites.eu/blueorca-websites/pripadova-studie-redesign-webu-leadea-cz" target="_blank" rel="noopener noreferrer" class="ref-inline-link">přečtěte si jej →</a></p>
-                            </div>
-                            <div class="ref-row">
-                                <span class="ref-row-label">Rozsah</span>
-                                <span class="ref-row-value">7 unikátních stránek • Blog s články</span>
+                                <p class="ref-desc">Web prošel kompletním redesignem s cílem vytvořit silnější marketingový nástroj pro získávání poptávek. Vzniklo komplexní řešení obsahující blog, landing pages a generátor dárkových poukazů pro marketingové kampaně a sociální sítě. Přečtěte si jeho <a href="https://blog.blueorcawebsites.eu/blueorca-websites/pripadova-studie-redesign-webu-leadea-cz" target="_blank" rel="noopener noreferrer" class="ref-inline-link">případovou studii</a></p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Speciální funkce</span>
@@ -549,7 +563,7 @@
                                     <a href="https://blog.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web&ensp;·&ensp;blog</p>
-                                <p class="ref-desc">Náš vlastní web, sloužící k budování našeho vlastního marketingu pomocí článků a sociálních sítí.</p>
+                                <p class="ref-desc">Náš vlastní jednoduchý, ale vysoce optimalizovaný blog sloužící k budování SEO, marketingu a návštěvnosti hlavního webu. Obsah je navržen tak, aby šel dlouhodobě rozšiřovat — články i kategorie lze vytvářet prakticky neomezeně.</p>
                             </div>
                         </div>
 
@@ -647,15 +661,14 @@
                                     <a href="https://galanterka.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Jednostránkový web&ensp;·&ensp;design na míru&ensp;·&ensp;Archivováno</p>
-                                <p class="ref-desc">Osobitý web pro galanterii vytvořený od základu – logo, design i všechny pluginy na míru. Součástí je Google mapa a interaktivní virtuální prohlídka v barvách webu. Vysoce optimalizovaný a vizuálně ucelený projekt. Bohužel již není aktivní.</p>
+                                <p class="ref-desc">Dnes již archivní web vytvořený pro lokální galanterii, jehož majitelka odešla do důchodu. Součástí byl návrh osobitého loga a designu na míru. Výsledkem byl vizuálně příjemný a osobitý web s útulnou atmosférou.</p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Speciální funkce</span>
                                 <span class="ref-row-value">
                                     <span class="ref-tags">
-                                        <span class="ref-tag ref-tag-nolink">Design dle představ</span>
                                         <span class="ref-tag ref-tag-nolink">Google mapa v barvách webu</span>
-                                        <span class="ref-tag ref-tag-nolink">Virtuální prohlídka</span>
+                                        <span class="ref-tag ref-tag-nolink">Virtuální prohlídka (již nefunkční)</span>
                                     </span>
                                 </span>
                             </div>
@@ -753,7 +766,7 @@
                                     <a href="https://www.milenium.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Jednostránkový web&ensp;·&ensp;design na míru</p>
-                                <p class="ref-desc">Rozkaz zněl jasně — epicná scéna vycházejícího slunce nad rotující zemí. Animované intro, které okamžitě sdělí, kdo firmu tvoří a co ji pohání. Jeden pohled, žádné řeči navíc — a hned víte, komu zavolat.</p>
+                                <p class="ref-desc">Klient měl od začátku jasnou představu — epická scéna vycházejícího slunce nad rotující zeměkoulí. Přenést takovou vizi do funkčního webu byla výzva, ale díky kombinaci designu, animací a 3D renderingu vznikl originální úvod, který okamžitě zaujme a podtrhne technologický charakter firmy.</p>
                             </div>
                             <div class="ref-row">
                                 <span class="ref-row-label">Speciální funkce</span>
@@ -830,7 +843,7 @@
     </main>
 
     <!-- VÝHODY -->
-    <section class="vyhody">
+    <section class="vyhody" id="vyhody">
         <div class="section-inner">
             <h2 class="vyhody-heading">Proč BlueOrca Websites?</h2>
             <div class="vyhody-grid">

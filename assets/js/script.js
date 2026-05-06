@@ -11,17 +11,20 @@
     function activateRef(ref, direction) {
         var panel       = document.querySelector('.ref-detail-panel');
         var newCard     = document.querySelector('.ref-card.ref-detail[data-ref="' + ref + '"]');
-        var currentCard = document.querySelector('.ref-card.ref-detail.active');
-        if (!newCard || currentCard === newCard) return;
+        if (!newCard) return;
 
         var dir = direction || 'right';
 
-        // Cancel any running animation
+        // Cancel any running animation first, so finish() can settle the correct .active card
         if (prismLock) {
             clearTimeout(prismLock.timer);
             prismLock.finish();
             prismLock = null;
         }
+
+        // Query currentCard AFTER finish() has resolved the previous animation state
+        var currentCard = document.querySelector('.ref-card.ref-detail.active');
+        if (currentCard === newCard) return;
 
         if (!currentCard) {
             newCard.classList.add('active');
@@ -34,6 +37,11 @@
         var h      = currentCard.offsetHeight;
         var r      = Math.round(mobile ? currentCard.offsetWidth / 2 : h / 2);
 
+        // Measure new card height before building stage (it has display:none)
+        newCard.style.display = 'grid';
+        var newH = newCard.offsetHeight;
+        newCard.style.display = '';
+
         // Stage with translateZ(-r) offset to keep front face at z=0
         var stage = document.createElement('div');
         stage.style.cssText =
@@ -41,7 +49,6 @@
             'transform-style:preserve-3d;' +
             'transform:translateZ(-' + r + 'px) rotate' + axis + '(0deg);';
 
-        panel.style.minHeight = h + 'px';
         panel.insertBefore(stage, currentCard);
         stage.appendChild(currentCard);
         stage.appendChild(newCard);
@@ -58,16 +65,17 @@
         // X-axis (desktop): right → side=+90, drum=-90  (card comes from above)
         var sideAngle = mobile ? (dir === 'right' ? -90 : 90) : (dir === 'right' ? 90 : -90);
         newCard.style.cssText =
-            'display:grid;position:absolute;top:0;left:0;width:100%;height:100%;' +
+            'display:grid;position:absolute;top:0;left:0;width:100%;height:' + newH + 'px;' +
             'backface-visibility:hidden;' +
             'transform:rotate' + axis + '(' + sideAngle + 'deg) translateZ(' + r + 'px);';
 
         void stage.offsetWidth; // force layout
 
-        // Rotate drum to bring new face to front
+        // Animate height and drum simultaneously
         var drumAngle = mobile ? (dir === 'right' ? 90 : -90) : (dir === 'right' ? -90 : 90);
-        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
+        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1), height ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
         stage.style.transform  = 'translateZ(-' + r + 'px) rotate' + axis + '(' + drumAngle + 'deg)';
+        stage.style.height     = newH + 'px';
 
         function finish() {
             panel.insertBefore(currentCard, stage);
@@ -76,7 +84,6 @@
             currentCard.style.cssText = '';
             newCard.classList.add('active');
             newCard.style.cssText = '';
-            panel.style.minHeight = '';
         }
 
         prismLock = {
@@ -271,11 +278,16 @@
     }, { passive: true });
 
     // --- Mouse wheel → prev / next (debounced) ---
+    // Only intercept horizontal-dominant wheel events (trackpad left/right swipe).
+    // Vertical scroll passes through so the page snap engine can navigate sections.
     var wheelCooldown = false;
     viewport.addEventListener('wheel', function (e) {
+        var absX = Math.abs(e.deltaX);
+        var absY = Math.abs(e.deltaY);
+        if (absY > absX) return; // vertical-dominant → let page snap handle it
         e.preventDefault();
         if (wheelCooldown) return;
-        var delta = e.deltaX || e.deltaY;
+        var delta = e.deltaX;
         if      (delta > 0) setActive(activeIdx + 1);
         else if (delta < 0) setActive(activeIdx - 1);
         wheelCooldown = true;
@@ -299,13 +311,22 @@
     // --- Init ---
     (function init() {
         var thumbs = getVisible();
-        if (thumbs.length) {
-            activeIdx = 0;
+        if (!thumbs.length) return;
+        // Detect pre-rendered active (set in HTML to avoid layout shift)
+        var preActive = thumbs.findIndex(function (t) { return t.classList.contains('active'); });
+        activeIdx = preActive !== -1 ? preActive : 0;
+        if (preActive === -1) {
             thumbs[0].classList.add('active');
             if (window.__cfActivateRef) window.__cfActivateRef(thumbs[0].getAttribute('data-ref'));
         }
         updatePositions();
         updateArrows();
+
+        // Enable panel height transition after initial render
+        var panel = document.querySelector('.ref-detail-panel');
+        if (panel) requestAnimationFrame(function () {
+            requestAnimationFrame(function () { panel.classList.remove('no-transition'); });
+        });
     })();
 
     // --- After filter: reset to first visible ---
@@ -722,6 +743,50 @@
     });
 })();
 
+// ===================== SMOOTH SCROLL FOR ANCHOR LINKS =====================
+(function () {
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            var id = a.getAttribute('href').slice(1);
+            var target = document.getElementById(id);
+            if (!target) return;
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+})();
+
+// ===================== SCROLLSPY =====================
+(function () {
+    var sectionIds = ['uvod', 'reference', 'vyhody', 'cenik', 'kontakt'];
+    var sections = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+    var navLinks = document.querySelectorAll('.site-page-nav-link[href^="#"]');
+    if (!navLinks.length || !sections.length) return;
+
+    var ratios = {};
+
+    function setActive(id) {
+        navLinks.forEach(function (link) {
+            link.classList.toggle('is-active', link.getAttribute('href') === '#' + id);
+        });
+    }
+
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            ratios[entry.target.id] = entry.intersectionRatio;
+        });
+        var best = null;
+        var bestRatio = 0;
+        sections.forEach(function (sec) {
+            var r = ratios[sec.id] || 0;
+            if (r > bestRatio) { bestRatio = r; best = sec.id; }
+        });
+        if (best) setActive(best);
+    }, { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+
+    sections.forEach(function (sec) { observer.observe(sec); });
+})();
+
 // ===================== ORCA DOUBLE-CLICK EASTER EGG =====================
 (function () {
     var logo = document.querySelector('.site-header-logo');
@@ -826,9 +891,15 @@
     requestAnimationFrame(tick);
 })();
 
-// ===================== MOBILE SWIPE (DETAIL PANEL) =====================
+// ===================== MOBILE SWIPE & NAV (DETAIL PANEL) =====================
 (function () {
-    var panel = document.querySelector('.ref-detail-panel');
+    var panel   = document.querySelector('.ref-detail-panel');
+    var prevBtn = document.querySelector('.ref-mobile-nav-btn--prev');
+    var nextBtn = document.querySelector('.ref-mobile-nav-btn--next');
+
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (window.__cfPrev) window.__cfPrev(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (window.__cfNext) window.__cfNext(); });
+
     if (!panel) return;
     var startX = 0;
     panel.addEventListener('touchstart', function (e) {

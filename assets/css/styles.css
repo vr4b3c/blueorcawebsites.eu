@@ -7,6 +7,13 @@
     box-sizing: border-box;
 }
 
+/* Animated border property */
+@property --bp {
+    syntax: '<percentage>';
+    initial-value: 0%;
+    inherits: false;
+}
+
 /* Základní styly */
 :root {
     --bg-primary: #031A2A;
@@ -26,7 +33,28 @@
 }
 
 html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
+    scroll-snap-type: y mandatory;
+    scroll-padding-top: 4.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: #3ca4c5 #031A2A;
+}
+
+/* Themed global scrollbar (Chromium) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #031A2A;
+}
+::-webkit-scrollbar-thumb {
+    background: #3ca4c5;
+    border-radius: 99px;
+    border: 2px solid #031A2A;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #8ed2e8;
 }
 
 a {
@@ -59,7 +87,7 @@ body {
         radial-gradient(ellipse 6%  55% at 70% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
         radial-gradient(ellipse 6%  60% at 87% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
         /* water gradient – dark depth at top, bright surface teal at bottom (pow 1.6 curve approx) */
-        linear-gradient(to bottom, #000a28 0%, #001a42 25%, #00395f 50%, #1f7da5 78%, #3ca4c5 100%);
+        linear-gradient(to top, #000a28 0%, #001a42 25%, #00395f 50%, #1f7da5 78%, #3ca4c5 100%);
 
     background-attachment: fixed;    
     color: var(--text-primary);
@@ -372,8 +400,58 @@ footer {
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
 }
 
+/* ===================== PAGE NAV ===================== */
+.site-page-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
+    margin: 0 auto;
+}
+
+.site-page-nav-link {
+    display: inline-block;
+    padding: 0.3rem 0.65rem;
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 500;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    transition: color 0.2s;
+    position: relative;
+}
+
+.site-page-nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0.65rem;
+    right: 0.65rem;
+    height: 1px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+}
+
+.site-page-nav-link:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.site-page-nav-link:hover::after,
+.site-page-nav-link.is-active::after {
+    transform: scaleX(1);
+}
+
+.site-page-nav-link.is-active {
+    color: var(--accent);
+}
+
 @media (max-width: 900px) {
     /* telefon + email do levého sloupce pod sebou, blog vpravo vedle */
+    .site-page-nav {
+        display: none;
+    }
     .site-header-nav {
         display: grid;
         grid-template-columns: 1fr auto;
@@ -536,6 +614,13 @@ footer {
 .mobile-drawer-link svg {
     flex-shrink: 0;
     opacity: 0.6;
+}
+
+.mobile-drawer-sep {
+    border: none;
+    border-top: 1px solid rgba(142, 210, 232, 0.12);
+    margin: 0.4rem 0;
+    flex-shrink: 0;
 }
 
 /* Zamknutí scrollu při otevřeném draweru */
@@ -993,6 +1078,17 @@ body.drawer-open {
     }
 }
 
+/* ===================== SCROLL SNAP ===================== */
+.cta-cms,
+.references,
+.vyhody,
+.cenik,
+.contact {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    min-height: calc(100svh - 4.5rem);
+}
+
 /* ===================== SEKCE ===================== */
 .references,
 .contact {
@@ -1002,6 +1098,9 @@ body.drawer-open {
 /* ===================== VÝHODY ===================== */
 .vyhody {
     padding: 5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .vyhody-heading {
@@ -1017,7 +1116,7 @@ body.drawer-open {
 .vyhody-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 1.25rem;
+    gap: 2rem;
 }
 
 .vyhody-box {
@@ -1259,21 +1358,72 @@ body.drawer-open {
     padding: 0.5rem 0.5rem 0.75rem;
     cursor: pointer;
     outline: none;
-    /* transition for border/shadow/background; transform & opacity driven by JS */
+    overflow: visible;
+    /* transition for shadow/background; border handled by ::before; transform & opacity driven by JS */
     transition:
-        opacity    0.65s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity      0.65s cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow   0.45s cubic-bezier(0.4, 0, 0.2, 1),
-        background   0.45s cubic-bezier(0.4, 0, 0.2, 1);
+        background   0.45s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.3s ease;
     will-change: transform, opacity;
 }
 
 /* --- 3D position-based rotations (applied via JS inline style) --- */
 
+.ref-thumb:not(.active):hover {
+    border-color: rgba(142, 210, 232, 0.35);
+}
+
 .ref-thumb.active {
-    border-color: rgba(142, 210, 232, 1);
     background: linear-gradient(160deg, rgba(15, 70, 99, 0.95) 0%, rgba(3, 26, 42, 0.95) 100%);
     box-shadow: none;
+}
+
+/* Animated border — conic-gradient travels clockwise around perimeter */
+.ref-thumb::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    padding: 1px;
+    background: conic-gradient(from -90deg, rgba(142, 210, 232, 1) var(--bp), transparent var(--bp));
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    --bp: 0%;
+    opacity: 0;
+    transition: opacity 0.25s ease, --bp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.ref-thumb.active::before {
+    --bp: 100%;
+    opacity: 1;
+    transition: opacity 0s, --bp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Flat downward arrow on the active thumbnail */
+.ref-thumb::after {
+    content: '';
+    position: absolute;
+    bottom: -11px;
+    left: 50%;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top center;
+    width: 0;
+    height: 0;
+    border-left: 18px solid transparent;
+    border-right: 18px solid transparent;
+    border-top: 10px solid rgba(142, 210, 232, 1);
+    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.ref-thumb.active::after {
+    transform: translateX(-50%) scaleY(1);
 }
 
 .ref-thumb-img {
@@ -1356,15 +1506,52 @@ body.drawer-open {
     }
 }
 
+/* ===================== MOBILE REFERENCE NAV ===================== */
+.ref-mobile-nav {
+    display: none;
+}
+
+@media (max-width: 700px) {
+    .ref-mobile-nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+
+    .ref-mobile-nav-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        background: transparent;
+        border: 1px solid rgba(142, 210, 232, 0.35);
+        color: var(--accent);
+        cursor: pointer;
+        padding: 0;
+        transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+    }
+
+    .ref-mobile-nav-btn:hover {
+        color: #fff;
+        border-color: rgba(142, 210, 232, 0.8);
+        background: rgba(142, 210, 232, 0.08);
+    }
+}
+
 /* ===================== DETAIL PANEL ===================== */
 .ref-detail-panel {
     position: relative;
-    /* large perspective = subtle foreshortening during drum rotation */
     perspective: 2000px;
     perspective-origin: center center;
     overflow: visible;
-    /* smooth height transitions when cards have different heights */
     transition: min-height 0.7s linear;
+}
+
+/* Suppress transition on first render until JS removes this class */
+.ref-detail-panel.no-transition {
+    transition: none !important;
 }
 
 /* ===================== REFERENCE KARTY ===================== */
@@ -1400,25 +1587,26 @@ body.drawer-open {
     overflow-x: hidden;
     aspect-ratio: 16 / 9;
     background: linear-gradient(135deg, var(--bg-primary) 0%, var(--accent-dark) 100%);
-    scrollbar-width: none;
-    scrollbar-color: rgba(142, 210, 232, 0.25) transparent;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(60, 164, 197, 0.5) rgba(3, 26, 42, 0.6);
 }
 
 .ref-image-wrap::-webkit-scrollbar {
-    width: 3px;
+    width: 6px;
 }
 
 .ref-image-wrap::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(3, 26, 42, 0.6);
+    border-radius: 99px;
 }
 
 .ref-image-wrap::-webkit-scrollbar-thumb {
-    background: rgba(142, 210, 232, 0.25);
+    background: rgba(60, 164, 197, 0.5);
     border-radius: 99px;
 }
 
 .ref-image-wrap::-webkit-scrollbar-thumb:hover {
-    background: rgba(142, 210, 232, 0.5);
+    background: rgba(142, 210, 232, 0.8);
 }
 
 .ref-image-wrap img {
@@ -1653,12 +1841,30 @@ body.drawer-open {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+}
+
+.ref-header-top h3 {
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .ref-header-top h3 a::after,
 .ref-header-top h3 a:hover::after {
     display: none;
+}
+
+.ref-header-top .btn {
+    flex-shrink: 1;
+    min-width: 0;
+}
+
+@media (max-width: 700px) {
+    .ref-header-top {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+    }
 }
 
 .ref-subtitle {
