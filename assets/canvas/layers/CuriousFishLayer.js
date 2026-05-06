@@ -599,8 +599,7 @@ export class CuriousFishLayer {
             const sharkY = shark.baseY || shark.y;
             const dx = mouseX - shark.x;
             const dy = mouseY - sharkY;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            if (distance < shark.size) {
+            if (dx * dx + dy * dy < shark.size * shark.size) {
                 hoveredFish = shark;
                 break;
             }

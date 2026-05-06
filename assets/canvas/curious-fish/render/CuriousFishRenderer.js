@@ -68,11 +68,26 @@ export function drawFish(ctx, fish, fishImage, config, isAttackingSchoolFish, ta
     
     ctx.restore();
     
-    // Debug visualization
     if (config.showDebug) {
-        ctx.save();
-        const mouthDistance = fish.currentSize * 0.9;
-        const mouthX = fish.x + Math.cos(fish.rotation) * mouthDistance * fish.flipScale;
+        drawFishDebug(ctx, fish, config, isAttackingSchoolFish, targetSchoolFish, width, height);
+    }
+}
+
+/**
+ * Draw debug overlay for the curious fish (hitboxes, FOV cone, zones).
+ * Only called when config.showDebug is true.
+ * @param {CanvasRenderingContext2D} ctx
+ * @param {Object} fish
+ * @param {Object} config
+ * @param {boolean} isAttackingSchoolFish
+ * @param {Object|null} targetSchoolFish
+ * @param {number} width
+ * @param {number} height
+ */
+function drawFishDebug(ctx, fish, config, isAttackingSchoolFish, targetSchoolFish, width, height) {
+    const mouthDistance = fish.currentSize * 0.9;
+    ctx.save();
+    const mouthX = fish.x + Math.cos(fish.rotation) * mouthDistance * fish.flipScale;
         const mouthY = fish.y + Math.sin(fish.rotation) * mouthDistance;
         const mouthRadius = fish.currentSize * 0.3;
         
@@ -176,7 +191,6 @@ export function drawFish(ctx, fish, fishImage, config, isAttackingSchoolFish, ta
         ctx.font = 'bold 14px Arial';
         ctx.textAlign = 'right';
         ctx.fillText('Dead zone (10vh)', width - 10, bottomThreshold - 5);
-    }
 }
 
 /**
@@ -280,8 +294,7 @@ export function drawTargetingCrosshair(ctx, mouseX, mouseY, phaseConfig, canAtta
         const sharkY = shark.baseY || shark.y;
         const dx = canvasMouseX - shark.x;
         const dy = canvasMouseY - sharkY;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        if (distance < shark.size) {
+        if (dx * dx + dy * dy < shark.size * shark.size) {
             hoveredFish = shark;
             break;
         }

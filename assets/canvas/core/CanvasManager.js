@@ -133,123 +133,11 @@ export class CanvasManager {
     }
     
     /**
-     * UNUSED Create play button to activate curious fish layer
-     */
-    _createPlayButton() {
-        // Check if curious fish is already enabled
-        const curiousFishLayer = this.getLayer('curiousFish');
-        if (curiousFishLayer && curiousFishLayer.enabled) {
-            console.log('Curious fish already enabled, skipping play button');
-            return;
-        }
-        
-        // Create button element
-        this.playButton = document.createElement('button');
-        this.playButton.id = 'canvas-play-button';
-        this.playButton.innerHTML = '⯈';
-        this.playButton.style.cssText = `
-            position: fixed;
-            bottom: 100px;
-            left: calc(50% + 0.5rem);
-                transform: translateX(-50%) scale(1);
-                opacity: 0;
-                pointer-events: none;
-            display: flex;
-            align-items: end;
-            justify-content: center;
-            z-index: 10000;
-            width: 120px;
-            height: 120px;
-            font-size: 64px;
-            font-weight: bold;
-            background: transparent;
-            color: white;
-            border: 0px none transparent;
-            border-radius: 50%;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-        `;
-        
-        // Add hover effects (transform effects removed - handled by CSS if needed)
-        this.playButton.addEventListener('mouseenter', () => {
-            // Hover effect placeholder
-        });
-        
-        this.playButton.addEventListener('mouseleave', () => {
-            // Hover exit placeholder
-        });
-        
-        // Add click handler
-        this.playButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.activatePlayMode();
-        });
-        
-        // Add to DOM
-        document.body.appendChild(this.playButton);
-        console.log('Play button created');
-
-            // Reveal play button after initial delay (first 2 seconds hidden)
-            setTimeout(() => {
-                if (!this.playButton) return;
-                this.playButton.style.transition = 'opacity 0.4s ease, transform 0.2s ease';
-                this.playButton.style.opacity = '1';
-                this.playButton.style.pointerEvents = 'auto';
-            }, 1000);
-    }
-    
-    /**
-     * UNUSED Activate play mode (enable curious fish layer)
-     */
-    _activatePlayMode() {
-        const curiousFishLayer = this.getLayer('curiousFish');
-        if (curiousFishLayer) {
-            curiousFishLayer.enabled = true;
-            // Ensure the curious fish lifecycle actually starts (not just enabling the layer)
-            try {
-                if (typeof curiousFishLayer.restartGame === 'function') {
-                    curiousFishLayer.restartGame(this.width || window.innerWidth, this.height || window.innerHeight);
-                } else if (typeof curiousFishLayer.gameState !== 'undefined') {
-                    curiousFishLayer.gameState = 'playing';
-                }
-            } catch (err) {
-                console.warn('Failed to start curiousFish layer via restartGame():', err);
-                try { curiousFishLayer.gameState = 'playing'; } catch (e) {}
-            }
-            console.log('Play mode activated - curious fish enabled');
-            
-            // Animate play button sliding down
-            if (this.playButton) {
-                this.playButton.style.transition = 'all 0.5s ease-out';
-                this.playButton.style.bottom = '-100px';
-                this.playButton.style.opacity = '0';
-                this.playButton.style.pointerEvents = 'none';
-                
-                setTimeout(() => {
-                    if (this.playButton && this.playButton.parentNode) {
-                        this.playButton.style.display = 'none';
-                    }
-                }, 500);
-            }
-            
-            // Enable HUD layer if it exists
-            const hudLayer = this.getLayer('hud');
-            if (hudLayer) {
-                hudLayer.enabled = true;
-                console.log('HUD layer enabled');
-            }
-        } else {
-            console.warn('Curious fish layer not found');
-        }
-    }
-    
-    /**
      * Update canvas size for viewport and device pixel ratio
      */
     updateCanvasSize() {
         const rect = this.canvas.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || this.config.devicePixelRatio || 1;
+        const dpr = Math.min(window.devicePixelRatio || this.config.devicePixelRatio || 1, 2.0);
         
         // Set actual canvas size (device pixels)
         const deviceW = Math.max(1, Math.round(rect.width * dpr));
@@ -494,31 +382,8 @@ export class CanvasManager {
             });
         }
         
-        // Draw performance stats
-        const particleCounts = this.getParticleCounts();
-        this.performanceMonitor.render(this.ctx, this.width, particleCounts);
-        
         this.frameCounter++;
         this.performanceProfiler.endFrame(currentTime);
-    }
-    
-    /**
-     * Get particle counts from all systems
-     * @private
-     * @returns {Object} Object with particle counts
-     */
-    getParticleCounts() {
-        const counts = {
-            food: this.foodLayer.getCount()
-        };
-        // Legacy plankton/bubbles removed — counts not tracked here
-        
-        const fishLayer = this.getLayer('fish');
-        if (fishLayer && fishLayer.sharks) {
-            counts.fish = fishLayer.sharks.length;
-        }
-        
-        return counts;
     }
     
     /**
@@ -565,6 +430,7 @@ export class CanvasManager {
         window.removeEventListener('resize', this.handleResize);
         this.canvas.removeEventListener('click', this.handleClick);
         document.removeEventListener('click', this.handleGlobalClick);
+        document.removeEventListener('touchend', this.handleTouch);
         
         // Destroy all layers
         this.layers.forEach(layer => {
@@ -578,11 +444,6 @@ export class CanvasManager {
         // Remove canvas
         if (this.canvas && this.canvas.parentNode) {
             this.canvas.parentNode.removeChild(this.canvas);
-        }
-        
-        // Remove play button
-        if (this.playButton && this.playButton.parentNode) {
-            this.playButton.parentNode.removeChild(this.playButton);
         }
         
     }

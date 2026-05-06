@@ -126,9 +126,9 @@ export function updateReverse(fish, currentTimestamp, reverseStartTime, mouseX, 
 export function updateRetreat(fish, retreatTargetX, retreatTargetY) {
     const dx = retreatTargetX - fish.x;
     const dy = retreatTargetY - fish.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distSq = dx * dx + dy * dy;
     
-    if (distance < 20) {
+    if (distSq < 400) { // 20 * 20
         return {
             isComplete: true,
             velocityX: 0,
@@ -137,6 +137,7 @@ export function updateRetreat(fish, retreatTargetX, retreatTargetY) {
     }
     
     const retreatSpeed = 3.0;
+    const distance = Math.sqrt(distSq);
     const velocityX = (dx / distance) * retreatSpeed;
     const velocityY = (dy / distance) * retreatSpeed;
     const angleToTarget = Math.atan2(dy, dx);
@@ -184,9 +185,10 @@ export function updateIdleAttack(fish, mouseX, mouseY, currentTimestamp, idleAtt
     
     const dx = mouseX - fish.x;
     const dy = mouseY - fish.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distSq = dx * dx + dy * dy;
+    const nearThreshold = fish.currentSize * FISH_SIZE_FACTORS.NEAR_MOUSE_THRESHOLD;
     
-    if (distance < fish.currentSize * FISH_SIZE_FACTORS.NEAR_MOUSE_THRESHOLD) {
+    if (distSq < nearThreshold * nearThreshold) {
         if (idleAttackCount >= maxIdleAttacks) {
             console.log('Fish tired after 3 attacks, swimming away...');
             return {
@@ -205,6 +207,7 @@ export function updateIdleAttack(fish, mouseX, mouseY, currentTimestamp, idleAtt
     }
     
     const attackSpeed = 7.5;
+    const distance = Math.sqrt(distSq);
     const velocityX = (dx / distance) * attackSpeed;
     const velocityY = (dy / distance) * attackSpeed;
     const angleToMouse = Math.atan2(dy, dx);
@@ -257,10 +260,10 @@ export function updateSchoolFishAttack(fish, targetSchoolFish, fishLayer, onVict
 
     const dx = targetX - fish.x;
     const dy = targetY - fish.y;
-    const distance = Math.sqrt(dx * dx + dy * dy);
+    const distSq = dx * dx + dy * dy;
     const collisionDistance = (fish.currentSize + target.size) * 0.5;
 
-    if (distance < collisionDistance) {
+    if (distSq < collisionDistance * collisionDistance) {
         if (onBlood) onBlood((fish.x + targetX) / 2, (fish.y + targetY) / 2, Math.atan2(dy, dx));
         targetMutations._hitFlashTime = currentTime;
 
@@ -286,6 +289,7 @@ export function updateSchoolFishAttack(fish, targetSchoolFish, fishLayer, onVict
     }
 
     const attackSpeed = 13.0;
+    const distance = Math.sqrt(distSq);
     const velocityX = (dx / distance) * attackSpeed;
     const velocityY = (dy / distance) * attackSpeed;
     const angleToTarget = Math.atan2(dy, dx);

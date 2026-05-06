@@ -149,15 +149,4 @@ export class PerformanceMonitor {
         return this.metrics.fps;
     }
     
-    /**
-     * Draw performance statistics on canvas (DEPRECATED - use DebugPanel instead)
-     * @param {CanvasRenderingContext2D} ctx - Canvas context
-     * @param {number} width - Canvas width
-     * @param {Object} particleCounts - Object with particle counts for each system
-     */
-    render(ctx, width, particleCounts = {}) {
-        // Stats rendering moved to DebugPanel for better UI/UX
-        // This method is kept for backwards compatibility but does nothing
-        return;
-    }
 }

@@ -41,6 +41,8 @@ export class WebGLOceanRenderer {
         
         // Bind methods
         this.handleResize = this.handleResize.bind(this);
+        this.handleContextLost = this.handleContextLost.bind(this);
+        this.handleContextRestored = this.handleContextRestored.bind(this);
         
         // Layer objects
         this.gradientLayer = null;
@@ -74,6 +76,8 @@ export class WebGLOceanRenderer {
         this.initLayers();
         
         window.addEventListener('resize', this.handleResize);
+        this.canvas.addEventListener('webglcontextlost', this.handleContextLost, false);
+        this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored, false);
         
         return this;
     }
@@ -106,6 +110,36 @@ export class WebGLOceanRenderer {
         }
     }
     
+    handleContextLost(e) {
+        e.preventDefault(); // Required to allow contextrestored to fire
+        this.gl = null;
+        console.warn('WebGL context lost — rendering paused until restored');
+    }
+
+    handleContextRestored() {
+        console.log('WebGL context restored — reinitialising');
+        const gl = this.canvas.getContext('webgl2', {
+            alpha: false,
+            antialias: false,
+            depth: false,
+            stencil: false,
+            premultipliedAlpha: false,
+            preserveDrawingBuffer: false,
+            powerPreference: 'high-performance',
+            desynchronized: false
+        });
+        if (!gl) return;
+        this.gl = gl;
+        gl.clearColor(0.02, 0.05, 0.1, 1.0);
+        this.onResize(this.canvas.width, this.canvas.height);
+        // Drop stale layer references and reinitialise from scratch
+        this.gradientLayer = null;
+        this.raysLayer = null;
+        this.bubblesLayer = null;
+        this.planktonLayer = null;
+        this.initLayers();
+    }
+
     handleResize() {
         clearTimeout(this.resizeTimeout);
         
@@ -356,6 +390,8 @@ export class WebGLOceanRenderer {
         if (this.planktonLayer) this.planktonLayer.destroy();
         
         window.removeEventListener('resize', this.handleResize);
+        this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
+        this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
         
         this.gl = null;
     }
