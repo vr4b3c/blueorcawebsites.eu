@@ -466,3 +466,57 @@
         link.addEventListener('click', closeDrawer);
     });
 })();
+
+// ===================== ORCA DOUBLE-CLICK EASTER EGG =====================
+(function () {
+    var logo = document.querySelector('.site-header-logo');
+    if (!logo) return;
+    var hidden = false;
+    var timer = null;
+    var DELAY = 380;
+
+    logo.addEventListener('click', function (e) {
+        if (timer) {
+            // druhý klik — dvojklik detekován
+            clearTimeout(timer);
+            timer = null;
+            e.preventDefault();
+            hidden = !hidden;
+            document.querySelectorAll('body > section, body > main, body > footer').forEach(function (el) {
+                el.style.visibility = hidden ? 'hidden' : '';
+                el.style.opacity    = hidden ? '0'       : '';
+            });
+        } else {
+            // první klik — čekáme na případný druhý
+            timer = setTimeout(function () {
+                timer = null;
+                // jednoduchý klik — naviguj normálně
+                window.location.href = logo.getAttribute('href') || '/';
+            }, DELAY);
+            e.preventDefault();
+        }
+    });
+})();
+
+// ===================== FPS COUNTER =====================
+(function () {
+    var el = document.createElement('div');
+    el.id = 'fps-counter';
+    el.textContent = '-- fps';
+    document.body.appendChild(el);
+
+    var frames = 0;
+    var last = performance.now();
+
+    function tick() {
+        frames++;
+        var now = performance.now();
+        if (now - last >= 500) {
+            el.textContent = Math.round(frames * 1000 / (now - last)) + ' fps';
+            frames = 0;
+            last = now;
+        }
+        requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+})();

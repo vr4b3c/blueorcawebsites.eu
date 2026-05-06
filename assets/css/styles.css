@@ -278,20 +278,12 @@ footer {
 
 /* oceánský shimmer – světelný odraz přejedoucí zleva doprava */
 .btn-primary::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 60%;
-    height: 100%;
     background: linear-gradient(
         105deg,
         transparent 30%,
         rgba(255,255,255,0.28) 50%,
         transparent 70%
     );
-    transition: left 0.5s ease;
-    pointer-events: none;
 }
 
 .btn-primary:hover {
@@ -343,20 +335,12 @@ footer {
 }
 
 .btn-secondary::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -120%;
-    width: 60%;
-    height: 100%;
     background: linear-gradient(
         105deg,
         transparent 30%,
         rgba(255,255,255,0.22) 50%,
         transparent 70%
     );
-    transition: left 0.5s ease;
-    pointer-events: none;
 }
 
 .btn-secondary:hover {
@@ -2261,4 +2245,114 @@ body.drawer-open {
     .ref-card.ref-detail.active {
         animation: none;
     }
+}
+
+/* ===================== ORCA LOGO – SVG fill colours ===================== */
+/* Shared by both the header logo (#orca_logo) and the contact logo (#orca_contact) */
+.color1 { fill: #061824; }
+.color2 { fill: #0b2a3f; }
+.color3 { fill: #0f4a6b; }
+.color4 { fill: #1f7fa6; }
+.color5 { fill: #4fc3dd; }
+.color6 { fill: #bdefff; }
+
+/* ===================== ORCA LOGO – Header animations ===================== */
+#tail {
+    transform-origin: 260px 560px;
+    animation: tailSwim 3.2s ease-in-out infinite;
+}
+#body {
+    transform-origin: 380px 520px;
+    animation: bodySwim 3.2s ease-in-out infinite;
+}
+#fin-left, #fin-right {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: finFlap 3.2s ease-in-out infinite;
+}
+#fin-left  { animation-delay: 0.7s; }
+#fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
+#mouth {
+    transform-box: fill-box;
+    transform-origin: 50% 20%;
+    transform: rotate(0deg);
+    transition: transform 0.35s ease-out;
+}
+#orca_logo:hover #mouth {
+    transform: rotate(10deg) translateY(-2px) translateX(-3px);
+}
+
+/* ===================== ORCA LOGO – Contact animations ===================== */
+#c-tail {
+    transform-origin: 260px 560px;
+    animation: tailSwim 3.2s ease-in-out infinite;
+}
+#c-body {
+    transform-origin: 380px 520px;
+    animation: bodySwim 3.2s ease-in-out infinite;
+}
+#c-fin-left, #c-fin-right {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: finFlap 3.2s ease-in-out infinite;
+}
+#c-fin-left  { animation-delay: 0.7s; }
+#c-fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
+#c-mouth {
+    transform-box: fill-box;
+    transform-origin: 50% 20%;
+    transform: rotate(0deg);
+    transition: transform 0.35s ease-out;
+}
+#orca_contact:hover #c-mouth {
+    transform: rotate(10deg) translateY(-2px) translateX(-3px);
+}
+
+/* ===================== ORCA LOGO – shared keyframes ===================== */
+@keyframes tailSwim {
+    0%   { transform: rotate(0deg); }
+    50%  { transform: rotate(10deg); }
+    100% { transform: rotate(0deg); }
+}
+@keyframes bodySwim {
+    0%   { transform: rotate(0deg); }
+    50%  { transform: rotate(3deg); }
+    100% { transform: rotate(0deg); }
+}
+@keyframes finFlap {
+    0%   { transform: rotate(0deg); }
+    40%  { transform: rotate(-5deg); }
+    70%  { transform: rotate(1deg); }
+    100% { transform: rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+    #tail, #body, #fin-left, #fin-right,
+    #c-tail, #c-body, #c-fin-left, #c-fin-right { animation: none; }
+}
+
+/* ===================== ORCA LOGO – canvas background ===================== */
+#webgl-ocean-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ===================== UTILITY ===================== */
+/* Shared button shimmer – base setup (background set per variant below) */
+.btn-primary::after,
+.btn-secondary::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    transition: left 0.5s ease;
+    pointer-events: none;
 }

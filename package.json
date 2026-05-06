@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "npx esbuild assets/js/animations.js --bundle --format=iife --minify --outfile=assets/js/dist/animations.js && npx esbuild assets/js/main.js --bundle --format=iife --minify --outfile=assets/js/dist/app.js"
+    "build": "npx esbuild assets/js/animations.js --bundle --format=iife --minify --outfile=assets/js/dist/animations.js && npx esbuild assets/js/main.js --bundle --format=iife --minify --outfile=assets/js/dist/app.js && npx esbuild assets/css/styles.css --minify --outfile=assets/css/dist/styles.min.css"
   },
   "dependencies": {
     "motion": "^12.38.0",

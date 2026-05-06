@@ -1,5 +1,13 @@
 import { inView, animate, stagger } from "../js/vendor/motion.js";
 
+// Initialise score circle stroke-dashoffsets before animations run
+document.querySelectorAll('.score-circle-wrap').forEach(function (wrap) {
+    var val = parseInt(wrap.querySelector('.score-val')?.textContent, 10);
+    var fill = wrap.querySelector('.score-fill');
+    if (!fill || isNaN(val)) return;
+    var circumference = 2 * Math.PI * 40; // r=40, viewBox 100×100
+    fill.style.strokeDashoffset = ((1 - val / 100) * circumference).toFixed(3);
+});
 // Respect prefers-reduced-motion
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
