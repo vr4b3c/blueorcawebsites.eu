@@ -59,7 +59,6 @@ export class CanvasManager {
         this.resizeTimeout = null;
         
         // Bind methods
-        this.render = this.render.bind(this);
         this.handleResize = this.handleResize.bind(this);
         this.handleClick = this.handleClick.bind(this);
         this.handleGlobalClick = this.handleGlobalClick.bind(this);
@@ -436,25 +435,9 @@ export class CanvasManager {
     }
     
     /**
-     * Main render loop (legacy - for backward compatibility)
-     * @param {number} currentTime - Current timestamp from requestAnimationFrame
-     */
-    render(currentTime) {
-        if (!this.isRunning) return;
-        
-        // Calculate delta time
-        const deltaTime = currentTime - this.lastTime;
-        this.lastTime = currentTime;
-        
-        // Call new renderFrame method
-        this.renderFrame(currentTime, deltaTime);
-        
-        // Continue animation loop
-        this.animationId = requestAnimationFrame(this.render);
-    }
-    
-    /**
-     * Render frame (called by MasterRenderer or legacy render loop)
+     * Render frame (called by MasterRenderer)
+     * @param {number} currentTime - Current timestamp
+     * @param {number} deltaTime - Time since last frame
      * @param {number} currentTime - Current timestamp
      * @param {number} deltaTime - Time since last frame
      */
@@ -546,7 +529,6 @@ export class CanvasManager {
         
         this.isRunning = true;
         this.lastTime = performance.now();
-        this.animationId = requestAnimationFrame(this.render);
     }
     
     /**
@@ -556,10 +538,6 @@ export class CanvasManager {
         if (!this.isRunning) return;
         
         this.isRunning = false;
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            this.animationId = null;
-        }
     }
     
     /**

@@ -212,7 +212,6 @@ export class PlanktonLayer {
         gl.bindVertexArray(this.microVao);
         const count = Math.floor(this.microParticles.length * this.qualityMultiplier);
         gl.drawArrays(gl.POINTS, 0, count);
-        gl.bindVertexArray(null);
     }
 
     compileShaders() {
@@ -428,7 +427,6 @@ export class PlanktonLayer {
         gl.bindVertexArray(this.vao);
         const particleCount = Math.floor(this.particles.length * this.qualityMultiplier);
         gl.drawArrays(gl.POINTS, 0, particleCount);
-        gl.bindVertexArray(null);
 
         this.renderMicro(currentTime);
     }

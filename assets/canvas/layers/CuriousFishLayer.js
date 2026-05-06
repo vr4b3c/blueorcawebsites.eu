@@ -206,9 +206,12 @@ export class CuriousFishLayer {
                 this.skeletons.push({
                     x: this.fish.x,
                     y: this.fish.y,
+                    vx: (this.fish.velocityX || 0) / 16, // px/ms
+                    vy: (this.fish.velocityY || 0) / 16,
                     flipScale: this.fish.flipScale,
                     size: this.fish.currentSize,
-                    startTime: Date.now()
+                    startTime: Date.now(),
+                    lastUpdate: Date.now()
                 });
                 // Blood cloud at the point of death
                 const fishLayer = this.manager && this.manager.getLayer('fish');
@@ -858,16 +861,21 @@ export class CuriousFishLayer {
     }
 
     drawSkeletons(ctx, height) {
-        const FALL_SPEED = 0.8; // px per frame
         const FALL_DURATION = 3000;  // ms padání
         const FADE_DURATION = 800;   // ms fadeoutu
+        const GRAVITY = 0.0002;      // px/ms² underwater gravity
         const now = Date.now();
         let anyActive = false;
         this.skeletons = this.skeletons.filter(sk => {
             const elapsed = now - sk.startTime;
             if (elapsed > FALL_DURATION + FADE_DURATION) return false; // smazat
 
-            sk.y += FALL_SPEED;
+            const dtSk = now - (sk.lastUpdate || now);
+            sk.lastUpdate = now;
+            sk.vy += GRAVITY * dtSk;
+            sk.vx *= 1 - 0.003 * (dtSk / 16);
+            sk.x += sk.vx * dtSk;
+            sk.y += sk.vy * dtSk;
 
             // Alpha: 1.0 po dobu padání, pak lineárně na 0
             const alpha = elapsed < FALL_DURATION

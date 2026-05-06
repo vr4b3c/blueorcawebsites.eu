@@ -20,6 +20,7 @@ export class FishLayer {
         this.enabled = true;
         this.sharks = [];
         this.bloodParticles = [];
+        this._schoolCentroidsCache = new Map();
         this.mouseX = null;
         this.mouseY = null;
         this.manager = null; // Reference to manager for food particles
@@ -148,7 +149,8 @@ export class FishLayer {
 
         // Pre-compute per-school centroids using wrap-aware (circular) averaging
         // so schools stay coherent even when fish span the screen wrap boundary.
-        const schoolCentroids = new Map();
+        this._schoolCentroidsCache.clear();
+        const schoolCentroids = this._schoolCentroidsCache;
         for (const f of this.sharks) {
             if (f.isDying || typeof f.schoolId === 'undefined') continue;
             const c = schoolCentroids.get(f.schoolId);
@@ -202,24 +204,36 @@ export class FishLayer {
             if (shark.isDying) {
                 // Initialize bone position and start time
                 if (shark.boneY === undefined) {
-                    shark.boneY = shark.baseY;
-                    shark.boneStartTime = Date.now();
-                    this._spawnBloodCloud(shark.x, shark.baseY, shark.size);
+                    // Actual Y at moment of death (match drawn position)
+                    const swOff  = Math.sin(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase) * shark.schoolWaveAmplitude;
+                    const vPhase = (shark.age / shark.verticalPeriod) % 1;
+                    const vOff   = Math.sin(vPhase * Math.PI * 2) * shark.verticalAmplitude;
+                    shark.boneX  = shark.x;
+                    shark.boneY  = shark.baseY + swOff + vOff;
+                    // Inherit velocity at death (speed is px/frame → /16 = px/ms)
+                    shark.boneVX = shark.direction * shark.speed / 16;
+                    shark.boneVY = shark.schoolWaveAmplitude * shark.schoolWaveSpeed
+                                   * Math.cos(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase)
+                                 + shark.verticalAmplitude * (2 * Math.PI / shark.verticalPeriod)
+                                   * Math.cos(vPhase * Math.PI * 2);
+                    shark.boneStartTime = currentTime;
+                    this._spawnBloodCloud(shark.boneX, shark.boneY, shark.size, currentTime);
                 }
 
                 const FALL_DURATION = 3000;  // ms padání
                 const FADE_DURATION = 800;   // ms fadeoutu
-                const elapsed = Date.now() - shark.boneStartTime;
+                const elapsed = currentTime - shark.boneStartTime;
 
                 // Remove after full fadeout
                 if (elapsed > FALL_DURATION + FADE_DURATION) continue;
 
-                const boneFallSpeed = 0.03; // px per ms (~30 px/s)
-                if (typeof deltaTime === 'number') {
-                    shark.boneY += boneFallSpeed * deltaTime;
-                } else {
-                    shark.boneY += boneFallSpeed * 16;
-                }
+                // Ballistic physics: inherited velocity + gentle underwater gravity
+                const dt2 = typeof deltaTime === 'number' ? deltaTime : 16;
+                const GRAVITY = 0.00012; // px/ms²
+                shark.boneVY += GRAVITY * dt2;
+                shark.boneVX *= 1 - 0.003 * (dt2 / 16); // water resistance
+                shark.boneX  += shark.boneVX * dt2;
+                shark.boneY  += shark.boneVY * dt2;
 
                 const alpha = elapsed < FALL_DURATION
                     ? 1.0
@@ -232,7 +246,7 @@ export class FishLayer {
                     try {
                         const boneW = shark.size * 1.33;
                         const boneH = boneW * (this.boneImage.height / this.boneImage.width) || shark.size;
-                        ctx.translate(shark.x, shark.boneY);
+                        ctx.translate(shark.boneX, shark.boneY);
                         if (shark.direction < 0) ctx.scale(-1, 1);
                         ctx.drawImage(this.boneImage, -boneW / 2, -boneH / 2, boneW, boneH);
                     } catch (e) { /* ignore */ }
@@ -242,7 +256,7 @@ export class FishLayer {
                     ctx.globalAlpha = alpha;
                     ctx.fillStyle = 'rgba(220,220,220,0.95)';
                     ctx.beginPath();
-                    ctx.ellipse(shark.x, shark.boneY, shark.size, shark.size * 0.4, 0, 0, Math.PI * 2);
+                    ctx.ellipse(shark.boneX, shark.boneY, shark.size, shark.size * 0.4, 0, 0, Math.PI * 2);
                     ctx.fill();
                     ctx.restore();
                 }
@@ -347,13 +361,13 @@ export class FishLayer {
                     }
                 }
 
-                // Pairwise separation — only same school, max 10 checks
+                // Pairwise separation — only same school, max 5 checks
                 let separationX = 0;
                 let separationY = 0;
                 let sepChecks = 0;
                 for (const other of this.sharks) {
                     if (other === shark || other.isDying) continue;
-                    if (sepChecks++ >= 10) break;
+                    if (sepChecks++ >= 5) break;
                     if (shark.schoolId !== other.schoolId) continue;
                     const odx = shark.x - other.x;
                     const ody = shark.baseY - other.baseY;
@@ -468,7 +482,7 @@ export class FishLayer {
 
         // ── Blood particle system ──────────────────────────────────────────────
         if (this.bloodParticles.length > 0) {
-            const now = Date.now();
+            const now = currentTime;
             let bpWrite = 0;
             ctx.save();
             for (let i = 0; i < this.bloodParticles.length; i++) {
@@ -709,9 +723,9 @@ export class FishLayer {
      * @param {number} size           - fish size, scales count and radius
      * @param {number|null} impactAngle - directional bias (null = full circle)
      */
-    _spawnBloodBurst(x, y, size, impactAngle = null) {
+    _spawnBloodBurst(x, y, size, impactAngle = null, spawnTime = 0) {
         const PALETTE = ['#8b0000','#a80000','#c01010','#6a0000','#b02000'];
-        const now   = Date.now();
+        const now   = spawnTime;
         const count = Math.max(22, Math.min(55, Math.floor(size * 0.55)));
 
         for (let i = 0; i < count; i++) {
@@ -747,8 +761,8 @@ export class FishLayer {
     }
 
     /** Alias used by the dying-fish path (purely radial, no impact angle). */
-    _spawnBloodCloud(x, y, size) {
-        this._spawnBloodBurst(x, y, size, null);
+    _spawnBloodCloud(x, y, size, spawnTime = 0) {
+        this._spawnBloodBurst(x, y, size, null, spawnTime);
     }
 
     /**

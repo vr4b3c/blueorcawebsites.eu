@@ -498,6 +498,56 @@
     });
 })();
 
+// ===================== HEADER SCROLL BEHAVIOUR =====================
+(function () {
+    var header = document.querySelector('.site-header');
+    if (!header) return;
+
+    var headerH = header.offsetHeight;
+    var offset = 0;    // translateY in px: 0 = fully visible, -headerH = fully hidden
+    var lastY = window.scrollY;
+    var snapTimer = null;
+
+    function commit(newOffset, animated) {
+        offset = Math.max(-headerH, Math.min(0, newOffset));
+        header.style.transition = animated ? 'transform 0.22s ease' : 'none';
+        header.style.transform  = offset === 0 ? '' : 'translateY(' + offset + 'px)';
+    }
+
+    function scheduleSnap() {
+        clearTimeout(snapTimer);
+        snapTimer = setTimeout(function () {
+            if (offset < -(headerH * 0.51)) {
+                commit(-headerH, true);   // snap fully hidden
+            } else {
+                commit(0, true);          // snap fully visible
+            }
+        }, 200);
+    }
+
+    window.addEventListener('scroll', function () {
+        var y = window.scrollY;
+        var delta = y - lastY;
+        lastY = y;
+
+        if (y <= 0) {
+            clearTimeout(snapTimer);
+            commit(0, false);
+            header.classList.add('is-top');
+            return;
+        }
+        header.classList.remove('is-top');
+
+        commit(offset - delta, false);
+        scheduleSnap();
+    }, { passive: true });
+
+    // Initial state
+    if (window.scrollY <= 0) {
+        header.classList.add('is-top');
+    }
+})();
+
 // ===================== FPS COUNTER =====================
 (function () {
     var el = document.createElement('div');

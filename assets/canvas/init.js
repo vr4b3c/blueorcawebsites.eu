@@ -10,7 +10,8 @@
 
 import { 
     createCanvasBackground,
-    FishLayer
+    FishLayer,
+    DasFishLayer
 } from './index.js';
 
 import { MasterRenderer } from '../core/MasterRenderer.js';
@@ -57,6 +58,9 @@ export function initCanvasBackground() {
 
     const fishLayer = new FishLayer(manager.config.fishConfig || {});
     manager.addLayer('fish', fishLayer);
+
+    const dasFishLayer = new DasFishLayer();
+    manager.addLayer('das', dasFishLayer);
 
     // Create MasterRenderer to coordinate both WebGL and Canvas rendering.
     // canvas2dFPS is device-tier-aware — lower values on weak devices reduce

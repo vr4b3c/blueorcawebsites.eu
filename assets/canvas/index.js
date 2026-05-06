@@ -15,6 +15,7 @@ import { PerformanceMonitor } from './utils/PerformanceMonitor.js';
 import { DebugPanel } from './utils/DebugPanel.js';
 import { FishLayer } from './layers/FishLayer.js';
 import { CuriousFishLayer } from './layers/CuriousFishLayer.js';
+import { DasFishLayer } from './layers/DasFishLayer.js';
 
 /**
  * Create and initialize canvas background manager
@@ -40,7 +41,8 @@ export {
     PerformanceMonitor,
     DebugPanel,
     FishLayer,
-    CuriousFishLayer
+    CuriousFishLayer,
+    DasFishLayer
 };
 
 // Log module load

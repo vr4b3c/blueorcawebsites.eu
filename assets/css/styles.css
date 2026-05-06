@@ -40,19 +40,26 @@ a:hover {
 
 body {
     padding-top: 4.5rem;
-    /* Fallback background mimicking the WebGL ocean scene:
-       – vertical water gradient (teal top → deep navy bottom)
-       – 5 subtle light-ray cones fanning down from the top */
+    /* Fallback background mimicking the WebGL ocean scene (WaterGradientLayer):
+       – vignette: elliptical dark edges/corners (x-axis less aggressive, matching shader vCenter.x *= 0.75)
+       – 5 subtle light-ray cones from the top surface
+       – non-linear water gradient: dark navy top → bright surface teal bottom (pow 1.6 curve approximated) */
     background-color: #000a28;
     background-image:
-        /* light rays – semi-transparent cones */
-        radial-gradient(ellipse 6%  60% at 13% 0%, rgba(62,164,197,.13) 0%, transparent 100%),
-        radial-gradient(ellipse 6%  55% at 30% 0%, rgba(62,164,197,.10) 0%, transparent 100%),
-        radial-gradient(ellipse 7%  65% at 50% 0%, rgba(62,164,197,.15) 0%, transparent 100%),
-        radial-gradient(ellipse 6%  55% at 70% 0%, rgba(62,164,197,.10) 0%, transparent 100%),
-        radial-gradient(ellipse 6%  60% at 87% 0%, rgba(62,164,197,.13) 0%, transparent 100%),
-        /* water gradient – light surface at top, deep ocean at bottom */
-        linear-gradient(to bottom, #3898b7 0%, #030d2b 100%);
+        /* vignette – elliptical, more aggressive vertically than horizontally (matches WebGL shader) */
+        radial-gradient(ellipse 115% 85% at 50% 50%,
+            transparent 0%,
+            transparent 33%,
+            rgba(0, 4, 20, 0.45) 60%,
+            rgba(0, 3, 16, 0.86) 100%),
+        /* light rays – semi-transparent cones fanning from top surface */
+        radial-gradient(ellipse 6%  60% at 13% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  55% at 30% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
+        radial-gradient(ellipse 7%  65% at 50% 0%, rgba(60,164,197,.13) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  55% at 70% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  60% at 87% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
+        /* water gradient – dark depth at top, bright surface teal at bottom (pow 1.6 curve approx) */
+        linear-gradient(to bottom, #000a28 0%, #001a42 25%, #00395f 50%, #1f7da5 78%, #3ca4c5 100%);
 
     background-attachment: fixed;    
     color: var(--text-primary);
@@ -93,6 +100,7 @@ footer {
     right: 0;
     z-index: 1000;
     height: 4.5rem;
+    will-change: transform;
 }
 
 .site-header::before {
@@ -104,6 +112,11 @@ footer {
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(142, 210, 232, 0.1);
     z-index: -1;
+    transition: opacity 0.3s ease;
+}
+
+.site-header.is-top::before {
+    opacity: 0;
 }
 
 .site-header-inner {
