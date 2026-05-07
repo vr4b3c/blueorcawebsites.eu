@@ -309,6 +309,9 @@ export class FishLayer {
                 continue;
             }
 
+            // Cache centroid once per fish (flocking + screen-wrap both use it)
+            const centroid = schoolCentroids.get(shark.schoolId);
+
             // Update position
             // Capture previous X to detect near-zero net movement later
             const prevX = shark.x;
@@ -374,7 +377,6 @@ export class FishLayer {
                 const baseSeparationRadius = 40 * (1 + (sizeFactor - 1) * 1.5);
 
                 // Centroid pull — spring-like: dead zone 20 px, progressive up to ~200 px
-                const centroid = schoolCentroids.get(shark.schoolId);
                 if (centroid && centroid.count > 1) {
                     let cdx = centroid.x - shark.x;
                     if (Math.abs(cdx) > width * 0.5) cdx += cdx > 0 ? -width : width;
@@ -492,7 +494,6 @@ export class FishLayer {
                 const safeZoneTop = this.config.verticalMarginTop;
                 const safeZoneBottom = height - this.config.verticalMarginBottom;
                 // Use centroid Y so the whole school reappears at the same height
-                const centroid = schoolCentroids.get(shark.schoolId);
                 const targetY = centroid ? centroid.y : shark.baseY;
                 shark.baseY = Math.max(safeZoneTop, Math.min(safeZoneBottom,
                     targetY + (Math.random() - 0.5) * 30));
@@ -501,7 +502,6 @@ export class FishLayer {
                 const safeZoneTop = this.config.verticalMarginTop;
                 const safeZoneBottom = height - this.config.verticalMarginBottom;
                 // Use centroid Y so the whole school reappears at the same height
-                const centroid = schoolCentroids.get(shark.schoolId);
                 const targetY = centroid ? centroid.y : shark.baseY;
                 shark.baseY = Math.max(safeZoneTop, Math.min(safeZoneBottom,
                     targetY + (Math.random() - 0.5) * 30));

@@ -114,9 +114,37 @@ export class DebugPanel {
         // Append to body
         document.body.appendChild(this.element);
         if (!this.visible) this.element.style.display = 'none';
-        const toggle = document.getElementById('debug-toggle');
+
+        this.els = {
+            fps:        document.getElementById('debug-fps'),
+            fpsMax:     document.getElementById('debug-fps-max'),
+            renderTime: document.getElementById('debug-render-time'),
+            totalTime:  document.getElementById('debug-total-time'),
+            idleTime:   document.getElementById('debug-idle-time'),
+            quality:    document.getElementById('debug-quality'),
+            resolution: document.getElementById('debug-resolution'),
+            content:    document.getElementById('debug-content'),
+            toggle:     document.getElementById('debug-toggle'),
+        };
+        this._layerTimeEls = {
+            fish:     document.getElementById('debug-fish-time'),
+            curious:  document.getElementById('debug-curious-time'),
+            hud:      document.getElementById('debug-hud-time'),
+            food:     document.getElementById('debug-food-time'),
+            rays:     document.getElementById('debug-rays-time'),
+            bubbles:  document.getElementById('debug-bubbles-time'),
+            plankton: document.getElementById('debug-plankton-time'),
+            gradient: document.getElementById('debug-gradient-time'),
+        };
+        this._countEls = {
+            'fish-count':     document.getElementById('debug-fish-count'),
+            'food-count':     document.getElementById('debug-food-count'),
+            'bubbles-count':  document.getElementById('debug-bubbles-count'),
+            'plankton-count': document.getElementById('debug-plankton-count'),
+        };
+
         const header = document.getElementById('debug-header');
-        if (toggle && header) {
+        if (this.els.toggle && header) {
             header.style.cursor = 'pointer';
             header.addEventListener('click', () => this.toggle());
         }
@@ -275,11 +303,9 @@ export class DebugPanel {
 
     toggle() {
         this.collapsed = !this.collapsed;
-        const content = document.getElementById('debug-content');
-        const toggle = document.getElementById('debug-toggle');
-        if (content && toggle) {
-            content.classList.toggle('collapsed', this.collapsed);
-            toggle.textContent = this.collapsed ? '+' : '−';
+        if (this.els.content && this.els.toggle) {
+            this.els.content.classList.toggle('collapsed', this.collapsed);
+            this.els.toggle.textContent = this.collapsed ? '+' : '−';
         }
     }
 
@@ -287,34 +313,29 @@ export class DebugPanel {
         if (!this.visible) return;
 
         // Main FPS
-        const fpsEl = document.getElementById('debug-fps');
-        const fpsMaxEl = document.getElementById('debug-fps-max');
-        if (fpsEl && stats.fps !== undefined) {
-            fpsEl.textContent = stats.fps;
-            fpsEl.className = 'debug-value';
-            if (stats.fps < 40) fpsEl.classList.add('error');
-            else if (stats.fps < 55) fpsEl.classList.add('warning');
+        if (this.els.fps && stats.fps !== undefined) {
+            this.els.fps.textContent = stats.fps;
+            this.els.fps.className = 'debug-value';
+            if (stats.fps < 40) this.els.fps.classList.add('error');
+            else if (stats.fps < 55) this.els.fps.classList.add('warning');
         }
-        if (fpsMaxEl && stats.theoreticalFPS !== undefined) {
-            fpsMaxEl.textContent = stats.theoreticalFPS;
+        if (this.els.fpsMax && stats.theoreticalFPS !== undefined) {
+            this.els.fpsMax.textContent = stats.theoreticalFPS;
         }
 
         // Render time
-        const renderTimeEl = document.getElementById('debug-render-time');
-        if (renderTimeEl && stats.renderTime !== undefined) {
-            renderTimeEl.textContent = stats.renderTime.toFixed(2);
+        if (this.els.renderTime && stats.renderTime !== undefined) {
+            this.els.renderTime.textContent = stats.renderTime.toFixed(2);
         }
-        
+
         // Total frame time
-        const totalTimeEl = document.getElementById('debug-total-time');
-        if (totalTimeEl && stats.totalFrameTime !== undefined) {
-            totalTimeEl.textContent = stats.totalFrameTime.toFixed(2);
+        if (this.els.totalTime && stats.totalFrameTime !== undefined) {
+            this.els.totalTime.textContent = stats.totalFrameTime.toFixed(2);
         }
-        
+
         // Idle time (browser overhead)
-        const idleTimeEl = document.getElementById('debug-idle-time');
-        if (idleTimeEl && stats.idleTime !== undefined) {
-            idleTimeEl.textContent = stats.idleTime.toFixed(2);
+        if (this.els.idleTime && stats.idleTime !== undefined) {
+            this.els.idleTime.textContent = stats.idleTime.toFixed(2);
         }
 
         // Canvas 2D layers
@@ -336,19 +357,16 @@ export class DebugPanel {
         this.updateCount('plankton-count', stats.counts?.plankton);
 
         // System
-        const qualityEl = document.getElementById('debug-quality');
-        if (qualityEl && stats.quality !== undefined) {
-            qualityEl.textContent = Math.round(stats.quality * 100);
+        if (this.els.quality && stats.quality !== undefined) {
+            this.els.quality.textContent = Math.round(stats.quality * 100);
         }
-
-        const resEl = document.getElementById('debug-resolution');
-        if (resEl && stats.resolution) {
-            resEl.textContent = stats.resolution;
+        if (this.els.resolution && stats.resolution) {
+            this.els.resolution.textContent = stats.resolution;
         }
     }
 
     updateLayerTime(id, value) {
-        const el = document.getElementById(`debug-${id}-time`);
+        const el = this._layerTimeEls[id];
         if (!el) return;
 
         // Extract time from various formats
@@ -385,7 +403,7 @@ export class DebugPanel {
     }
 
     updateCount(id, value) {
-        const el = document.getElementById(id);
+        const el = this._countEls[id];
         if (!el) return;
 
         if (value !== undefined && value !== null) {

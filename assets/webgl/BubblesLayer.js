@@ -7,6 +7,7 @@ export class BubblesLayer {
         this.program = null;
         this.buffers = {};
         this.bubbles = [];
+        this._bubblePool = [];
         this.sources = [];
         this.qualityMultiplier = 1.0;
         
@@ -237,6 +238,8 @@ export class BubblesLayer {
             
             if (bubble.y + bubble.size >= 0) {
                 this.bubbles[bWrite++] = bubble;
+            } else {
+                this._bubblePool.push(bubble);
             }
         }
         this.bubbles.length = bWrite;
@@ -281,16 +284,16 @@ export class BubblesLayer {
     spawnBubble(source) {
         const baseSize = this.config.minSize + Math.random() * (this.config.maxSize - this.config.minSize);
         const offsetX = (Math.random() - 0.5) * 20;
-        
-        this.bubbles.push({
-            startX: source.x + offsetX,
-            y: source.y,
-            baseSize,
-            size: baseSize,
-            riseSpeed: 0.5 + Math.random() * 1.5,
-            swayPeriod: 2000 + Math.random() * 3000,
-            age: Math.random() * 1000
-        });
+
+        const bubble = this._bubblePool.pop() || {};
+        bubble.startX    = source.x + offsetX;
+        bubble.y         = source.y;
+        bubble.baseSize  = baseSize;
+        bubble.size      = baseSize;
+        bubble.riseSpeed = 0.5 + Math.random() * 1.5;
+        bubble.swayPeriod = 2000 + Math.random() * 3000;
+        bubble.age       = Math.random() * 1000;
+        this.bubbles.push(bubble);
     }
     
     setQuality(quality) {
@@ -319,5 +322,7 @@ export class BubblesLayer {
         for (const key in this.buffers) {
             gl.deleteBuffer(this.buffers[key]);
         }
+        this.bubbles.length = 0;
+        this._bubblePool.length = 0;
     }
 }

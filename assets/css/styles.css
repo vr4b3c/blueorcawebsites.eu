@@ -339,7 +339,7 @@ footer {
 }
 
 .btn-primary:hover::after {
-    left: 160%;
+    transform: translateX(267%);
 }
 
 .btn-primary:active {
@@ -396,7 +396,7 @@ footer {
 }
 
 .btn-secondary:hover::after {
-    left: 160%;
+    transform: translateX(267%);
 }
 
 .btn-secondary:active {
@@ -1270,7 +1270,7 @@ body.drawer-open {
 /* ===================== THUMBNAIL ROW ===================== */
 .ref-thumbs-track {
     position: relative;
-    margin-bottom: 2.5rem;
+    margin-bottom: 3.5rem;
 }
 
 .ref-thumbs-arrows {
@@ -2782,10 +2782,11 @@ a[target="_blank"]:hover::after {
     content: '';
     position: absolute;
     top: 0;
-    left: -120%;
+    left: 0;
     width: 60%;
     height: 100%;
-    transition: left 0.5s ease;
+    transform: translateX(-200%);
+    transition: transform 0.5s ease;
     pointer-events: none;
 }
 

@@ -1,3 +1,6 @@
+var BlueOrca = window.BlueOrca = window.BlueOrca || {};
+BlueOrca.carousel = {};
+
 // ===================== REFERENCE THUMB & FILTER =====================
 (function () {
     var pills  = document.querySelectorAll('.filter-pill');
@@ -40,7 +43,7 @@
         // Measure new card height before building stage (it has display:none)
         newCard.style.display = 'grid';
         var newH = newCard.offsetHeight;
-        newCard.style.display = '';
+        // display reset omitted — newCard.style.cssText below overrides it immediately
 
         // Stage with translateZ(-r) offset to keep front face at z=0
         var stage = document.createElement('div');
@@ -93,7 +96,7 @@
     }
 
     // Expose for coverflow module
-    window.__cfActivateRef = activateRef;
+    BlueOrca.carousel.activateRef = activateRef;
 
     // Thumb click is handled by coverflow IIFE via event delegation
 
@@ -114,7 +117,7 @@
             });
 
             // Signal position update after filter
-            if (window.__posUpdateAfterFilter) window.__posUpdateAfterFilter();
+            if (BlueOrca.carousel.posUpdateAfterFilter) BlueOrca.carousel.posUpdateAfterFilter();
         });
     });
 })();
@@ -154,6 +157,11 @@
 
     function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
     function wrapIdx(i, n)    { return ((i % n) + n) % n; }
+    function normalizeDelta(d, n) {
+        if (d >  Math.floor(n / 2)) d -= n;
+        if (d < -Math.floor(n / 2)) d += n;
+        return d;
+    }
 
     // How many items to show each side of centre (responsive)
     // Desktop ≥1024: range 2 (5 visible); tablet <1024: range 1 (3 visible)
@@ -195,9 +203,7 @@
         var cardH = thumbs[0].offsetHeight;
         row.style.height = (cardH + 32) + 'px';
         thumbs.forEach(function (t, i) {
-            var rel = i - activeIdx;
-            if (rel >  Math.floor(n / 2)) rel -= n;
-            if (rel < -Math.floor(n / 2)) rel += n;
+            var rel = normalizeDelta(i - activeIdx, n);
             t.setAttribute('data-cf-rel', String(rel));
             t.style.transition = 'none';
             t.style.transform  = 'perspective(900px) translateX(0px) rotateY(0deg) scale(1)';
@@ -233,9 +239,7 @@
         row.style.height = (cardH + 32) + 'px';
 
         thumbs.forEach(function (t, i) {
-            var rel = i - activeIdx;
-            if (rel >  Math.floor(n / 2)) rel -= n;
-            if (rel < -Math.floor(n / 2)) rel += n;
+            var rel = normalizeDelta(i - activeIdx, n);
 
             // Items beyond visRange: invisible, no layout needed
             if (Math.abs(rel) > visRange) {
@@ -290,10 +294,6 @@
         var n = thumbs.length;
         if (!n) return;
 
-        var delta = newIdx - activeIdx;
-        if (delta >  Math.floor(n / 2)) delta -= n;
-        if (delta < -Math.floor(n / 2)) delta += n;
-
         setOneStep(newIdx);
     }
 
@@ -305,9 +305,7 @@
         var n = thumbs.length;
         if (!n) return;
 
-        var delta = newIdx - activeIdx;
-        if (delta >  Math.floor(n / 2)) delta -= n;
-        if (delta < -Math.floor(n / 2)) delta += n;
+        var delta = normalizeDelta(newIdx - activeIdx, n);
         var dir = delta >= 0 ? 'right' : 'left';
 
         activeIdx = wrapIdx(newIdx, n);
@@ -316,8 +314,8 @@
             t.classList.toggle('active', i === activeIdx);
         });
 
-        if (window.__cfActivateRef) {
-            window.__cfActivateRef(thumbs[activeIdx].getAttribute('data-ref'), dir);
+        if (BlueOrca.carousel.activateRef) {
+            BlueOrca.carousel.activateRef(thumbs[activeIdx].getAttribute('data-ref'), dir);
         }
 
         updatePositions();
@@ -417,9 +415,7 @@
             updateArrows();
         }
     });
-    row.querySelectorAll('.ref-thumb').forEach(function (t) {
-        mo.observe(t, { attributes: true, attributeFilter: ['class'] });
-    });
+    mo.observe(row, { subtree: true, attributes: true, attributeFilter: ['class'] });
 
     // Debounced resize → recalculate layout
     var _resizeTimer;
@@ -437,7 +433,7 @@
         activeIdx = preActive !== -1 ? preActive : 0;
         if (preActive === -1) {
             thumbs[0].classList.add('active');
-            if (window.__cfActivateRef) window.__cfActivateRef(thumbs[0].getAttribute('data-ref'));
+            if (BlueOrca.carousel.activateRef) BlueOrca.carousel.activateRef(thumbs[0].getAttribute('data-ref'));
         }
         centerPositions();
         updateArrows();
@@ -452,25 +448,25 @@
     // ── External hooks ─────────────────────────────────────────────────────
 
     // After filter pill change: reset to first visible item
-    window.__posUpdateAfterFilter = function () {
+    BlueOrca.carousel.posUpdateAfterFilter = function () {
         row.querySelectorAll('.ref-thumb').forEach(function (t) { t.classList.remove('active'); });
         activeIdx = 0;
         var thumbs = getVisible();
         if (thumbs.length) {
             thumbs[0].classList.add('active');
-            if (window.__cfActivateRef) window.__cfActivateRef(thumbs[0].getAttribute('data-ref'));
+            if (BlueOrca.carousel.activateRef) BlueOrca.carousel.activateRef(thumbs[0].getAttribute('data-ref'));
         }
         updatePositions();
         updateArrows();
     };
 
     // Mobile navigation buttons
-    window.__cfNext = function () { setActive(activeIdx + 1); };
-    window.__cfPrev = function () { setActive(activeIdx - 1); };
+    BlueOrca.carousel.next = function () { setActive(activeIdx + 1); };
+    BlueOrca.carousel.prev = function () { setActive(activeIdx - 1); };
 
     // Called by IntersectionObserver when section enters / leaves viewport
-    window.__refCarouselEnter = function () { updatePositions(); };
-    window.__refCarouselLeave = function () { centerPositions(); };
+    BlueOrca.carousel.enter = function () { updatePositions(); };
+    BlueOrca.carousel.leave = function () { centerPositions(); };
 })();
 
 // ===================== REFERENCE SECTION SCROLL TRIGGER =====================
@@ -483,11 +479,11 @@
             if (entry.isIntersecting && !entered) {
                 entered = true;
                 refSection.classList.add('in-view');
-                if (window.__refCarouselEnter) window.__refCarouselEnter();
+                if (BlueOrca.carousel.enter) BlueOrca.carousel.enter();
             } else if (!entry.isIntersecting && entered) {
                 entered = false;
                 refSection.classList.remove('in-view');
-                if (window.__refCarouselLeave) window.__refCarouselLeave();
+                if (BlueOrca.carousel.leave) BlueOrca.carousel.leave();
             }
         });
     }, { threshold: 0.25 });
@@ -1151,8 +1147,8 @@
     var prevBtn = document.querySelector('.ref-mobile-nav-btn--prev');
     var nextBtn = document.querySelector('.ref-mobile-nav-btn--next');
 
-    if (prevBtn) prevBtn.addEventListener('click', function () { if (window.__cfPrev) window.__cfPrev(); });
-    if (nextBtn) nextBtn.addEventListener('click', function () { if (window.__cfNext) window.__cfNext(); });
+    if (prevBtn) prevBtn.addEventListener('click', function () { if (BlueOrca.carousel.prev) BlueOrca.carousel.prev(); });
+    if (nextBtn) nextBtn.addEventListener('click', function () { if (BlueOrca.carousel.next) BlueOrca.carousel.next(); });
 
     if (!panel) return;
     var startX = 0;
@@ -1162,7 +1158,7 @@
     panel.addEventListener('touchend', function (e) {
         if (window.innerWidth >= 700) return;
         var dx = e.changedTouches[0].clientX - startX;
-        if      (dx >  50) { if (window.__cfNext) window.__cfNext(); }
-        else if (dx < -50) { if (window.__cfPrev) window.__cfPrev(); }
+        if      (dx >  50) { if (BlueOrca.carousel.next) BlueOrca.carousel.next(); }
+        else if (dx < -50) { if (BlueOrca.carousel.prev) BlueOrca.carousel.prev(); }
     }, { passive: true });
 })();

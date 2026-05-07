@@ -461,6 +461,7 @@
       this.program = null;
       this.buffers = {};
       this.bubbles = [];
+      this._bubblePool = [];
       this.sources = [];
       this.qualityMultiplier = 1;
       this.config = {
@@ -659,6 +660,8 @@
         bubble.size = bubble.baseSize * (1 - riseProgress * 0.6);
         if (bubble.y + bubble.size >= 0) {
           this.bubbles[bWrite++] = bubble;
+        } else {
+          this._bubblePool.push(bubble);
         }
       }
       this.bubbles.length = bWrite;
@@ -694,15 +697,15 @@
     spawnBubble(source) {
       const baseSize = this.config.minSize + Math.random() * (this.config.maxSize - this.config.minSize);
       const offsetX = (Math.random() - 0.5) * 20;
-      this.bubbles.push({
-        startX: source.x + offsetX,
-        y: source.y,
-        baseSize,
-        size: baseSize,
-        riseSpeed: 0.5 + Math.random() * 1.5,
-        swayPeriod: 2e3 + Math.random() * 3e3,
-        age: Math.random() * 1e3
-      });
+      const bubble = this._bubblePool.pop() || {};
+      bubble.startX = source.x + offsetX;
+      bubble.y = source.y;
+      bubble.baseSize = baseSize;
+      bubble.size = baseSize;
+      bubble.riseSpeed = 0.5 + Math.random() * 1.5;
+      bubble.swayPeriod = 2e3 + Math.random() * 3e3;
+      bubble.age = Math.random() * 1e3;
+      this.bubbles.push(bubble);
     }
     setQuality(quality) {
       this.qualityMultiplier = quality;
@@ -727,6 +730,8 @@
       for (const key in this.buffers) {
         gl.deleteBuffer(this.buffers[key]);
       }
+      this.bubbles.length = 0;
+      this._bubblePool.length = 0;
     }
   };
 
@@ -4317,9 +4322,35 @@
       this.addStyles();
       document.body.appendChild(this.element);
       if (!this.visible) this.element.style.display = "none";
-      const toggle = document.getElementById("debug-toggle");
+      this.els = {
+        fps: document.getElementById("debug-fps"),
+        fpsMax: document.getElementById("debug-fps-max"),
+        renderTime: document.getElementById("debug-render-time"),
+        totalTime: document.getElementById("debug-total-time"),
+        idleTime: document.getElementById("debug-idle-time"),
+        quality: document.getElementById("debug-quality"),
+        resolution: document.getElementById("debug-resolution"),
+        content: document.getElementById("debug-content"),
+        toggle: document.getElementById("debug-toggle")
+      };
+      this._layerTimeEls = {
+        fish: document.getElementById("debug-fish-time"),
+        curious: document.getElementById("debug-curious-time"),
+        hud: document.getElementById("debug-hud-time"),
+        food: document.getElementById("debug-food-time"),
+        rays: document.getElementById("debug-rays-time"),
+        bubbles: document.getElementById("debug-bubbles-time"),
+        plankton: document.getElementById("debug-plankton-time"),
+        gradient: document.getElementById("debug-gradient-time")
+      };
+      this._countEls = {
+        "fish-count": document.getElementById("debug-fish-count"),
+        "food-count": document.getElementById("debug-food-count"),
+        "bubbles-count": document.getElementById("debug-bubbles-count"),
+        "plankton-count": document.getElementById("debug-plankton-count")
+      };
       const header = document.getElementById("debug-header");
-      if (toggle && header) {
+      if (this.els.toggle && header) {
         header.style.cursor = "pointer";
         header.addEventListener("click", () => this.toggle());
       }
@@ -4475,37 +4506,30 @@
     }
     toggle() {
       this.collapsed = !this.collapsed;
-      const content = document.getElementById("debug-content");
-      const toggle = document.getElementById("debug-toggle");
-      if (content && toggle) {
-        content.classList.toggle("collapsed", this.collapsed);
-        toggle.textContent = this.collapsed ? "+" : "\u2212";
+      if (this.els.content && this.els.toggle) {
+        this.els.content.classList.toggle("collapsed", this.collapsed);
+        this.els.toggle.textContent = this.collapsed ? "+" : "\u2212";
       }
     }
     update(stats) {
       if (!this.visible) return;
-      const fpsEl = document.getElementById("debug-fps");
-      const fpsMaxEl = document.getElementById("debug-fps-max");
-      if (fpsEl && stats.fps !== void 0) {
-        fpsEl.textContent = stats.fps;
-        fpsEl.className = "debug-value";
-        if (stats.fps < 40) fpsEl.classList.add("error");
-        else if (stats.fps < 55) fpsEl.classList.add("warning");
+      if (this.els.fps && stats.fps !== void 0) {
+        this.els.fps.textContent = stats.fps;
+        this.els.fps.className = "debug-value";
+        if (stats.fps < 40) this.els.fps.classList.add("error");
+        else if (stats.fps < 55) this.els.fps.classList.add("warning");
       }
-      if (fpsMaxEl && stats.theoreticalFPS !== void 0) {
-        fpsMaxEl.textContent = stats.theoreticalFPS;
+      if (this.els.fpsMax && stats.theoreticalFPS !== void 0) {
+        this.els.fpsMax.textContent = stats.theoreticalFPS;
       }
-      const renderTimeEl = document.getElementById("debug-render-time");
-      if (renderTimeEl && stats.renderTime !== void 0) {
-        renderTimeEl.textContent = stats.renderTime.toFixed(2);
+      if (this.els.renderTime && stats.renderTime !== void 0) {
+        this.els.renderTime.textContent = stats.renderTime.toFixed(2);
       }
-      const totalTimeEl = document.getElementById("debug-total-time");
-      if (totalTimeEl && stats.totalFrameTime !== void 0) {
-        totalTimeEl.textContent = stats.totalFrameTime.toFixed(2);
+      if (this.els.totalTime && stats.totalFrameTime !== void 0) {
+        this.els.totalTime.textContent = stats.totalFrameTime.toFixed(2);
       }
-      const idleTimeEl = document.getElementById("debug-idle-time");
-      if (idleTimeEl && stats.idleTime !== void 0) {
-        idleTimeEl.textContent = stats.idleTime.toFixed(2);
+      if (this.els.idleTime && stats.idleTime !== void 0) {
+        this.els.idleTime.textContent = stats.idleTime.toFixed(2);
       }
       this.updateLayerTime("fish", stats.layers?.FishLayer);
       this.updateLayerTime("curious", stats.layers?.CuriousFishLayer);
@@ -4519,17 +4543,15 @@
       this.updateCount("food-count", stats.counts?.food);
       this.updateCount("bubbles-count", stats.counts?.bubbles);
       this.updateCount("plankton-count", stats.counts?.plankton);
-      const qualityEl = document.getElementById("debug-quality");
-      if (qualityEl && stats.quality !== void 0) {
-        qualityEl.textContent = Math.round(stats.quality * 100);
+      if (this.els.quality && stats.quality !== void 0) {
+        this.els.quality.textContent = Math.round(stats.quality * 100);
       }
-      const resEl = document.getElementById("debug-resolution");
-      if (resEl && stats.resolution) {
-        resEl.textContent = stats.resolution;
+      if (this.els.resolution && stats.resolution) {
+        this.els.resolution.textContent = stats.resolution;
       }
     }
     updateLayerTime(id, value) {
-      const el = document.getElementById(`debug-${id}-time`);
+      const el = this._layerTimeEls[id];
       if (!el) return;
       let time = 0;
       if (typeof value === "number") {
@@ -4557,7 +4579,7 @@
       }
     }
     updateCount(id, value) {
-      const el = document.getElementById(id);
+      const el = this._countEls[id];
       if (!el) return;
       if (value !== void 0 && value !== null) {
         this.lastKnownValues[`count-${id}`] = value;
@@ -4836,6 +4858,7 @@
           this.sharks[writeIndex++] = shark;
           continue;
         }
+        const centroid = schoolCentroids.get(shark.schoolId);
         const prevX = shark.x;
         shark.x += shark.direction * shark.speed;
         if (shark.burstVX !== void 0) {
@@ -4882,7 +4905,6 @@
         const sizeFactor = Math.max(0.5, shark.size / sizeNorm);
         if (!shark.isIndependent) {
           const baseSeparationRadius = 40 * (1 + (sizeFactor - 1) * 1.5);
-          const centroid = schoolCentroids.get(shark.schoolId);
           if (centroid && centroid.count > 1) {
             let cdx = centroid.x - shark.x;
             if (Math.abs(cdx) > width * 0.5) cdx += cdx > 0 ? -width : width;
@@ -4978,7 +5000,6 @@
           shark.x = -shark.size * 2;
           const safeZoneTop = this.config.verticalMarginTop;
           const safeZoneBottom = height - this.config.verticalMarginBottom;
-          const centroid = schoolCentroids.get(shark.schoolId);
           const targetY = centroid ? centroid.y : shark.baseY;
           shark.baseY = Math.max(safeZoneTop, Math.min(
             safeZoneBottom,
@@ -4988,7 +5009,6 @@
           shark.x = width + shark.size * 2;
           const safeZoneTop = this.config.verticalMarginTop;
           const safeZoneBottom = height - this.config.verticalMarginBottom;
-          const centroid = schoolCentroids.get(shark.schoolId);
           const targetY = centroid ? centroid.y : shark.baseY;
           shark.baseY = Math.max(safeZoneTop, Math.min(
             safeZoneBottom,
