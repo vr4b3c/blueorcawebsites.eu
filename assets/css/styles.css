@@ -1083,6 +1083,9 @@ body.drawer-open {
 }
 
 /* ===================== SCROLL SNAP ===================== */
+/* All snap sections: full-viewport, vertically centred, column flex.
+   When content exceeds viewport height the section expands naturally
+   (min-height, not fixed height) so nothing clips on mobile. */
 .cta-cms,
 .references,
 .vyhody,
@@ -1091,6 +1094,9 @@ body.drawer-open {
     scroll-snap-align: start;
     scroll-snap-stop: always;
     min-height: calc(100svh - 4.5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* ===================== SEKCE ===================== */
@@ -1102,9 +1108,6 @@ body.drawer-open {
 /* ===================== VÝHODY ===================== */
 .vyhody {
     padding: 5rem 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
 }
 
 .vyhody-grid {
@@ -1276,15 +1279,15 @@ body.drawer-open {
 .ref-thumbs-arrows {
     position: absolute;
     top: 0;
-    left: -2rem;
-    right: -2rem;
+    left: 0;
+    right: 0;
     bottom: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     pointer-events: none;
     z-index: 30;  /* above all carousel items (max z-index = 20) */
-    padding: 0 0.25rem;
+    padding: 0;
 }
 
 .ref-thumbs-viewport {
@@ -1306,18 +1309,21 @@ body.drawer-open {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: none;
-    border: none;
+    width: 44px;
+    height: 44px;
+    background: transparent;
+    border: 1px solid rgba(142, 210, 232, 0.35);
     color: var(--accent);
     cursor: pointer;
-    transition: color 0.2s ease, opacity 0.2s ease;
-    padding: 0.4rem;
+    padding: 0;
     pointer-events: auto;
-    height: 100%;  
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
 }
 
 .ref-thumbs-arrow:hover:not(:disabled) {
     color: #fff;
+    border-color: rgba(142, 210, 232, 0.8);
+    background: rgba(142, 210, 232, 0.08);
 }
 
 .ref-thumbs-arrow:disabled {
@@ -1345,6 +1351,7 @@ body.drawer-open {
     overflow: visible;
     /* transition for shadow/background; border handled by ::before; transform & opacity driven by JS */
     transition:
+        transform    0.65s cubic-bezier(0.4, 0, 0.2, 1),
         opacity      0.65s cubic-bezier(0.4, 0, 0.2, 1),
         box-shadow   0.45s cubic-bezier(0.4, 0, 0.2, 1),
         background   0.45s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1465,17 +1472,6 @@ body.drawer-open {
 @media (max-width: 1024px) {
     .ref-thumb {
         width: 38cqi;
-    }
-
-    /* Push arrows to screen edge using up the section-inner padding (1.5rem) */
-    .ref-thumbs-arrows {
-        left: -1.5rem;
-        right: -1.5rem;
-        padding: 0;
-    }
-
-    .ref-thumbs-arrow {
-        padding: 0.6rem 0.8rem;
     }
 
     .ref-thumbs-arrow svg {

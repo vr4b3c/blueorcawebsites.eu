@@ -140,13 +140,13 @@ BlueOrca.carousel = {};
     // 3-D config per relative position; rel=±(range+1) shares position with ±range
     // but sits one z-index layer below — always ready behind the boundary items.
     var posCfg = {
-        '-3': { ry:  54, scale: 0.76, overlay: 0.82 },
-        '-2': { ry:  40, scale: 0.86, overlay: 0.62 },
-        '-1': { ry:  28, scale: 0.94, overlay: 0.30 },
+        '-3': { ry:  54, scale: 0.60, overlay: 0.82 },
+        '-2': { ry:  40, scale: 0.72, overlay: 0.62 },
+        '-1': { ry:  28, scale: 0.85, overlay: 0.30 },
          '0': { ry:   0, scale: 1.00, overlay: 0 },
-         '1': { ry: -28, scale: 0.94, overlay: 0.30 },
-         '2': { ry: -40, scale: 0.86, overlay: 0.62 },
-         '3': { ry: -54, scale: 0.76, overlay: 0.82 },
+         '1': { ry: -28, scale: 0.85, overlay: 0.30 },
+         '2': { ry: -40, scale: 0.72, overlay: 0.62 },
+         '3': { ry: -54, scale: 0.60, overlay: 0.82 },
     };
 
     // ── Helpers ────────────────────────────────────────────────────────────
