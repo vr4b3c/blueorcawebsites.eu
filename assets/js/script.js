@@ -855,6 +855,7 @@
     ruler.setAttribute('aria-hidden', 'true');
 
     var rulerItems = [];
+    var rulerContents = [];
     var rulerTicks = [];
 
     navLinks.forEach(function (link, i) {
@@ -862,6 +863,9 @@
         item.className = 'scroll-ruler-item';
         item.href = link.getAttribute('href');
         item.dataset.section = link.getAttribute('href').slice(1);
+
+        var content = document.createElement('span');
+        content.className = 'scroll-ruler-content';
 
         var label = document.createElement('span');
         label.className = 'scroll-ruler-label';
@@ -871,10 +875,12 @@
         dot.className = 'scroll-ruler-dot';
         dot.setAttribute('aria-hidden', 'true');
 
-        item.appendChild(label);
-        item.appendChild(dot);
+        content.appendChild(label);
+        content.appendChild(dot);
+        item.appendChild(content);
         ruler.appendChild(item);
         rulerItems.push(item);
+        rulerContents.push(content);
 
         if (i < navLinks.length - 1) {
             var tick = document.createElement('div');
@@ -895,35 +901,67 @@
         var rulerH = ruler.offsetHeight;
         if (rulerH <= 0 || !sections.length) return;
 
-        // Mirror the native scrollbar exactly:
-        //  trackH = 100vh (full viewport, scrollbar track spans whole screen)
-        //  thumbH = trackH * trackH / scrollHeight  (browser formula)
-        //  thumbTop at section i = scrollTop_i / scrollMax * (trackH - thumbH)
-        //  dot = center of thumb → thumbTop + thumbH/2
-        //  tick = bottom of thumb at section i → thumbTop + thumbH
-        //  All screen-y values offset by headerH to get ruler-y
-        var vh       = window.innerHeight;
-        var scrollH  = document.documentElement.scrollHeight;
+        // Mirror the native scrollbar, accounting for arrow buttons on Linux:
+        //  buttonH = height of each scrollbar arrow (top + bottom), read from CSS var
+        //  trackH  = vh - 2*buttonH  (usable thumb travel area)
+        //  thumbH  = trackH * vh / scrollH  (thumb represents visible fraction)
+        //  thumbTop at section i = frac * (trackH - thumbH)  (relative to track start)
+        //  ruler-y = buttonH + thumbTop[+thumbH] - headerH
+        var vh        = window.innerHeight;
+        var scrollH   = document.documentElement.scrollHeight;
         var scrollMax = scrollH - vh;
-        var headerH  = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
-        var trackH   = vh;                        // scrollbar track = full viewport
-        var thumbH   = trackH * trackH / scrollH; // native browser thumb formula
+        var headerH   = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+        var buttonH   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--scrollbar-button-h')) || 0;
+        var trackH    = vh - 2 * buttonH;         // effective track height
+        var thumbH    = trackH * vh / scrollH;    // thumb height
 
+        // First pass: compute tick Y values (lane boundaries) and thumb center Y per section
+        var tickYs = [];
+        var thumbCenters = [];
         sections.forEach(function (sec, i) {
-            var docTop       = sec.getBoundingClientRect().top + window.scrollY;
+            var docTop        = sec.getBoundingClientRect().top + window.scrollY;
             var snapScrollTop = Math.max(0, docTop - headerH);
-            var frac         = scrollMax > 0 ? snapScrollTop / scrollMax : 0;
-            var thumbTop     = frac * (trackH - thumbH);
-
-            // dot at thumb centre
-            var dotY = thumbTop + thumbH / 2 - headerH;
-            if (rulerItems[i]) rulerItems[i].style.top = Math.max(0, dotY) + 'px';
-
-            // tick at thumb bottom (= where next thumb top begins)
-            if (i < sections.length - 1 && rulerTicks[i]) {
-                var tickY = thumbTop + thumbH - headerH;
-                rulerTicks[i].style.top = Math.max(0, tickY) + 'px';
+            var frac          = scrollMax > 0 ? snapScrollTop / scrollMax : 0;
+            var thumbTop      = frac * (trackH - thumbH);
+            // center of thumb when this section is snapped (ruler coords)
+            thumbCenters.push(buttonH + thumbTop + thumbH / 2 - headerH);
+            if (i < sections.length - 1) {
+                // tick at thumb bottom converted to ruler coords
+                tickYs.push(Math.max(0, buttonH + thumbTop + thumbH - headerH));
             }
+        });
+
+        // Stretch each item over its full section lane.
+        // First lane: top button is above the ruler (headerH > buttonH), so we extend
+        //   the first lane's bottom boundary down by buttonH to compensate.
+        // Last lane: bottom button is inside the ruler (last buttonH px of viewport),
+        //   so we extend the last lane's top boundary up by buttonH to cover it.
+        // Adjacent lanes compensate so there are no gaps.
+        var n = rulerItems.length;
+        rulerItems.forEach(function (item, i) {
+            var laneTop    = i === 0 ? 0 : tickYs[i - 1];
+            var laneBottom = i < tickYs.length ? tickYs[i] : rulerH;
+
+            if (n >= 3) {
+                if (i === 0)     laneBottom += buttonH;
+                if (i === 1)     laneTop    += buttonH;
+                if (i === n - 1) laneTop    -= buttonH;
+                if (i === n - 2) laneBottom -= buttonH;
+            }
+
+            var adjLaneTop = Math.max(0, laneTop);
+            item.style.top    = adjLaneTop + 'px';
+            item.style.height = Math.max(0, laneBottom - laneTop) + 'px';
+
+            // Position content (label + dot) at exact thumb center within the lane
+            if (rulerContents[i]) {
+                rulerContents[i].style.top = (thumbCenters[i] - adjLaneTop) + 'px';
+            }
+        });
+
+        // Position tick elements at lane boundaries
+        tickYs.forEach(function (tickY, i) {
+            if (rulerTicks[i]) rulerTicks[i].style.top = tickY + 'px';
         });
     }
 

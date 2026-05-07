@@ -674,29 +674,30 @@ export class FishLayer {
         const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : archetype === 2 ? 2 : 3;
         let baseSize, schoolImage, fishCountBase;
 
-        // shark.png — biggest: 50-120px, small schools
+        // shark.png — biggest: 50-120px, osamělí predátoři
         if (fishType === 0) {
             schoolImage = this.fishImages[0];
             baseSize = 50 + Math.random() * 70;
-            fishCountBase = [1, 3]; // [min, max]
+            fishCountBase = [1, 1]; // pevně 1 (osamělí)
         }
-        // fish2.png — smallest: 10-30px, large schools
+        // fish2.png — střední: 10-30px, střední hejna
         else if (fishType === 1) {
             schoolImage = this.fishImages[1];
             baseSize = 10 + Math.random() * 20;
-            fishCountBase = [10, 15];
+            fishCountBase = [12, 20]; // upravené počty
         }
-        // fish1.png — nejmenší: 5-10px, velká hejna
+        // fish1.png — nejmenší: 4-8px, velmi rozsáhlá hejna
         else if (fishType === 2) {
             schoolImage = this.fishImages[2];
             baseSize = 4 + Math.random() * 4;
-            fishCountBase = [20, 35];
+            fishCountBase = [25, 45]; // více malých rybek
         }
-        // curiousfish.png — large: 30-120px
+        // curiousfish.png — hráčovo/kuriozní hejno: malé 2-4 jedinci
         else {
             schoolImage = this.fishImages[3];
-            baseSize = 30 + Math.random() * 90;
-            fishCountBase = [4, 6];
+            // Make curiousfish smaller by default: 30 - 60 px
+            baseSize = 30 + Math.random() * 30;
+            fishCountBase = [2, 4]; // malé hejno
         }
 
         // Final school size — single source of truth for everything below

@@ -30,6 +30,7 @@
     --red: #ff4e42;
     --radius: 0;
     --shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+    --scrollbar-button-h: 12px; /* explicit arrow height – read by JS ruler */
 }
 
 html {
@@ -56,13 +57,12 @@ html {
 ::-webkit-scrollbar-thumb:hover {
     background: #8ed2e8;
 }
-::-webkit-scrollbar-button,
-::-webkit-scrollbar-button:start,
-::-webkit-scrollbar-button:end {
-    display: none;
-    height: 0;
-    width: 0;
+
+::-webkit-scrollbar-button {
+    height: var(--scrollbar-button-h);
+    background: #031A2A; /* blend with track */
 }
+
 
 a {
     color: var(--accent);
@@ -72,6 +72,8 @@ a {
 a:hover {
     text-decoration: underline;
 }
+
+strong {font-weight: 600;}
 
 body {
     padding-top: 4.5rem;
@@ -359,7 +361,7 @@ footer {
     display: inline-flex;
     align-items: center;
     padding: 0.3rem 1rem;
-    background: #e07800;
+    background: #d3a33b;
     color: #fff;
     font-size: 0.75rem;
     font-weight: 600;
@@ -1798,7 +1800,7 @@ body.drawer-open {
     color: var(--accent);
 }
 
-.external::after {
+a[target="_blank"]::after {
     content: '';
     display: inline-block;
     width: 0.9em;
@@ -1817,7 +1819,7 @@ body.drawer-open {
     transition: opacity 0.2s ease;
 }
 
-.external:hover::after {
+a[target="_blank"]:hover::after {
     opacity: 1;
 }
 
@@ -1873,7 +1875,7 @@ body.drawer-open {
 .ref-subtitle {
     font-size: 0.9rem;
     font-weight: 500;
-    margin: 0.15rem 0 0;
+    margin: 0.25rem 0 0;
 }
 
 .ref-header .ref-desc {
@@ -1919,6 +1921,7 @@ body.drawer-open {
     transition: border-color 0.2s ease, color 0.2s ease;
 }
 
+
 .ref-inline-link:hover {
     color: #fff;
     border-color: rgba(142, 210, 232, 0.7);
@@ -1931,31 +1934,43 @@ body.drawer-open {
     gap: 0.3rem;
 }
 
-.ref-tag {
+.btn-tercial {
     display: inline-flex;
     align-items: center;
-    font-size: 0.72rem;
     padding: 0.15rem 0.5rem;
-    border-radius: 0;
     background: rgba(142, 210, 232, 0.08);
     border: 1px solid rgba(142, 210, 232, 0.25);
     color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 500;
     text-decoration: none;
-    transition: background 0.2s ease, border-color 0.2s ease;
+    letter-spacing: 0.1em;
+    border-radius: 0;
     white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-.ref-tag:hover {
+.btn-tercial:hover {
     background: rgba(142, 210, 232, 0.18);
     border-color: rgba(142, 210, 232, 0.5);
     text-decoration: none;
 }
 
-.ref-tag-nolink {
+.btn-tercial::after {
+    display: none;
+}
+
+.btn-tercial-nolink {
     color: var(--text-muted);
-    border-color: rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.04);
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.04);
     cursor: default;
+}
+
+.btn-tercial-nolink:hover {
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.08);
 }
 
 .ref-tech {
@@ -2005,7 +2020,9 @@ body.drawer-open {
     color: var(--text-secondary);
     line-height: 1.7;
 }
-
+.ref-desc strong {
+    color: var(--accent);
+}
 .ref-feature {
     display: flex;
     align-items: center;
@@ -2438,7 +2455,6 @@ body.drawer-open {
     display: none;
     text-align: center;
     padding: 2rem 0;
-    border-top: 1px solid rgba(142, 210, 232, 0.06);
     color: var(--text-muted);
     font-size: 0.82rem;
     letter-spacing: 0.02em;
@@ -2703,7 +2719,7 @@ body.drawer-open {
     pointer-events: none;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 1499px) {
     .scroll-ruler {
         display: none;
     }
@@ -2712,26 +2728,57 @@ body.drawer-open {
 .scroll-ruler-item {
     position: absolute;
     right: 0;
-    display: flex;
-    align-items: center;
-    padding-right: 8px;
-    gap: 6px;
+    width: 3rem;
     text-decoration: none;
     pointer-events: auto;
     color: inherit;
+}
+
+.scroll-ruler-item:hover {
+    text-decoration: none !important;
+}
+
+.scroll-ruler-content {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+    gap: 6px;
     transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.scroll-ruler-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, transparent 30%, rgba(60, 164, 197, 0.12) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.scroll-ruler-item:hover::before {
+    opacity: 1;
+}
+
+.scroll-ruler-item.is-active::before {
+    opacity: 0.6;
 }
 
 .scroll-ruler-label {
-    font-size: 0.58rem;
-    font-weight: 500;
+    font-size: 0.68rem;
+    font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     color: rgba(142, 210, 232, 0.25);
     white-space: nowrap;
     transition: color 0.25s ease;
     font-family: inherit;
-    writing-mode: vertical-rl;
+    writing-mode: vertical-lr;
+    text-orientation: upright;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 0, 0, 0.4);
 }
 
 .scroll-ruler-item:hover .scroll-ruler-label,
@@ -2739,27 +2786,14 @@ body.drawer-open {
     color: rgba(142, 210, 232, 0.88);
 }
 
-.scroll-ruler-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: rgba(142, 210, 232, 0.25);
-    flex-shrink: 0;
-    transition: background 0.25s ease, transform 0.25s ease;
-}
-
-.scroll-ruler-item.is-active .scroll-ruler-dot {
-    background: var(--accent);
-    transform: scale(1.5);
-}
 
 .scroll-ruler-tick {
     position: absolute;
     right: 0;
-    width: 20px;
-    border-top: 1px solid rgba(142, 210, 232, 0.45);
-    transform: translateY(-50%);
+    width: 25px;
+    border-top: 1px solid rgba(142, 210, 232, 0.55);
     pointer-events: none;
+    margin-top: -10px;
 }
 
 /* ===================== UTILITY ===================== */
@@ -2774,4 +2808,10 @@ body.drawer-open {
     height: 100%;
     transition: left 0.5s ease;
     pointer-events: none;
+}
+
+/* Suppress external-link arrow on all buttons */
+.btn-primary[target]::after,
+.btn-secondary[target]::after {
+    /* shimmer overrides; arrow already hidden because ::after is the shimmer */
 }
