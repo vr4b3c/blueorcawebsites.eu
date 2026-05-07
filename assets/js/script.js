@@ -819,54 +819,7 @@
 })();
 
 // ===================== HEADER SCROLL BEHAVIOUR =====================
-(function () {
-    var header = document.querySelector('.site-header');
-    if (!header) return;
-
-    var headerH = header.offsetHeight;
-    var offset = 0;    // translateY in px: 0 = fully visible, -headerH = fully hidden
-    var lastY = window.scrollY;
-    var snapTimer = null;
-
-    function commit(newOffset, animated) {
-        offset = Math.max(-headerH, Math.min(0, newOffset));
-        header.style.transition = animated ? 'transform 0.22s ease' : 'none';
-        header.style.transform  = offset === 0 ? '' : 'translateY(' + offset + 'px)';
-    }
-
-    function scheduleSnap() {
-        clearTimeout(snapTimer);
-        snapTimer = setTimeout(function () {
-            if (offset < -(headerH * 0.51)) {
-                commit(-headerH, true);   // snap fully hidden
-            } else {
-                commit(0, true);          // snap fully visible
-            }
-        }, 200);
-    }
-
-    window.addEventListener('scroll', function () {
-        var y = window.scrollY;
-        var delta = y - lastY;
-        lastY = y;
-
-        if (y <= 0) {
-            clearTimeout(snapTimer);
-            commit(0, false);
-            header.classList.add('is-top');
-            return;
-        }
-        header.classList.remove('is-top');
-
-        commit(offset - delta, false);
-        scheduleSnap();
-    }, { passive: true });
-
-    // Initial state
-    if (window.scrollY <= 0) {
-        header.classList.add('is-top');
-    }
-})();
+// Removed – sticky snap sections keep header always visible and unscrolled.
 
 // ===================== FPS COUNTER =====================
 (function () {
@@ -889,6 +842,125 @@
         requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
+})();
+
+// ===================== SCROLL RULER =====================
+(function () {
+    var navLinks = document.querySelectorAll('.site-page-nav-link[href^="#"]');
+    if (!navLinks.length) return;
+
+    var ruler = document.createElement('nav');
+    ruler.className = 'scroll-ruler';
+    ruler.setAttribute('aria-label', 'Navigace sekcemi');
+    ruler.setAttribute('aria-hidden', 'true');
+
+    var rulerItems = [];
+    var rulerTicks = [];
+
+    navLinks.forEach(function (link, i) {
+        var item = document.createElement('a');
+        item.className = 'scroll-ruler-item';
+        item.href = link.getAttribute('href');
+        item.dataset.section = link.getAttribute('href').slice(1);
+
+        var label = document.createElement('span');
+        label.className = 'scroll-ruler-label';
+        label.textContent = link.textContent.replace(/\u00a0/g, '\u00a0').trim();
+
+        var dot = document.createElement('span');
+        dot.className = 'scroll-ruler-dot';
+        dot.setAttribute('aria-hidden', 'true');
+
+        item.appendChild(label);
+        item.appendChild(dot);
+        ruler.appendChild(item);
+        rulerItems.push(item);
+
+        if (i < navLinks.length - 1) {
+            var tick = document.createElement('div');
+            tick.className = 'scroll-ruler-tick';
+            tick.setAttribute('aria-hidden', 'true');
+            ruler.appendChild(tick);
+            rulerTicks.push(tick);
+        }
+    });
+
+    document.body.appendChild(ruler);
+
+    // Position each item proportionally to its section's scroll offset
+    var sectionIds = Array.from(navLinks).map(function (l) { return l.getAttribute('href').slice(1); });
+    var sections = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
+
+    function positionItems() {
+        var rulerH = ruler.offsetHeight;
+        if (rulerH <= 0 || !sections.length) return;
+
+        // Mirror the native scrollbar exactly:
+        //  trackH = 100vh (full viewport, scrollbar track spans whole screen)
+        //  thumbH = trackH * trackH / scrollHeight  (browser formula)
+        //  thumbTop at section i = scrollTop_i / scrollMax * (trackH - thumbH)
+        //  dot = center of thumb → thumbTop + thumbH/2
+        //  tick = bottom of thumb at section i → thumbTop + thumbH
+        //  All screen-y values offset by headerH to get ruler-y
+        var vh       = window.innerHeight;
+        var scrollH  = document.documentElement.scrollHeight;
+        var scrollMax = scrollH - vh;
+        var headerH  = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+        var trackH   = vh;                        // scrollbar track = full viewport
+        var thumbH   = trackH * trackH / scrollH; // native browser thumb formula
+
+        sections.forEach(function (sec, i) {
+            var docTop       = sec.getBoundingClientRect().top + window.scrollY;
+            var snapScrollTop = Math.max(0, docTop - headerH);
+            var frac         = scrollMax > 0 ? snapScrollTop / scrollMax : 0;
+            var thumbTop     = frac * (trackH - thumbH);
+
+            // dot at thumb centre
+            var dotY = thumbTop + thumbH / 2 - headerH;
+            if (rulerItems[i]) rulerItems[i].style.top = Math.max(0, dotY) + 'px';
+
+            // tick at thumb bottom (= where next thumb top begins)
+            if (i < sections.length - 1 && rulerTicks[i]) {
+                var tickY = thumbTop + thumbH - headerH;
+                rulerTicks[i].style.top = Math.max(0, tickY) + 'px';
+            }
+        });
+    }
+
+    positionItems();
+    window.addEventListener('resize', positionItems);
+
+    // smooth scroll on click
+    rulerItems.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+            var id = item.dataset.section;
+            var target = document.getElementById(id);
+            if (!target) return;
+            e.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    // active state via IntersectionObserver
+    var ratios = {};
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            ratios[entry.target.id] = entry.intersectionRatio;
+        });
+        var best = null;
+        var bestRatio = 0;
+        sections.forEach(function (sec) {
+            var r = ratios[sec.id] || 0;
+            if (r > bestRatio) { bestRatio = r; best = sec.id; }
+        });
+        if (best) {
+            rulerItems.forEach(function (item) {
+                item.classList.toggle('is-active', item.dataset.section === best);
+            });
+        }
+    }, { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
+
+    sections.forEach(function (sec) { observer.observe(sec); });
 })();
 
 // ===================== MOBILE SWIPE & NAV (DETAIL PANEL) =====================

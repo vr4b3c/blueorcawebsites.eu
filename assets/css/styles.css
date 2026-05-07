@@ -36,14 +36,14 @@ html {
     scroll-behavior: auto;
     scroll-snap-type: y mandatory;
     scroll-padding-top: 4.5rem;
-    scrollbar-width: thin;
+    scrollbar-width: 0.75rem;
     scrollbar-color: #3ca4c5 #031A2A;
 }
 
 /* Themed global scrollbar (Chromium) */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 0.75rem;
+    height: 0.75rem;
 }
 ::-webkit-scrollbar-track {
     background: #031A2A;
@@ -55,6 +55,13 @@ html {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: #8ed2e8;
+}
+::-webkit-scrollbar-button,
+::-webkit-scrollbar-button:start,
+::-webkit-scrollbar-button:end {
+    display: none;
+    height: 0;
+    width: 0;
 }
 
 a {
@@ -128,7 +135,6 @@ footer {
     right: 0;
     z-index: 1000;
     height: 4.5rem;
-    will-change: transform;
 }
 
 .site-header::before {
@@ -140,10 +146,6 @@ footer {
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(142, 210, 232, 0.1);
     z-index: -1;
-    transition: opacity 0.3s ease;
-}
-
-.site-header.is-top::before {
     opacity: 0;
 }
 
@@ -1208,10 +1210,9 @@ body.drawer-open {
     font-weight: 300;
     color: var(--accent);
     line-height: 1.25;
-    margin-bottom: 2rem;
+    margin-bottom: 0.9rem;
     letter-spacing: 1px;
 }
-
 /* ===================== FILTER PILLS ===================== */
 .ref-filter {
     display: flex;
@@ -1355,7 +1356,7 @@ body.drawer-open {
     background: linear-gradient(160deg, rgba(15, 70, 99, 0.5) 0%, rgba(3, 26, 42, 0.7) 100%);
     border: 1px solid transparent;
     border-radius: 0;
-    padding: 0.5rem 0.5rem 0.75rem;
+    padding: 0.5rem;
     cursor: pointer;
     outline: none;
     overflow: visible;
@@ -1455,6 +1456,7 @@ body.drawer-open {
 }
 
 .ref-thumb-label {
+    display: none;
     font-size: 0.82rem;
     font-weight: 600;
     font-style: italic;
@@ -1465,6 +1467,7 @@ body.drawer-open {
     letter-spacing: 0.02em;
     transition: color 0.2s ease;
 }
+
 
 .ref-thumb.active .ref-thumb-label {
     color: var(--text-secondary);
@@ -2253,6 +2256,9 @@ body.drawer-open {
 /* ===================== KONTAKT ===================== */
 .contact {
     border-top: 1px solid rgba(142, 210, 232, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .contact-content {
@@ -2313,9 +2319,12 @@ body.drawer-open {
 /* ===================== CENÍK ===================== */
 .cenik {
     padding: 5rem 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
-.cenik-eyebrow {
+.section-eyebrow {
     text-align: center;
     font-size: 0.72rem;
     font-weight: 600;
@@ -2335,7 +2344,7 @@ body.drawer-open {
     margin-bottom: 0.9rem;
 }
 
-.cenik-sub {
+.section-sub {
     text-align: center;
     font-size: 0.95rem;
     color: var(--text-secondary);
@@ -2426,6 +2435,7 @@ body.drawer-open {
 
 /* ===================== FOOTER ===================== */
 .site-footer {
+    display: none;
     text-align: center;
     padding: 2rem 0;
     border-top: 1px solid rgba(142, 210, 232, 0.06);
@@ -2670,6 +2680,86 @@ body.drawer-open {
     z-index: -1;
     will-change: transform;
     transform: translateZ(0);
+}
+
+/* ===================== SCROLL RULER ===================== */
+.scroll-ruler {
+    position: fixed;
+    right: 0;
+    top: 4.5rem;
+    height: calc(100vh - 4.5rem);
+    z-index: 200;
+    pointer-events: none;
+}
+
+.scroll-ruler::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: rgba(142, 210, 232, 0.15);
+    pointer-events: none;
+}
+
+@media (max-width: 1200px) {
+    .scroll-ruler {
+        display: none;
+    }
+}
+
+.scroll-ruler-item {
+    position: absolute;
+    right: 0;
+    display: flex;
+    align-items: center;
+    padding-right: 8px;
+    gap: 6px;
+    text-decoration: none;
+    pointer-events: auto;
+    color: inherit;
+    transform: translateY(-50%);
+}
+
+.scroll-ruler-label {
+    font-size: 0.58rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(142, 210, 232, 0.25);
+    white-space: nowrap;
+    transition: color 0.25s ease;
+    font-family: inherit;
+    writing-mode: vertical-rl;
+}
+
+.scroll-ruler-item:hover .scroll-ruler-label,
+.scroll-ruler-item.is-active .scroll-ruler-label {
+    color: rgba(142, 210, 232, 0.88);
+}
+
+.scroll-ruler-dot {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: rgba(142, 210, 232, 0.25);
+    flex-shrink: 0;
+    transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.scroll-ruler-item.is-active .scroll-ruler-dot {
+    background: var(--accent);
+    transform: scale(1.5);
+}
+
+.scroll-ruler-tick {
+    position: absolute;
+    right: 0;
+    width: 20px;
+    border-top: 1px solid rgba(142, 210, 232, 0.45);
+    transform: translateY(-50%);
+    pointer-events: none;
 }
 
 /* ===================== UTILITY ===================== */
