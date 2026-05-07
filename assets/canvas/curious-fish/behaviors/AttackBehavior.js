@@ -264,18 +264,20 @@ export function updateSchoolFishAttack(fish, targetSchoolFish, fishLayer, onVict
     const collisionDistance = (fish.currentSize + target.size) * 0.5;
 
     if (distSq < collisionDistance * collisionDistance) {
+        const fishLoses = targetIsBigger || (targetIsSlightlyBigger && Math.random() > 0.4);
+
+        if (fishLoses) {
+            // Shark wins unscathed — no blood, no flash, no damage on shark
+            targetMutations.isBeingAttacked = false;
+            if (onDefeat) onDefeat();
+            return { attackComplete: true, shouldDie: true, targetMutations };
+        }
+
+        // Fish wins — shark takes damage: blood burst + hit flash
         if (onBlood) onBlood((fish.x + targetX) / 2, (fish.y + targetY) / 2, Math.atan2(dy, dx));
         targetMutations._hitFlashTime = currentTime;
 
-        if (targetIsBigger) {
-            targetMutations.isBeingAttacked = false;
-            if (onDefeat) onDefeat();
-            return { attackComplete: true, shouldDie: true, targetMutations };
-        } else if (targetIsSlightlyBigger && Math.random() > 0.4) {
-            targetMutations.isBeingAttacked = false;
-            if (onDefeat) onDefeat();
-            return { attackComplete: true, shouldDie: true, targetMutations };
-        } else if (!target.isDying) {
+        if (!target.isDying) {
             targetMutations.isDying = true;
             if (fishLayer?.boneLoaded && fishLayer.boneImage) targetMutations.image = fishLayer.boneImage;
             targetMutations.killedByCurious = true;

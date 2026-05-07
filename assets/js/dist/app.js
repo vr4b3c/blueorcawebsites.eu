@@ -464,10 +464,10 @@
       this.sources = [];
       this.qualityMultiplier = 1;
       this.config = {
-        sourceWidthBase: 400,
-        minSourceSpacing: 80,
-        minSize: 4,
-        maxSize: 10,
+        sourceWidthBase: 600,
+        minSourceSpacing: 200,
+        minSize: 2,
+        maxSize: 6,
         riseSpeed: 0.3,
         swayAmount: 10,
         bubblesPerSource: 0.02,
@@ -483,10 +483,11 @@
     }
     initSources(width, height) {
       this.sources = [];
-      const baseSourceCount = Math.max(1, Math.floor(width / this.config.sourceWidthBase));
-      const targetSourceCount = Math.max(1, baseSourceCount);
+      const edgeMargin = Math.min(50, width * 0.1);
+      const usableWidth = Math.max(0, width - edgeMargin * 2);
+      const targetSourceCount = Math.max(1, Math.floor(usableWidth / this.config.sourceWidthBase));
       for (let attempt = 0; attempt < targetSourceCount * 10 && this.sources.length < targetSourceCount; attempt++) {
-        const x = Math.random() * width;
+        const x = edgeMargin + Math.random() * (width - edgeMargin * 2);
         let tooClose = false;
         for (const source of this.sources) {
           if (Math.abs(source.x - x) < this.config.minSourceSpacing) {
@@ -514,6 +515,7 @@
             
             out float v_age;
             out float v_size;
+            out float v_riseProgress;
             
             void main() {
                 float swayProgress = mod(a_age / a_swayPeriod, 1.0);
@@ -530,6 +532,7 @@
                 
                 v_age = a_age;
                 v_size = a_size;
+                v_riseProgress = 1.0 - (a_position.y / u_resolution.y);
             }
         `;
       const fragmentShaderSource = `#version 300 es
@@ -537,6 +540,7 @@
             
             in float v_age;
             in float v_size;
+            in float v_riseProgress;
             
             out vec4 outColor;
             
@@ -548,7 +552,8 @@
                 
                 float gradient = 1.0 - dist * 2.0;
                 vec3 color = mix(vec3(0.588, 0.784, 1.0), vec3(1.0), gradient);
-                float alpha = gradient * 0.6;
+                float topFade = 1.0 - smoothstep(0.78, 1.0, v_riseProgress);
+                float alpha = gradient * 0.6 * topFade;
                 
                 outColor = vec4(color, alpha);
             }
@@ -2629,17 +2634,15 @@
     const distSq = dx * dx + dy * dy;
     const collisionDistance = (fish.currentSize + target.size) * 0.5;
     if (distSq < collisionDistance * collisionDistance) {
+      const fishLoses = targetIsBigger || targetIsSlightlyBigger && Math.random() > 0.4;
+      if (fishLoses) {
+        targetMutations.isBeingAttacked = false;
+        if (onDefeat) onDefeat();
+        return { attackComplete: true, shouldDie: true, targetMutations };
+      }
       if (onBlood) onBlood((fish.x + targetX) / 2, (fish.y + targetY) / 2, Math.atan2(dy, dx));
       targetMutations._hitFlashTime = currentTime;
-      if (targetIsBigger) {
-        targetMutations.isBeingAttacked = false;
-        if (onDefeat) onDefeat();
-        return { attackComplete: true, shouldDie: true, targetMutations };
-      } else if (targetIsSlightlyBigger && Math.random() > 0.4) {
-        targetMutations.isBeingAttacked = false;
-        if (onDefeat) onDefeat();
-        return { attackComplete: true, shouldDie: true, targetMutations };
-      } else if (!target.isDying) {
+      if (!target.isDying) {
         targetMutations.isDying = true;
         if (fishLayer?.boneLoaded && fishLayer.boneImage) targetMutations.image = fishLayer.boneImage;
         targetMutations.killedByCurious = true;
@@ -2723,6 +2726,8 @@
     const eatenFood = [];
     const foodUpdates = [];
     let newTargetedFood = fish.targetedFood;
+    const EDGE_MARGIN = 100;
+    const inEdgeZone = (food) => food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN || food.y < EDGE_MARGIN || food.y > height - EDGE_MARGIN;
     let shouldFindNewFood = true;
     if (fish.targetedFood) {
       const targeted = fish.targetedFood;
@@ -2734,7 +2739,7 @@
         const centerDy = targeted.y - fish.y;
         const centerDistSquared = centerDx * centerDx + centerDy * centerDy;
         const minCenterDistanceSquared = (fish.currentSize * 1.2) ** 2;
-        if (centerDistSquared < minCenterDistanceSquared) {
+        if (centerDistSquared < minCenterDistanceSquared || inEdgeZone(targeted)) {
           newTargetedFood = null;
         } else if (tdistSquared <= fovDistance * fovDistance && targeted.y <= height * 0.9) {
           shouldFindNewFood = false;
@@ -2765,7 +2770,7 @@
       let nearestFood = null;
       let nearestDistanceSquared = fovDistance * fovDistance;
       for (const food of foodParticles) {
-        if (food.eaten || food.y > bottomThreshold) continue;
+        if (food.eaten || food.y > bottomThreshold || inEdgeZone(food)) continue;
         const foodDeltaX = food.x - fovOriginX;
         const foodDeltaY = food.y - fovOriginY;
         const foodDistanceSquared = foodDeltaX * foodDeltaX + foodDeltaY * foodDeltaY;

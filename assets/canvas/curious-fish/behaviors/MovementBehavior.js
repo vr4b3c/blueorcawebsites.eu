@@ -93,6 +93,11 @@ export function findFoodTarget(fish, foodParticles, width, height, followDistanc
     const foodUpdates = []; // Track food particle updates for orchestrator to apply
     let newTargetedFood = fish.targetedFood; // Track new targeted food value
     
+    const EDGE_MARGIN = 100;
+    const inEdgeZone = (food) =>
+        food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN ||
+        food.y < EDGE_MARGIN || food.y > height - EDGE_MARGIN;
+
     // Check if targeted food still valid (use squared distance for performance)
     let shouldFindNewFood = true;
     if (fish.targetedFood) {
@@ -106,7 +111,7 @@ export function findFoodTarget(fish, foodParticles, width, height, followDistanc
             const centerDistSquared = centerDx * centerDx + centerDy * centerDy;
             const minCenterDistanceSquared = (fish.currentSize * 1.2) ** 2;
             
-            if (centerDistSquared < minCenterDistanceSquared) {
+            if (centerDistSquared < minCenterDistanceSquared || inEdgeZone(targeted)) {
                 newTargetedFood = null;
             } else if (tdistSquared <= fovDistance * fovDistance && targeted.y <= height * 0.9) {
                 shouldFindNewFood = false;
@@ -142,7 +147,7 @@ export function findFoodTarget(fish, foodParticles, width, height, followDistanc
         let nearestDistanceSquared = fovDistance * fovDistance;
         
         for (const food of foodParticles) {
-            if (food.eaten || food.y > bottomThreshold) continue;
+            if (food.eaten || food.y > bottomThreshold || inEdgeZone(food)) continue;
             
             const foodDeltaX = food.x - fovOriginX;
             const foodDeltaY = food.y - fovOriginY;

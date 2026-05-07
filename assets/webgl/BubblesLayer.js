@@ -11,10 +11,10 @@ export class BubblesLayer {
         this.qualityMultiplier = 1.0;
         
         this.config = {
-            sourceWidthBase: 400,
-            minSourceSpacing: 80,
-            minSize: 4,
-            maxSize: 10,
+            sourceWidthBase: 600,
+            minSourceSpacing: 200,
+            minSize: 2,
+            maxSize: 6,
             riseSpeed: 0.3,
             swayAmount: 10,
             bubblesPerSource: 0.02,
@@ -33,11 +33,11 @@ export class BubblesLayer {
     initSources(width, height) {
         this.sources = [];
         
-        const baseSourceCount = Math.max(1, Math.floor(width / this.config.sourceWidthBase));
-        const targetSourceCount = Math.max(1, baseSourceCount);
-        
+        const edgeMargin = Math.min(50, width * 0.1);
+        const usableWidth = Math.max(0, width - edgeMargin * 2);
+        const targetSourceCount = Math.max(1, Math.floor(usableWidth / this.config.sourceWidthBase));
         for (let attempt = 0; attempt < targetSourceCount * 10 && this.sources.length < targetSourceCount; attempt++) {
-            const x = Math.random() * width;
+            const x = edgeMargin + Math.random() * (width - edgeMargin * 2);
             
             let tooClose = false;
             for (const source of this.sources) {
@@ -69,6 +69,7 @@ export class BubblesLayer {
             
             out float v_age;
             out float v_size;
+            out float v_riseProgress;
             
             void main() {
                 float swayProgress = mod(a_age / a_swayPeriod, 1.0);
@@ -85,6 +86,7 @@ export class BubblesLayer {
                 
                 v_age = a_age;
                 v_size = a_size;
+                v_riseProgress = 1.0 - (a_position.y / u_resolution.y);
             }
         `;
         
@@ -93,6 +95,7 @@ export class BubblesLayer {
             
             in float v_age;
             in float v_size;
+            in float v_riseProgress;
             
             out vec4 outColor;
             
@@ -104,7 +107,8 @@ export class BubblesLayer {
                 
                 float gradient = 1.0 - dist * 2.0;
                 vec3 color = mix(vec3(0.588, 0.784, 1.0), vec3(1.0), gradient);
-                float alpha = gradient * 0.6;
+                float topFade = 1.0 - smoothstep(0.78, 1.0, v_riseProgress);
+                float alpha = gradient * 0.6 * topFade;
                 
                 outColor = vec4(color, alpha);
             }

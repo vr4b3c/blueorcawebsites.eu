@@ -2749,23 +2749,6 @@ a[target="_blank"]:hover::after {
     pointer-events: none;
 }
 
-.scroll-ruler-item::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to right, transparent 30%, rgba(60, 164, 197, 0.12) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.scroll-ruler-item:hover::before {
-    opacity: 1;
-}
-
-.scroll-ruler-item.is-active::before {
-    opacity: 0.6;
-}
 
 .scroll-ruler-label {
     font-size: 0.68rem;
