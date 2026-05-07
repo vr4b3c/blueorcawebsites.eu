@@ -20,7 +20,7 @@ if (!reduced) {
 
     // Section heading
     inView('.references .section-heading', function (el) {
-        animate(el, { opacity: [0, 1], y: [25, 0] }, { duration: 0.6, ease: [0.33, 1, 0.68, 1] });
+        animate(el, { opacity: [0, 1], y: [25, 0] }, { duration: 1.0, ease: [0.33, 1, 0.68, 1] });
     });
 
     // Filter pills – staggered
@@ -28,7 +28,7 @@ if (!reduced) {
         animate(
             el.querySelectorAll('.filter-pill'),
             { opacity: [0, 1], y: [12, 0] },
-            { duration: 0.4, delay: stagger(0.08), ease: [0.33, 1, 0.68, 1] }
+            { duration: 0.7, delay: stagger(0.12), ease: [0.33, 1, 0.68, 1] }
         );
     });
 
@@ -36,7 +36,7 @@ if (!reduced) {
 
     // Footer
     inView('.site-footer', function (el) {
-        animate(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: [0.33, 1, 0.68, 1] });
+        animate(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.8, ease: [0.33, 1, 0.68, 1] });
     });
 }
 

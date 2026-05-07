@@ -3022,17 +3022,17 @@
   document.documentElement.classList.add("motion-ready");
   if (!reduced) {
     Nm(".references .section-heading", function(el) {
-      bm(el, { opacity: [0, 1], y: [25, 0] }, { duration: 0.6, ease: [0.33, 1, 0.68, 1] });
+      bm(el, { opacity: [0, 1], y: [25, 0] }, { duration: 1, ease: [0.33, 1, 0.68, 1] });
     });
     Nm(".ref-filter", function(el) {
       bm(
         el.querySelectorAll(".filter-pill"),
         { opacity: [0, 1], y: [12, 0] },
-        { duration: 0.4, delay: tf(0.08), ease: [0.33, 1, 0.68, 1] }
+        { duration: 0.7, delay: tf(0.12), ease: [0.33, 1, 0.68, 1] }
       );
     });
     Nm(".site-footer", function(el) {
-      bm(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.5, ease: [0.33, 1, 0.68, 1] });
+      bm(el, { opacity: [0, 1], y: [20, 0] }, { duration: 0.8, ease: [0.33, 1, 0.68, 1] });
     });
   }
 })();

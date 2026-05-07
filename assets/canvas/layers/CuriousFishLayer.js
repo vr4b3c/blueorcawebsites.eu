@@ -607,7 +607,7 @@ export class CuriousFishLayer {
         if (!hoveredFish) return;
         
         // Pink for same-species (mating), red for others (attack)
-        const isSameSpecies = hoveredFish.image?.src?.includes('curiousfish.png');
+        const isSameSpecies = hoveredFish.image?.src?.includes('curiousfish');
         const cursorColor = isSameSpecies ? '#ff69b4' : '#ff0000';
         
         ctx.save();

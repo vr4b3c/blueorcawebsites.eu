@@ -38,7 +38,7 @@ html {
     scroll-snap-type: y mandatory;
     scroll-padding-top: 4.5rem;
     scrollbar-width: 0.75rem;
-    scrollbar-color: #3ca4c5 #031A2A;
+    scrollbar-color:  #3ca4c5 rgba(0,0,0,0.15);
 }
 
 /* Themed global scrollbar (Chromium) */
@@ -47,20 +47,20 @@ html {
     height: 0.75rem;
 }
 ::-webkit-scrollbar-track {
-    background: #031A2A;
+    background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-    background: #3ca4c5;
+    background: var(--accent-mid);
     border-radius: 99px;
-    border: 2px solid #031A2A;
+    border: 2px solid var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #8ed2e8;
+    background: var(--accent);
 }
 
 ::-webkit-scrollbar-button {
     height: var(--scrollbar-button-h);
-    background: #031A2A; /* blend with track */
+    background: var(--bg-primary); /* blend with track */
 }
 
 
@@ -564,7 +564,7 @@ footer {
     padding: 4.5rem 2rem 2rem;
     gap: 0.25rem;
     transform: translateX(100%);
-    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -667,7 +667,7 @@ body.drawer-open {
 
 /* Text: fade in při zobrazení slidu */
 .cta-slider .cta-slide.is-active .cta-cms-text {
-    animation: ctaTextIn 0.4s ease both;
+    animation: ctaTextIn 0.7s ease both;
 }
 
 @keyframes ctaTextIn {
@@ -677,7 +677,7 @@ body.drawer-open {
 
 /* Text: fade out při odchodu */
 .cta-slider .cta-slide.is-text-out .cta-cms-text {
-    animation: ctaTextOut 0.2s ease forwards;
+    animation: ctaTextOut 0.35s ease forwards;
     pointer-events: none;
 }
 
@@ -714,7 +714,7 @@ body.drawer-open {
     transform-style: preserve-3d;
     /* scale(1.015): každá dlaždice přesahuje sousedy o ~1.5% → žádné škvíry */
     transform: scale(1.015) rotateY(0deg);
-    transition: transform var(--tf-dur, 0.45s) cubic-bezier(0.4, 0, 0.2, 1) var(--tf-delay, 0s);
+    transition: transform var(--tf-dur, 0.75s) cubic-bezier(0.4, 0, 0.2, 1) var(--tf-delay, 0s);
     will-change: transform;
 }
 
@@ -1351,11 +1351,11 @@ body.drawer-open {
     overflow: visible;
     /* transition for shadow/background; border handled by ::before; transform & opacity driven by JS */
     transition:
-        transform    0.65s cubic-bezier(0.4, 0, 0.2, 1),
-        opacity      0.65s cubic-bezier(0.4, 0, 0.2, 1),
-        box-shadow   0.45s cubic-bezier(0.4, 0, 0.2, 1),
-        background   0.45s cubic-bezier(0.4, 0, 0.2, 1),
-        border-color 0.3s ease;
+        transform    1.0s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity      1.0s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow   0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        background   0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.65s linear;
     will-change: transform, opacity;
 }
 
@@ -1368,31 +1368,7 @@ body.drawer-open {
 .ref-thumb.active {
     background: linear-gradient(160deg, rgba(15, 70, 99, 0.95) 0%, rgba(3, 26, 42, 0.95) 100%);
     box-shadow: none;
-}
-
-/* Animated border — conic-gradient travels clockwise around perimeter */
-.ref-thumb::before {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    padding: 1px;
-    background: conic-gradient(from -90deg, rgba(142, 210, 232, 1) var(--bp), transparent var(--bp));
-    -webkit-mask:
-        linear-gradient(#fff 0 0) content-box,
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    --bp: 0%;
-    opacity: 0;
-    transition: opacity 0.25s ease, --bp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    pointer-events: none;
-    z-index: 2;
-}
-
-.ref-thumb.active::before {
-    --bp: 100%;
-    opacity: 1;
-    transition: opacity 0s, --bp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    border-color: rgba(142, 210, 232, 1);
 }
 
 /* Flat downward arrow on the active thumbnail */
@@ -1408,7 +1384,7 @@ body.drawer-open {
     border-left: 18px solid transparent;
     border-right: 18px solid transparent;
     border-top: 10px solid rgba(142, 210, 232, 1);
-    transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s;
+    transition: transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) 0.15s;
     pointer-events: none;
     z-index: 20;
 }
@@ -1433,7 +1409,7 @@ body.drawer-open {
     background: rgba(2, 14, 26, 1);
     pointer-events: none;
     opacity: var(--cf-overlay, 0);
-    transition: opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 1.0s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 1;
 }
 
@@ -1527,7 +1503,6 @@ body.drawer-open {
     perspective: 2000px;
     perspective-origin: center center;
     overflow: visible;
-    transition: min-height 0.7s linear;
 }
 
 .ref-detail-panel::before {

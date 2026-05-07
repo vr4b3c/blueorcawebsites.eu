@@ -34,7 +34,7 @@ BlueOrca.carousel = {};
             return;
         }
 
-        var DUR    = 700;
+        var DUR    = 1100;
         var mobile = window.innerWidth < 700;
         var axis   = mobile ? 'Y' : 'X';
         var h      = currentCard.offsetHeight;
@@ -76,7 +76,7 @@ BlueOrca.carousel = {};
 
         // Animate height and drum simultaneously
         var drumAngle = mobile ? (dir === 'right' ? 90 : -90) : (dir === 'right' ? -90 : 90);
-        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1), height ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
+        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
         stage.style.transform  = 'translateZ(-' + r + 'px) rotate' + axis + '(' + drumAngle + 'deg)';
         stage.style.height     = newH + 'px';
 
@@ -98,7 +98,30 @@ BlueOrca.carousel = {};
     // Expose for coverflow module
     BlueOrca.carousel.activateRef = activateRef;
 
-    // Thumb click is handled by coverflow IIFE via event delegation
+    // Lock .ref-detail-panel to the height of the tallest card so switching
+    // cards never causes layout jumps or section-height flickering.
+    function lockPanelHeight() {
+        var panel = document.querySelector('.ref-detail-panel');
+        if (!panel) return;
+        var allCards = Array.from(panel.querySelectorAll('.ref-card.ref-detail'));
+        var maxH = 0;
+        allCards.forEach(function (c) {
+            var savedCss = c.style.cssText;
+            c.style.cssText = 'display:grid;position:absolute;visibility:hidden;width:100%;';
+            var h = c.offsetHeight;
+            c.style.cssText = savedCss;
+            if (h > maxH) maxH = h;
+        });
+        if (maxH > 0) panel.style.minHeight = maxH + 'px';
+    }
+
+    // Run on load and on resize (debounced)
+    lockPanelHeight();
+    var _panelResizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(_panelResizeTimer);
+        _panelResizeTimer = setTimeout(lockPanelHeight, 120);
+    });
 
     // --- Filter pills ---
     pills.forEach(function (pill) {
@@ -135,7 +158,7 @@ BlueOrca.carousel = {};
     var _queued       = null;   // last requested idx received during animation lock
 
     // Transition string used for animated moves
-    var CF_TRANSITION = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+    var CF_TRANSITION = 'transform 1.0s cubic-bezier(0.4,0,0.2,1)';
 
     // 3-D config per relative position; rel=±(range+1) shares position with ±range
     // but sits one z-index layer below — always ready behind the boundary items.
@@ -181,7 +204,7 @@ BlueOrca.carousel = {};
         t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
         if (delayZIndex) {
             var newZ = String(cfZIndex(rel));
-            setTimeout(function () { t.style.zIndex = newZ; }, Math.round(CF_LOCK_MS / 3));
+            setTimeout(function () { t.style.zIndex = newZ; }, Math.round(CF_LOCK_MS / 5));
         } else {
             t.style.zIndex = String(cfZIndex(rel));
         }
@@ -297,8 +320,8 @@ BlueOrca.carousel = {};
         setOneStep(newIdx);
     }
 
-    // Duration must match CF_TRANSITION (0.65s) + small buffer
-    var CF_LOCK_MS = 700;
+    // Duration must match CF_TRANSITION (1.0s) + small buffer
+    var CF_LOCK_MS = 1050;
 
     function setOneStep(newIdx) {
         var thumbs = getVisible();
@@ -351,7 +374,7 @@ BlueOrca.carousel = {};
         var html = document.documentElement;
         html.style.scrollSnapType = 'none';
         setActive(idx);
-        setTimeout(function () { html.style.scrollSnapType = ''; }, 800);
+        setTimeout(function () { html.style.scrollSnapType = ''; }, 1200);
     });
 
     // Mouse drag / swipe
@@ -835,6 +858,11 @@ BlueOrca.carousel = {};
             startInterval();
         }, remainingTime);
     });
+
+    BlueOrca.ctaSlider = {
+        next: function () { show(current + 1); startInterval(); },
+        prev: function () { show(current - 1); startInterval(); }
+    };
 })();
 
 // ===================== HAMBURGER / MOBILE DRAWER =====================
@@ -891,6 +919,14 @@ BlueOrca.carousel = {};
             var target = document.getElementById(id);
             if (!target) return;
             e.preventDefault();
+            // Use JS navigator if available (gives custom duration), else fallback
+            if (BlueOrca.navigateTo && BlueOrca.nearestSectionIdx) {
+                var snapSections = Array.from(document.querySelectorAll(
+                    '.cta-cms, .references, .vyhody, .cenik, .contact'
+                ));
+                var idx = snapSections.indexOf(target);
+                if (idx !== -1) { BlueOrca.navigateTo(idx); return; }
+            }
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     });
@@ -1108,13 +1144,20 @@ BlueOrca.carousel = {};
     positionItems();
     window.addEventListener('resize', positionItems);
 
-    // smooth scroll on click
+    // animated scroll on click — routes through section navigator when possible
     rulerItems.forEach(function (item) {
         item.addEventListener('click', function (e) {
             var id = item.dataset.section;
             var target = document.getElementById(id);
             if (!target) return;
             e.preventDefault();
+            if (BlueOrca.navigateTo) {
+                var snapSections = Array.from(document.querySelectorAll(
+                    '.cta-cms, .references, .vyhody, .cenik, .contact'
+                ));
+                var idx = snapSections.indexOf(target);
+                if (idx !== -1) { BlueOrca.navigateTo(idx); return; }
+            }
             target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     });
@@ -1139,6 +1182,44 @@ BlueOrca.carousel = {};
     }, { threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
 
     sections.forEach(function (sec) { observer.observe(sec); });
+})();
+
+// ===================== HORIZONTAL KEYBOARD NAV (CTA slider / References carousel) =====================
+(function () {
+    var HEADER_H = 72;
+    var snapSections = Array.from(document.querySelectorAll(
+        '.cta-cms, .references, .vyhody, .cenik, .contact'
+    ));
+    if (!snapSections.length) return;
+
+    function nearestIdx() {
+        var sy = window.scrollY;
+        var best = 0, bestD = Infinity;
+        snapSections.forEach(function (s, i) {
+            var top = Math.round(s.getBoundingClientRect().top + window.scrollY - HEADER_H);
+            var d = Math.abs(top - sy);
+            if (d < bestD) { bestD = d; best = i; }
+        });
+        return best;
+    }
+
+    document.addEventListener('keydown', function (e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
+            e.target.isContentEditable) return;
+        var isLeft  = e.key === 'ArrowLeft'  || e.key === 'a' || e.key === 'A';
+        var isRight = e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D';
+        if (!isLeft && !isRight) return;
+        var idx = nearestIdx();
+        if (idx === 0 && BlueOrca.ctaSlider) {
+            e.preventDefault();
+            isLeft ? BlueOrca.ctaSlider.prev() : BlueOrca.ctaSlider.next();
+        } else if (idx === 1 && BlueOrca.carousel) {
+            e.preventDefault();
+            isLeft ? BlueOrca.carousel.prev() : BlueOrca.carousel.next();
+        }
+    });
+
+    BlueOrca.nearestSectionIdx = nearestIdx;
 })();
 
 // ===================== MOBILE SWIPE & NAV (DETAIL PANEL) =====================
