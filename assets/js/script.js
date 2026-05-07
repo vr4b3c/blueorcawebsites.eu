@@ -233,9 +233,12 @@
         if (!t || t.classList.contains('filter-hidden')) return;
         var idx = getVisible().indexOf(t);
         if (idx === -1) return;
+        // Temporarily disable mandatory scroll-snap so the panel min-height
+        // transition (0.7 s) does not cause the browser to snap to the next section.
+        var html = document.documentElement;
+        html.style.scrollSnapType = 'none';
         setActive(idx);
-        var detailPanel = document.querySelector('.ref-detail-panel');
-        if (detailPanel) detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(function () { html.style.scrollSnapType = ''; }, 800);
     });
 
     // --- Mouse drag (swipe gesture changes active card) ---

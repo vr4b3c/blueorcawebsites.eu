@@ -762,15 +762,16 @@
     }
     initParticles(width, height) {
       this.particles = [];
+      const topGap = 80 / height;
       for (let s = 0; s < this.config.swarmCount; s++) {
         const centerX = Math.random();
-        const centerY = Math.pow(Math.random(), 2) * 0.7 + 0.05;
+        const centerY = Math.pow(Math.random(), 2) * (0.75 - topGap) + topGap;
         const swarmSpreadX = 0.02 + Math.random() * 0.03;
         const swarmSpreadY = 0.015 + Math.random() * 0.02;
         for (let i = 0; i < this.config.particlesPerSwarm; i++) {
           const spreadX = (Math.random() - 0.5) * swarmSpreadX;
           const spreadY = (Math.random() - 0.5) * swarmSpreadY;
-          const yPos = Math.min(0.9, Math.max(0.05, centerY + spreadY));
+          const yPos = Math.min(0.9, Math.max(topGap, centerY + spreadY));
           this.particles.push({
             x: Math.min(1, Math.max(0, centerX + spreadX)),
             y: yPos,
@@ -787,7 +788,7 @@
         }
       }
       for (let i = 0; i < this.config.fineCount; i++) {
-        const yPos = Math.pow(Math.random(), 2) * 0.9 + 0.05;
+        const yPos = Math.pow(Math.random(), 2) * (0.95 - topGap) + topGap;
         this.particles.push({
           x: Math.random(),
           y: yPos,
@@ -840,7 +841,8 @@
 
                 // Fade u vrcholu a dna
                 float normY = y / u_resolution.y;
-                v_fade = smoothstep(0.0, 0.07, normY) * smoothstep(1.0, 0.88, normY);
+                float topFadeEdge = 70.0 / u_resolution.y;
+                v_fade = smoothstep(topFadeEdge - 8.0 / u_resolution.y, topFadeEdge, normY) * smoothstep(1.0, 0.75, normY);
 
                 vec2 clip = (vec2(x, y) / u_resolution) * 2.0 - 1.0;
                 clip.y = -clip.y;
@@ -938,6 +940,7 @@
             uniform float u_time;
             
             out float v_glimmer;
+            out float v_topFade;
             
             void main() {
                 float progress = mod(u_time / (a_duration * 1000.0), 1.0);
@@ -949,6 +952,11 @@
                 vec2 position;
                 position.x = a_basePosition.x * u_resolution.x + driftOffset;
                 position.y = a_basePosition.y * u_resolution.y + yOffset;
+                
+                // Hard top cutoff at 70px \u2014 8px fade zone
+                float normY = position.y / u_resolution.y;
+                float topEdge = 70.0 / u_resolution.y;
+                v_topFade = smoothstep(topEdge - 8.0 / u_resolution.y, topEdge, normY);
                 
                 vec2 clipSpace = (position / u_resolution) * 2.0 - 1.0;
                 clipSpace.y = -clipSpace.y;
@@ -969,6 +977,7 @@
             uniform float u_opacity;
             
             in float v_glimmer;
+            in float v_topFade;
             out vec4 outColor;
             
             void main() {
@@ -987,7 +996,7 @@
                 
                 // Bioluminiscence: posun barvy k modrob\xEDl\xE9 + zesilen\xED jasu
                 vec3 glowColor = mix(u_color, vec3(0.65, 0.95, 1.0), v_glimmer);
-                float finalOpacity = min(1.0, u_opacity * alpha * (1.0 + v_glimmer * 4.0));
+                float finalOpacity = min(1.0, u_opacity * alpha * (1.0 + v_glimmer * 4.0)) * v_topFade;
                 
                 outColor = vec4(glowColor, finalOpacity);
             }
@@ -4710,7 +4719,7 @@
         let culled = 0;
         for (let i = 0; i < this.sharks.length && this.sharks.length - culled > _FishLayer.MAX_FISH; i++) {
           const s = this.sharks[i];
-          if (s.passive && s.isIndependent && !s.isDying) {
+          if (s.passive && s.isIndependent && !s.isDying && (!s.bornAt || currentTime - s.bornAt > 1e4)) {
             s.isDying = true;
             culled++;
           }

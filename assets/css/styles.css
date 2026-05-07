@@ -1554,6 +1554,20 @@ body.drawer-open {
     transition: min-height 0.7s linear;
 }
 
+.ref-detail-panel::before {
+    content: '';
+    position: absolute;
+    top: calc(100% - 15px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 40px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(142, 210, 232, 0.22) 0%, transparent 75%);
+    filter: blur(14px);
+    pointer-events: none;
+    z-index: 0;
+}
+
 /* Suppress transition on first render until JS removes this class */
 .ref-detail-panel.no-transition {
     transition: none !important;
@@ -1577,6 +1591,12 @@ body.drawer-open {
     transition: box-shadow 0.3s ease;
     display: grid;
     grid-template-columns: minmax(500px, 3fr) minmax(450px, 1fr);
+    position: relative;
+    isolation: isolate;
+}
+
+.ref-card::after {
+    content: none;
 }
 
 .ref-card:hover {
@@ -2751,30 +2771,30 @@ a[target="_blank"]:hover::after {
 
 
 .scroll-ruler-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 0.1em;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0em;
     text-transform: uppercase;
-    color: rgba(142, 210, 232, 0.25);
+    color: rgba(142, 210, 232, 0.5);
     white-space: nowrap;
     transition: color 0.25s ease;
     font-family: inherit;
     writing-mode: vertical-lr;
     text-orientation: upright;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6), 0 0 12px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6), 0 0 5px rgba(0, 0, 0, 0.4);
 }
 
 .scroll-ruler-item:hover .scroll-ruler-label,
 .scroll-ruler-item.is-active .scroll-ruler-label {
-    color: rgba(142, 210, 232, 0.88);
+    color: rgba(142, 210, 232, 1);
 }
 
 
 .scroll-ruler-tick {
     position: absolute;
     right: 0;
-    width: 25px;
-    border-top: 1px solid rgba(142, 210, 232, 0.55);
+    width: 35px;
+    border-top: 1px solid rgba(142, 210, 232, 0.50);
     pointer-events: none;
     margin-top: -10px;
 }

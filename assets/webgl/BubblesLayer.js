@@ -159,7 +159,7 @@ export class BubblesLayer {
         if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
             console.error('Program link error:', gl.getProgramInfoLog(program));
             return null;
-        }
+        } 
         
         gl.deleteShader(vertexShader);
         gl.deleteShader(fragmentShader);

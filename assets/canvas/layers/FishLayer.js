@@ -151,7 +151,8 @@ export class FishLayer {
             let culled = 0;
             for (let i = 0; i < this.sharks.length && this.sharks.length - culled > FishLayer.MAX_FISH; i++) {
                 const s = this.sharks[i];
-                if (s.passive && s.isIndependent && !s.isDying) {
+                if (s.passive && s.isIndependent && !s.isDying &&
+                        (!s.bornAt || currentTime - s.bornAt > 10_000)) {
                     s.isDying = true;
                     culled++;
                 }
