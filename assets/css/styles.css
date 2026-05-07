@@ -1436,7 +1436,7 @@ body.drawer-open {
     transition: none !important;
     opacity: 1 !important;
     pointer-events: none !important;
-    z-index: 1 !important;
+    /* z-index set by JS to 25 – above all carousel items (max 20) */
 }
 
 .ref-thumb-img {

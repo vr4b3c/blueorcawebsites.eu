@@ -128,6 +128,7 @@
     if (!viewport) return;
 
     var activeIdx = 0;
+    var _pendingSteps = [];
 
     // 3-D config per relative position (clamped to ±3, beyond that hidden)
     var posCfg = {
@@ -222,6 +223,7 @@
                 var ghost = t.cloneNode(true);
                 ghost.classList.add('ref-thumb-ghost');
                 ghost.removeAttribute('data-cf-rel');
+                ghost.style.zIndex = '1'; // always below all carousel items
                 row.appendChild(ghost);
                 setTimeout(function () {
                     if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
@@ -263,11 +265,41 @@
     }
 
     function setActive(newIdx) {
+        // Cancel any pending chained steps from a previous multi-step jump
+        _pendingSteps.forEach(clearTimeout);
+        _pendingSteps = [];
+
         var thumbs = getVisible();
         var n = thumbs.length;
         if (!n) return;
 
-        // Determine direction before wrapping
+        var delta = newIdx - activeIdx;
+        if (delta >  Math.floor(n / 2)) delta -= n;
+        if (delta < -Math.floor(n / 2)) delta += n;
+
+        // Multi-step jump: execute one step at a time so only boundary items ghost
+        if (Math.abs(delta) > 1) {
+            var step = delta > 0 ? 1 : -1;
+            var absDelta = Math.abs(delta);
+            setOneStep(activeIdx + step);
+            for (var s = 1; s < absDelta; s++) {
+                (function (delay, dir) {
+                    _pendingSteps.push(setTimeout(function () {
+                        setOneStep(activeIdx + dir);
+                    }, delay * 700));
+                })(s, step);
+            }
+            return;
+        }
+
+        setOneStep(newIdx);
+    }
+
+    function setOneStep(newIdx) {
+        var thumbs = getVisible();
+        var n = thumbs.length;
+        if (!n) return;
+
         var delta = newIdx - activeIdx;
         if (delta >  Math.floor(n / 2)) delta -= n;
         if (delta < -Math.floor(n / 2)) delta += n;
