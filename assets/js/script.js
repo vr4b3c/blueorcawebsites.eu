@@ -127,10 +127,15 @@
     var nextBtn  = document.querySelector('.ref-thumbs-arrow--next');
     if (!viewport) return;
 
-    var activeIdx = 0;
-    var _pendingSteps = [];
+    var activeIdx     = 0;
+    var _animating    = false;
+    var _queued       = null;   // last requested idx received during animation lock
 
-    // 3-D config per relative position (clamped to ±3, beyond that hidden)
+    // Transition string used for animated moves
+    var CF_TRANSITION = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+
+    // 3-D config per relative position; rel=±(range+1) shares position with ±range
+    // but sits one z-index layer below — always ready behind the boundary items.
     var posCfg = {
         '-3': { ry:  54, scale: 0.76, overlay: 0.82 },
         '-2': { ry:  40, scale: 0.86, overlay: 0.62 },
@@ -139,21 +144,48 @@
          '1': { ry: -28, scale: 0.94, overlay: 0.30 },
          '2': { ry: -40, scale: 0.86, overlay: 0.62 },
          '3': { ry: -54, scale: 0.76, overlay: 0.82 },
-    }; 
+    };
+
+    // ── Helpers ────────────────────────────────────────────────────────────
 
     function getVisible() {
         return Array.from(row.querySelectorAll('.ref-thumb:not(.filter-hidden)'));
     }
 
     function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
-    function wrapIdx(i, n) { return ((i % n) + n) % n; }
+    function wrapIdx(i, n)    { return ((i % n) + n) % n; }
 
-    // Unique z-index: right-side (rel >= 0) gets priority over left at same distance.
-    // Formula: rel=0 → 20, rel=+1 → 18, rel=-1 → 17, rel=+2 → 16, rel=-2 → 15 …
+    // How many items to show each side of centre (responsive)
+    // Desktop ≥1024: range 2 (5 visible); tablet <1024: range 1 (3 visible)
+    function getRange() { return window.innerWidth < 1024 ? 1 : 2; }
+
+    // rel=0 → 20, rel=+1 → 18, rel=-1 → 17, rel=+2 → 16, rel=-2 → 15,
+    // rel=+3 → 14 (under +2), rel=-3 → 13 (under -2) ...
     function cfZIndex(rel) {
         return rel >= 0 ? (20 - rel * 2) : (20 + rel * 2 - 1);
     }
 
+    // Apply all positional inline styles to a thumb in one place.
+    // delayZIndex: defer z-index change to 1/3 through the animation so items
+    // don't pop stacking layers at the very start of their move.
+    function applyStyle(t, tx, cfg, rel, half, transition, delayZIndex) {
+        t.style.transition = transition || 'none';
+        t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
+        if (delayZIndex) {
+            var newZ = String(cfZIndex(rel));
+            setTimeout(function () { t.style.zIndex = newZ; }, Math.round(CF_LOCK_MS / 3));
+        } else {
+            t.style.zIndex = String(cfZIndex(rel));
+        }
+        t.style.opacity    = '1';
+        t.style.left       = 'calc(50% - ' + half + 'px)';
+        t.style.setProperty('--cf-overlay', String(cfg.overlay));
+        t.style.visibility = '';
+    }
+
+    // ── Position functions ─────────────────────────────────────────────────
+
+    // Reset all thumbs to the centre (used when section scrolls out of view)
     function centerPositions() {
         var thumbs = getVisible();
         var n = thumbs.length;
@@ -177,6 +209,11 @@
         });
     }
 
+    // Spread all thumbs into coverflow positions.
+    // Items at |rel| == range+1 are positioned identically to |rel| == range
+    // but with lower z-index — they act as permanent "underwings" so there's
+    // never an empty gap when boundary items slide inward.
+    // Items beyond range+1 are hidden (visibility:hidden).
     function updatePositions() {
         var thumbs = getVisible();
         var n = thumbs.length;
@@ -184,14 +221,14 @@
 
         activeIdx = wrapIdx(activeIdx, n);
 
-        var vw    = window.innerWidth;
-        var range        = vw < 700 ? 1 : 2;
-        var overlapRatio = vw < 700 ? 0.88 : 0.60;
-
-        var cardW = thumbs[0].offsetWidth;
-        var half  = Math.round(cardW / 2);
-        var step  = cardW * overlapRatio;
-        var cardH = thumbs[0].offsetHeight;
+        var range        = getRange();
+        var visRange     = range + 1;          // slots ±visRange are visible but underlaid
+        var vw           = window.innerWidth;
+        var overlapRatio = vw >= 1024 ? 0.60 : 0.72; // tablet: wider spacing between 3 items
+        var cardW        = thumbs[0].offsetWidth;
+        var half         = Math.round(cardW / 2);
+        var step         = cardW * overlapRatio;
+        var cardH        = thumbs[0].offsetHeight;
 
         row.style.height = (cardH + 32) + 'px';
 
@@ -200,74 +237,54 @@
             if (rel >  Math.floor(n / 2)) rel -= n;
             if (rel < -Math.floor(n / 2)) rel += n;
 
-            var relC = clamp(rel, -2, 2);
-            var cfg  = posCfg[String(relC)];
-            if (range === 1 && Math.abs(relC) === 1) {
-                cfg = { ry: relC < 0 ? 46 : -46, scale: 0.78, overlay: 0.65 };
+            // Items beyond visRange: invisible, no layout needed
+            if (Math.abs(rel) > visRange) {
+                t.style.visibility = 'hidden';
+                t.setAttribute('data-cf-rel', String(rel));
+                return;
             }
-            var tx = rel * step;
-            var z  = cfZIndex(rel);
 
-            // Detect wrapping cases
+            // rel clamped for config lookup; ±visRange uses same visual config as ±range
+            var relC = clamp(rel, -range, range);
+            var cfg  = posCfg[String(relC)];
+
+            // ±visRange items sit at the same tx as ±range (behind them, same position)
+            var txRel = clamp(rel, -range, range);
+            var tx    = txRel * step;
+
             var prevRel = parseInt(t.getAttribute('data-cf-rel') || String(rel), 10);
-            var wasHidden = Math.abs(prevRel) > range; // item was outside visible range
-            // Case A: visible boundary → visible other side (sign change, e.g. n=5: rel=-2→+2)
-            var isGhostWrap = !wasHidden && Math.abs(prevRel) >= range && Math.abs(rel) >= range && (prevRel * rel < 0);
-            // Case B: visible → hidden (same or opposite side, e.g. n=6: rel=2→3 or rel=-2→3)
-            var isLeavingVisible = !wasHidden && Math.abs(rel) > range;
-            var needsGhost = isGhostWrap || isLeavingVisible;
+            var wasHidden = Math.abs(prevRel) > visRange;
+
             t.setAttribute('data-cf-rel', String(rel));
 
-            if (needsGhost) {
-                // Create a ghost clone at the old (visible) position before teleporting
-                var ghost = t.cloneNode(true);
-                ghost.classList.add('ref-thumb-ghost');
-                ghost.removeAttribute('data-cf-rel');
-                ghost.style.zIndex = '1'; // always below all carousel items
-                row.appendChild(ghost);
-                setTimeout(function () {
-                    if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
-                }, 700);
-
-                t.style.transition = 'none';
-                t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
-                t.style.zIndex     = String(z);
-                t.style.opacity    = 1;
-                t.style.left       = 'calc(50% - ' + half + 'px)';
-                t.style.setProperty('--cf-overlay', String(cfg.overlay));
-                t.classList.toggle('cf-outer', Math.abs(rel) >= 2);
-                t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
-                void t.offsetWidth; // force reflow so next transition starts from here
-                t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
-            } else if (wasHidden) {
-                // Item was outside visible range: teleport instantly to correct position, no ghost
-                t.style.transition = 'none';
-                t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
-                t.style.zIndex     = String(z);
-                t.style.opacity    = 1;
-                t.style.left       = 'calc(50% - ' + half + 'px)';
-                t.style.setProperty('--cf-overlay', String(cfg.overlay));
-                t.classList.toggle('cf-outer', Math.abs(rel) >= 2);
-                t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+            if (wasHidden) {
+                // Snap silently from off-screen into the underlaid slot
+                applyStyle(t, tx, cfg, rel, half, null);
                 void t.offsetWidth;
-                t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+                t.style.transition = CF_TRANSITION;
             } else {
-                t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
-                t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
-                t.style.zIndex     = String(z);
-                t.style.opacity    = 1;
-                t.style.left       = 'calc(50% - ' + half + 'px)';
-                t.style.setProperty('--cf-overlay', String(cfg.overlay));
-                t.classList.toggle('cf-outer', Math.abs(rel) >= 2);
-                t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+                // Normal animated move — delay z-index swap so stacking order
+                // changes at 1/3 through the animation, not at its start
+                applyStyle(t, tx, cfg, rel, half, CF_TRANSITION, true);
             }
         });
     }
 
+    // ── Navigation ─────────────────────────────────────────────────────────
+
+    function updateArrows() {
+        var n = getVisible().length;
+        if (prevBtn) prevBtn.disabled = n <= 1;
+        if (nextBtn) nextBtn.disabled = n <= 1;
+    }
+
+    // Public entry point
     function setActive(newIdx) {
-        // Cancel any pending chained steps from a previous multi-step jump
-        _pendingSteps.forEach(clearTimeout);
-        _pendingSteps = [];
+        // If an animation is running, queue the request and handle it after unlock
+        if (_animating) {
+            _queued = newIdx;
+            return;
+        }
 
         var thumbs = getVisible();
         var n = thumbs.length;
@@ -277,23 +294,11 @@
         if (delta >  Math.floor(n / 2)) delta -= n;
         if (delta < -Math.floor(n / 2)) delta += n;
 
-        // Multi-step jump: execute one step at a time so only boundary items ghost
-        if (Math.abs(delta) > 1) {
-            var step = delta > 0 ? 1 : -1;
-            var absDelta = Math.abs(delta);
-            setOneStep(activeIdx + step);
-            for (var s = 1; s < absDelta; s++) {
-                (function (delay, dir) {
-                    _pendingSteps.push(setTimeout(function () {
-                        setOneStep(activeIdx + dir);
-                    }, delay * 700));
-                })(s, step);
-            }
-            return;
-        }
-
         setOneStep(newIdx);
     }
+
+    // Duration must match CF_TRANSITION (0.65s) + small buffer
+    var CF_LOCK_MS = 700;
 
     function setOneStep(newIdx) {
         var thumbs = getVisible();
@@ -317,20 +322,25 @@
 
         updatePositions();
         updateArrows();
+
+        // Lock input for the duration of the transition, then handle any queued request
+        _animating = true;
+        setTimeout(function () {
+            _animating = false;
+            if (_queued !== null) {
+                var q = _queued;
+                _queued = null;
+                setActive(q);
+            }
+        }, CF_LOCK_MS);
     }
 
-    function updateArrows() {
-        var n = getVisible().length;
-        // Never disable — infinite loop; disable only if ≤1 item
-        if (prevBtn) prevBtn.disabled = n <= 1;
-        if (nextBtn) nextBtn.disabled = n <= 1;
-    }
+    // ── Event listeners ────────────────────────────────────────────────────
 
-    // --- Arrow buttons ---
     if (prevBtn) prevBtn.addEventListener('click', function () { setActive(activeIdx - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function () { setActive(activeIdx + 1); });
 
-    // --- Click on a thumb ---
+    // Click on a thumb
     var moved = false;
     row.addEventListener('click', function (e) {
         if (moved) { moved = false; return; }
@@ -338,18 +348,18 @@
         if (!t || t.classList.contains('filter-hidden')) return;
         var idx = getVisible().indexOf(t);
         if (idx === -1) return;
-        // Temporarily disable mandatory scroll-snap so the panel min-height
-        // transition (0.7 s) does not cause the browser to snap to the next section.
+        // Temporarily disable mandatory scroll-snap so the panel height transition
+        // doesn't cause the browser to snap to the next section
         var html = document.documentElement;
         html.style.scrollSnapType = 'none';
         setActive(idx);
         setTimeout(function () { html.style.scrollSnapType = ''; }, 800);
     });
 
-    // --- Mouse drag (swipe gesture changes active card) ---
-    var dragging  = false;
-    var startX    = 0;
-    var THRESHOLD = 55;
+    // Mouse drag / swipe
+    var dragging = false;
+    var startX   = 0;
+    var DRAG_THRESHOLD = 55;
 
     viewport.addEventListener('mousedown', function (e) {
         if (e.button !== 0) return;
@@ -369,11 +379,11 @@
         dragging = false;
         if (!moved) return;
         var dx = e.clientX - startX;
-        if      (dx >  THRESHOLD) setActive(activeIdx - 1);
-        else if (dx < -THRESHOLD) setActive(activeIdx + 1);
+        if      (dx >  DRAG_THRESHOLD) setActive(activeIdx - 1);
+        else if (dx < -DRAG_THRESHOLD) setActive(activeIdx + 1);
     });
 
-    // --- Touch swipe ---
+    // Touch swipe
     var touchStartX = 0;
     viewport.addEventListener('touchstart', function (e) {
         touchStartX = e.touches[0].clientX;
@@ -385,24 +395,19 @@
         else if (dx < -50) setActive(activeIdx + 1);
     }, { passive: true });
 
-    // --- Mouse wheel → prev / next (debounced) ---
-    // Only intercept horizontal-dominant wheel events (trackpad left/right swipe).
-    // Vertical scroll passes through so the page snap engine can navigate sections.
+    // Horizontal trackpad / mouse-wheel swipe (debounced)
     var wheelCooldown = false;
     viewport.addEventListener('wheel', function (e) {
-        var absX = Math.abs(e.deltaX);
-        var absY = Math.abs(e.deltaY);
-        if (absY > absX) return; // vertical-dominant → let page snap handle it
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) return; // vertical → let page snap handle
         e.preventDefault();
         if (wheelCooldown) return;
-        var delta = e.deltaX;
-        if      (delta > 0) setActive(activeIdx + 1);
-        else if (delta < 0) setActive(activeIdx - 1);
+        if      (e.deltaX > 0) setActive(activeIdx + 1);
+        else if (e.deltaX < 0) setActive(activeIdx - 1);
         wheelCooldown = true;
         setTimeout(function () { wheelCooldown = false; }, 320);
     }, { passive: false });
 
-    // --- MutationObserver: sync if .active is toggled externally ---
+    // Sync if .active is changed externally
     var mo = new MutationObserver(function () {
         var thumbs = getVisible();
         var ext = thumbs.findIndex(function (t) { return t.classList.contains('active'); });
@@ -416,11 +421,18 @@
         mo.observe(t, { attributes: true, attributeFilter: ['class'] });
     });
 
-    // --- Init ---
+    // Debounced resize → recalculate layout
+    var _resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(updatePositions, 80);
+    });
+
+    // ── Init ───────────────────────────────────────────────────────────────
+
     (function init() {
         var thumbs = getVisible();
         if (!thumbs.length) return;
-        // Detect pre-rendered active (set in HTML to avoid layout shift)
         var preActive = thumbs.findIndex(function (t) { return t.classList.contains('active'); });
         activeIdx = preActive !== -1 ? preActive : 0;
         if (preActive === -1) {
@@ -437,7 +449,9 @@
         });
     })();
 
-    // --- After filter: reset to first visible ---
+    // ── External hooks ─────────────────────────────────────────────────────
+
+    // After filter pill change: reset to first visible item
     window.__posUpdateAfterFilter = function () {
         row.querySelectorAll('.ref-thumb').forEach(function (t) { t.classList.remove('active'); });
         activeIdx = 0;
@@ -450,30 +464,13 @@
         updateArrows();
     };
 
-    // --- Recalc on resize ---
-    window.addEventListener('resize', function () { updatePositions(); });
-
-    // --- Mobile navigation helpers ---
+    // Mobile navigation buttons
     window.__cfNext = function () { setActive(activeIdx + 1); };
     window.__cfPrev = function () { setActive(activeIdx - 1); };
 
-    // --- Scroll-trigger hooks (called by IntersectionObserver below) ---
-    window.__refCarouselEnter = function () {
-        updatePositions();
-        // After the longest animation finishes (delay 0.46s + duration 0.6s = ~1.1s),
-        // lock all thumbs out of the animation so carousel switching never re-triggers it.
-        var thumbs = row.querySelectorAll('.ref-thumb');
-        thumbs.forEach(function (t) { t.classList.remove('thumb-entered'); });
-        setTimeout(function () {
-            thumbs.forEach(function (t) { t.classList.add('thumb-entered'); });
-        }, 1150);
-    };
-    window.__refCarouselLeave = function () {
-        centerPositions();
-        row.querySelectorAll('.ref-thumb').forEach(function (t) {
-            t.classList.remove('thumb-entered');
-        });
-    };
+    // Called by IntersectionObserver when section enters / leaves viewport
+    window.__refCarouselEnter = function () { updatePositions(); };
+    window.__refCarouselLeave = function () { centerPositions(); };
 })();
 
 // ===================== REFERENCE SECTION SCROLL TRIGGER =====================
