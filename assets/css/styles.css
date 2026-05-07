@@ -1305,6 +1305,7 @@ body.drawer-open {
     pointer-events: none;
     z-index: 10;
     padding: 0 0.5rem;
+
 }
 
 .ref-thumbs-viewport {
@@ -1333,6 +1334,7 @@ body.drawer-open {
     transition: color 0.2s ease, opacity 0.2s ease;
     padding: 0.4rem;
     pointer-events: auto;
+    height: 100%;  
 }
 
 .ref-thumbs-arrow:hover:not(:disabled) {
@@ -1427,6 +1429,14 @@ body.drawer-open {
 
 .ref-thumb.active::after {
     transform: translateX(-50%) scaleY(1);
+}
+
+.ref-thumb-ghost {
+    animation: none !important;
+    transition: none !important;
+    opacity: 1 !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
 }
 
 .ref-thumb-img {
@@ -2598,25 +2608,10 @@ a[target="_blank"]:hover::after {
     opacity: 0;
 }
 
-/* Thumbnails: CSS-driven stagger animation (reliable for near-viewport elements) */
-.motion-ready .ref-thumb {
-    animation: thumbEnter 0.4s cubic-bezier(0.33, 1, 0.68, 1) both;
-}
-.motion-ready .ref-thumb:nth-child(1) { animation-delay: 0.05s; }
-.motion-ready .ref-thumb:nth-child(2) { animation-delay: 0.12s; }
-.motion-ready .ref-thumb:nth-child(3) { animation-delay: 0.19s; }
-.motion-ready .ref-thumb:nth-child(4) { animation-delay: 0.26s; }
-
-@keyframes thumbEnter {
-    from { translate: 0 14px; }
-    to   { translate: 0 0px; }
-}
+/* Thumbnails: rozbalovací animaci řeší JS coverflow transition (translateX ze středu).
+   CSS opacity animace zde odstraněna – způsobovala z-index artefakty. */
 
 @media (prefers-reduced-motion: reduce) {
-    .motion-ready .ref-thumb {
-        animation: none;
-        opacity: 1;
-    }
     .ref-card.ref-detail.active {
         animation: none;
     }

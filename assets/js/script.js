@@ -138,7 +138,7 @@
          '1': { ry: -28, scale: 0.94, overlay: 0.30 },
          '2': { ry: -40, scale: 0.86, overlay: 0.62 },
          '3': { ry: -54, scale: 0.76, overlay: 0.82 },
-    };
+    }; 
 
     function getVisible() {
         return Array.from(row.querySelectorAll('.ref-thumb:not(.filter-hidden)'));
@@ -146,6 +146,35 @@
 
     function clamp(v, lo, hi) { return Math.min(Math.max(v, lo), hi); }
     function wrapIdx(i, n) { return ((i % n) + n) % n; }
+
+    // Unique z-index: right-side (rel >= 0) gets priority over left at same distance.
+    // Formula: rel=0 → 20, rel=+1 → 18, rel=-1 → 17, rel=+2 → 16, rel=-2 → 15 …
+    function cfZIndex(rel) {
+        return rel >= 0 ? (20 - rel * 2) : (20 + rel * 2 - 1);
+    }
+
+    function centerPositions() {
+        var thumbs = getVisible();
+        var n = thumbs.length;
+        if (!n) return;
+        var cardW = thumbs[0].offsetWidth;
+        var half  = Math.round(cardW / 2);
+        var cardH = thumbs[0].offsetHeight;
+        row.style.height = (cardH + 32) + 'px';
+        thumbs.forEach(function (t, i) {
+            var rel = i - activeIdx;
+            if (rel >  Math.floor(n / 2)) rel -= n;
+            if (rel < -Math.floor(n / 2)) rel += n;
+            t.setAttribute('data-cf-rel', String(rel));
+            t.style.transition = 'none';
+            t.style.transform  = 'perspective(900px) translateX(0px) rotateY(0deg) scale(1)';
+            t.style.opacity    = '1';
+            t.style.zIndex     = String(cfZIndex(rel));
+            t.style.left       = 'calc(50% - ' + half + 'px)';
+            t.style.visibility = '';
+            t.style.setProperty('--cf-overlay', '0');
+        });
+    }
 
     function updatePositions() {
         var thumbs = getVisible();
@@ -175,17 +204,61 @@
             if (range === 1 && Math.abs(relC) === 1) {
                 cfg = { ry: relC < 0 ? 46 : -46, scale: 0.78, overlay: 0.65 };
             }
-            var tx   = rel * step;
+            var tx = rel * step;
+            var z  = cfZIndex(rel);
 
-            t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
-            t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
-            t.style.opacity    = 1;
-            t.style.zIndex     = 10 - Math.abs(rel);
-            t.style.left       = 'calc(50% - ' + half + 'px)';
+            // Detect wrapping cases
+            var prevRel = parseInt(t.getAttribute('data-cf-rel') || String(rel), 10);
+            var wasHidden = Math.abs(prevRel) > range; // item was outside visible range
+            // Case A: visible boundary → visible other side (sign change, e.g. n=5: rel=-2→+2)
+            var isGhostWrap = !wasHidden && Math.abs(prevRel) >= range && Math.abs(rel) >= range && (prevRel * rel < 0);
+            // Case B: visible → hidden (same or opposite side, e.g. n=6: rel=2→3 or rel=-2→3)
+            var isLeavingVisible = !wasHidden && Math.abs(rel) > range;
+            var needsGhost = isGhostWrap || isLeavingVisible;
+            t.setAttribute('data-cf-rel', String(rel));
 
-            t.style.setProperty('--cf-overlay', String(cfg.overlay));
+            if (needsGhost) {
+                // Create a ghost clone at the old (visible) position before teleporting
+                var ghost = t.cloneNode(true);
+                ghost.classList.add('ref-thumb-ghost');
+                ghost.removeAttribute('data-cf-rel');
+                row.appendChild(ghost);
+                setTimeout(function () {
+                    if (ghost.parentNode) ghost.parentNode.removeChild(ghost);
+                }, 700);
 
-            t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+                t.style.transition = 'none';
+                t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
+                t.style.zIndex     = String(z);
+                t.style.opacity    = 1;
+                t.style.left       = 'calc(50% - ' + half + 'px)';
+                t.style.setProperty('--cf-overlay', String(cfg.overlay));
+                t.classList.toggle('cf-outer', Math.abs(rel) >= 2);
+                t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+                void t.offsetWidth; // force reflow so next transition starts from here
+                t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+            } else if (wasHidden) {
+                // Item was outside visible range: teleport instantly to correct position, no ghost
+                t.style.transition = 'none';
+                t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
+                t.style.zIndex     = String(z);
+                t.style.opacity    = 1;
+                t.style.left       = 'calc(50% - ' + half + 'px)';
+                t.style.setProperty('--cf-overlay', String(cfg.overlay));
+                t.classList.toggle('cf-outer', Math.abs(rel) >= 2);
+                t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+                void t.offsetWidth;
+                t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+            } else {
+                t.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+                t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
+                t.style.zIndex     = String(z);
+                t.style.opacity    = 1;
+                t.style.left       = 'calc(50% - ' + half + 'px)';
+                t.style.setProperty('--cf-overlay', String(cfg.overlay));
+                t.classList.toggle('cf-outer', Math.abs(rel) >= 2);
+                t.style.visibility = Math.abs(rel) > range ? 'hidden' : '';
+            }
         });
     }
 
@@ -322,7 +395,7 @@
             thumbs[0].classList.add('active');
             if (window.__cfActivateRef) window.__cfActivateRef(thumbs[0].getAttribute('data-ref'));
         }
-        updatePositions();
+        centerPositions();
         updateArrows();
 
         // Enable panel height transition after initial render
@@ -351,6 +424,45 @@
     // --- Mobile navigation helpers ---
     window.__cfNext = function () { setActive(activeIdx + 1); };
     window.__cfPrev = function () { setActive(activeIdx - 1); };
+
+    // --- Scroll-trigger hooks (called by IntersectionObserver below) ---
+    window.__refCarouselEnter = function () {
+        updatePositions();
+        // After the longest animation finishes (delay 0.46s + duration 0.6s = ~1.1s),
+        // lock all thumbs out of the animation so carousel switching never re-triggers it.
+        var thumbs = row.querySelectorAll('.ref-thumb');
+        thumbs.forEach(function (t) { t.classList.remove('thumb-entered'); });
+        setTimeout(function () {
+            thumbs.forEach(function (t) { t.classList.add('thumb-entered'); });
+        }, 1150);
+    };
+    window.__refCarouselLeave = function () {
+        centerPositions();
+        row.querySelectorAll('.ref-thumb').forEach(function (t) {
+            t.classList.remove('thumb-entered');
+        });
+    };
+})();
+
+// ===================== REFERENCE SECTION SCROLL TRIGGER =====================
+(function () {
+    var refSection = document.getElementById('reference');
+    if (!refSection) return;
+    var entered = false;
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting && !entered) {
+                entered = true;
+                refSection.classList.add('in-view');
+                if (window.__refCarouselEnter) window.__refCarouselEnter();
+            } else if (!entry.isIntersecting && entered) {
+                entered = false;
+                refSection.classList.remove('in-view');
+                if (window.__refCarouselLeave) window.__refCarouselLeave();
+            }
+        });
+    }, { threshold: 0.25 });
+    observer.observe(refSection);
 })();
 
 // ===================== MINIMAP =====================
