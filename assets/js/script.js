@@ -393,7 +393,7 @@ BlueOrca.carousel = {};
     document.addEventListener('mousemove', function (e) {
         if (!dragging) return;
         if (Math.abs(e.clientX - startX) > 6) moved = true;
-    });
+    }, { passive: true });
 
     document.addEventListener('mouseup', function (e) {
         if (!dragging) return;
@@ -570,7 +570,7 @@ BlueOrca.carousel = {};
 
         document.addEventListener('mousemove', function (e) {
             if (mmDragging) minimapScrollTo(e.clientY);
-        });
+        }, { passive: true });
 
         document.addEventListener('mouseup', function () {
             mmDragging = false;
@@ -617,7 +617,7 @@ BlueOrca.carousel = {};
             if (prevMoved) {
                 scrollEl.scrollTop = prevStartScroll - dy;
             }
-        });
+        }, { passive: true });
 
         document.addEventListener('mouseup', function () {
             if (prevDragging) {

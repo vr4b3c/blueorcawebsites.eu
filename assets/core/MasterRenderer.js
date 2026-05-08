@@ -25,6 +25,7 @@ export class MasterRenderer {
         this.frameCount = 0;
         this.currentFPS = 60;
         this.fpsLogTime = 0;
+        this.debug = options.debug || false;
 
         // 2D canvas is throttled — fish AI doesn't need full display rate.
         // With both canvases rendering every frame (no throttle), 100% of Commits are
@@ -191,9 +192,9 @@ export class MasterRenderer {
                 }
             }
 
-            // Log average FPS to console every 5 seconds
+            // Log average FPS to console every 5 seconds (debug builds only)
             if (currentTime - this.fpsLogTime >= 5000) {
-                console.log(`FPS: ${this.currentFPS}`);
+                if (this.debug) console.log(`FPS: ${this.currentFPS}`);
                 this.fpsLogTime = currentTime;
             }
             

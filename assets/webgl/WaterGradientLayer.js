@@ -52,6 +52,11 @@ export class WaterGradientLayer {
         this.height = height;
         this.compileShaders();
         this.createBuffers();
+        // Upload constant uniforms once — these never change after init
+        const gl = this.gl;
+        gl.useProgram(this.program);
+        if (this.locs.topColor) gl.uniform4fv(this.locs.topColor, this.gradient.topColor);
+        if (this.locs.bottomColor) gl.uniform4fv(this.locs.bottomColor, this.gradient.bottomColor);
     }
 
     compileShaders() {
@@ -203,6 +208,14 @@ export class WaterGradientLayer {
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
         this.buffers.position = positionBuffer;
+
+        // VAO: record attribute layout once — render() just calls bindVertexArray
+        this.vao = gl.createVertexArray();
+        gl.bindVertexArray(this.vao);
+        gl.enableVertexAttribArray(this.locs.position);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.vertexAttribPointer(this.locs.position, 2, gl.FLOAT, false, 0, 0);
+        gl.bindVertexArray(null);
     }
 
     render(currentTime, deltaTime) {
@@ -215,14 +228,10 @@ export class WaterGradientLayer {
 
         const locs = this.locs;
         if (locs.time) gl.uniform1f(locs.time, currentTime * 0.001);
-        if (locs.topColor) gl.uniform4fv(locs.topColor, this.gradient.topColor);
-        if (locs.bottomColor) gl.uniform4fv(locs.bottomColor, this.gradient.bottomColor);
 
-        gl.enableVertexAttribArray(locs.position);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
-        gl.vertexAttribPointer(locs.position, 2, gl.FLOAT, false, 0, 0);
-
+        gl.bindVertexArray(this.vao);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.bindVertexArray(null);
     }
 
     onResize(width, height) {
@@ -234,6 +243,7 @@ export class WaterGradientLayer {
         const gl = this.gl;
         if (this.program) gl.deleteProgram(this.program);
         if (this.buffers.position) gl.deleteBuffer(this.buffers.position);
+        if (this.vao) gl.deleteVertexArray(this.vao);
     }
 
     toggle(enabled) {

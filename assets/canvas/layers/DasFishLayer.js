@@ -228,7 +228,8 @@ export class DasFishLayer {
         if (!this.fish) return;
 
         this._update(deltaTime);
-        this._checkKills();
+        // Skip kills during the freeze/loader glitch — das is buffering, temporarily harmless
+        if (this._glitch.effect !== 'freeze') this._checkKills();
 
         const f = this.fish;
         if (!this._imageLoaded) {

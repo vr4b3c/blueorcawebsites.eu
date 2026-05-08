@@ -78,6 +78,12 @@ export class WebGLOceanRenderer {
         window.addEventListener('resize', this.handleResize);
         this.canvas.addEventListener('webglcontextlost', this.handleContextLost, false);
         this.canvas.addEventListener('webglcontextrestored', this.handleContextRestored, false);
+
+        // Set blend equation once — never changes between frames
+        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+
+        // Signal to CSS that WebGL is active (disables background-attachment: fixed)
+        document.body.classList.add('has-webgl');
         
         return this;
     }
@@ -220,10 +226,13 @@ export class WebGLOceanRenderer {
         if (profiling) times.gradient = performance.now();
 
         this.gl.enable(this.gl.BLEND);
-        this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+
+        // Elapsed time from session start — stays small so float32 precision is maintained
+        // even in long sessions (raw currentTime in ms degrades to ~64ms steps after 8+ min).
+        const elapsed = currentTime - this.startTime;
 
         if (this.raysLayer && this.raysLayer.enabled) {
-            this.raysLayer.render(currentTime, deltaTime);
+            this.raysLayer.render(elapsed, deltaTime);
         }
 
         if (profiling) times.rays = performance.now();
@@ -235,7 +244,7 @@ export class WebGLOceanRenderer {
         if (profiling) times.bubbles = performance.now();
 
         if (this.planktonLayer && this.planktonLayer.enabled) {
-            this.planktonLayer.render(currentTime, deltaTime);
+            this.planktonLayer.render(elapsed, deltaTime);
         }
         
         if (profiling) {

@@ -302,7 +302,8 @@ export class FishLayer {
                 const verticalPhase    = (shark.age / shark.verticalPeriod) % 1;
                 const verticalOffset   = Math.sin(verticalPhase * Math.PI * 2) * shark.verticalAmplitude;
                 const currentY         = shark.baseY + schoolWaveOffset + verticalOffset;
-                if (shark !== targetedFish) {
+                // Skip draw if CuriousFishLayer will draw it on top instead
+                if (!shark._drawOnTop && shark !== targetedFish) {
                     this.drawShark(ctx, shark.x, currentY, shark.size, shark.direction, verticalPhase, shark.image, 0, 0, shark);
                 }
                 this.sharks[writeIndex++] = shark;
@@ -415,8 +416,11 @@ export class FishLayer {
             
             // Food attraction — only food ahead in travel direction, no direction reversal
             if (this.manager && this.manager.foodLayer && this.manager.foodLayer.getParticles().length > 0) {
+                // fish1 (type 2), fish2 (type 1) and curiousfish school (type 3) have wider detection and stronger pull
+                const isHungry  = shark.fishType === 1 || shark.fishType === 2 || shark.fishType === 3;
+                const detectR   = isHungry ? 380 : 220;
                 let nearestFood = null;
-                let nearestDistSq = 220 * 220;
+                let nearestDistSq = detectR * detectR;
 
                 for (const food of this.manager.foodLayer.getParticles()) {
                     if (food.eaten) continue;
@@ -436,14 +440,18 @@ export class FishLayer {
                     const fdy = nearestFood.y - currentY;
                     const fdist = Math.sqrt(nearestDistSq);
 
-                    // Gentle Y steering only — no X override (fish keeps swimming naturally)
+                    // Y steering — stronger pull for fish1/fish2
+                    const yPull = isHungry ? 0.75 : 0.3;
                     if (fdist > 0) {
-                        shark.baseY += (fdy / fdist) * 0.3;
+                        shark.baseY += (fdy / fdist) * yPull;
                     }
 
                     // Speed burst when close
-                    if (fdist < 80) {
-                        shark.speed = Math.min(shark.baseSpeed * 2.0, shark.speed + 0.03);
+                    const burstRange  = isHungry ? 140 : 80;
+                    const burstAccel  = isHungry ? 0.07 : 0.03;
+                    const burstMaxMul = isHungry ? 2.8 : 2.0;
+                    if (fdist < burstRange) {
+                        shark.speed = Math.min(shark.baseSpeed * burstMaxMul, shark.speed + burstAccel);
                     } else {
                         shark.speed = Math.max(shark.baseSpeed, shark.speed - 0.02);
                     }
@@ -716,7 +724,8 @@ export class FishLayer {
         // Surface fish (big) are fast, deep fish (small) are slow.
         // Normalise schoolSize 30..120 → speedT 0..1
         const speedT = Math.min(1, Math.max(0, (schoolSize - 30) / 90));
-        const schoolSpeed = 0.35 + speedT * 1.15 + (Math.random() - 0.5) * 0.3;
+        const speedMult = fishType === 2 ? 2.0 : 1.0; // micro fish (fish1) swim 2× faster
+        const schoolSpeed = (0.35 + speedT * 1.15 + (Math.random() - 0.5) * 0.3) * speedMult;
 
         // ── Fish count — more fish in deeper/smaller hejna ────────────────────
         const countVariation = 0.7 + Math.random() * 0.6;
@@ -880,10 +889,10 @@ export class FishLayer {
      */
     _buildDepthCache(sourceImage) {
         const TIERS = [
-            { sat: 30, bri: 100 },
-            { sat: 55, bri: 100 },
-            { sat: 78, bri: 100 },
-            null  // tier 3: original, no processing
+            { sat: 92,  bri: 82 },   // tier 0: deep — full colour, just darker
+            { sat: 96,  bri: 89 },   // tier 1
+            { sat: 99,  bri: 95 },   // tier 2
+            null                      // tier 3: original, no processing
         ];
         const w = sourceImage.naturalWidth || sourceImage.width;
         const h = sourceImage.naturalHeight || sourceImage.height;

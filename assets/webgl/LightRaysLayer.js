@@ -204,6 +204,18 @@ export class LightRaysLayer {
         gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
 
         this.buffers.position = positionBuffer;
+
+        // VAO: record attribute layout once — render() just calls bindVertexArray
+        this.vao = gl.createVertexArray();
+        gl.bindVertexArray(this.vao);
+        gl.enableVertexAttribArray(this.locs.position);
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.vertexAttribPointer(this.locs.position, 2, gl.FLOAT, false, 0, 0);
+        gl.bindVertexArray(null);
+
+        // Upload resolution once here; onResize() keeps it current
+        gl.useProgram(this.program);
+        gl.uniform2f(this.locs.resolution, this.width, this.height);
     }
 
     render(currentTime, deltaTime) {
@@ -215,7 +227,6 @@ export class LightRaysLayer {
         gl.useProgram(program);
 
         const locs = this.locs;
-        gl.uniform2f(locs.resolution, this.width, this.height);
         gl.uniform1f(locs.time, currentTime);
         gl.uniform1i(locs.rayCount, this.rays.length);
 
@@ -241,23 +252,26 @@ export class LightRaysLayer {
         gl.uniform1fv(locs.sways,    this._swaysArr);
         gl.uniform1fv(locs.shimmers, this._shimmersArr);
 
-        gl.enableVertexAttribArray(locs.position);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.position);
-        gl.vertexAttribPointer(locs.position, 2, gl.FLOAT, false, 0, 0);
-
+        gl.bindVertexArray(this.vao);
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.bindVertexArray(null);
     }
 
     onResize(width, height) {
         this.width = width;
         this.height = height;
         this.initRays(width);
+        if (this.program) {
+            this.gl.useProgram(this.program);
+            this.gl.uniform2f(this.locs.resolution, width, height);
+        }
     }
 
     destroy() {
         const gl = this.gl;
         if (this.program) gl.deleteProgram(this.program);
         if (this.buffers.position) gl.deleteBuffer(this.buffers.position);
+        if (this.vao) gl.deleteVertexArray(this.vao);
     }
 
     toggle(enabled) {

@@ -237,6 +237,18 @@ export class CuriousFishLayer {
             
             // Draw fish and partner
             this.drawFish(ctx);
+
+            // Draw partner on top when it's the smaller fish and dance is in spin phase+
+            if (this.dancePartner && this.dancePartner._drawOnTop && !this.dancePartner.isDying) {
+                const fishLayer = this.manager && this.manager.getLayer('fish');
+                if (fishLayer) {
+                    const p = this.dancePartner;
+                    const swOff = Math.sin(p.age * p.schoolWaveSpeed + p.schoolWavePhase) * p.schoolWaveAmplitude;
+                    const vPhase = (p.age / p.verticalPeriod) % 1;
+                    const vOff   = Math.sin(vPhase * Math.PI * 2) * p.verticalAmplitude;
+                    fishLayer.drawShark(ctx, p.x, p.baseY + swOff + vOff, p.size, p.direction, vPhase, p.image, 0, 0, p);
+                }
+            }
             
             // Draw big heart if in phase 2 (kiss phase) and danceState still exists
             if (this.danceState && this.danceState.phase === 2 && this.danceState.bigHeart) {
@@ -744,6 +756,13 @@ export class CuriousFishLayer {
         
         // Update state from result
         this.danceState = result;
+
+        // Tag partner _drawOnTop when in spin_flip-or-later phases and partner is smaller
+        if (this.dancePartner && !result.completed) {
+            const isAfterFaceNuzzle = (result.phase === 1 && result.danceStep >= 1) || result.phase >= 2;
+            const partnerSmaller    = this.dancePartner.size < this.fish.currentSize;
+            this.dancePartner._drawOnTop = isAfterFaceNuzzle && partnerSmaller;
+        }
         
         // Check if dance completed
         if (result.completed) {
@@ -761,6 +780,9 @@ export class CuriousFishLayer {
                 this.fish.velocityX = 0;
                 this.fish.velocityY = 0;
                 
+                // Clear draw-on-top flag
+                delete this.dancePartner._drawOnTop;
+
                 // Clear dance state — game continues
                 this.danceState = null;
                 this.dancePartner = null;

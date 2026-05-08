@@ -31,6 +31,13 @@ export class PlanktonLayer {
         this.compileMicroShaders();
         this.createBuffers();
         this.createMicroBuffers();
+        // Upload constant uniforms once — these never change after init
+        const gl = this.gl;
+        gl.useProgram(this.program);
+        gl.uniform3f(this.locs.color, 0.45, 0.78, 0.95);
+        gl.uniform2f(this.locs.resolution, width, height);
+        gl.useProgram(this.microProgram);
+        gl.uniform2f(this.microLocs.resolution, width, height);
     }
     
     initParticles(width, height) {
@@ -208,7 +215,6 @@ export class PlanktonLayer {
         gl.useProgram(this.microProgram);
         const l = this.microLocs;
 
-        gl.uniform2f(l.resolution, this.width, this.height);
         gl.uniform1f(l.time, currentTime);
         gl.uniform1f(l.baseOpacity, 0.55 * this.qualityMultiplier);
 
@@ -429,9 +435,7 @@ export class PlanktonLayer {
         
         gl.useProgram(program);
         const locs = this.locs;
-        gl.uniform2f(locs.resolution, this.width, this.height);
         gl.uniform1f(locs.time, currentTime);
-        gl.uniform3f(locs.color, 0.45, 0.78, 0.95);  // světle modrá
         // Upload opacity only when the value changes (qualityMultiplier rarely changes)
         const opacity = 0.45 * this.qualityMultiplier;
         if (this._lastOpacity !== opacity) {
@@ -453,6 +457,14 @@ export class PlanktonLayer {
     onResize(width, height) {
         this.width = width;
         this.height = height;
+        if (this.program) {
+            this.gl.useProgram(this.program);
+            this.gl.uniform2f(this.locs.resolution, width, height);
+        }
+        if (this.microProgram) {
+            this.gl.useProgram(this.microProgram);
+            this.gl.uniform2f(this.microLocs.resolution, width, height);
+        }
     }
 
     toggle(enabled) {

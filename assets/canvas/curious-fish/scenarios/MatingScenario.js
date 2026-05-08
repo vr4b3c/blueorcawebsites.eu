@@ -45,9 +45,9 @@ export function initiateMatingDance(fish, partner, currentTime = performance.now
 /** Build the ordered list of choreography steps for phase 1. */
 function _buildDanceSteps() {
     return [
-        { type: 'orbit_close', duration: 2800 },  // tight mutual orbit, 2.5 rotations
-        { type: 'spin_flip',   duration: 2600 },  // side-by-side smooth X-axis barrel-rolls
-        { type: 'spiral_in',   duration: 1600 },  // spiral inward until collision
+        { type: 'kiss_peck', duration: 2200 },  // nose-to-nose quick pecks — hearts burst on contact
+        { type: 'spin_flip', duration: 2600 },  // overlapping barrel-rolls
+        { type: 'spiral_in', duration: 1600 },  // spiral inward until collision
     ];
 }
 
@@ -72,85 +72,96 @@ function _stepDanceChoreography(danceState, fish, partner, deltaTime, currentTim
             fish.y  - danceState._stepMidY,
             fish.x  - danceState._stepMidX
         );
+        // Capture positions to blend FROM — smooths cross-step position transitions
+        danceState._blendFromFishX    = fish.x;
+        danceState._blendFromFishY    = fish.y;
+        danceState._blendFromPartnerX = partner.x;
+        danceState._blendFromPartnerY = partner.baseY !== undefined ? partner.baseY : partner.y;
     }
 
     const elapsed = currentTime - danceState.stepStartTime;
-    const t       = Math.min(elapsed / step.duration, 1.0);
+    const tRaw    = Math.min(elapsed / step.duration, 1.0);
     const midX    = danceState._stepMidX;
     const midY    = danceState._stepMidY;
     // Tight radius — fish nearly touch (0.38 × combined size ≈ just over half-size gap each)
     const baseR   = Math.max(28, (fish.currentSize + partner.size) * 0.38);
 
+    // Smoothstep blend-in for first BLEND_DUR of each step: lerps position from the
+    // previous step's end position into this step's motion (no snap at step boundary).
+    // kiss_peck bypasses blend — approach ends exactly at its radius so no snap occurs.
+    const BLEND_DUR = 0.18;
+    const bRaw = Math.min(tRaw / BLEND_DUR, 1.0);
+    const blendFactor = (step.type === 'kiss_peck') ? 1.0
+        : bRaw * bRaw * (3.0 - 2.0 * bRaw); // smoothstep
+
     if (Math.random() < 0.04) spawnHeart();
 
-    // ── orbit_close: tight CCW mutual orbit, both facing direction of travel ──
-    if (step.type === 'orbit_close') {
-        // 2.5 full rotations so they end on opposite sides → sets up spin_flip nicely
-        const angle = danceState._baseAngle + t * Math.PI * 5;
+    // Target positions — blend applied after all cases
+    let tFishX, tFishY, tPartnerX, tPartnerY;
 
-        fish.x        = midX + Math.cos(angle) * baseR;
-        fish.y        = midY + Math.sin(angle) * baseR;
+    // ── kiss_peck: nose-to-nose, 3 quick forward-back pecks, hearts on contact ──
+    if (step.type === 'kiss_peck') {
+        const r = baseR * 0.85;
+        // peckProgress goes 0→1 three times over the full step
+        const peckProgress = (tRaw * 3) % 1;
+        // sinusoidal lean-in: 0 (rest) → 14 px (nose contact) → 0 (rest)
+        const peckLean = Math.sin(peckProgress * Math.PI) * 14;
+
+        tFishX    = midX - r + peckLean;
+        tFishY    = midY;
+        tPartnerX = midX + r - peckLean;
+        tPartnerY = midY;
+
         fish.velocityX = 0; fish.velocityY = 0;
         fish.rotation  = 0; fish.targetRotation = 0;
+        fish.flipScale = 1; fish.targetFlipScale = 1;  // face right toward partner
+        delete partner.flipX;
+        partner.direction = -1;  // face left toward curious fish
 
-        // Face direction of travel: CCW tangent dx = -sin(angle)
-        const goRight = -Math.sin(angle) >= 0;
-        fish.flipScale       = goRight ? 1 : -1;
-        fish.targetFlipScale = fish.flipScale;
+        // Dense hearts near peck contact; gentle ambient hearts throughout
+        if (peckLean > 11 && Math.random() < 0.22) spawnHeart();
+        if (Math.random() < 0.05) spawnHeart();
 
-        partner.x = midX + Math.cos(angle + Math.PI) * baseR;
-        const pY  = midY + Math.sin(angle + Math.PI) * baseR;
-        if (partner.baseY !== undefined) partner.baseY = pY; else partner.y = pY;
-        partner.direction = goRight ? -1 : 1;  // 180° opposite
-        partner.flipX     = undefined;          // no smooth flip yet
-
-    // ── spin_flip: side-by-side smooth barrel-rolls along X axis ─────────────
+    // ── spin_flip: both fish centred on midpoint, rolling together ────────────
     } else if (step.type === 'spin_flip') {
-        const N          = 3;                         // number of full flips
-        const flipAngle  = t * N * Math.PI * 2;      // 0 → 6π
-        const yBounce    = Math.sin(flipAngle) * (fish.currentSize * 0.38);
-        const r          = baseR;
+        const N         = 3;                        // number of full flips
+        const flipAngle = tRaw * N * Math.PI * 2;  // 0 → 6π
+        const yBounce   = Math.sin(flipAngle) * (fish.currentSize * 0.28);
 
-        // Curious fish — left side
-        fish.x        = midX - r;
-        fish.y        = midY + yBounce;
+        tFishX    = midX;
+        tFishY    = midY + yBounce;
+        tPartnerX = midX;
+        tPartnerY = midY + yBounce;
+
         fish.velocityX = 0; fish.velocityY = 0;
         fish.rotation  = 0; fish.targetRotation = 0;
-        // Smooth X rotation: set flipScale directly (bypasses the 0.20 lerp)
+        // Smooth X-axis roll — both share the same cos phase (same direction)
         fish.flipScale       = Math.cos(flipAngle);
         fish.targetFlipScale = fish.flipScale;
-
-        // Partner — right side, opposite bounce phase & inverted flip phase
-        partner.x = midX + r;
-        const pY  = midY - yBounce;   // counter-phase bounce
-        if (partner.baseY !== undefined) partner.baseY = pY; else partner.y = pY;
-        // flipX drives ctx.scale in drawShark for smooth rotation
-        partner.flipX     = Math.cos(flipAngle + Math.PI); // 180° offset → anti-phase
-        partner.direction = partner.flipX >= 0 ? -1 : 1;  // fallback (unused while flipX set)
+        partner.flipX     = Math.cos(flipAngle);  // same phase = same direction
+        partner.direction = partner.flipX >= 0 ? 1 : -1;
 
         // Hearts burst every time fish are edge-on (squish zero)
         if (Math.abs(Math.cos(flipAngle)) < 0.12 && Math.random() < 0.45) spawnHeart();
 
-    // ── spiral_in: shrinking orbit until collision at midpoint ───────────────
+    // ── spiral_in: shrinking orbit until collision at midpoint ────────────────
     } else if (step.type === 'spiral_in') {
         // easeIn: slow start, fast finish for dramatic effect
-        const ease    = t * t;
+        const ease    = tRaw * tRaw;
         const spiralR = baseR * (1 - ease);
         // Quarter-orbit so they arrive face-to-face
-        const angle   = danceState._baseAngle + t * Math.PI * 0.5;
+        const angle   = danceState._baseAngle + tRaw * Math.PI * 0.5;
 
-        fish.x        = midX + Math.cos(angle) * spiralR;
-        fish.y        = midY + Math.sin(angle) * spiralR;
+        tFishX    = midX + Math.cos(angle) * spiralR;
+        tFishY    = midY + Math.sin(angle) * spiralR;
+        tPartnerX = midX + Math.cos(angle + Math.PI) * spiralR;
+        tPartnerY = midY + Math.sin(angle + Math.PI) * spiralR;
+
         fish.velocityX = 0; fish.velocityY = 0;
         fish.rotation  = 0; fish.targetRotation = 0;
-
         const goRight = -Math.sin(angle) >= 0;
         fish.flipScale       = goRight ? 1 : -1;
         fish.targetFlipScale = fish.flipScale;
-
-        partner.x = midX + Math.cos(angle + Math.PI) * spiralR;
-        const pY  = midY + Math.sin(angle + Math.PI) * spiralR;
-        if (partner.baseY !== undefined) partner.baseY = pY; else partner.y = pY;
         partner.direction = goRight ? -1 : 1;
         partner.flipX     = undefined;  // clear smooth flip from previous step
 
@@ -158,7 +169,17 @@ function _stepDanceChoreography(danceState, fish, partner, deltaTime, currentTim
         if (Math.random() < 0.04 + ease * 0.18) spawnHeart();
     }
 
-    if (t >= 1.0) {
+    // ── Apply cross-step position blend ──────────────────────────────────────
+    if (tFishX !== undefined) {
+        const lp = (a, b, f) => a + (b - a) * f;
+        fish.x    = lp(danceState._blendFromFishX,    tFishX,    blendFactor);
+        fish.y    = lp(danceState._blendFromFishY,    tFishY,    blendFactor);
+        partner.x = lp(danceState._blendFromPartnerX, tPartnerX, blendFactor);
+        const pY  = lp(danceState._blendFromPartnerY, tPartnerY, blendFactor);
+        if (partner.baseY !== undefined) partner.baseY = pY; else partner.y = pY;
+    }
+
+    if (tRaw >= 1.0) {
         danceState.danceStep++;
         danceState.stepStartTime = null;
         return danceState.danceStep >= steps.length;
@@ -196,7 +217,10 @@ export function updateMatingDance(danceState, fish, partner, deltaTime, width, h
 
     // ── Phase 0: Approach ─────────────────────────────────────────────────
     if (danceState.phase === 0) {
-        const targetDistance = (fish.currentSize + partner.size) * 0.9;
+        // Target distance matches kiss_peck starting radius (2 × baseR × 0.85)
+        // so approach ends exactly where the first choreography step expects the fish.
+        const baseR = Math.max(28, (fish.currentSize + partner.size) * 0.38);
+        const targetDistance = baseR * 1.7;
         const dx = partner.x - fish.x;
         const dy = partnerY - fish.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
@@ -234,11 +258,12 @@ export function updateMatingDance(danceState, fish, partner, deltaTime, width, h
             if (Math.random() < 0.02) spawnHeart();
 
         } else {
-            // Close enough — enter choreography phase
+            // Close enough — burst of hearts then enter choreography
             fish.velocityX = 0;
             fish.velocityY = 0;
             fish.targetRotation = 0;
             fish.rotation = 0;
+            for (let i = 0; i < 6; i++) spawnHeart();
             danceState.phase = 1;
             danceState.danceStep = 0;
             danceState.danceSteps = _buildDanceSteps();

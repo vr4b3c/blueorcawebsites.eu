@@ -16,6 +16,7 @@ import { DebugPanel } from './utils/DebugPanel.js';
 import { FishLayer } from './layers/FishLayer.js';
 import { CuriousFishLayer } from './layers/CuriousFishLayer.js';
 import { DasFishLayer } from './layers/DasFishLayer.js';
+import { JellyfishLayer } from './layers/JellyfishLayer.js';
 
 /**
  * Create and initialize canvas background manager
@@ -42,7 +43,8 @@ export {
     DebugPanel,
     FishLayer,
     CuriousFishLayer,
-    DasFishLayer
+    DasFishLayer,
+    JellyfishLayer
 };
 
 // Log module load
