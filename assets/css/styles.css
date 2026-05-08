@@ -1860,6 +1860,15 @@ a[target="_blank"]:hover::after {
     display: none;
 }
 
+.ref-header-top h3 a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+.ref-header-top h3 a:hover {
+    text-decoration: underline;
+}
+
 .ref-header-top .btn {
     flex-shrink: 1;
     min-width: 0;
