@@ -300,6 +300,7 @@ export class MasterRenderer {
             this.webglRenderer.canvas.style.display = 'none';
             this.webglRenderer = null;
         }
+        document.body.classList.remove('has-webgl');
         this.tier = 1;
         console.warn('[MasterRenderer] Tier 1: WebGL disabled — CSS background active');
     }

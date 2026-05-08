@@ -77,28 +77,7 @@ strong {font-weight: 600;}
 
 body {
     padding-top: 4.5rem;
-    /* Fallback background mimicking the WebGL ocean scene (WaterGradientLayer):
-       – vignette: elliptical dark edges/corners (x-axis less aggressive, matching shader vCenter.x *= 0.75)
-       – 5 subtle light-ray cones from the top surface
-       – non-linear water gradient: dark navy top → bright surface teal bottom (pow 1.6 curve approximated) */
-    background-color: #000a28;
-    background-image:
-        /* vignette – elliptical, more aggressive vertically than horizontally (matches WebGL shader) */
-        radial-gradient(ellipse 115% 85% at 50% 50%,
-            transparent 0%,
-            transparent 33%,
-            rgba(0, 4, 20, 0.45) 60%,
-            rgba(0, 3, 16, 0.86) 100%),
-        /* light rays – semi-transparent cones fanning from top surface */
-        radial-gradient(ellipse 6%  60% at 13% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
-        radial-gradient(ellipse 6%  55% at 30% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
-        radial-gradient(ellipse 7%  65% at 50% 0%, rgba(60,164,197,.13) 0%, transparent 100%),
-        radial-gradient(ellipse 6%  55% at 70% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
-        radial-gradient(ellipse 6%  60% at 87% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
-        /* water gradient – dark depth at top, bright surface teal at bottom (pow 1.6 curve approx) */
-        linear-gradient(to top, #000a28 0%, #001a42 25%, #00395f 50%, #1f7da5 78%, #3ca4c5 100%);
-
-    background-attachment: fixed;    
+    background-color: #000a28; /* instant base colour before ::before paints */
     color: var(--text-primary);
     font-family: 'Inter', sans-serif;
     font-weight: 400;
@@ -106,8 +85,51 @@ body {
     overflow-x: hidden;
 }
 
-body.has-webgl {
-    background-attachment: scroll;
+/* Fallback gradient — fixed via position:fixed (works on iOS/Android unlike background-attachment:fixed).
+   Matches WebGL WaterGradientLayer shader precisely:
+   – water gradient: pow(1.6) curve from mix(#000a28, #3ca4c5, pow(y,1.6)), 11 computed stops
+   – 5 static light-ray cones from the surface (top)
+   – vignette overlay: ellipse 180%×135% matches shader vCenter.x×=0.75, vDist=length×1.55,
+     smoothstep(0.45,1.05) — stops computed from cubic smoothstep at each percentage */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2; /* behind WebGL canvas (z-index:-1) and 2D canvas (z-index:0) */
+    background-color: #000a28;
+    background-image:
+        /* vignette — ellipse 180%×135%: semi-axes 90%W × 67.5%H exactly compensate shader's
+           vCenter.x×=0.75 asymmetry; stops follow cubic smoothstep(0.45→1.05) */
+        radial-gradient(ellipse 180% 135% at 50% 50%,
+            transparent          43%,  /* vDist < 0.45 → vignette=1, no overlay */
+            rgba(0, 0, 0, 0.22)  60%,  /* cubic smoothstep ≈ 0.216 */
+            rgba(0, 0, 0, 0.46)  70%,  /* ≈ 0.463 */
+            rgba(0, 0, 0, 0.72)  80%,  /* ≈ 0.718 */
+            rgba(0, 0, 0, 0.92)  90%,  /* ≈ 0.919 */
+            rgba(0, 0, 0, 1.00) 100%), /* vDist ≥ 1.05 → vignette=0, black */
+        /* light rays – semi-transparent cones fanning from top surface */
+        radial-gradient(ellipse 6%  60% at 13% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  55% at 30% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
+        radial-gradient(ellipse 7%  65% at 50% 0%, rgba(60,164,197,.13) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  55% at 70% 0%, rgba(60,164,197,.08) 0%, transparent 100%),
+        radial-gradient(ellipse 6%  60% at 87% 0%, rgba(60,164,197,.11) 0%, transparent 100%),
+        /* water gradient — pow(1.6) curve: 11 stops from mix(#000a28, #3ca4c5, pow(y,1.6)) */
+        linear-gradient(to top,
+            #000a28  0%,   /* y=0.0  t=0.000 */
+            #020e2c 10%,   /* y=0.1  t=0.025 */
+            #051634 20%,   /* y=0.2  t=0.076 */
+            #09203f 30%,   /* y=0.3  t=0.146 */
+            #0e2e4c 40%,   /* y=0.4  t=0.231 */
+            #143d5c 50%,   /* y=0.5  t=0.330 */
+            #1b4e6d 60%,   /* y=0.6  t=0.442 */
+            #226181 70%,   /* y=0.7  t=0.565 */
+            #2a7696 80%,   /* y=0.8  t=0.700 */
+            #338cad 90%,   /* y=0.9  t=0.845 */
+            #3ca4c5 100%); /* y=1.0  t=1.000 */
+}
+
+body.has-webgl::before {
+    display: none; /* WebGL canvas handles the visual — no need to paint the CSS fallback */
 }
 
 /* Ensure page content sits above WebGL (-1) and 2D canvas (0) layers */
