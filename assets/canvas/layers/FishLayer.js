@@ -136,7 +136,7 @@ export class FishLayer {
         
         // Spawn schools until we have the configured number of schools
         while (this._schoolsSpawned < effectiveSchoolCount) {
-            this.spawnSchool(width, height);
+            this.spawnSchool(width, height, effectiveSchoolCount);
             this._schoolsSpawned++;
         }
         
@@ -675,12 +675,17 @@ export class FishLayer {
         ctx.restore();
     }
     
-    spawnSchool(width, height) {
+    spawnSchool(width, height, totalSchools = 8) {
         const direction = Math.random() > 0.5 ? 1 : -1;
 
-        // Cycle through 4 archetypes: 0=shark, 1=fish2, 2=fish1 (tiny dense), 3=curiousfish school
-        const archetype = this._schoolsSpawned % 4;
-        const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : archetype === 2 ? 2 : 3;
+        // Cycle through 6 archetypes — fish2 appears 2×, shark 2×, micro 1×, curious 1×
+        const archetype = this._schoolsSpawned % 6;
+        const fishType = archetype === 0 ? 0   // shark
+                       : archetype === 1 ? 1   // fish2
+                       : archetype === 2 ? 2   // fish1 (micro)
+                       : archetype === 3 ? 3   // curiousfish
+                       : archetype === 4 ? 1   // fish2
+                       : 0;                    // shark (solo)
         let baseSize, schoolImage, fishCountBase;
 
         // shark.png — biggest: 50-120px, osamělí predátoři
@@ -693,13 +698,13 @@ export class FishLayer {
         else if (fishType === 1) {
             schoolImage = this.fishImages[1];
             baseSize = 10 + Math.random() * 20;
-            fishCountBase = [12, 20]; // upravené počty
+            fishCountBase = [8, 14]; // střední hejna
         }
-        // fish1.png — nejmenší: 4-8px, velmi rozsáhlá hejna
+        // fish1.png — nejmenší: 10-16px, středně velká hejna
         else if (fishType === 2) {
             schoolImage = this.fishImages[2];
-            baseSize = 4 + Math.random() * 4;
-            fishCountBase = [25, 45]; // více malých rybek
+            baseSize = 10 + Math.random() * 6;
+            fishCountBase = [15, 25]; // omezené počty
         }
         // curiousfish.png — hráčovo/kuriozní hejno: malé 2-4 jedinci
         else {
@@ -711,7 +716,7 @@ export class FishLayer {
 
         // Final school size — single source of truth for everything below
         const sizeVariation = 0.5 + Math.random();
-        const schoolSize = Math.max(fishType === 2 ? 5 : fishType === 0 ? 50 : 30, baseSize * sizeVariation * this.config.size);
+        const schoolSize = Math.max(fishType === 2 ? 12 : fishType === 0 ? 50 : 30, baseSize * sizeVariation * this.config.size);
 
         // ── Depth tier ────────────────────────────────────────────────────────
         // Larger fish = shallower (tier 3 = surface), smaller = deeper (tier 0).
@@ -733,15 +738,22 @@ export class FishLayer {
             (fishCountBase[0] + Math.random() * (fishCountBase[1] - fishCountBase[0])) * countVariation
         ));
 
-        // ── Y position tied to depth tier ────────────────────────────────────
-        // tier 3 (big/surface) → upper quarter; tier 0 (small/deep) → lower quarter.
-        // Each tier occupies ~25 % of the safe zone, with ±10 % random scatter.
+        // ── Y position: slot-based distribution across the full safe zone ─────
+        // Divide the safe zone into totalSchools equal slots and assign this school
+        // to its slot deterministically — prevents clustering of same-tier schools.
+        // A soft tier bias (bigger=shallower) nudges within the slot.
         const safeZoneTop = this.config.verticalMarginTop;
         const safeZoneBottom = height - this.config.verticalMarginBottom;
         const safeZoneHeight = safeZoneBottom - safeZoneTop;
-        const tierFraction = (3 - depthTier) / 3; // 0 for tier3 (top), 1 for tier0 (bottom)
-        const tierCentreY = safeZoneTop + safeZoneHeight * (0.10 + tierFraction * 0.80);
-        let schoolY = tierCentreY + (Math.random() - 0.5) * safeZoneHeight * 0.20;
+        const slotCount = Math.max(totalSchools, 4);
+        const slotIndex = this._schoolsSpawned % slotCount;
+        const slotHeight = safeZoneHeight / slotCount;
+        const slotCentreY = safeZoneTop + slotHeight * (slotIndex + 0.5);
+        // Soft tier bias: tier3 (big) drifts up, tier0 (small) drifts down
+        const tierBias = (depthTier - 1.5) / 1.5; // tier3≈+1 (up), tier0≈−1 (down)
+        let schoolY = slotCentreY - tierBias * slotHeight * 0.3
+                    + (Math.random() - 0.5) * slotHeight * 0.55;
+        schoolY = Math.max(safeZoneTop + 20, Math.min(safeZoneBottom - 20, schoolY));
 
         // Das Y-avoidance — only for the smallest/densest school (fishType === 2, fish1.png)
         if (fishType === 2) {
@@ -764,7 +776,7 @@ export class FishLayer {
         
         for (let i = 0; i < fishCount; i++) {
             // Calculate individual fish size first — minimum 30px regardless of random multipliers
-            const individualSize = Math.max(fishType === 2 ? 5 : fishType === 0 ? 50 : 30, schoolSize * (0.4 + Math.random() * 0.3));
+            const individualSize = Math.max(fishType === 2 ? 12 : fishType === 0 ? 50 : 30, schoolSize * (0.4 + Math.random() * 0.3));
             
             // Spread based on individual fish size - larger fish spawn further from center
             const spreadFactorX = 2.5 + (individualSize / schoolSize);

@@ -398,13 +398,9 @@ export function completeMatingDance(fish, partner, width, height, fishLayer, spa
  * @returns {number} Baby count spawned
  */
 export function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options = {}, config) {
-    const babyCount = 3 + Math.floor(Math.random() * 3); // 3-5 babies
+    const babyCount = 2 + Math.floor(Math.random() * 3); // 2-4 babies
     
     if (!fishLayer) return 0;
-
-    // Respect the global fish cap — skip spawn if already at limit
-    const MAX_FISH = 150;
-    if (fishLayer.sharks && fishLayer.sharks.length >= MAX_FISH) return 0;
 
     const curiousFishImage = fishLayer.fishImages && fishLayer.fishImages[3]; // curiousfish.png
     const promoteNewCurious = !!options.promoteNewCurious;
