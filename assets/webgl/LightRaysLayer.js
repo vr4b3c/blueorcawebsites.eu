@@ -274,6 +274,19 @@ export class LightRaysLayer {
         if (this.vao) gl.deleteVertexArray(this.vao);
     }
 
+    /**
+     * Reduce the number of active light rays proportionally.
+     * Called by WebGLOceanRenderer.reduceBudget() when the system steps down to WEBGL_LITE.
+     * @param {number} factor - 0.0–1.0  (0.5 = halve count, minimum 1 ray)
+     */
+    reduceBudget(factor) {
+        if (!this.program || !this.locs) return;
+        const activeCount = Math.max(1, Math.round(this.options.rayCount * factor));
+        const gl = this.gl;
+        gl.useProgram(this.program);
+        gl.uniform1i(this.locs.rayCount, activeCount);
+    }
+
     toggle(enabled) {
         this.enabled = !!enabled;
         if (this.enabled && !this.program) {

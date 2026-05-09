@@ -41,6 +41,10 @@ if (canvas) {
 
         try {
             renderer.init();
+            // Force a silent pre-warm frame: drives Chrome's GPU process to compile all
+            // shaders immediately at startup instead of deferring to the first visible
+            // frame (which caused 15–18s GPU spikes observed in DevTools trace).
+            renderer.renderFrame(0, 0);
             console.log(`[WebGL] Ocean Renderer initialized (tier=${tier} ${label}, awaiting MasterRenderer)`);
         } catch (error) {
             console.warn('WebGL2 not available, falling back to CSS background:', error.message);

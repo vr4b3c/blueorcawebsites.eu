@@ -1,4 +1,5 @@
 import { DebugPanel } from '../canvas/utils/DebugPanel.js';
+import { getDeviceProfile } from '../canvas/utils/DeviceProfile.js';
 
 /**
  * Master Renderer - Koordinuje WebGL a 2D Canvas rendering
@@ -35,15 +36,25 @@ export class MasterRenderer {
         this.canvas2dInterval = 1000 / (options.canvas2dFPS || 45);
         this.lastCanvas2dTime = 0;
 
-        // Performance tier: 0=Full (WebGL+Canvas), 1=Canvas only (WebGL off), 2=CSS only
+        // 5-level degradation ladder:
+        //   0 = FULL:            WebGL (full budget) + Canvas (full entities)
+        //   1 = WEBGL_LITE:      WebGL (50% particle budget) + Canvas full
+        //   2 = CANVAS_GRADIENT: WebGL off + Canvas full + CSS gradient visible
+        //   3 = CANVAS_REDUCED:  No WebGL + Canvas at reduced quality (fewer fish, no decorative icons)
+        //   4 = GRADIENT_ONLY:   All animations stopped — CSS gradient only
         this.tier = 0;
         this.lowFpsSince = null;
-        this.LOW_FPS_THRESHOLD = 28;   // FPS below this triggers degradation
-        this.LOW_FPS_DURATION = 8000;  // ms sustained below threshold before dropping a tier
+        this.LOW_FPS_THRESHOLD        = 28;   // FPS threshold for levels 0 and 1
+        this.LOW_FPS_THRESHOLD_CANVAS = 22;   // FPS threshold for level 2
+        this.LOW_FPS_THRESHOLD_FINAL  = 15;   // FPS threshold for level 3
+        this.LOW_FPS_DURATION         = 5000; // ms sustained below threshold before stepping down
         // WebGL shader compilation + JS parse can spike load-time FPS for 10-15s.
         // Degradation is inhibited during this warmup window to prevent false triggers.
         this._warmupDuration = 12000; // ms after start() before degradation is allowed
         this._warmupUntil = 0;       // set in start()
+        // Page hidden tracking — enables one conservative step-up after ≥60s in background
+        this._hiddenSince = 0;
+        this.RECOVERY_HIDDEN_MIN = 60000; // 60 s hidden → allow step up on restore
 
         // Debug panel — created on start()
         this.debugPanel = null;
@@ -67,6 +78,14 @@ export class MasterRenderer {
             cancelAnimationFrame(renderer.rafId);
             renderer.rafId = null;
         }
+        // On context loss jump directly to CANVAS_GRADIENT — no need to wait for FPS timer
+        renderer.onContextLost = () => {
+            if (this.tier < 2) {
+                console.warn('[MasterRenderer] WebGL context lost — jumping to level 2');
+                this.lowFpsSince = null;
+                this._disableWebGL();
+            }
+        };
     }
     
     /**
@@ -89,6 +108,23 @@ export class MasterRenderer {
         if (this.isRunning) return;
         // Sync tier with actually registered renderers
         if (!this.webglRenderer && this.tier === 0) this.tier = 1;
+
+        // Proactive settings based on device tier — applied from frame 1,
+        // no waiting for the 5s FPS degradation timer.
+        const { tier: deviceTier } = getDeviceProfile();
+        if (deviceTier === 0) {
+            // mobile-low: no WebGL (already tier=1), start canvas at reduced quality
+            this._reduceCanvasQuality(0.6);
+        } else if (deviceTier === 1) {
+            // mobile-medium: WebGL running but cut particle budget immediately
+            if (this.webglRenderer) {
+                this.webglRenderer.reduceBudget(0.5);
+                this.tier = 1; // mark as WEBGL_LITE from the start
+            }
+            this._reduceCanvasQuality(0.7);
+        }
+        // device tiers 2 and 3: full quality, let adaptive system take over if needed
+
         this.isRunning = true;
         this.lastTime = performance.now();
         this.fpsUpdateTime = this.lastTime;
@@ -103,12 +139,20 @@ export class MasterRenderer {
         if (!this._visibilityListenerAdded) {
             this._onVisibilityChange = () => {
                 if (document.hidden) {
+                    this._hiddenSince = performance.now();
                     if (this.isRunning) {
                         this._pausedByVisibility = true;
                         this.stop();
                     }
                 } else if (this._pausedByVisibility) {
                     this._pausedByVisibility = false;
+                    const hiddenDuration = performance.now() - (this._hiddenSince || 0);
+                    // Conservative step-up: only if hidden long enough and tier is recoverable.
+                    // Levels 0–2 stay put (WebGL can't be revived without reinit).
+                    // Level 4 → 3: re-enable canvas after a long background pause.
+                    if (hiddenDuration >= this.RECOVERY_HIDDEN_MIN && this.tier >= 3) {
+                        this._stepUp();
+                    }
                     // Reset lastTime so the first post-resume deltaTime is 0, not huge.
                     this.lastTime = performance.now();
                     this.lastCanvas2dTime = this.lastTime;
@@ -140,7 +184,10 @@ export class MasterRenderer {
     render(currentTime) {
         if (!this.isRunning) return;
         
-        const deltaTime = currentTime - this.lastTime;
+        // Clamp deltaTime: after a GC storm or tab-wake the raw delta can be 1000ms+,
+        // which causes physics objects to teleport. 100ms cap = max one 10fps "slip" frame.
+        const rawDelta = currentTime - this.lastTime;
+        const deltaTime = Math.min(rawDelta, 100);
         this.lastTime = currentTime;
         
         // Measure render time for theoretical FPS
@@ -183,15 +230,20 @@ export class MasterRenderer {
             this.frameCount = 0;
             this.fpsUpdateTime = currentTime;
 
-            // Tier degradation: sustained low FPS triggers progressive fallback.
-            // Skip during warmup window — shader compilation & JS parse push initial FPS low.
-            if (this.tier < 2 && currentTime >= this._warmupUntil) {
-                if (this.currentFPS < this.LOW_FPS_THRESHOLD) {
+            // Degradation: sustained low FPS steps down one tier at a time.
+            // Skip during warmup — shader compilation & JS parse push initial FPS low.
+            if (this.tier < 4 && currentTime >= this._warmupUntil) {
+                const threshold = this.tier <= 1
+                    ? this.LOW_FPS_THRESHOLD
+                    : this.tier === 2
+                        ? this.LOW_FPS_THRESHOLD_CANVAS
+                        : this.LOW_FPS_THRESHOLD_FINAL;
+
+                if (this.currentFPS < threshold) {
                     if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
                     if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
                         this.lowFpsSince = null;
-                        if (this.tier === 0) this.disableWebGL();
-                        else this.reduceCanvasQuality();
+                        this._stepDown();
                     }
                 } else {
                     this.lowFpsSince = null;
@@ -298,31 +350,103 @@ export class MasterRenderer {
     }
     
     /**
-     * Tier 1: hide WebGL canvas, let CSS body gradient show through.
-     * Triggered automatically when FPS < LOW_FPS_THRESHOLD for LOW_FPS_DURATION ms.
+     * Step down one degradation level.
+     * Called automatically by updateFPSDisplay when sustained FPS threshold is missed.
      */
-    disableWebGL() {
+    _stepDown() {
+        const next = this.tier + 1;
+        if (next > 4) return;
+
+        if (next === 1) {
+            // WEBGL_LITE: cut particle budgets by 50%, WebGL stays running
+            if (this.webglRenderer) this.webglRenderer.reduceBudget(0.5);
+            this.tier = 1;
+            console.warn('[MasterRenderer] Level 1 (WEBGL_LITE): particle budget halved');
+        } else if (next === 2) {
+            // CANVAS_GRADIENT: kill WebGL, CSS gradient visible, canvas still running
+            this._disableWebGL();
+        } else if (next === 3) {
+            // CANVAS_REDUCED: push canvas quality to 0.4 (fewer fish, no decorative icons)
+            this._reduceCanvasQuality(0.4);
+            this.tier = 3;
+            console.warn('[MasterRenderer] Level 3 (CANVAS_REDUCED): quality forced to 0.4');
+        } else if (next === 4) {
+            // GRADIENT_ONLY: stop canvas entirely, only CSS gradient remains
+            this._stopCanvas();
+            this.tier = 4;
+            console.warn('[MasterRenderer] Level 4 (GRADIENT_ONLY): all animations stopped');
+        }
+    }
+
+    /**
+     * Step up one level after a long background pause.
+     * Only safe path: 4 → 3 (re-enable canvas at reduced quality).
+     * WebGL cannot be re-enabled without a full reinit (page reload required).
+     */
+    _stepUp() {
+        if (this.tier === 4) {
+            this._resumeCanvas();
+            this.tier = 3;
+            console.log('[MasterRenderer] Recovery: Level 3 (canvas resumed after background)');
+        }
+    }
+
+    /**
+     * Disable WebGL and transition to CANVAS_GRADIENT (level 2).
+     */
+    _disableWebGL() {
         if (this.webglRenderer) {
             this.webglRenderer.canvas.style.display = 'none';
             this.webglRenderer = null;
         }
         document.body.classList.remove('has-webgl');
-        this.tier = 1;
-        console.warn('[MasterRenderer] Tier 1: WebGL disabled — CSS background active');
+        this.tier = 2;
+        console.warn('[MasterRenderer] Level 2 (CANVAS_GRADIENT): WebGL off — CSS gradient active');
     }
 
     /**
-     * Tier 2: reduce canvas quality further — canvas always stays running, just fewer fish.
-     * Canvas is never destroyed: CSS gradient is the WebGL fallback, not the canvas fallback.
+     * Force canvas quality to a specific value.
+     * @param {number} quality - 0.3–1.0
      */
-    reduceCanvasQuality() {
+    _reduceCanvasQuality(quality) {
         if (this.canvasManager && this.canvasManager.performanceMonitor) {
             const mon = this.canvasManager.performanceMonitor;
-            mon.qualitySettings.current = Math.max(mon.qualitySettings.min, mon.qualitySettings.current - 0.2);
-            mon.notifyQualityChange(mon.qualitySettings.current);
+            const clamped = Math.max(mon.qualitySettings?.min ?? 0.3, quality);
+            mon.qualitySettings.current = clamped;
+            mon.notifyQualityChange(clamped);
         }
-        this.tier = 2;
-        console.warn('[MasterRenderer] Tier 2: canvas quality reduced — fish still running');
+    }
+
+    /**
+     * Stop canvas animation entirely (level 4) and clear the canvas.
+     */
+    _stopCanvas() {
+        if (this.canvasManager) {
+            if (this.canvasManager.ctx) {
+                this.canvasManager.ctx.clearRect(0, 0, this.canvasManager.width, this.canvasManager.height);
+            }
+            if (this.canvasManager.canvas) {
+                this.canvasManager.canvas.style.display = 'none';
+            }
+        }
+    }
+
+    /**
+     * Re-show canvas after recovery from level 4.
+     */
+    _resumeCanvas() {
+        if (this.canvasManager && this.canvasManager.canvas) {
+            this.canvasManager.canvas.style.display = '';
+        }
+    }
+
+    // ── Legacy aliases — kept for any external callers ───────────────────────────────────
+    /** @deprecated Use _disableWebGL() */
+    disableWebGL() { this._disableWebGL(); }
+    /** @deprecated Use _reduceCanvasQuality() */
+    reduceCanvasQuality() {
+        const cur = this.canvasManager?.performanceMonitor?.qualitySettings?.current ?? 1.0;
+        this._reduceCanvasQuality(Math.max(0.3, cur - 0.2));
     }
 
     /**

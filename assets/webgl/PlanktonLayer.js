@@ -219,7 +219,8 @@ export class PlanktonLayer {
         gl.uniform1f(l.baseOpacity, 0.55 * this.qualityMultiplier);
 
         gl.bindVertexArray(this.microVao);
-        const count = Math.floor(this.microParticles.length * this.qualityMultiplier);
+        const effectiveMicro = Math.min(this.qualityMultiplier, this._budgetFactor || 1.0);
+        const count = Math.floor(this.microParticles.length * effectiveMicro);
         gl.drawArrays(gl.POINTS, 0, count);
     }
 
@@ -444,7 +445,8 @@ export class PlanktonLayer {
         }
 
         gl.bindVertexArray(this.vao);
-        const particleCount = Math.floor(this.particles.length * this.qualityMultiplier);
+        const effectiveFactor = Math.min(this.qualityMultiplier, this._budgetFactor || 1.0);
+        const particleCount = Math.floor(this.particles.length * effectiveFactor);
         gl.drawArrays(gl.POINTS, 0, particleCount);
 
         this.renderMicro(currentTime);
@@ -453,7 +455,16 @@ export class PlanktonLayer {
     setQuality(quality) {
         this.qualityMultiplier = quality;
     }
-    
+
+    /**
+     * Reduce drawn particle count independently of the quality (opacity) multiplier.
+     * The effective count = particles * min(qualityMultiplier, budgetFactor).
+     * @param {number} factor - 0.0–1.0
+     */
+    reduceBudget(factor) {
+        this._budgetFactor = Math.max(0.1, factor);
+    }
+
     onResize(width, height) {
         this.width = width;
         this.height = height;

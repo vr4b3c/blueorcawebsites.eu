@@ -120,6 +120,8 @@ export class WebGLOceanRenderer {
         e.preventDefault(); // Required to allow contextrestored to fire
         this.gl = null;
         console.warn('WebGL context lost — rendering paused until restored');
+        // Notify MasterRenderer so it can jump to CANVAS_GRADIENT level immediately
+        if (typeof this.onContextLost === 'function') this.onContextLost();
     }
 
     handleContextRestored() {
@@ -388,6 +390,18 @@ export class WebGLOceanRenderer {
         this.qualityMultiplier = quality;
         if (this.bubblesLayer) this.bubblesLayer.setQuality(quality);
         if (this.planktonLayer) this.planktonLayer.setQuality(quality);
+    }
+
+    /**
+     * Reduce particle and ray budgets proportionally.
+     * Separate from setQuality — this cuts geometry counts (not just opacity/rate).
+     * Called by MasterRenderer when stepping to WEBGL_LITE (level 1).
+     * @param {number} factor - 0.0–1.0  (0.5 = half budget)
+     */
+    reduceBudget(factor) {
+        if (this.raysLayer)    this.raysLayer.reduceBudget(factor);
+        if (this.bubblesLayer) this.bubblesLayer.reduceBudget(factor);
+        if (this.planktonLayer) this.planktonLayer.reduceBudget(factor);
     }
     
     destroy() {

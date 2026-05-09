@@ -8,6 +8,7 @@
  */
 
 import { MathUtils } from '../utils/MathUtils.js';
+import { getDeviceProfile } from '../utils/DeviceProfile.js';
 import { PerformanceMonitor } from '../utils/PerformanceMonitor.js';
 import { PerformanceProfiler } from '../utils/PerformanceProfiler.js';
 import { FoodLayer } from '../layers/FoodLayer.js';
@@ -137,7 +138,9 @@ export class CanvasManager {
      */
     updateCanvasSize() {
         const rect = this.canvas.getBoundingClientRect();
-        const dpr = Math.min(window.devicePixelRatio || this.config.devicePixelRatio || 1, 2.0);
+        // Use device-tier-aware DPR cap so mobile/weak devices render fewer physical pixels.
+        const { tier, entityBudget } = getDeviceProfile();
+        const dpr = Math.min(window.devicePixelRatio || this.config.devicePixelRatio || 1, entityBudget.dprCap);
         
         // Set actual canvas size (device pixels)
         const deviceW = Math.max(1, Math.round(rect.width * dpr));
@@ -151,6 +154,11 @@ export class CanvasManager {
         } catch (e) {
             this.ctx.scale(dpr, dpr);
         }
+
+        // On weak devices disable bilinear filtering: cheaper drawImage with no visual diff
+        // at small fish sizes. Must be re-set here because setTransform doesn't affect it,
+        // but save/restore does — so we anchor it to every resize/init.
+        this.ctx.imageSmoothingEnabled = tier >= 2;
         
         // Store logical dimensions (CSS pixels)
         this.width = rect.width;

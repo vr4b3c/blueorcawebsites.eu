@@ -23,6 +23,8 @@ export class FishLayer {
         this.enabled = true;
         this.sharks = [];
         this.bloodParticles = [];
+        this._sharkPool = [];       // Reusable fish objects — avoids GC churn on school spawn/death
+        this._bloodPool = [];       // Reusable blood particle objects
         this._schoolCentroidsCache = new Map();
         this.mouseX = null;
         this.mouseY = null;
@@ -88,6 +90,7 @@ export class FishLayer {
         this.height = height;
         this.sharks = [];
         this._schoolsSpawned = 0;
+        this._qualityMultiplier = 1.0;
         this._recalcSchoolCount(width, height);
         
         // Store reference to manager for food access
@@ -96,6 +99,15 @@ export class FishLayer {
         // Add mouse listener
         document.addEventListener('mousemove', this.handleMouseMove);
         console.log('SharkLayer initialized');
+    }
+
+    /**
+     * Apply a quality multiplier \u2014 called by CanvasManager.applyQualityToLayers.
+     * Below 0.6 the effective school count is halved to reduce CPU load.
+     * @param {number} quality - 0.3\u20131.0
+     */
+    setQuality(quality) {
+        this._qualityMultiplier = quality;
     }
     
     /**
@@ -130,9 +142,14 @@ export class FishLayer {
         this._frameCounter++;
 
         // Resolve effective school count (manual config or auto-scaled)
-        const effectiveSchoolCount = this.config.schoolCount !== null
+        let effectiveSchoolCount = this.config.schoolCount !== null
             ? this.config.schoolCount
             : (this._autoSchoolCount || this._recalcSchoolCount(width, height) || this._autoSchoolCount);
+
+        // Under quality pressure, cap schools at 50% to reduce CPU load on fish AI
+        if ((this._qualityMultiplier || 1.0) < 0.6) {
+            effectiveSchoolCount = Math.max(1, Math.floor(effectiveSchoolCount * 0.5));
+        }
         
         // Spawn schools until we have the configured number of schools
         while (this._schoolsSpawned < effectiveSchoolCount) {
@@ -537,6 +554,10 @@ export class FishLayer {
             this.sharks[writeIndex++] = shark;
         }
         
+        // Return dropped fish objects to pool before truncating — avoids GC churn
+        for (let i = writeIndex; i < this.sharks.length; i++) {
+            this._sharkPool.push(this.sharks[i]);
+        }
         // Truncate array efficiently
         this.sharks.length = writeIndex;
 
@@ -569,6 +590,9 @@ export class FishLayer {
                 ctx.fill();
 
                 this.bloodParticles[bpWrite++] = p;
+            }
+            for (let i = bpWrite; i < this.bloodParticles.length; i++) {
+                this._bloodPool.push(this.bloodParticles[i]);
             }
             this.bloodParticles.length = bpWrite;
             ctx.globalAlpha = 1.0;
@@ -785,26 +809,34 @@ export class FishLayer {
             const offsetY = (Math.random() - 0.5) * individualSize * spreadFactorY;
             
             const fishSpeed = schoolSpeed * (0.9 + Math.random() * 0.2);
-            this.sharks.push({
-                x: schoolCenterX + offsetX,
-                baseY: schoolY + offsetY,
-                size: individualSize,
-                speed: fishSpeed,
-                baseSpeed: fishSpeed,
-                schoolId: this._schoolsSpawned,
-                fishType: fishType,
-                depthTier: depthTier,
-                direction: direction,
-                verticalAmplitude: 2 + Math.random() * 4,
-                verticalPeriod: 5000 + Math.random() * 5000,
-                age: Math.random() * 1000,
-                image: schoolImage,
-                _imageIndex: fishType, // O(1) lookup in drawShark — invariant: fishType 0/1/2/3 maps directly to fishImages[fishType]
-                schoolWavePhase: schoolWavePhase,
-                schoolWaveSpeed: schoolWaveSpeed,
-                schoolWaveAmplitude: schoolWaveAmplitude,
-                tailPeriod: 280 + Math.random() * 220
-            });
+            const shark = this._sharkPool.pop() || {};
+            shark.x = schoolCenterX + offsetX;
+            shark.baseY = schoolY + offsetY;
+            shark.size = individualSize;
+            shark.speed = fishSpeed;
+            shark.baseSpeed = fishSpeed;
+            shark.schoolId = this._schoolsSpawned;
+            shark.fishType = fishType;
+            shark.depthTier = depthTier;
+            shark.direction = direction;
+            shark.verticalAmplitude = 2 + Math.random() * 4;
+            shark.verticalPeriod = 5000 + Math.random() * 5000;
+            shark.age = Math.random() * 1000;
+            shark.image = schoolImage;
+            shark._imageIndex = fishType;
+            shark.schoolWavePhase = schoolWavePhase;
+            shark.schoolWaveSpeed = schoolWaveSpeed;
+            shark.schoolWaveAmplitude = schoolWaveAmplitude;
+            shark.tailPeriod = 280 + Math.random() * 220;
+            // Clear any stale state from a previous life
+            shark.isDying = undefined;
+            shark.boneY = undefined;
+            shark.boneStartTime = undefined;
+            shark.isDancing = undefined;
+            shark._hitFlashTime = undefined;
+            shark.passive = undefined;
+            shark.isIndependent = undefined;
+            this.sharks.push(shark);
         }
     }
 
@@ -830,26 +862,33 @@ export class FishLayer {
             const sz = baseSize * (0.7 + Math.random() * 0.6);
             const ox = (Math.random() - 0.5) * sz * 7;
             const oy = (Math.random() - 0.5) * sz * 3;
-            this.sharks.push({
-                x:               -sz * 3 + ox,
-                baseY:           centreY + oy,
-                size:            sz,
-                speed:           schoolSpeed * (0.9 + Math.random() * 0.2),
-                baseSpeed:       schoolSpeed,
-                schoolId:        schoolId,
-                fishType:        1,
-                depthTier:       1,
-                direction:       direction,
-                verticalAmplitude: 3 + Math.random() * 3,
-                verticalPeriod:  4000 + Math.random() * 3000,
-                age:             Math.random() * 500,
-                image:           schoolImage,
-                _imageIndex:     1, // fishImages[1] = fish2.webp
-                schoolWavePhase,
-                schoolWaveSpeed,
-                schoolWaveAmplitude,
-                tailPeriod:      260 + Math.random() * 180,
-            });
+            const fish = this._sharkPool.pop() || {};
+            fish.x               = -sz * 3 + ox;
+            fish.baseY           = centreY + oy;
+            fish.size            = sz;
+            fish.speed           = schoolSpeed * (0.9 + Math.random() * 0.2);
+            fish.baseSpeed       = schoolSpeed;
+            fish.schoolId        = schoolId;
+            fish.fishType        = 1;
+            fish.depthTier       = 1;
+            fish.direction       = direction;
+            fish.verticalAmplitude = 3 + Math.random() * 3;
+            fish.verticalPeriod  = 4000 + Math.random() * 3000;
+            fish.age             = Math.random() * 500;
+            fish.image           = schoolImage;
+            fish._imageIndex     = 1;
+            fish.schoolWavePhase = schoolWavePhase;
+            fish.schoolWaveSpeed = schoolWaveSpeed;
+            fish.schoolWaveAmplitude = schoolWaveAmplitude;
+            fish.tailPeriod      = 260 + Math.random() * 180;
+            fish.isDying         = undefined;
+            fish.boneY           = undefined;
+            fish.boneStartTime   = undefined;
+            fish.isDancing       = undefined;
+            fish._hitFlashTime   = undefined;
+            fish.passive         = undefined;
+            fish.isIndependent   = undefined;
+            this.sharks.push(fish);
         }
     }
 
@@ -875,17 +914,17 @@ export class FishLayer {
             const r      = size * (0.04 + Math.random() * 0.10);
             const life   = 3500 + Math.random() * 1500; // 3.5 – 5 s
 
-            this.bloodParticles.push({
-                x:      x + (Math.random() - 0.5) * size * 0.3,
-                y:      y + (Math.random() - 0.5) * size * 0.2,
-                vx:     Math.cos(angle) * speed,
-                vy:     Math.sin(angle) * speed * 0.6,
-                radius: r,
-                color:  PALETTE[Math.floor(Math.random() * PALETTE.length)],
-                alpha:  0.45 + Math.random() * 0.40,
-                birth:  now,
-                life,
-            });
+            const bp = this._bloodPool.pop() || {};
+            bp.x      = x + (Math.random() - 0.5) * size * 0.3;
+            bp.y      = y + (Math.random() - 0.5) * size * 0.2;
+            bp.vx     = Math.cos(angle) * speed;
+            bp.vy     = Math.sin(angle) * speed * 0.6;
+            bp.radius = r;
+            bp.color  = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+            bp.alpha  = 0.45 + Math.random() * 0.40;
+            bp.birth  = now;
+            bp.life   = life;
+            this.bloodParticles.push(bp);
         }
     }
 

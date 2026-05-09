@@ -92,6 +92,9 @@ export class CuriousFishLayer {
         this.mouseX = null;
         this.mouseY = null;
         this.hearts = [];
+        this._iconPool = []; // Object pool — reuses icon objects to avoid GC churn
+        this._qualityMultiplier = 1.0;
+        this._cachedFontSize = 16;
         this.isStaring = false;
         this.heartSpawnTimer = 0;
         this.manager = null;
@@ -156,10 +159,21 @@ export class CuriousFishLayer {
         this.handleTouchMove = this.handleTouchMove.bind(this);
     }
     
+    /**
+     * Apply a quality multiplier — called by CanvasManager.applyQualityToLayers.
+     * Below 0.5 decorative icons (zzz, stars, etc.) are suppressed to reduce GC pressure.
+     * @param {number} quality - 0.3–1.0
+     */
+    setQuality(quality) {
+        this._qualityMultiplier = quality;
+    }
+
     init(width, height, canvasManager) {
         this.width = width;
         this.height = height;
         this.manager = canvasManager;
+        // Cache font size once — avoids forced style recalc in every render frame
+        this._cachedFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
         
         // Initialize fish at bottom-center and let it swim up
         this.spawnFish();
@@ -193,6 +207,8 @@ export class CuriousFishLayer {
     onResize(width, height) {
         this.width = width;
         this.height = height;
+        // Refresh on resize — user may have changed browser zoom
+        this._cachedFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     }
     
     
@@ -521,23 +537,29 @@ export class CuriousFishLayer {
      * @param {string} type - Icon type (heart, lightning, food, star, bubble, zzz, question, exclamation)
      */
     spawnIcon(type) {
+        if (!this.fish) return;
+        // Under quality pressure, suppress purely decorative icons to cut GC churn.
+        // Hearts are kept because they appear during mating (gameplay feedback).
+        if (this._qualityMultiplier < 0.5 && type !== 'heart') return;
+
         const config = ICON_SPAWN_CONFIG[type] || ICON_SPAWN_CONFIG.default;
-        
+
         const distance = this.fish.currentSize * config.distanceFactor;
         const iconX = this.fish.x + Math.cos(this.fish.rotation) * distance * this.fish.flipScale;
         const iconY = this.fish.y + Math.sin(this.fish.rotation) * distance + config.yOffset;
         const baseSize = this.fish.currentSize * config.sizeFactor;
-        
-        this.hearts.push({
-            x: iconX,
-            y: iconY,
-            velocityX: (Math.random() - 0.5) * config.velocityRange,
-            velocityY: -0.35 - Math.random() * 0.2,
-            age: 0,
-            maxAge: config.maxAge,
-            size: baseSize + Math.random() * baseSize * 0.4,
-            type: type
-        });
+
+        // Reuse a pooled object to avoid triggering GC on every spawn
+        const icon = this._iconPool.pop() || {};
+        icon.x = iconX;
+        icon.y = iconY;
+        icon.velocityX = (Math.random() - 0.5) * config.velocityRange;
+        icon.velocityY = -0.35 - Math.random() * 0.2;
+        icon.age = 0;
+        icon.maxAge = config.maxAge;
+        icon.size = baseSize + Math.random() * baseSize * 0.4;
+        icon.type = type;
+        this.hearts.push(icon);
     }
     
     // Legacy spawn functions - deprecated in favor of consolidated spawnIcon()
@@ -590,6 +612,8 @@ export class CuriousFishLayer {
             heart.y += heart.velocityY;
             if (heart.age < heart.maxAge) {
                 this.hearts[w++] = heart;
+            } else {
+                this._iconPool.push(heart); // return to pool instead of GC
             }
         }
         this.hearts.length = w;
@@ -597,11 +621,13 @@ export class CuriousFishLayer {
     
     drawTargetingCrosshair(ctx) {
         if (!this.fish) return;
-        const canvas = document.querySelector('canvas');
+        // Use the manager's canvas reference — avoids a DOM query every frame
+        const canvas = this.manager && this.manager.canvas;
         if (!canvas || this.mouseX === null || this.mouseY === null) return;
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = this.mouseX - rect.left;
-        const mouseY = this.mouseY - rect.top;
+        // Canvas is position:fixed top:0 left:0 covering the viewport,
+        // so clientX/Y already equal canvas-space X/Y (no rect offset needed).
+        const mouseX = this.mouseX;
+        const mouseY = this.mouseY;
         const fishLayer = this.manager && this.manager.getLayer('fish');
         if (!fishLayer || !fishLayer.sharks) return;
         let hoveredFish = null;
@@ -626,8 +652,8 @@ export class CuriousFishLayer {
         ctx.strokeStyle = cursorColor;
         ctx.lineWidth = 2;
         ctx.globalAlpha = 0.8;
-        const fontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
-        const diameter = 1.5 * fontSize;
+        // Use cached font size \u2014 avoids getComputedStyle in the render loop
+        const diameter = 1.5 * (this._cachedFontSize || 16);
         const innerRadius = diameter * 0.3;
         const outerRadius = diameter * 0.5;
         ctx.beginPath();

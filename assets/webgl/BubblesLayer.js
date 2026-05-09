@@ -300,6 +300,19 @@ export class BubblesLayer {
         this.qualityMultiplier = quality;
     }
 
+    /**
+     * Reduce particle source count proportionally.
+     * Separate from setQuality (which scales opacity/rate); this removes entire sources
+     * so fewer bubbles are ever spawned. One-way — call at half-budget level.
+     * @param {number} factor - 0.0–1.0
+     */
+    reduceBudget(factor) {
+        if (!this._allSources) this._allSources = this.sources.slice();
+        const targetCount = Math.max(1, Math.round(this._allSources.length * factor));
+        this.sources = this._allSources.slice(0, targetCount);
+        // Drain any bubbles that originated from removed sources (let existing ones finish)
+    }
+
     toggle(enabled) {
         this.enabled = !!enabled;
         if (this.enabled && !this.program) {
