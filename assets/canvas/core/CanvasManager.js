@@ -56,6 +56,9 @@ export class CanvasManager {
         this.width = 0;
         this.height = 0;
         
+        // Ripple effects (click feedback)
+        this._ripples = [];
+
         // Event handlers
         this.resizeTimeout = null;
         
@@ -204,9 +207,32 @@ export class CanvasManager {
         // Prevent event from triggering global click handler (avoid double spawn)
         e.stopPropagation();
 
-        // Always spawn food on EVERY click
-        const quality = this.performanceMonitor.getQuality();
-        this.foodLayer.spawn(x, y, quality);
+        // Check if clicking on a school fish — if so, trigger attack/dance and skip food
+        const fishLayer = this.getLayer('fish');
+        let clickedFish = false;
+        if (fishLayer && fishLayer.sharks) {
+            for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
+                const shark = fishLayer.sharks[i];
+                if (shark.isDying) continue;
+                const dx = x - shark.x;
+                const dy = y - (shark.baseY || shark.y);
+                if (dx * dx + dy * dy < shark.size * shark.size) {
+                    clickedFish = true;
+                    break;
+                }
+            }
+        }
+
+        // Spawn food only when NOT clicking a fish
+        if (!clickedFish) {
+            const quality = this.performanceMonitor.getQuality();
+            this.foodLayer.spawn(x, y, quality);
+        }
+
+        // Ripple feedback only when NOT clicking a fish (fish click gets red death ripple later)
+        if (!clickedFish) {
+            this._ripples.push({ x, y, startTime: performance.now(), maxR: 80, duration: 900 });
+        }
 
         // Get or lazily create curious fish layer
         let curiousFishLayer = this.getLayer('curiousFish');
@@ -223,7 +249,6 @@ export class CanvasManager {
         }
 
         // Check if clicking on a school fish
-        const fishLayer = this.getLayer('fish');
         if (fishLayer && fishLayer.sharks) {
             for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
                 const shark = fishLayer.sharks[i];
@@ -349,7 +374,7 @@ export class CanvasManager {
         
         // Clear canvas
         this.ctx.clearRect(0, 0, this.width, this.height);
-        
+
         // Reset food targeted flags
         this.foodLayer.resetTargetedFlags();
         
@@ -390,6 +415,28 @@ export class CanvasManager {
             });
         }
         
+        // Draw ripples on top of all layers (so death ripples are visible above blood clouds)
+        if (this._ripples.length > 0) {
+            const now = performance.now();
+            let writeIdx = 0;
+            this.ctx.save();
+            for (let i = 0; i < this._ripples.length; i++) {
+                const rip = this._ripples[i];
+                const t = (now - rip.startTime) / rip.duration;
+                if (t >= 1.0) continue;
+                const r = rip.maxR * t;
+                const alpha = (1 - t) * (1 - t) * 0.80;
+                this.ctx.beginPath();
+                this.ctx.arc(rip.x, rip.y, r, 0, Math.PI * 2);
+                this.ctx.strokeStyle = `rgba(${rip.color || '160,220,255'},${alpha.toFixed(3)})`;
+                this.ctx.lineWidth = 2.5;
+                this.ctx.stroke();
+                this._ripples[writeIdx++] = rip;
+            }
+            this._ripples.length = writeIdx;
+            this.ctx.restore();
+        }
+
         this.frameCounter++;
         this.performanceProfiler.endFrame(currentTime);
     }

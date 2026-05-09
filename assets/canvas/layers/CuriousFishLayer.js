@@ -232,7 +232,17 @@ export class CuriousFishLayer {
                 // Blood cloud at the point of death
                 const fishLayer = this.manager && this.manager.getLayer('fish');
                 if (fishLayer && fishLayer._spawnBloodBurst) {
-                    fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null);
+                    fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null, currentTime);
+                }
+                // Red death ripple — slow, big, strong
+                if (this.manager && this.manager._ripples) {
+                    this.manager._ripples.push({
+                        x: this.fish.x, y: this.fish.y,
+                        startTime: performance.now(),
+                        maxR: 90 + this.fish.currentSize * 0.9,
+                        duration: 1400,
+                        color: '210,30,30',
+                    });
                 }
             }
             this.drawSkeletons(ctx, height);

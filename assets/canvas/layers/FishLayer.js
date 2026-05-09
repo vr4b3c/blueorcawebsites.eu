@@ -5,13 +5,13 @@
 import { drawGlow } from '../utils/GlowCache.js';
 
 export class FishLayer {
-    static MAX_FISH = 150;               // Hard cap on total fish in the array
+    static MAX_FISH = 80;                // Hard cap on total fish in the array
     static MAX_PASSIVE_LIFESPAN = 300_000; // ms — passive/independent fish live max 5 min
 
     // Single source of truth for fish layer configuration
     static DEFAULT_CONFIG = {
-        schoolCount: null,     // null = auto-scale by viewport (1 school per 250 000 px²)
-        schoolDensity: 250000, // px² per school when schoolCount is null
+        schoolCount: null,     // null = auto-scale by viewport (1 school per 600 000 px²)
+        schoolDensity: 600000, // px² per school when schoolCount is null
         size: 1.2,              // Size multiplier (0.5-2x)
         avoidRadius: 100,       // Radius to avoid mouse cursor
         verticalMarginTop: 100, // Minimum distance from top edge (px)
@@ -130,8 +130,8 @@ export class FishLayer {
     _recalcSchoolCount(width, height) {
         if (this.config.schoolCount !== null) return; // manual override
         const area = width * height;
-        const density = this.config.schoolDensity || 250000;
-        const count = Math.max(2, Math.min(20, Math.round(area / density)));
+        const density = this.config.schoolDensity || 600000;
+        const count = Math.max(1, Math.min(8, Math.round(area / density)));
         this._autoSchoolCount = count;
     }
     
@@ -157,10 +157,10 @@ export class FishLayer {
             this._schoolsSpawned++;
         }
         
-        // Remove all fish if school count decreased
+        // School count decreased — don't nuke the array, just accept fewer schools.
+        // Existing fish finish their natural lifecycle (bone animation etc.)
         if (this._schoolsSpawned > effectiveSchoolCount) {
-            this.sharks = [];
-            this._schoolsSpawned = 0;
+            this._schoolsSpawned = effectiveSchoolCount;
         }
 
         // Cull oldest passive/independent fish when total count exceeds hard cap
@@ -259,6 +259,17 @@ export class FishLayer {
                     }
                     shark.boneStartTime = currentTime;
                     this._spawnBloodCloud(shark.boneX, shark.boneY, shark.size, currentTime);
+
+                    // Red death ripple — notify CanvasManager
+                    if (this.manager && this.manager._ripples) {
+                        this.manager._ripples.push({
+                            x: shark.boneX, y: shark.boneY,
+                            startTime: currentTime,
+                            maxR: 55 + shark.size * 0.8,
+                            duration: 700,
+                            color: '200,60,60',
+                        });
+                    }
                 }
 
                 const FALL_DURATION = 3000;  // ms padání
@@ -383,6 +394,20 @@ export class FishLayer {
                         shark.x += (dx / distance) * avoidStrength;
                         shark.baseY += (dy / distance) * avoidStrength * 0.5;
                     }
+                }
+            }
+
+            // Mouse cursor avoidance — fish scatter gently when cursor is close
+            if (this.mouseX !== null && this.mouseY !== null) {
+                const mdx = shark.x - this.mouseX;
+                const mdy = currentY - this.mouseY;
+                const mDistSq = mdx * mdx + mdy * mdy;
+                const MOUSE_AVOID_R = 175;
+                if (mDistSq < MOUSE_AVOID_R * MOUSE_AVOID_R && mDistSq > 0) {
+                    const mDist = Math.sqrt(mDistSq);
+                    const strength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+                    shark.x += (mdx / mDist) * strength;
+                    shark.baseY += (mdy / mDist) * strength * 0.45;
                 }
             }
             
@@ -722,13 +747,13 @@ export class FishLayer {
         else if (fishType === 1) {
             schoolImage = this.fishImages[1];
             baseSize = 10 + Math.random() * 20;
-            fishCountBase = [8, 14]; // střední hejna
+            fishCountBase = [4, 8]; // střední hejna
         }
         // fish1.png — nejmenší: 10-16px, středně velká hejna
         else if (fishType === 2) {
             schoolImage = this.fishImages[2];
             baseSize = 10 + Math.random() * 6;
-            fishCountBase = [15, 25]; // omezené počty
+            fishCountBase = [7, 12]; // omezené počty
         }
         // curiousfish.png — hráčovo/kuriozní hejno: malé 2-4 jedinci
         else {

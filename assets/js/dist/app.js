@@ -1403,6 +1403,7 @@
       for (let i = 0; i < count; i++) {
         const p = this._newFoamParticle();
         p.age = Math.random() * p.maxAge;
+        p.yOffset = p.riseSpeed * (p.age / 1e3);
         this._foam.push(p);
       }
       this._foamBuf = new Float32Array(count * 4);
@@ -1411,24 +1412,23 @@
       return {
         x: Math.random(),
         // normalized 0..1
-        size: 3 + Math.random() * 5,
-        // px (3–8px)
+        size: 2 + Math.random() * 4,
+        // px (2–6px) — jemné
         age: 0,
-        maxAge: 1500 + Math.random() * 2e3,
+        maxAge: 1200 + Math.random() * 1600,
         // ms
-        phase: Math.random() * Math.PI * 2,
-        driftX: (Math.random() - 0.5) * 3e-5,
-        // normalized/ms
-        bobAmp: 2 + Math.random() * 3,
-        // px
-        bobSpeed: 0.8 + Math.random() * 1.2
-        // rad/s
+        driftX: (Math.random() - 0.5) * 1e-5,
+        // velmi jemný horizontální drift
+        riseSpeed: 6 + Math.random() * 12,
+        // px/s — stoupání nahoru
+        yOffset: 0
+        // px nad hladinou
       };
     }
     /** Wave y-position in pixels at given normalized x and time — must match vertex shader. */
     _waveYpx(normX, t) {
       const xPx = normX * this.width;
-      return SURFACE_Y + 8 * Math.sin(xPx * 0.018 + t * 9e-4) + 3.5 * Math.sin(xPx * 0.038 + t * 15e-4) + 1.5 * Math.sin(xPx * 0.075 + t * 22e-4);
+      return SURFACE_Y + 3 * Math.sin(xPx * 0.012 + t * 45e-5) + 1.5 * Math.sin(xPx * 0.027 + t * 73e-5) + 0.9 * Math.sin(xPx * 0.051 + t * 11e-4) + 0.5 * Math.sin(xPx * 0.089 + t * 161e-5) + 0.3 * Math.sin(xPx * 0.143 + t * 94e-5);
     }
     createFoamBuffers() {
       const gl = this.gl;
@@ -1465,22 +1465,21 @@
           continue;
         }
         p.x = (p.x + p.driftX * deltaTime + 1) % 1;
+        p.yOffset += p.riseSpeed * deltaTime / 1e3;
         this._writeFoamVertex(i, p, elapsed, p.age);
       }
       return effectiveCount;
     }
     _writeFoamVertex(i, p, elapsed, age) {
       const waveY = this._waveYpx(p.x, elapsed);
-      const bobY = Math.sin(p.phase + elapsed * p.bobSpeed * 1e-3) * p.bobAmp;
       const t = age / p.maxAge;
       let opacity;
-      if (t < 0.2) opacity = t / 0.2;
-      else if (t < 0.75) opacity = 1;
-      else opacity = (1 - t) / 0.25;
-      opacity *= 0.75 * this.qualityMultiplier;
+      if (t < 0.12) opacity = t / 0.12;
+      else opacity = 1 - (t - 0.12) / 0.88;
+      opacity *= 0.55 * this.qualityMultiplier;
       const j = i * 4;
       this._foamBuf[j] = p.x * this.width;
-      this._foamBuf[j + 1] = waveY + bobY;
+      this._foamBuf[j + 1] = waveY - Math.max(p.yOffset, 8);
       this._foamBuf[j + 2] = p.size;
       this._foamBuf[j + 3] = opacity;
     }
@@ -3760,7 +3759,17 @@
           });
           const fishLayer = this.manager && this.manager.getLayer("fish");
           if (fishLayer && fishLayer._spawnBloodBurst) {
-            fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null);
+            fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null, currentTime);
+          }
+          if (this.manager && this.manager._ripples) {
+            this.manager._ripples.push({
+              x: this.fish.x,
+              y: this.fish.y,
+              startTime: performance.now(),
+              maxR: 90 + this.fish.currentSize * 0.9,
+              duration: 1400,
+              color: "210,30,30"
+            });
           }
         }
         this.drawSkeletons(ctx, height);
@@ -4403,6 +4412,7 @@
       };
       this.width = 0;
       this.height = 0;
+      this._ripples = [];
       this.resizeTimeout = null;
       this.handleResize = this.handleResize.bind(this);
       this.handleClick = this.handleClick.bind(this);
@@ -4507,8 +4517,27 @@
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       e.stopPropagation();
-      const quality = this.performanceMonitor.getQuality();
-      this.foodLayer.spawn(x, y, quality);
+      const fishLayer = this.getLayer("fish");
+      let clickedFish = false;
+      if (fishLayer && fishLayer.sharks) {
+        for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
+          const shark = fishLayer.sharks[i];
+          if (shark.isDying) continue;
+          const dx = x - shark.x;
+          const dy = y - (shark.baseY || shark.y);
+          if (dx * dx + dy * dy < shark.size * shark.size) {
+            clickedFish = true;
+            break;
+          }
+        }
+      }
+      if (!clickedFish) {
+        const quality = this.performanceMonitor.getQuality();
+        this.foodLayer.spawn(x, y, quality);
+      }
+      if (!clickedFish) {
+        this._ripples.push({ x, y, startTime: performance.now(), maxR: 80, duration: 900 });
+      }
       let curiousFishLayer = this.getLayer("curiousFish");
       if (!curiousFishLayer) {
         curiousFishLayer = new CuriousFishLayer();
@@ -4520,7 +4549,6 @@
         curiousFishLayer.gameState = "playing";
         curiousFishLayer.setTargetPoint(x, y, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
       }
-      const fishLayer = this.getLayer("fish");
       if (fishLayer && fishLayer.sharks) {
         for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
           const shark = fishLayer.sharks[i];
@@ -4656,6 +4684,26 @@
             this.performanceProfiler.endSection(`layer:${layerName}`);
           }
         });
+      }
+      if (this._ripples.length > 0) {
+        const now = performance.now();
+        let writeIdx = 0;
+        this.ctx.save();
+        for (let i = 0; i < this._ripples.length; i++) {
+          const rip = this._ripples[i];
+          const t = (now - rip.startTime) / rip.duration;
+          if (t >= 1) continue;
+          const r = rip.maxR * t;
+          const alpha = (1 - t) * (1 - t) * 0.8;
+          this.ctx.beginPath();
+          this.ctx.arc(rip.x, rip.y, r, 0, Math.PI * 2);
+          this.ctx.strokeStyle = `rgba(${rip.color || "160,220,255"},${alpha.toFixed(3)})`;
+          this.ctx.lineWidth = 2.5;
+          this.ctx.stroke();
+          this._ripples[writeIdx++] = rip;
+        }
+        this._ripples.length = writeIdx;
+        this.ctx.restore();
       }
       this.frameCounter++;
       this.performanceProfiler.endFrame(currentTime);
@@ -5107,15 +5155,15 @@
 
   // assets/canvas/layers/FishLayer.js
   var FishLayer = class _FishLayer {
-    static MAX_FISH = 150;
+    static MAX_FISH = 80;
     // Hard cap on total fish in the array
     static MAX_PASSIVE_LIFESPAN = 3e5;
     // ms — passive/independent fish live max 5 min
     // Single source of truth for fish layer configuration
     static DEFAULT_CONFIG = {
       schoolCount: null,
-      // null = auto-scale by viewport (1 school per 250 000 px²)
-      schoolDensity: 25e4,
+      // null = auto-scale by viewport (1 school per 600 000 px²)
+      schoolDensity: 6e5,
       // px² per school when schoolCount is null
       size: 1.2,
       // Size multiplier (0.5-2x)
@@ -5222,8 +5270,8 @@
     _recalcSchoolCount(width, height) {
       if (this.config.schoolCount !== null) return;
       const area = width * height;
-      const density = this.config.schoolDensity || 25e4;
-      const count = Math.max(2, Math.min(20, Math.round(area / density)));
+      const density = this.config.schoolDensity || 6e5;
+      const count = Math.max(1, Math.min(8, Math.round(area / density)));
       this._autoSchoolCount = count;
     }
     render(ctx, currentTime, deltaTime, width, height) {
@@ -5239,8 +5287,7 @@
         this._schoolsSpawned++;
       }
       if (this._schoolsSpawned > effectiveSchoolCount) {
-        this.sharks = [];
-        this._schoolsSpawned = 0;
+        this._schoolsSpawned = effectiveSchoolCount;
       }
       if (this.sharks.length > _FishLayer.MAX_FISH) {
         let culled = 0;
@@ -5312,6 +5359,16 @@
             }
             shark.boneStartTime = currentTime;
             this._spawnBloodCloud(shark.boneX, shark.boneY, shark.size, currentTime);
+            if (this.manager && this.manager._ripples) {
+              this.manager._ripples.push({
+                x: shark.boneX,
+                y: shark.boneY,
+                startTime: currentTime,
+                maxR: 55 + shark.size * 0.8,
+                duration: 700,
+                color: "200,60,60"
+              });
+            }
           }
           const FALL_DURATION = 3e3;
           const FADE_DURATION = 800;
@@ -5404,6 +5461,18 @@
               shark.x += dx / distance * avoidStrength;
               shark.baseY += dy / distance * avoidStrength * 0.5;
             }
+          }
+        }
+        if (this.mouseX !== null && this.mouseY !== null) {
+          const mdx = shark.x - this.mouseX;
+          const mdy = currentY - this.mouseY;
+          const mDistSq = mdx * mdx + mdy * mdy;
+          const MOUSE_AVOID_R = 175;
+          if (mDistSq < MOUSE_AVOID_R * MOUSE_AVOID_R && mDistSq > 0) {
+            const mDist = Math.sqrt(mDistSq);
+            const strength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+            shark.x += mdx / mDist * strength;
+            shark.baseY += mdy / mDist * strength * 0.45;
           }
         }
         const sizeNorm = 40;
@@ -5651,11 +5720,11 @@
       } else if (fishType === 1) {
         schoolImage = this.fishImages[1];
         baseSize = 10 + Math.random() * 20;
-        fishCountBase = [8, 14];
+        fishCountBase = [4, 8];
       } else if (fishType === 2) {
         schoolImage = this.fishImages[2];
         baseSize = 10 + Math.random() * 6;
-        fishCountBase = [15, 25];
+        fishCountBase = [7, 12];
       } else {
         schoolImage = this.fishImages[3];
         baseSize = 30 + Math.random() * 30;

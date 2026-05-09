@@ -217,6 +217,7 @@ export class WaterSurfaceLayer {
         for (let i = 0; i < count; i++) {
             const p = this._newFoamParticle();
             p.age = Math.random() * p.maxAge; // rozložit počáteční fáze
+            p.yOffset = p.riseSpeed * (p.age / 1000); // pre-compute rise
             this._foam.push(p);
         }
         this._foamBuf = new Float32Array(count * 4); // [xPx, yPx, size, opacity]
@@ -224,14 +225,13 @@ export class WaterSurfaceLayer {
 
     _newFoamParticle() {
         return {
-            x:        Math.random(),                        // normalized 0..1
-            size:     3 + Math.random() * 5,                // px (3–8px)
-            age:      0,
-            maxAge:   1500 + Math.random() * 2000,          // ms
-            phase:    Math.random() * Math.PI * 2,
-            driftX:   (Math.random() - 0.5) * 0.00003,     // normalized/ms
-            bobAmp:   2 + Math.random() * 3,                // px
-            bobSpeed: 0.8 + Math.random() * 1.2,            // rad/s
+            x:         Math.random(),                       // normalized 0..1
+            size:      2 + Math.random() * 4,               // px (2–6px) — jemné
+            age:       0,
+            maxAge:    1200 + Math.random() * 1600,         // ms
+            driftX:    (Math.random() - 0.5) * 0.00001,    // velmi jemný horizontální drift
+            riseSpeed: 6 + Math.random() * 12,              // px/s — stoupání nahoru
+            yOffset:   0,                                   // px nad hladinou
         };
     }
 
@@ -239,9 +239,11 @@ export class WaterSurfaceLayer {
     _waveYpx(normX, t) {
         const xPx = normX * this.width;
         return SURFACE_Y
-            + 8.0  * Math.sin(xPx * 0.018 + t * 0.0009)
-            + 3.5  * Math.sin(xPx * 0.038 + t * 0.0015)
-            + 1.5  * Math.sin(xPx * 0.075 + t * 0.0022);
+            + 3.0 * Math.sin(xPx * 0.012 + t * 0.00045)
+            + 1.5 * Math.sin(xPx * 0.027 + t * 0.00073)
+            + 0.9 * Math.sin(xPx * 0.051 + t * 0.00110)
+            + 0.5 * Math.sin(xPx * 0.089 + t * 0.00161)
+            + 0.3 * Math.sin(xPx * 0.143 + t * 0.00094);
     }
 
     createFoamBuffers() {
@@ -292,6 +294,7 @@ export class WaterSurfaceLayer {
             }
 
             p.x = (p.x + p.driftX * deltaTime + 1.0) % 1.0;
+            p.yOffset += p.riseSpeed * deltaTime / 1000;
 
             this._writeFoamVertex(i, p, elapsed, p.age);
         }
@@ -301,18 +304,18 @@ export class WaterSurfaceLayer {
 
     _writeFoamVertex(i, p, elapsed, age) {
         const waveY = this._waveYpx(p.x, elapsed);
-        const bobY  = Math.sin(p.phase + elapsed * p.bobSpeed * 0.001) * p.bobAmp;
 
+        // Stoupání nahoru od hladiny, fade-in rychle, fade-out lineárně
         const t = age / p.maxAge;
         let opacity;
-        if (t < 0.2)       opacity = t / 0.2;
-        else if (t < 0.75) opacity = 1.0;
-        else               opacity = (1.0 - t) / 0.25;
-        opacity *= 0.75 * this.qualityMultiplier;
+        if (t < 0.12) opacity = t / 0.12;
+        else          opacity = 1.0 - ((t - 0.12) / 0.88);
+        opacity *= 0.55 * this.qualityMultiplier;
 
         const j = i * 4;
         this._foamBuf[j]     = p.x * this.width;
-        this._foamBuf[j + 1] = waveY + bobY;
+        // Vždy min. 8px nad vrcholem ribbon (ribbon má ±4px + rezerva pro mismatch)
+        this._foamBuf[j + 1] = waveY - Math.max(p.yOffset, 8);
         this._foamBuf[j + 2] = p.size;
         this._foamBuf[j + 3] = opacity;
     }

@@ -50,7 +50,7 @@ export function drawFish(ctx, fish, fishImage, config, isAttackingSchoolFish, ta
     const verticalBob = bobActive * Math.sin(fish.age * bobFrequency) * 6 * sizeScale;
     // Add gentle rotation bob (±3 degrees) with slightly different frequency for natural movement
     const rotationBob = bobActive * Math.sin(fish.age * bobFrequency * 0.7) * 0.05;
-    
+
     ctx.save();
     ctx.translate(fish.x, fish.y + verticalBob);
     ctx.scale(fish.flipScale, 1);
