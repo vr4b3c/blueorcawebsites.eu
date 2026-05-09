@@ -12,6 +12,11 @@ export class PlanktonLayer {
         this.microParticles = [];
         this.qualityMultiplier = 1.0;
         this._lastOpacity = null;
+        // Budget factor tracks how many particles are actually drawn.
+        // _targetBudgetFactor is set instantly by reduceBudget();
+        // _budgetFactor is lerped toward it each frame to avoid sudden particle-count snaps.
+        this._budgetFactor = 1.0;
+        this._targetBudgetFactor = 1.0;
         
         this.config = {
             swarmCount: 30,
@@ -433,6 +438,10 @@ export class PlanktonLayer {
         const program = this.program;
         
         if (!program || this.particles.length === 0) return;
+
+        // Smooth budget lerp — converges ~95% in 1.5 s at 60 fps (alpha=0.04).
+        // Prevents the visible particle-count snap when reduceBudget() is called.
+        this._budgetFactor += (this._targetBudgetFactor - this._budgetFactor) * 0.04;
         
         gl.useProgram(program);
         const locs = this.locs;
@@ -462,7 +471,8 @@ export class PlanktonLayer {
      * @param {number} factor - 0.0–1.0
      */
     reduceBudget(factor) {
-        this._budgetFactor = Math.max(0.1, factor);
+        // Set target; render() lerps _budgetFactor toward it each frame for a smooth visual fade.
+        this._targetBudgetFactor = Math.max(0.1, factor);
     }
 
     onResize(width, height) {

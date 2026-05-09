@@ -47,7 +47,7 @@ export class MasterRenderer {
         this.LOW_FPS_THRESHOLD        = 28;   // FPS threshold for levels 0 and 1
         this.LOW_FPS_THRESHOLD_CANVAS = 22;   // FPS threshold for level 2
         this.LOW_FPS_THRESHOLD_FINAL  = 15;   // FPS threshold for level 3
-        this.LOW_FPS_DURATION         = 5000; // ms sustained below threshold before stepping down
+        this.LOW_FPS_DURATION         = 15000; // ms sustained below threshold before stepping down
         // WebGL shader compilation + JS parse can spike load-time FPS for 10-15s.
         // Degradation is inhibited during this warmup window to prevent false triggers.
         this._warmupDuration = 12000; // ms after start() before degradation is allowed
@@ -62,7 +62,7 @@ export class MasterRenderer {
         this._rampFactor   = 0.3;   // current applied budget (0–1)
         this._rampTarget   = 1.0;   // ceiling; overridden in start() by device tier
         this._rampStep     = 0.15;  // increment per check
-        this._rampInterval = 4000;  // ms between steps (outside warmup window)
+        this._rampInterval = 8000;  // ms between steps (outside warmup window)
         this._lastRampTime = 0;
         this._rampComplete = false;
 

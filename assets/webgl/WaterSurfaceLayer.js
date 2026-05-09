@@ -11,7 +11,7 @@
  *   2. Foam particles (POINTS) — částice plující na hladině
  */
 
-const SURFACE_Y = 70; // px od vrchu — stejné jako PlanktonLayer topEdge
+export const SURFACE_Y = 70; // px od vrchu — stejné jako PlanktonLayer topEdge
 
 export class WaterSurfaceLayer {
     constructor(gl, config = {}) {

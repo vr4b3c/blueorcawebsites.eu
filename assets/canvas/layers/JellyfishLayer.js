@@ -8,6 +8,8 @@
  * Movement: diagonal glide + jerky vertical pulsing bell.
  */
 
+import { SURFACE_Y } from '../../webgl/WaterSurfaceLayer.js';
+
 export class JellyfishLayer {
     // Hard cap — 1 individual per school, sparse
     static MAX_JELLYFISH = 12;
@@ -110,8 +112,19 @@ export class JellyfishLayer {
 
             const currentY = jf.baseY + yOffset;
 
-            // Exited right side OR floated off the top → respawn below bottom edge
-            if (jf.x > width + jf.size * 2.5 || jf.baseY < -jf.size * 3) {
+            // Surface bounce: reflect off the waterline instead of escaping through the top
+            const ceiling = SURFACE_Y + jf.size * 2;
+            if (jf.baseY <= ceiling) {
+                jf.baseY = ceiling;
+                if (jf.riseSpeed > 0) jf.riseSpeed = -jf.origRiseSpeed * 0.7; // flip to sinking
+            }
+            // Once sunk deep enough, restore natural rise so the cycle repeats
+            if (jf.riseSpeed < 0 && jf.baseY >= height * 0.5) {
+                jf.riseSpeed = jf.origRiseSpeed;
+            }
+
+            // Exited right side → respawn below bottom edge
+            if (jf.x > width + jf.size * 2.5) {
                 this._resetBelowBottom(jf, width, height);
             }
 
@@ -249,6 +262,7 @@ export class JellyfishLayer {
                 size:           indivSize,
                 speed:          speed * (0.88 + Math.random() * 0.24),
                 riseSpeed:      riseSpeed * (0.88 + Math.random() * 0.24),
+                origRiseSpeed:  riseSpeed * (0.88 + Math.random() * 0.24),
                 pulseFreq:      pulseFreq * (0.9 + Math.random() * 0.2),
                 pulseAmplitude: pulseAmp * (0.8 + Math.random() * 0.4),
                 age:            phaseAge,

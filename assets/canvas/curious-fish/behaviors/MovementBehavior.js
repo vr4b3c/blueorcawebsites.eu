@@ -94,9 +94,10 @@ export function findFoodTarget(fish, foodParticles, width, height, followDistanc
     let newTargetedFood = fish.targetedFood; // Track new targeted food value
     
     const EDGE_MARGIN = 100;
+    const TOP_MARGIN = 80; // must match SURFACE_Y + 10 (food spawn floor)
     const inEdgeZone = (food) =>
         food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN ||
-        food.y < EDGE_MARGIN || food.y > height - EDGE_MARGIN;
+        food.y < TOP_MARGIN || food.y > height - EDGE_MARGIN;
 
     // Check if targeted food still valid (use squared distance for performance)
     let shouldFindNewFood = true;

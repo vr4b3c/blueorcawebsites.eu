@@ -10,6 +10,12 @@ export class BubblesLayer {
         this._bubblePool = [];
         this.sources = [];
         this.qualityMultiplier = 1.0;
+        // Budget lerp system: reduceBudget() sets _targetBudgetFactor;
+        // _currentBudgetFactor is smoothly lerped toward it in render() so bubble
+        // sources appear/disappear gradually instead of snapping.
+        this._allSources          = null;
+        this._targetBudgetFactor  = 1.0;
+        this._currentBudgetFactor = 1.0;
         
         this.config = {
             sourceWidthBase: 600,
@@ -52,6 +58,10 @@ export class BubblesLayer {
                 this.sources.push({ x, y: height + 5 });
             }
         }
+        // Snapshot full source list so the budget lerp system can slice it gradually.
+        // Also snap current factor to avoid a spurious lerp sweep after a resize.
+        this._allSources = this.sources.slice();
+        this._currentBudgetFactor = this._targetBudgetFactor;
     }
     
     compileShaders() {
@@ -218,11 +228,16 @@ export class BubblesLayer {
         
         if (!program) return;
         
+        // Smooth budget lerp — converges ~95% in 1.5 s at 60 fps (alpha=0.04).
+        // Recalculate active source count each frame from the lerped factor so bubble
+        // spawn slots decrease/increase gradually instead of snapping to a new slice.
+        this._currentBudgetFactor += (this._targetBudgetFactor - this._currentBudgetFactor) * 0.04;
+        const srcArr = this._allSources || this.sources;
+        const srcCount = Math.max(1, Math.round(srcArr.length * this._currentBudgetFactor));
+
         const spawnChance = this.config.bubblesPerSource * this.qualityMultiplier;
-        for (const source of this.sources) {
-            if (Math.random() < spawnChance) {
-                this.spawnBubble(source);
-            }
+        for (let si = 0; si < srcCount; si++) {
+            if (Math.random() < spawnChance) this.spawnBubble(srcArr[si]);
         }
         
         // In-place update and compaction — no Array.filter() allocation per frame
@@ -308,8 +323,8 @@ export class BubblesLayer {
      */
     reduceBudget(factor) {
         if (!this._allSources) this._allSources = this.sources.slice();
-        const targetCount = Math.max(1, Math.round(this._allSources.length * factor));
-        this.sources = this._allSources.slice(0, targetCount);
+        // Only update the target; render() lerps _currentBudgetFactor toward it each frame.
+        this._targetBudgetFactor = Math.max(0.1, factor);
         // Drain any bubbles that originated from removed sources (let existing ones finish)
     }
 

@@ -13,6 +13,7 @@ import { PerformanceMonitor } from '../utils/PerformanceMonitor.js';
 import { PerformanceProfiler } from '../utils/PerformanceProfiler.js';
 import { FoodLayer } from '../layers/FoodLayer.js';
 import { CuriousFishLayer } from '../layers/CuriousFishLayer.js';
+import { SURFACE_Y } from '../../webgl/WaterSurfaceLayer.js';
 
 export class CanvasManager {
     constructor(options = {}) {
@@ -207,6 +208,9 @@ export class CanvasManager {
         // Prevent event from triggering global click handler (avoid double spawn)
         e.stopPropagation();
 
+        // Clamp spawn position to the water surface — food and ripples must not appear above the waterline
+        const spawnY = Math.max(SURFACE_Y + 10, y);
+
         // Check if clicking on a school fish — if so, trigger attack/dance and skip food
         const fishLayer = this.getLayer('fish');
         let clickedFish = false;
@@ -226,12 +230,12 @@ export class CanvasManager {
         // Spawn food only when NOT clicking a fish
         if (!clickedFish) {
             const quality = this.performanceMonitor.getQuality();
-            this.foodLayer.spawn(x, y, quality);
+            this.foodLayer.spawn(x, spawnY, quality);
         }
 
         // Ripple feedback only when NOT clicking a fish (fish click gets red death ripple later)
         if (!clickedFish) {
-            this._ripples.push({ x, y, startTime: performance.now(), maxR: 80, duration: 900 });
+            this._ripples.push({ x, y: spawnY, startTime: performance.now(), maxR: 80, duration: 900 });
         }
 
         // Get or lazily create curious fish layer
@@ -245,7 +249,7 @@ export class CanvasManager {
             curiousFishLayer.spawnFish();
             curiousFishLayer.gameState = 'playing';
             // Nudge immediately toward the food — normal findFoodTarget loop takes over from here
-            curiousFishLayer.setTargetPoint(x, y, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
+            curiousFishLayer.setTargetPoint(x, spawnY, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
         }
 
         // Check if clicking on a school fish

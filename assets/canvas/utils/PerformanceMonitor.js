@@ -29,10 +29,17 @@ export class PerformanceMonitor {
             min: 0.3,
             max: 1.0,
             targetFPS: options.targetFPS || 45,
-            adjustInterval: 1000
+            // Longer interval prevents rapid quality oscillation on borderline hardware.
+            // Combined with the consecutive-tick requirement below, effective hysteresis
+            // is 2×4000 = 8 s before stepping down and 3×4000 = 12 s before recovering.
+            adjustInterval: 4000
         };
         
         this.lastQualityAdjustment = 0;
+        // Consecutive low/high tick counters — both must reach their threshold
+        // before quality changes, creating a natural debounce.
+        this._lowFpsCount  = 0;
+        this._highFpsCount = 0;
         this.qualityChangeListeners = [];
     }
     
@@ -91,17 +98,32 @@ export class PerformanceMonitor {
         const oldQuality = this.qualitySettings.current;
         
         if (fps < target - 5) {
-            // Reduce quality
-            this.qualitySettings.current = Math.max(
-                this.qualitySettings.min,
-                this.qualitySettings.current - 0.1
-            );
-        } else if (fps > target + 10 && this.qualitySettings.current < this.qualitySettings.max) {
-            // Increase quality
-            this.qualitySettings.current = Math.min(
-                this.qualitySettings.max,
-                this.qualitySettings.current + 0.05
-            );
+            // FPS is too low — count consecutive ticks; step down only after 2 in a row.
+            // At 4 s per tick this means the machine must struggle for ≥ 8 s before quality drops.
+            this._highFpsCount = 0;
+            this._lowFpsCount++;
+            if (this._lowFpsCount >= 2) {
+                this.qualitySettings.current = Math.max(
+                    this.qualitySettings.min,
+                    this.qualitySettings.current - 0.1
+                );
+            }
+        } else if (fps > target + 15 && this.qualitySettings.current < this.qualitySettings.max) {
+            // FPS is comfortably high — count 3 consecutive ticks before recovering.
+            // Slower step (+0.03) and higher threshold (+15 vs +10) prevent false recoveries
+            // from triggering a new oscillation cycle.
+            this._lowFpsCount = 0;
+            this._highFpsCount++;
+            if (this._highFpsCount >= 3) {
+                this.qualitySettings.current = Math.min(
+                    this.qualitySettings.max,
+                    this.qualitySettings.current + 0.03
+                );
+            }
+        } else {
+            // FPS in acceptable band — hold quality, reset both counters.
+            this._lowFpsCount  = 0;
+            this._highFpsCount = 0;
         }
         
         // Notify listeners if quality changed

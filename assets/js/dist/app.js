@@ -495,6 +495,9 @@
       this._bubblePool = [];
       this.sources = [];
       this.qualityMultiplier = 1;
+      this._allSources = null;
+      this._targetBudgetFactor = 1;
+      this._currentBudgetFactor = 1;
       this.config = {
         sourceWidthBase: 600,
         minSourceSpacing: 200,
@@ -531,6 +534,8 @@
           this.sources.push({ x, y: height + 5 });
         }
       }
+      this._allSources = this.sources.slice();
+      this._currentBudgetFactor = this._targetBudgetFactor;
     }
     compileShaders() {
       const gl = this.gl;
@@ -675,11 +680,12 @@
       const gl = this.gl;
       const program = this.program;
       if (!program) return;
+      this._currentBudgetFactor += (this._targetBudgetFactor - this._currentBudgetFactor) * 0.04;
+      const srcArr = this._allSources || this.sources;
+      const srcCount = Math.max(1, Math.round(srcArr.length * this._currentBudgetFactor));
       const spawnChance = this.config.bubblesPerSource * this.qualityMultiplier;
-      for (const source of this.sources) {
-        if (Math.random() < spawnChance) {
-          this.spawnBubble(source);
-        }
+      for (let si = 0; si < srcCount; si++) {
+        if (Math.random() < spawnChance) this.spawnBubble(srcArr[si]);
       }
       const dt = Math.min(deltaTime, 50);
       let bWrite = 0;
@@ -749,8 +755,7 @@
      */
     reduceBudget(factor) {
       if (!this._allSources) this._allSources = this.sources.slice();
-      const targetCount = Math.max(1, Math.round(this._allSources.length * factor));
-      this.sources = this._allSources.slice(0, targetCount);
+      this._targetBudgetFactor = Math.max(0.1, factor);
     }
     toggle(enabled) {
       this.enabled = !!enabled;
@@ -789,6 +794,8 @@
       this.microParticles = [];
       this.qualityMultiplier = 1;
       this._lastOpacity = null;
+      this._budgetFactor = 1;
+      this._targetBudgetFactor = 1;
       this.config = {
         swarmCount: 30,
         particlesPerSwarm: 50,
@@ -1163,6 +1170,7 @@
       const gl = this.gl;
       const program = this.program;
       if (!program || this.particles.length === 0) return;
+      this._budgetFactor += (this._targetBudgetFactor - this._budgetFactor) * 0.04;
       gl.useProgram(program);
       const locs = this.locs;
       gl.uniform1f(locs.time, currentTime);
@@ -1186,7 +1194,7 @@
      * @param {number} factor - 0.0–1.0
      */
     reduceBudget(factor) {
-      this._budgetFactor = Math.max(0.1, factor);
+      this._targetBudgetFactor = Math.max(0.1, factor);
     }
     onResize(width, height) {
       this.width = width;
@@ -2197,9 +2205,14 @@
         min: 0.3,
         max: 1,
         targetFPS: options.targetFPS || 45,
-        adjustInterval: 1e3
+        // Longer interval prevents rapid quality oscillation on borderline hardware.
+        // Combined with the consecutive-tick requirement below, effective hysteresis
+        // is 2×4000 = 8 s before stepping down and 3×4000 = 12 s before recovering.
+        adjustInterval: 4e3
       };
       this.lastQualityAdjustment = 0;
+      this._lowFpsCount = 0;
+      this._highFpsCount = 0;
       this.qualityChangeListeners = [];
     }
     /**
@@ -2245,15 +2258,26 @@
       const target = this.qualitySettings.targetFPS;
       const oldQuality = this.qualitySettings.current;
       if (fps < target - 5) {
-        this.qualitySettings.current = Math.max(
-          this.qualitySettings.min,
-          this.qualitySettings.current - 0.1
-        );
-      } else if (fps > target + 10 && this.qualitySettings.current < this.qualitySettings.max) {
-        this.qualitySettings.current = Math.min(
-          this.qualitySettings.max,
-          this.qualitySettings.current + 0.05
-        );
+        this._highFpsCount = 0;
+        this._lowFpsCount++;
+        if (this._lowFpsCount >= 2) {
+          this.qualitySettings.current = Math.max(
+            this.qualitySettings.min,
+            this.qualitySettings.current - 0.1
+          );
+        }
+      } else if (fps > target + 15 && this.qualitySettings.current < this.qualitySettings.max) {
+        this._lowFpsCount = 0;
+        this._highFpsCount++;
+        if (this._highFpsCount >= 3) {
+          this.qualitySettings.current = Math.min(
+            this.qualitySettings.max,
+            this.qualitySettings.current + 0.03
+          );
+        }
+      } else {
+        this._lowFpsCount = 0;
+        this._highFpsCount = 0;
       }
       if (oldQuality !== this.qualitySettings.current) {
         this.notifyQualityChange(this.qualitySettings.current);
@@ -3198,7 +3222,8 @@
     const foodUpdates = [];
     let newTargetedFood = fish.targetedFood;
     const EDGE_MARGIN = 100;
-    const inEdgeZone = (food) => food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN || food.y < EDGE_MARGIN || food.y > height - EDGE_MARGIN;
+    const TOP_MARGIN = 80;
+    const inEdgeZone = (food) => food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN || food.y < TOP_MARGIN || food.y > height - EDGE_MARGIN;
     let shouldFindNewFood = true;
     if (fish.targetedFood) {
       const targeted = fish.targetedFood;
@@ -4517,6 +4542,7 @@
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       e.stopPropagation();
+      const spawnY = Math.max(SURFACE_Y + 10, y);
       const fishLayer = this.getLayer("fish");
       let clickedFish = false;
       if (fishLayer && fishLayer.sharks) {
@@ -4533,10 +4559,10 @@
       }
       if (!clickedFish) {
         const quality = this.performanceMonitor.getQuality();
-        this.foodLayer.spawn(x, y, quality);
+        this.foodLayer.spawn(x, spawnY, quality);
       }
       if (!clickedFish) {
-        this._ripples.push({ x, y, startTime: performance.now(), maxR: 80, duration: 900 });
+        this._ripples.push({ x, y: spawnY, startTime: performance.now(), maxR: 80, duration: 900 });
       }
       let curiousFishLayer = this.getLayer("curiousFish");
       if (!curiousFishLayer) {
@@ -4547,7 +4573,7 @@
         curiousFishLayer.enabled = true;
         curiousFishLayer.spawnFish();
         curiousFishLayer.gameState = "playing";
-        curiousFishLayer.setTargetPoint(x, y, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
+        curiousFishLayer.setTargetPoint(x, spawnY, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
       }
       if (fishLayer && fishLayer.sharks) {
         for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
@@ -5279,9 +5305,7 @@
       if (!this._frameCounter) this._frameCounter = 0;
       this._frameCounter++;
       let effectiveSchoolCount = this.config.schoolCount !== null ? this.config.schoolCount : this._autoSchoolCount || this._recalcSchoolCount(width, height) || this._autoSchoolCount;
-      if ((this._qualityMultiplier || 1) < 0.6) {
-        effectiveSchoolCount = Math.max(1, Math.floor(effectiveSchoolCount * 0.5));
-      }
+      effectiveSchoolCount = Math.max(1, Math.round(effectiveSchoolCount * (this._qualityMultiplier || 1)));
       while (this._schoolsSpawned < effectiveSchoolCount) {
         this.spawnSchool(width, height, effectiveSchoolCount);
         this._schoolsSpawned++;
@@ -6364,7 +6388,15 @@
         const raw = (Math.sin(phase - Math.PI * 0.5) + 1) * 0.5;
         const yOffset = -raw * jf.pulseAmplitude;
         const currentY = jf.baseY + yOffset;
-        if (jf.x > width + jf.size * 2.5 || jf.baseY < -jf.size * 3) {
+        const ceiling = SURFACE_Y + jf.size * 2;
+        if (jf.baseY <= ceiling) {
+          jf.baseY = ceiling;
+          if (jf.riseSpeed > 0) jf.riseSpeed = -jf.origRiseSpeed * 0.7;
+        }
+        if (jf.riseSpeed < 0 && jf.baseY >= height * 0.5) {
+          jf.riseSpeed = jf.origRiseSpeed;
+        }
+        if (jf.x > width + jf.size * 2.5) {
           this._resetBelowBottom(jf, width, height);
         }
         if (this.particles.length < 50 && Math.random() < 2e-3 * deltaTime) {
@@ -6469,6 +6501,7 @@
           size: indivSize,
           speed: speed * (0.88 + Math.random() * 0.24),
           riseSpeed: riseSpeed * (0.88 + Math.random() * 0.24),
+          origRiseSpeed: riseSpeed * (0.88 + Math.random() * 0.24),
           pulseFreq: pulseFreq * (0.9 + Math.random() * 0.2),
           pulseAmplitude: pulseAmp * (0.8 + Math.random() * 0.4),
           age: phaseAge,
@@ -6515,7 +6548,7 @@
       this.LOW_FPS_THRESHOLD = 28;
       this.LOW_FPS_THRESHOLD_CANVAS = 22;
       this.LOW_FPS_THRESHOLD_FINAL = 15;
-      this.LOW_FPS_DURATION = 5e3;
+      this.LOW_FPS_DURATION = 15e3;
       this._warmupDuration = 12e3;
       this._warmupUntil = 0;
       this._hiddenSince = 0;
@@ -6523,7 +6556,7 @@
       this._rampFactor = 0.3;
       this._rampTarget = 1;
       this._rampStep = 0.15;
-      this._rampInterval = 4e3;
+      this._rampInterval = 8e3;
       this._lastRampTime = 0;
       this._rampComplete = false;
       this.debugPanel = null;

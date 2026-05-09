@@ -146,10 +146,10 @@ export class FishLayer {
             ? this.config.schoolCount
             : (this._autoSchoolCount || this._recalcSchoolCount(width, height) || this._autoSchoolCount);
 
-        // Under quality pressure, cap schools at 50% to reduce CPU load on fish AI
-        if ((this._qualityMultiplier || 1.0) < 0.6) {
-            effectiveSchoolCount = Math.max(1, Math.floor(effectiveSchoolCount * 0.5));
-        }
+        // Proportional school scaling — quality 1.0 → full schools, quality 0.3 → 30% of schools.
+        // Replaces the old binary cliff at 0.6 that caused quality to oscillate between
+        // full schools and half schools, producing visible flickering on borderline hardware.
+        effectiveSchoolCount = Math.max(1, Math.round(effectiveSchoolCount * (this._qualityMultiplier || 1.0)));
         
         // Spawn schools until we have the configured number of schools
         while (this._schoolsSpawned < effectiveSchoolCount) {
