@@ -39,7 +39,11 @@ export class MasterRenderer {
         this.tier = 0;
         this.lowFpsSince = null;
         this.LOW_FPS_THRESHOLD = 28;   // FPS below this triggers degradation
-        this.LOW_FPS_DURATION = 5000;  // ms sustained below threshold before dropping a tier
+        this.LOW_FPS_DURATION = 8000;  // ms sustained below threshold before dropping a tier
+        // WebGL shader compilation + JS parse can spike load-time FPS for 10-15s.
+        // Degradation is inhibited during this warmup window to prevent false triggers.
+        this._warmupDuration = 12000; // ms after start() before degradation is allowed
+        this._warmupUntil = 0;       // set in start()
 
         // Debug panel — created on start()
         this.debugPanel = null;
@@ -89,6 +93,7 @@ export class MasterRenderer {
         this.lastTime = performance.now();
         this.fpsUpdateTime = this.lastTime;
         this.frameCount = 0;
+        this._warmupUntil = this.lastTime + this._warmupDuration;
         this.debugPanel = new DebugPanel();
         this.rafId = requestAnimationFrame(this.render);
 
@@ -178,14 +183,15 @@ export class MasterRenderer {
             this.frameCount = 0;
             this.fpsUpdateTime = currentTime;
 
-            // Tier degradation: sustained low FPS triggers progressive fallback
-            if (this.tier < 2) {
+            // Tier degradation: sustained low FPS triggers progressive fallback.
+            // Skip during warmup window — shader compilation & JS parse push initial FPS low.
+            if (this.tier < 2 && currentTime >= this._warmupUntil) {
                 if (this.currentFPS < this.LOW_FPS_THRESHOLD) {
                     if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
                     if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
                         this.lowFpsSince = null;
                         if (this.tier === 0) this.disableWebGL();
-                        else this.disableCanvas();
+                        else this.reduceCanvasQuality();
                     }
                 } else {
                     this.lowFpsSince = null;
@@ -306,15 +312,17 @@ export class MasterRenderer {
     }
 
     /**
-     * Tier 2: destroy 2D canvas entirely. CSS background only.
+     * Tier 2: reduce canvas quality further — canvas always stays running, just fewer fish.
+     * Canvas is never destroyed: CSS gradient is the WebGL fallback, not the canvas fallback.
      */
-    disableCanvas() {
-        if (this.canvasManager) {
-            this.canvasManager.destroy();
-            this.canvasManager = null;
+    reduceCanvasQuality() {
+        if (this.canvasManager && this.canvasManager.performanceMonitor) {
+            const mon = this.canvasManager.performanceMonitor;
+            mon.qualitySettings.current = Math.max(mon.qualitySettings.min, mon.qualitySettings.current - 0.2);
+            mon.notifyQualityChange(mon.qualitySettings.current);
         }
         this.tier = 2;
-        console.warn('[MasterRenderer] Tier 2: Canvas disabled — CSS background only');
+        console.warn('[MasterRenderer] Tier 2: canvas quality reduced — fish still running');
     }
 
     /**

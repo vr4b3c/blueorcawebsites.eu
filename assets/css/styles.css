@@ -63,6 +63,10 @@ html {
     background: var(--bg-primary); /* blend with track */
 }
 
+::selection {
+    background: var(--orange);
+    color: var(--bg-primary);
+}
 
 a {
     color: var(--accent);
@@ -218,7 +222,7 @@ footer {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 0.4rem;
+    gap: 0.3rem;
     min-width: 0;
     flex-shrink: 1;
 }
