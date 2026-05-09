@@ -1219,6 +1219,355 @@
     }
   };
 
+  // assets/webgl/WaterSurfaceLayer.js
+  var SURFACE_Y = 70;
+  var WaterSurfaceLayer = class {
+    constructor(gl, config = {}) {
+      this.gl = gl;
+      this.program = null;
+      this.foamProgram = null;
+      this.vao = null;
+      this.foamVao = null;
+      this.buffers = {};
+      this.enabled = true;
+      this.qualityMultiplier = 1;
+      this._budgetFactor = 1;
+      this._foam = [];
+      this._foamBuf = null;
+      this.config = {
+        columns: 256,
+        // rozlišení vlny
+        foamCount: 120,
+        // počet foam částic
+        ...config
+      };
+    }
+    init(width, height) {
+      this.width = width;
+      this.height = height;
+      this.compileWaveShaders();
+      this.compileFoamShaders();
+      this.createWaveBuffers();
+      this.initFoamParticles();
+      this.createFoamBuffers();
+      const gl = this.gl;
+      if (this.program) {
+        gl.useProgram(this.program);
+        gl.uniform2f(this.locs.resolution, width, height);
+      }
+      if (this.foamProgram) {
+        gl.useProgram(this.foamProgram);
+        gl.uniform2f(this.foamLocs.resolution, width, height);
+      }
+    }
+    // ─── Surface fill shaders ────────────────────────────────────────────────
+    // Geometrie: TRIANGLE_STRIP, každý sloupec má dva vrcholy:
+    //   a_t = -1.0 → horní hrana pásku
+    //   a_t = +1.0 → dolní hrana pásku
+    // Fragment: alpha bell-curve — maximum uprostřed, 0 na krajích
+    compileWaveShaders() {
+      const vertSrc = `#version 300 es
+            in float a_x;    // normalized column 0..1
+            in float a_t;    // -1 = top edge, +1 = bottom edge of ribbon
+
+            uniform vec2 u_resolution;
+            uniform float u_time;
+
+            out float v_t;
+
+            void main() {
+                float xPx = a_x * u_resolution.x;
+
+                // 5 inkomenzurabiln\xEDch harmonik \u2014 klidn\xE1 ale p\u0159irozen\u011B nepravideln\xE1 vlna
+                float wave = 3.0  * sin(xPx * 0.012 + u_time * 0.00045)
+                           + 1.5  * sin(xPx * 0.027 + u_time * 0.00073)
+                           + 0.9  * sin(xPx * 0.051 + u_time * 0.00110)
+                           + 0.5  * sin(xPx * 0.089 + u_time * 0.00161)
+                           + 0.3  * sin(xPx * 0.143 + u_time * 0.00094);
+
+                // \xB14px geometrie \u2014 nikdy sub-pixel, pow() to vizu\xE1ln\u011B o\u0159e\u017Ee na ~1px
+                float yPx = ${SURFACE_Y}.0 + wave + a_t * 4.0;
+
+                vec2 clip = (vec2(xPx, yPx) / u_resolution) * 2.0 - 1.0;
+                clip.y = -clip.y;
+                gl_Position = vec4(clip, 0.0, 1.0);
+                v_t = a_t;
+            }
+        `;
+      const fragSrc = `#version 300 es
+            precision mediump float;
+            in float v_t;
+            out vec4 outColor;
+
+            void main() {
+                // pow(bell, 6) \u2192 ostr\xFD hrot uprost\u0159ed, pad\xE1 rychle k nule
+                // vizu\xE1ln\u011B ~1-2px i kdy\u017E geometrie m\xE1 8px
+                float bell = 1.0 - abs(v_t);
+                float alpha = pow(bell, 6.0) * 0.38;
+                if (alpha < 0.005) discard;
+                outColor = vec4(0.88, 0.97, 1.0, alpha);
+            }
+        `;
+      this.program = this.createProgram(vertSrc, fragSrc);
+      if (this.program) {
+        const gl = this.gl;
+        const p = this.program;
+        this.locs = {
+          resolution: gl.getUniformLocation(p, "u_resolution"),
+          time: gl.getUniformLocation(p, "u_time"),
+          x: gl.getAttribLocation(p, "a_x"),
+          t: gl.getAttribLocation(p, "a_t")
+        };
+      }
+    }
+    createWaveBuffers() {
+      const gl = this.gl;
+      const N = this.config.columns;
+      const xs = new Float32Array(N * 2);
+      const ts = new Float32Array(N * 2);
+      for (let i = 0; i < N; i++) {
+        const nx = i / (N - 1);
+        xs[i * 2] = nx;
+        xs[i * 2 + 1] = nx;
+        ts[i * 2] = -1;
+        ts[i * 2 + 1] = 1;
+      }
+      const upload = (data) => {
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        return buf;
+      };
+      this.buffers.x = upload(xs);
+      this.buffers.t = upload(ts);
+      this.buffers.vertexCount = N * 2;
+      if (this.locs) {
+        this.vao = gl.createVertexArray();
+        gl.bindVertexArray(this.vao);
+        gl.enableVertexAttribArray(this.locs.x);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.x);
+        gl.vertexAttribPointer(this.locs.x, 1, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.locs.t);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.t);
+        gl.vertexAttribPointer(this.locs.t, 1, gl.FLOAT, false, 0, 0);
+        gl.bindVertexArray(null);
+      }
+    }
+    // ─── Foam particle shaders ───────────────────────────────────────────────
+    compileFoamShaders() {
+      const vertSrc = `#version 300 es
+            in vec2 a_pos;       // pixel position [xPx, yPx]
+            in float a_size;     // point size in px
+            in float a_opacity;  // pre-computed opacity
+
+            uniform vec2 u_resolution;
+
+            out float v_opacity;
+
+            void main() {
+                vec2 clip = (a_pos / u_resolution) * 2.0 - 1.0;
+                clip.y = -clip.y;
+                gl_Position = vec4(clip, 0.0, 1.0);
+                gl_PointSize = a_size;
+                v_opacity = a_opacity;
+            }
+        `;
+      const fragSrc = `#version 300 es
+            precision mediump float;
+            in float v_opacity;
+            out vec4 outColor;
+
+            void main() {
+                vec2 c = gl_PointCoord - vec2(0.5);
+                if (length(c) > 0.5) discard;
+                float alpha = smoothstep(0.5, 0.15, length(c)) * v_opacity;
+                outColor = vec4(0.90, 0.97, 1.0, alpha);
+            }
+        `;
+      this.foamProgram = this.createProgram(vertSrc, fragSrc);
+      if (this.foamProgram) {
+        const gl = this.gl;
+        const p = this.foamProgram;
+        this.foamLocs = {
+          resolution: gl.getUniformLocation(p, "u_resolution"),
+          pos: gl.getAttribLocation(p, "a_pos"),
+          size: gl.getAttribLocation(p, "a_size"),
+          opacity: gl.getAttribLocation(p, "a_opacity")
+        };
+      }
+    }
+    // ─── Foam particle simulation (JS-side) ──────────────────────────────────
+    initFoamParticles() {
+      const count = this.config.foamCount;
+      this._foam = [];
+      for (let i = 0; i < count; i++) {
+        const p = this._newFoamParticle();
+        p.age = Math.random() * p.maxAge;
+        this._foam.push(p);
+      }
+      this._foamBuf = new Float32Array(count * 4);
+    }
+    _newFoamParticle() {
+      return {
+        x: Math.random(),
+        // normalized 0..1
+        size: 3 + Math.random() * 5,
+        // px (3–8px)
+        age: 0,
+        maxAge: 1500 + Math.random() * 2e3,
+        // ms
+        phase: Math.random() * Math.PI * 2,
+        driftX: (Math.random() - 0.5) * 3e-5,
+        // normalized/ms
+        bobAmp: 2 + Math.random() * 3,
+        // px
+        bobSpeed: 0.8 + Math.random() * 1.2
+        // rad/s
+      };
+    }
+    /** Wave y-position in pixels at given normalized x and time — must match vertex shader. */
+    _waveYpx(normX, t) {
+      const xPx = normX * this.width;
+      return SURFACE_Y + 8 * Math.sin(xPx * 0.018 + t * 9e-4) + 3.5 * Math.sin(xPx * 0.038 + t * 15e-4) + 1.5 * Math.sin(xPx * 0.075 + t * 22e-4);
+    }
+    createFoamBuffers() {
+      const gl = this.gl;
+      const count = this._foam.length;
+      this.buffers.foam = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
+      gl.bufferData(gl.ARRAY_BUFFER, this._foamBuf, gl.DYNAMIC_DRAW);
+      if (this.foamLocs) {
+        this.foamVao = gl.createVertexArray();
+        gl.bindVertexArray(this.foamVao);
+        const stride = 4 * 4;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
+        gl.enableVertexAttribArray(this.foamLocs.pos);
+        gl.vertexAttribPointer(this.foamLocs.pos, 2, gl.FLOAT, false, stride, 0);
+        gl.enableVertexAttribArray(this.foamLocs.size);
+        gl.vertexAttribPointer(this.foamLocs.size, 1, gl.FLOAT, false, stride, 8);
+        gl.enableVertexAttribArray(this.foamLocs.opacity);
+        gl.vertexAttribPointer(this.foamLocs.opacity, 1, gl.FLOAT, false, stride, 12);
+        gl.bindVertexArray(null);
+      }
+    }
+    /** Update foam positions in JS, fill _foamBuf, return effective particle count. */
+    updateFoam(elapsed, deltaTime) {
+      const effectiveCount = Math.floor(
+        this._foam.length * Math.min(this.qualityMultiplier, this._budgetFactor)
+      );
+      for (let i = 0; i < effectiveCount; i++) {
+        const p = this._foam[i];
+        p.age += deltaTime;
+        if (p.age >= p.maxAge) {
+          const fresh = this._newFoamParticle();
+          this._foam[i] = fresh;
+          this._writeFoamVertex(i, fresh, elapsed, 0);
+          continue;
+        }
+        p.x = (p.x + p.driftX * deltaTime + 1) % 1;
+        this._writeFoamVertex(i, p, elapsed, p.age);
+      }
+      return effectiveCount;
+    }
+    _writeFoamVertex(i, p, elapsed, age) {
+      const waveY = this._waveYpx(p.x, elapsed);
+      const bobY = Math.sin(p.phase + elapsed * p.bobSpeed * 1e-3) * p.bobAmp;
+      const t = age / p.maxAge;
+      let opacity;
+      if (t < 0.2) opacity = t / 0.2;
+      else if (t < 0.75) opacity = 1;
+      else opacity = (1 - t) / 0.25;
+      opacity *= 0.75 * this.qualityMultiplier;
+      const j = i * 4;
+      this._foamBuf[j] = p.x * this.width;
+      this._foamBuf[j + 1] = waveY + bobY;
+      this._foamBuf[j + 2] = p.size;
+      this._foamBuf[j + 3] = opacity;
+    }
+    // ─── Render ──────────────────────────────────────────────────────────────
+    render(elapsed, deltaTime) {
+      const gl = this.gl;
+      if (this.program && this.vao) {
+        gl.useProgram(this.program);
+        gl.uniform1f(this.locs.time, elapsed);
+        gl.bindVertexArray(this.vao);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.buffers.vertexCount);
+      }
+      if (this.foamProgram && this.foamVao) {
+        const count = this.updateFoam(elapsed, deltaTime);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._foamBuf, 0, count * 4);
+        gl.useProgram(this.foamProgram);
+        gl.bindVertexArray(this.foamVao);
+        gl.drawArrays(gl.POINTS, 0, count);
+      }
+    }
+    // ─── Lifecycle ───────────────────────────────────────────────────────────
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+    }
+    reduceBudget(factor) {
+      this._budgetFactor = Math.max(0.1, factor);
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      if (this.program) {
+        this.gl.useProgram(this.program);
+        this.gl.uniform2f(this.locs.resolution, width, height);
+      }
+      if (this.foamProgram) {
+        this.gl.useProgram(this.foamProgram);
+        this.gl.uniform2f(this.foamLocs.resolution, width, height);
+      }
+    }
+    toggle(enabled) {
+      this.enabled = !!enabled;
+      if (this.enabled && !this.program && this.width && this.height) {
+        this.init(this.width, this.height);
+      }
+    }
+    destroy() {
+      const gl = this.gl;
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.foamProgram) gl.deleteProgram(this.foamProgram);
+      if (this.vao) gl.deleteVertexArray(this.vao);
+      if (this.foamVao) gl.deleteVertexArray(this.foamVao);
+      if (this.buffers.x) gl.deleteBuffer(this.buffers.x);
+      if (this.buffers.t) gl.deleteBuffer(this.buffers.t);
+      if (this.buffers.foam) gl.deleteBuffer(this.buffers.foam);
+    }
+    // ─── Shader compilation ──────────────────────────────────────────────────
+    createProgram(vertexSource, fragmentSource) {
+      const gl = this.gl;
+      const vertShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertShader, vertexSource);
+      gl.compileShader(vertShader);
+      if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+        console.error("WaterSurface vertex shader:", gl.getShaderInfoLog(vertShader));
+        return null;
+      }
+      const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragShader, fragmentSource);
+      gl.compileShader(fragShader);
+      if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+        console.error("WaterSurface fragment shader:", gl.getShaderInfoLog(fragShader));
+        return null;
+      }
+      const program = gl.createProgram();
+      gl.attachShader(program, vertShader);
+      gl.attachShader(program, fragShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("WaterSurface program link:", gl.getProgramInfoLog(program));
+        return null;
+      }
+      gl.deleteShader(vertShader);
+      gl.deleteShader(fragShader);
+      return program;
+    }
+  };
+
   // assets/webgl/WebGLOceanRenderer.js
   var WebGLOceanRenderer = class {
     constructor(canvas2, options = {}) {
@@ -1238,6 +1587,7 @@
         enableRays: options.enableRays !== false,
         enableBubbles: options.enableBubbles !== false,
         enablePlankton: options.enablePlankton !== false,
+        enableWaterSurface: options.enableWaterSurface !== false,
         profiling: options.profiling || false,
         // Per-layer config overrides (entity counts, etc.)
         planktonConfig: options.planktonConfig || {},
@@ -1256,6 +1606,7 @@
       this.raysLayer = null;
       this.bubblesLayer = null;
       this.planktonLayer = null;
+      this.waterSurfaceLayer = null;
     }
     init() {
       const gl = this.canvas.getContext("webgl2", {
@@ -1304,6 +1655,11 @@
         this.planktonLayer.init(width, height);
         this.planktonLayer.enabled = true;
       }
+      if (this.options.enableWaterSurface) {
+        this.waterSurfaceLayer = new WaterSurfaceLayer(this.gl);
+        this.waterSurfaceLayer.init(width, height);
+        this.waterSurfaceLayer.enabled = true;
+      }
     }
     handleContextLost(e) {
       e.preventDefault();
@@ -1331,6 +1687,7 @@
       this.raysLayer = null;
       this.bubblesLayer = null;
       this.planktonLayer = null;
+      this.waterSurfaceLayer = null;
       this.initLayers();
     }
     handleResize() {
@@ -1363,6 +1720,7 @@
         if (this.raysLayer) this.raysLayer.onResize(width, height);
         if (this.bubblesLayer) this.bubblesLayer.onResize(width, height);
         if (this.planktonLayer) this.planktonLayer.onResize(width, height);
+        if (this.waterSurfaceLayer) this.waterSurfaceLayer.onResize(width, height);
       }
     }
     start() {
@@ -1402,6 +1760,9 @@
       if (profiling) times.bubbles = performance.now();
       if (this.planktonLayer && this.planktonLayer.enabled) {
         this.planktonLayer.render(elapsed, deltaTime);
+      }
+      if (this.waterSurfaceLayer && this.waterSurfaceLayer.enabled) {
+        this.waterSurfaceLayer.render(elapsed, deltaTime);
       }
       if (profiling) {
         times.plankton = performance.now();
@@ -1454,6 +1815,9 @@
       }
       if (this.planktonLayer) {
         this.planktonLayer.setQuality(this.qualityMultiplier);
+      }
+      if (this.waterSurfaceLayer) {
+        this.waterSurfaceLayer.setQuality(this.qualityMultiplier);
       }
     }
     setLayerEnabled(name, enabled) {
@@ -1533,6 +1897,7 @@
       this.qualityMultiplier = quality;
       if (this.bubblesLayer) this.bubblesLayer.setQuality(quality);
       if (this.planktonLayer) this.planktonLayer.setQuality(quality);
+      if (this.waterSurfaceLayer) this.waterSurfaceLayer.setQuality(quality);
     }
     /**
      * Reduce particle and ray budgets proportionally.
@@ -1544,6 +1909,7 @@
       if (this.raysLayer) this.raysLayer.reduceBudget(factor);
       if (this.bubblesLayer) this.bubblesLayer.reduceBudget(factor);
       if (this.planktonLayer) this.planktonLayer.reduceBudget(factor);
+      if (this.waterSurfaceLayer) this.waterSurfaceLayer.reduceBudget(factor);
     }
     destroy() {
       this.stop();
@@ -1551,6 +1917,7 @@
       if (this.raysLayer) this.raysLayer.destroy();
       if (this.bubblesLayer) this.bubblesLayer.destroy();
       if (this.planktonLayer) this.planktonLayer.destroy();
+      if (this.waterSurfaceLayer) this.waterSurfaceLayer.destroy();
       window.removeEventListener("resize", this.handleResize);
       this.canvas.removeEventListener("webglcontextlost", this.handleContextLost);
       this.canvas.removeEventListener("webglcontextrestored", this.handleContextRestored);
@@ -6084,6 +6451,12 @@
       this._warmupUntil = 0;
       this._hiddenSince = 0;
       this.RECOVERY_HIDDEN_MIN = 6e4;
+      this._rampFactor = 0.3;
+      this._rampTarget = 1;
+      this._rampStep = 0.15;
+      this._rampInterval = 4e3;
+      this._lastRampTime = 0;
+      this._rampComplete = false;
       this.debugPanel = null;
       this._pausedByVisibility = false;
       this._visibilityListenerAdded = false;
@@ -6126,15 +6499,13 @@
       if (this.isRunning) return;
       if (!this.webglRenderer && this.tier === 0) this.tier = 1;
       const { tier: deviceTier } = getDeviceProfile();
-      if (deviceTier === 0) {
-        this._reduceCanvasQuality(0.6);
-      } else if (deviceTier === 1) {
-        if (this.webglRenderer) {
-          this.webglRenderer.reduceBudget(0.5);
-          this.tier = 1;
-        }
-        this._reduceCanvasQuality(0.7);
-      }
+      if (deviceTier === 0) this._rampTarget = 0.65;
+      else if (deviceTier === 1) this._rampTarget = 0.8;
+      else this._rampTarget = 1;
+      this._rampFactor = 0.3;
+      this._rampComplete = false;
+      this._lastRampTime = 0;
+      this._applyRampBudget(this._rampFactor);
       this.isRunning = true;
       this.lastTime = performance.now();
       this.fpsUpdateTime = this.lastTime;
@@ -6212,16 +6583,34 @@
         this.currentFPS = Math.round(this.frameCount * 1e3 / (currentTime - this.fpsUpdateTime));
         this.frameCount = 0;
         this.fpsUpdateTime = currentTime;
-        if (this.tier < 4 && currentTime >= this._warmupUntil) {
-          const threshold = this.tier <= 1 ? this.LOW_FPS_THRESHOLD : this.tier === 2 ? this.LOW_FPS_THRESHOLD_CANVAS : this.LOW_FPS_THRESHOLD_FINAL;
-          if (this.currentFPS < threshold) {
-            if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
-            if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+        if (currentTime >= this._warmupUntil) {
+          if (!this._rampComplete) {
+            if (this.currentFPS < this.LOW_FPS_THRESHOLD_FINAL) {
+              this._rampComplete = true;
               this.lowFpsSince = null;
               this._stepDown();
+            } else if (this.currentFPS >= this.LOW_FPS_THRESHOLD + 8 && // 36 fps comfort zone
+            this._rampFactor < this._rampTarget && currentTime - this._lastRampTime >= this._rampInterval) {
+              this._rampFactor = Math.min(this._rampFactor + this._rampStep, this._rampTarget);
+              this._applyRampBudget(this._rampFactor);
+              this._lastRampTime = currentTime;
+              console.log(`[MasterRenderer] Ramp ${Math.round(this._rampFactor * 100)}%`);
+              if (this._rampFactor >= this._rampTarget) {
+                this._rampComplete = true;
+                console.log("[MasterRenderer] Ramp-up complete");
+              }
             }
-          } else {
-            this.lowFpsSince = null;
+          } else if (this.tier < 4) {
+            const threshold = this.tier <= 1 ? this.LOW_FPS_THRESHOLD : this.tier === 2 ? this.LOW_FPS_THRESHOLD_CANVAS : this.LOW_FPS_THRESHOLD_FINAL;
+            if (this.currentFPS < threshold) {
+              if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
+              if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+                this.lowFpsSince = null;
+                this._stepDown();
+              }
+            } else {
+              this.lowFpsSince = null;
+            }
           }
         }
         if (currentTime - this.fpsLogTime >= 5e3) {
@@ -6299,6 +6688,7 @@
      * Called automatically by updateFPSDisplay when sustained FPS threshold is missed.
      */
     _stepDown() {
+      this._rampComplete = true;
       const next = this.tier + 1;
       if (next > 4) return;
       if (next === 1) {
@@ -6383,6 +6773,15 @@
     reduceCanvasQuality() {
       const cur = this.canvasManager?.performanceMonitor?.qualitySettings?.current ?? 1;
       this._reduceCanvasQuality(Math.max(0.3, cur - 0.2));
+    }
+    /**
+     * Apply a budget factor to both WebGL particle counts and canvas entity quality.
+     * Used exclusively by the progressive ramp-up system.
+     * @param {number} factor - 0.0–1.0
+     */
+    _applyRampBudget(factor) {
+      if (this.webglRenderer) this.webglRenderer.reduceBudget(factor);
+      this._reduceCanvasQuality(factor);
     }
     /**
      * Get current FPS

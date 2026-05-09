@@ -1,0 +1,30 @@
+Levné ale wow efekty
+Tier 1 — pár řádků, okamžitý wow
+1. Ripple na klik (vlnka na vodní hladině)
+Při každém kliku se rozšíří průhledný kruh (canvas arc + fade-out opacity). Uživatel okamžitě cítí, že "hodil jídlo do vody". Velmi nízká cena, maximální zpětná vazba.
+
+2. Rozptyl školních ryb před kurzorem
+School fish momentálně reagují až na klik. Přidat avoidance radius kolem myši (150–200px) — ryby se roztečou, ale hned se vrátí do formace. Dá to scéně živý, reaktivní pocit.
+
+3. Bioluminescent burst při sežrání jídla
+Když CuriousFish sežere potravu → krátký glow pulse vyzářený z pozice jídla přes Canvas globalCompositeOperation = 'lighter'. Existující plankton kod to dělá podobně, takže je to přímý vzor.
+
+4. Stín ryby
+Každá ryba dostane tmavou elipsu kreslenou mírně pod ní (offset Y + ~30% opacity). Za 5 řádků přidá obrovský pocit hloubky.
+
+Tier 2 — trochu víc kódu, silný efekt
+5. Screen shake na útok predátora
+Když DasFish zabije školní rybu → canvas.style.transform = 'translate(Xpx, Ypx)' na 200ms s decay. Existující _spawnBloodCloud() je ideální hook.
+
+6. Ink cloud při útoku na CuriousFish
+Když je hráčova ryba zasažena → tmavé inkoustové částice se rozprsknou (jako chobotnice). Znovu využít FoodLayer particle pool pro spawn, jiná barva + rychlejší fade.
+
+7. Parallax posun vrstev při scrollu
+WebGL background se hýbe pomaleji než canvas entity při scrollu stránky. window.scroll event → offsetY do WebGL uniform. Dává obrovský 3D depth pocit bez žádného výpočetního nákladu.
+
+Tier 3 — médium effort, nejextrémnější wow
+8. Caustic light flicker na entitách
+Existující WaterGradient kaustiky jsou statické na pozadí. Promítnout kaustický pattern jako "světelné tečky" pohybující se po rybách (canvas clip nebo overlay). Efekt reálného podmořského osvětlení.
+
+9. Vodní hladina nahoře s foam particles
+Tenká animovaná čára s malými pěnovými částicemi nahoře viewportu. Oddělí "vzduch" od "vody" a okamžitě contextuje celou scénu.

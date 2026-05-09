@@ -56,6 +56,16 @@ export class MasterRenderer {
         this._hiddenSince = 0;
         this.RECOVERY_HIDDEN_MIN = 60000; // 60 s hidden → allow step up on restore
 
+        // Progressive ramp-up: start at low budget, scale up to target over the first
+        // ~20–25 s after warmup instead of launching at full capacity and stepping down.
+        // This avoids the frame-1 GC storm produced when all particles spawn at once.
+        this._rampFactor   = 0.3;   // current applied budget (0–1)
+        this._rampTarget   = 1.0;   // ceiling; overridden in start() by device tier
+        this._rampStep     = 0.15;  // increment per check
+        this._rampInterval = 4000;  // ms between steps (outside warmup window)
+        this._lastRampTime = 0;
+        this._rampComplete = false;
+
         // Debug panel — created on start()
         this.debugPanel = null;
 
@@ -109,21 +119,20 @@ export class MasterRenderer {
         // Sync tier with actually registered renderers
         if (!this.webglRenderer && this.tier === 0) this.tier = 1;
 
-        // Proactive settings based on device tier — applied from frame 1,
-        // no waiting for the 5s FPS degradation timer.
+        // Set ramp ceiling based on device tier.  Mobile devices cap below 100 % to
+        // preserve head room — the ramp-up system handles the budget, not a hard lock.
         const { tier: deviceTier } = getDeviceProfile();
-        if (deviceTier === 0) {
-            // mobile-low: no WebGL (already tier=1), start canvas at reduced quality
-            this._reduceCanvasQuality(0.6);
-        } else if (deviceTier === 1) {
-            // mobile-medium: WebGL running but cut particle budget immediately
-            if (this.webglRenderer) {
-                this.webglRenderer.reduceBudget(0.5);
-                this.tier = 1; // mark as WEBGL_LITE from the start
-            }
-            this._reduceCanvasQuality(0.7);
-        }
-        // device tiers 2 and 3: full quality, let adaptive system take over if needed
+        if      (deviceTier === 0) this._rampTarget = 0.65; // mobile-low
+        else if (deviceTier === 1) this._rampTarget = 0.80; // mobile-medium
+        else                       this._rampTarget = 1.0;  // desktop
+
+        // Start all layers at minimum budget from frame 1.
+        // The ramp-up system in updateFPSDisplay() gradually increases to _rampTarget
+        // every _rampInterval ms — gives the GPU and GC time to settle before adding load.
+        this._rampFactor   = 0.3;
+        this._rampComplete = false;
+        this._lastRampTime = 0;
+        this._applyRampBudget(this._rampFactor);
 
         this.isRunning = true;
         this.lastTime = performance.now();
@@ -230,23 +239,49 @@ export class MasterRenderer {
             this.frameCount = 0;
             this.fpsUpdateTime = currentTime;
 
-            // Degradation: sustained low FPS steps down one tier at a time.
-            // Skip during warmup — shader compilation & JS parse push initial FPS low.
-            if (this.tier < 4 && currentTime >= this._warmupUntil) {
-                const threshold = this.tier <= 1
-                    ? this.LOW_FPS_THRESHOLD
-                    : this.tier === 2
-                        ? this.LOW_FPS_THRESHOLD_CANVAS
-                        : this.LOW_FPS_THRESHOLD_FINAL;
-
-                if (this.currentFPS < threshold) {
-                    if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
-                    if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+            // After warmup: ramp-up OR normal degradation — mutually exclusive.
+            // Skip entirely during warmup — shader compile & JS parse push FPS low.
+            if (currentTime >= this._warmupUntil) {
+                if (!this._rampComplete) {
+                    // ── Progressive ramp-up phase ───────────────────────────────────
+                    // FPS critically low even at current low budget → abort ramp,
+                    // hand off to the normal step-down system immediately.
+                    if (this.currentFPS < this.LOW_FPS_THRESHOLD_FINAL) {
+                        this._rampComplete = true;
                         this.lowFpsSince = null;
                         this._stepDown();
+                    } else if (
+                        this.currentFPS >= this.LOW_FPS_THRESHOLD + 8 && // 36 fps comfort zone
+                        this._rampFactor < this._rampTarget &&
+                        currentTime - this._lastRampTime >= this._rampInterval
+                    ) {
+                        this._rampFactor = Math.min(this._rampFactor + this._rampStep, this._rampTarget);
+                        this._applyRampBudget(this._rampFactor);
+                        this._lastRampTime = currentTime;
+                        console.log(`[MasterRenderer] Ramp ${Math.round(this._rampFactor * 100)}%`);
+                        if (this._rampFactor >= this._rampTarget) {
+                            this._rampComplete = true;
+                            console.log('[MasterRenderer] Ramp-up complete');
+                        }
                     }
-                } else {
-                    this.lowFpsSince = null;
+                    // FPS in the "ok but not great" band → hold current budget, wait.
+                } else if (this.tier < 4) {
+                    // ── Normal adaptive degradation (ramp finished or aborted) ──────
+                    const threshold = this.tier <= 1
+                        ? this.LOW_FPS_THRESHOLD
+                        : this.tier === 2
+                            ? this.LOW_FPS_THRESHOLD_CANVAS
+                            : this.LOW_FPS_THRESHOLD_FINAL;
+
+                    if (this.currentFPS < threshold) {
+                        if (this.lowFpsSince === null) this.lowFpsSince = currentTime;
+                        if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+                            this.lowFpsSince = null;
+                            this._stepDown();
+                        }
+                    } else {
+                        this.lowFpsSince = null;
+                    }
                 }
             }
 
@@ -354,6 +389,7 @@ export class MasterRenderer {
      * Called automatically by updateFPSDisplay when sustained FPS threshold is missed.
      */
     _stepDown() {
+        this._rampComplete = true; // abort ramp-up if still active — degradation takes priority
         const next = this.tier + 1;
         if (next > 4) return;
 
@@ -447,6 +483,16 @@ export class MasterRenderer {
     reduceCanvasQuality() {
         const cur = this.canvasManager?.performanceMonitor?.qualitySettings?.current ?? 1.0;
         this._reduceCanvasQuality(Math.max(0.3, cur - 0.2));
+    }
+
+    /**
+     * Apply a budget factor to both WebGL particle counts and canvas entity quality.
+     * Used exclusively by the progressive ramp-up system.
+     * @param {number} factor - 0.0–1.0
+     */
+    _applyRampBudget(factor) {
+        if (this.webglRenderer) this.webglRenderer.reduceBudget(factor);
+        this._reduceCanvasQuality(factor);
     }
 
     /**

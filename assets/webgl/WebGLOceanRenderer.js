@@ -2,6 +2,7 @@ import { WaterGradientLayer } from './WaterGradientLayer.js';
 import { LightRaysLayer } from './LightRaysLayer.js';
 import { BubblesLayer } from './BubblesLayer.js';
 import { PlanktonLayer } from './PlanktonLayer.js';
+import { WaterSurfaceLayer } from './WaterSurfaceLayer.js';
 
 export class WebGLOceanRenderer {
     constructor(canvas, options = {}) {
@@ -25,6 +26,7 @@ export class WebGLOceanRenderer {
             enableRays: options.enableRays !== false,
             enableBubbles: options.enableBubbles !== false,
             enablePlankton: options.enablePlankton !== false,
+            enableWaterSurface: options.enableWaterSurface !== false,
             profiling: options.profiling || false,
             // Per-layer config overrides (entity counts, etc.)
             planktonConfig: options.planktonConfig || {},
@@ -49,6 +51,7 @@ export class WebGLOceanRenderer {
         this.raysLayer = null;
         this.bubblesLayer = null;
         this.planktonLayer = null;
+        this.waterSurfaceLayer = null;
     }
     
     init() {
@@ -114,6 +117,12 @@ export class WebGLOceanRenderer {
             this.planktonLayer.init(width, height);
             this.planktonLayer.enabled = true;
         }
+
+        if (this.options.enableWaterSurface) {
+            this.waterSurfaceLayer = new WaterSurfaceLayer(this.gl);
+            this.waterSurfaceLayer.init(width, height);
+            this.waterSurfaceLayer.enabled = true;
+        }
     }
     
     handleContextLost(e) {
@@ -145,6 +154,7 @@ export class WebGLOceanRenderer {
         this.raysLayer = null;
         this.bubblesLayer = null;
         this.planktonLayer = null;
+        this.waterSurfaceLayer = null;
         this.initLayers();
     }
 
@@ -188,6 +198,7 @@ export class WebGLOceanRenderer {
             if (this.raysLayer) this.raysLayer.onResize(width, height);
             if (this.bubblesLayer) this.bubblesLayer.onResize(width, height);
             if (this.planktonLayer) this.planktonLayer.onResize(width, height);
+            if (this.waterSurfaceLayer) this.waterSurfaceLayer.onResize(width, height);
         }
     }
     
@@ -248,7 +259,11 @@ export class WebGLOceanRenderer {
         if (this.planktonLayer && this.planktonLayer.enabled) {
             this.planktonLayer.render(elapsed, deltaTime);
         }
-        
+
+        if (this.waterSurfaceLayer && this.waterSurfaceLayer.enabled) {
+            this.waterSurfaceLayer.render(elapsed, deltaTime);
+        }
+
         if (profiling) {
             times.plankton = performance.now();
             times.total = times.plankton - times.start;
@@ -308,6 +323,9 @@ export class WebGLOceanRenderer {
         }
         if (this.planktonLayer) {
             this.planktonLayer.setQuality(this.qualityMultiplier);
+        }
+        if (this.waterSurfaceLayer) {
+            this.waterSurfaceLayer.setQuality(this.qualityMultiplier);
         }
     }
     
@@ -390,6 +408,7 @@ export class WebGLOceanRenderer {
         this.qualityMultiplier = quality;
         if (this.bubblesLayer) this.bubblesLayer.setQuality(quality);
         if (this.planktonLayer) this.planktonLayer.setQuality(quality);
+        if (this.waterSurfaceLayer) this.waterSurfaceLayer.setQuality(quality);
     }
 
     /**
@@ -399,18 +418,20 @@ export class WebGLOceanRenderer {
      * @param {number} factor - 0.0–1.0  (0.5 = half budget)
      */
     reduceBudget(factor) {
-        if (this.raysLayer)    this.raysLayer.reduceBudget(factor);
-        if (this.bubblesLayer) this.bubblesLayer.reduceBudget(factor);
-        if (this.planktonLayer) this.planktonLayer.reduceBudget(factor);
+        if (this.raysLayer)          this.raysLayer.reduceBudget(factor);
+        if (this.bubblesLayer)       this.bubblesLayer.reduceBudget(factor);
+        if (this.planktonLayer)      this.planktonLayer.reduceBudget(factor);
+        if (this.waterSurfaceLayer)  this.waterSurfaceLayer.reduceBudget(factor);
     }
     
     destroy() {
         this.stop();
         
-        if (this.gradientLayer) this.gradientLayer.destroy();
-        if (this.raysLayer) this.raysLayer.destroy();
-        if (this.bubblesLayer) this.bubblesLayer.destroy();
-        if (this.planktonLayer) this.planktonLayer.destroy();
+        if (this.gradientLayer)    this.gradientLayer.destroy();
+        if (this.raysLayer)         this.raysLayer.destroy();
+        if (this.bubblesLayer)      this.bubblesLayer.destroy();
+        if (this.planktonLayer)     this.planktonLayer.destroy();
+        if (this.waterSurfaceLayer) this.waterSurfaceLayer.destroy();
         
         window.removeEventListener('resize', this.handleResize);
         this.canvas.removeEventListener('webglcontextlost', this.handleContextLost);
