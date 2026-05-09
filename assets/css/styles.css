@@ -191,7 +191,7 @@ footer {
     display: flex;
     height: 100%;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0rem;
     text-decoration: none;
     flex-shrink: 0;
     transition: opacity 0.2s;
@@ -209,10 +209,88 @@ footer {
 
 .site-header-logo-wordmark {
     display: block;
-    width: auto;
+    width: min(200px, calc(100vw - 12rem));
     height: auto;
-    width: min(220px, calc(100vw - 10rem));
     flex-shrink: 1;
+}
+
+.site-header-logo-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.4rem;
+    min-width: 0;
+    flex-shrink: 1;
+}
+
+/* Slogan stage v kontextu headeru – mnohem menší než hero verze */
+.site-header-logo-text .hero-slogan-stage {
+    height: 1.4em;
+    font-size: 0.58rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    perspective: 80px;
+    perspective-origin: 50% 0%;
+    justify-content: flex-start;
+    overflow: visible;
+    width: auto;
+}
+
+/* Všechny slogany jsou v DOM a střínají se přes CSS animaci.
+   Přidat/odebrat <span class="hero-slogan-tpl"> libovolně – při přidání
+   doplnit další :nth-child() delay níže (+5s za každý slogan). */
+/* 3 slogany × 5s = 15s cyklus
+   Každý slogan je viditelný ~3.4s, přechod ~0.6s
+   Přidat slogan: +5s na animation-duration všech, přidat nth-child delay (-5s × pořadí od konce) */
+.site-header-logo-text .hero-slogan-item {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: rgba(224, 240, 246, 0.65);
+    font-size: inherit;
+    font-weight: 400;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    white-space: nowrap;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-origin: 50% 50%;
+    opacity: 0;
+    transform: rotateX(90deg);
+    animation: sloganDrum 15s ease-in-out infinite;
+}
+.site-header-logo-text .hero-slogan-item:nth-child(1) { animation-delay: -15s; }
+.site-header-logo-text .hero-slogan-item:nth-child(2) { animation-delay: -10s; }
+.site-header-logo-text .hero-slogan-item:nth-child(3) { animation-delay:  -5s; }
+
+@keyframes sloganDrum {
+    /* příchod zdola ≈ 0.6s */
+    0%      { transform: rotateX(90deg);  opacity: 0; }
+    4%      { transform: rotateX(0deg);   opacity: 1; }
+    /* viditelný */
+    29%     { transform: rotateX(0deg);   opacity: 1; }
+    /* odchod nahoru ≈ 0.6s */
+    33.3%   { transform: rotateX(-90deg); opacity: 0; }
+    /* neviditelný skok zpět pod horizont */
+    33.4%   { transform: rotateX(90deg);  opacity: 0; }
+    100%    { transform: rotateX(90deg);  opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-header-logo-text .hero-slogan-item {
+        animation: none;
+        opacity: 0;
+    }
+    .site-header-logo-text .hero-slogan-item:nth-child(1) {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (max-width: 700px) {
+    .site-header-logo-text .hero-slogan-stage {
+        display: none;
+    }
 }
 
 .site-header-logo:hover .site-header-logo-mark {
@@ -843,6 +921,31 @@ body.drawer-open {
     animation-play-state: paused;
 }
 
+/* ===================== HEADER SLOGAN ROTATOR ===================== */
+.hero-slogan-stage {
+    position: relative;
+    height: 1.9em;
+    overflow: hidden;
+    perspective: 700px;
+    perspective-origin: 50% 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-slogan-item {
+    position: absolute;
+    font-size: clamp(1rem, 2.2vw, 1.4rem);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    white-space: nowrap;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    transform-origin: 50% 50%;
+}
+
+/* ===================== CTA CMS ===================== (main section) */
 .cta-cms {
     padding: 9rem 0;
     position: relative;

@@ -1243,3 +1243,5 @@ BlueOrca.carousel = {};
         else if (dx < -50) { if (BlueOrca.carousel.prev) BlueOrca.carousel.prev(); }
     }, { passive: true });
 })();
+
+// HERO SLOGAN ROTATOR – animace řeší čistě CSS (@keyframes sloganDrum)
