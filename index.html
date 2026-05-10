@@ -1076,17 +1076,20 @@
 
     <!-- FOOTER / KONTAKT -->
     <footer class="site-footer" id="kontakt">
+        <!-- Ambient bioluminescent atmosphere -->
+        <div class="contact-glow" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+
         <div class="section-inner">
             <header class="section-header">
                 <p class="section-eyebrow">Pojďme si promluvit</p>
                 <h2 class="section-heading">Kontakt</h2>
                 <p class="section-sub">Máte zájem o profesionální web? Napište nám nebo nás rovnou zavolejte.</p>
             </header>
-            <div class="footer-inner">
-            <div class="footer-grid">
 
-                <!-- Branding + kontaktní info -->
-                <div class="footer-brand">
+            <div class="contact-layout">
+
+                <!-- Info column -->
+                <aside class="contact-info">
                     <a href="/" class="footer-logo-link" aria-label="BlueOrca Websites – domů">
                         <svg id="orca_footer" class="footer-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="50 100 750 800" aria-hidden="true" focusable="false">
                             <g id="ft-tail">
@@ -1136,40 +1139,47 @@
                         </svg>
                         <span class="footer-brand-name">BlueOrca<strong>Websites</strong></span>
                     </a>
-                    <p class="footer-desc">Profesionální tvorba webových stránek na míru. Moderní design, bleskové načítání, SEO optimalizace a vlastní redakční systém zdarma.</p>
-                    <ul class="footer-contact-list">
+
+                    <p class="contact-tagline">Vytváříme weby,<br>které pracují za vás.</p>
+
+                    <div class="contact-status">
+                        <span class="contact-status-dot" aria-hidden="true"></span>
+                        <span>Dostupní k projektu</span>
+                    </div>
+
+                    <ul class="contact-links">
                         <li>
                             <a href="mailto:info@blueorcawebsites.eu" class="footer-contact-link">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
                                 info@blueorcawebsites.eu
                             </a>
                         </li>
                         <li>
                             <a href="tel:+420773202288" class="footer-contact-link">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
                                 +420 773 202 288
                             </a>
                         </li>
                     </ul>
-                </div>
+                </aside>
 
-                <!-- Kontaktní formulář -->
-                <div class="footer-col footer-col--form">
-                    <h3 class="footer-col-title">Napište nám</h3>
-                    <form class="footer-form" novalidate aria-label="Kontaktní formulář">
-                        <div class="footer-form-row">
-                            <div class="footer-form-field">
+                <!-- Dominant form panel -->
+                <div class="contact-form-panel">
+                    <p class="contact-form-label">Napište nám zprávu</p>
+                    <form class="contact-form" novalidate aria-label="Kontaktní formulář">
+                        <div class="contact-form-row">
+                            <div class="contact-field">
                                 <label for="f-name">Jméno</label>
                                 <input type="text" id="f-name" name="name" placeholder="Vaše jméno" autocomplete="name">
                             </div>
-                            <div class="footer-form-field">
+                            <div class="contact-field">
                                 <label for="f-email">E-mail</label>
                                 <input type="email" id="f-email" name="email" placeholder="vas@email.cz" autocomplete="email">
                             </div>
                         </div>
-                        <div class="footer-form-field">
+                        <div class="contact-field contact-field--grow">
                             <label for="f-message">Zpráva</label>
-                            <textarea id="f-message" name="message" rows="4" placeholder="Váš dotaz nebo poptávka..."></textarea>
+                            <textarea id="f-message" name="message" rows="5" placeholder="Váš dotaz nebo poptávka..."></textarea>
                         </div>
                         <!-- Chybové hlášení (zobrazí JS přidáním .is-visible) -->
                         <div class="footer-form-notice footer-form-notice--error" role="alert" aria-live="polite">
@@ -1181,22 +1191,15 @@
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                             Zpráva odeslána! Ozveme se do 24 hodin.
                         </div>
-                        <button type="submit" class="btn-primary">Odeslat zprávu</button>
+                        <button type="submit" class="contact-submit">
+                            Odeslat zprávu
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                        </button>
                     </form>
                 </div>
 
-                <!-- Naše projekty -->
-                <nav class="footer-col" aria-label="Spřízněné weby">
-                    <h3 class="footer-col-title">Spřízněné weby</h3>
-                    <ul class="footer-link-list">
-                        <li><a href="https://blog.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer">Blog BlueOrca</a></li>
-                        <li><a href="https://demo.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer">Ukázka administrace</a></li>
-                        <li><a href="https://webolution.cz/" target="_blank" rel="noopener noreferrer">webolution.cz</a></li>
-                    </ul>
-                </nav>
+            </div><!-- /.contact-layout -->
 
-            </div>
-            </div><!-- /.footer-inner -->
             <div class="footer-strip">
                 <p class="footer-copy">&copy; 2026 BlueOrca Websites. Všechna práva vyhrazena.</p>
             </div>
