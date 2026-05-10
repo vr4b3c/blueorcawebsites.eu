@@ -166,17 +166,28 @@ export class WaterSurfaceLayer {
     // ─── Foam particle shaders ───────────────────────────────────────────────
 
     compileFoamShaders() {
+        // Wave formula matches the wave ribbon vertex shader exactly.
+        // By computing it here on the GPU we avoid 5×sin() per foam particle on the JS CPU.
         const vertSrc = `#version 300 es
-            in vec2 a_pos;       // pixel position [xPx, yPx]
+            in float a_normX;    // normalized x position [0..1]
+            in float a_yOffset;  // pixels above wave surface (always >= 8)
             in float a_size;     // point size in px
             in float a_opacity;  // pre-computed opacity
 
-            uniform vec2 u_resolution;
+            uniform vec2  u_resolution;
+            uniform float u_time;
 
             out float v_opacity;
 
             void main() {
-                vec2 clip = (a_pos / u_resolution) * 2.0 - 1.0;
+                float xPx = a_normX * u_resolution.x;
+                float wave = 3.0  * sin(xPx * 0.012 + u_time * 0.00045)
+                           + 1.5  * sin(xPx * 0.027 + u_time * 0.00073)
+                           + 0.9  * sin(xPx * 0.051 + u_time * 0.00110)
+                           + 0.5  * sin(xPx * 0.089 + u_time * 0.00161)
+                           + 0.3  * sin(xPx * 0.143 + u_time * 0.00094);
+                float yPx = ${SURFACE_Y}.0 + wave - a_yOffset;
+                vec2 clip = (vec2(xPx, yPx) / u_resolution) * 2.0 - 1.0;
                 clip.y = -clip.y;
                 gl_Position = vec4(clip, 0.0, 1.0);
                 gl_PointSize = a_size;
@@ -203,7 +214,9 @@ export class WaterSurfaceLayer {
             const p  = this.foamProgram;
             this.foamLocs = {
                 resolution: gl.getUniformLocation(p, 'u_resolution'),
-                pos:        gl.getAttribLocation(p, 'a_pos'),
+                time:       gl.getUniformLocation(p, 'u_time'),
+                normX:      gl.getAttribLocation(p, 'a_normX'),
+                yOffset:    gl.getAttribLocation(p, 'a_yOffset'),
                 size:       gl.getAttribLocation(p, 'a_size'),
                 opacity:    gl.getAttribLocation(p, 'a_opacity'),
             };
@@ -260,11 +273,15 @@ export class WaterSurfaceLayer {
             this.foamVao = gl.createVertexArray();
             gl.bindVertexArray(this.foamVao);
 
+            // Interleaved layout: [normX(f), yOffset(f), size(f), opacity(f)]
             const stride = 4 * 4; // 4 floats × 4 bytes
             gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
 
-            gl.enableVertexAttribArray(this.foamLocs.pos);
-            gl.vertexAttribPointer(this.foamLocs.pos, 2, gl.FLOAT, false, stride, 0);
+            gl.enableVertexAttribArray(this.foamLocs.normX);
+            gl.vertexAttribPointer(this.foamLocs.normX, 1, gl.FLOAT, false, stride, 0);
+
+            gl.enableVertexAttribArray(this.foamLocs.yOffset);
+            gl.vertexAttribPointer(this.foamLocs.yOffset, 1, gl.FLOAT, false, stride, 4);
 
             gl.enableVertexAttribArray(this.foamLocs.size);
             gl.vertexAttribPointer(this.foamLocs.size, 1, gl.FLOAT, false, stride, 8);
@@ -303,9 +320,8 @@ export class WaterSurfaceLayer {
         return effectiveCount;
     }
 
-    _writeFoamVertex(i, p, elapsed, age) {
-        const waveY = this._waveYpx(p.x, elapsed);
-
+    _writeFoamVertex(i, p, _elapsed, age) {
+        // Wave y is now computed in the vertex shader — no sin() on JS CPU.
         // Stoupání nahoru od hladiny, fade-in rychle, fade-out lineárně
         const t = age / p.maxAge;
         let opacity;
@@ -314,9 +330,9 @@ export class WaterSurfaceLayer {
         opacity *= 0.55 * this.qualityMultiplier;
 
         const j = i * 4;
-        this._foamBuf[j]     = p.x * this.width;
+        this._foamBuf[j]     = p.x;                       // normX [0..1]
         // Vždy min. 8px nad vrcholem ribbon (ribbon má ±4px + rezerva pro mismatch)
-        this._foamBuf[j + 1] = waveY - Math.max(p.yOffset, 8);
+        this._foamBuf[j + 1] = Math.max(p.yOffset, 8);   // yOffset px above wave
         this._foamBuf[j + 2] = p.size;
         this._foamBuf[j + 3] = opacity;
     }
@@ -342,6 +358,7 @@ export class WaterSurfaceLayer {
             gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
             gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._foamBuf, 0, count * 4);
             gl.useProgram(this.foamProgram);
+            gl.uniform1f(this.foamLocs.time, elapsed);   // wave phase for GPU calculation
             gl.bindVertexArray(this.foamVao);
             gl.drawArrays(gl.POINTS, 0, count);
         }

@@ -224,6 +224,19 @@ export class MasterRenderer {
         this.debugPanel?.destroy();
         this.debugPanel = null;
     }
+
+    /**
+     * Fully tear down the renderer — removes all event listeners and stops the loop.
+     * Call this before discarding the instance (e.g. after WebGL context loss recovery).
+     */
+    destroy() {
+        this.stop();
+        if (this._onVisibilityChange) {
+            document.removeEventListener('visibilitychange', this._onVisibilityChange);
+            this._onVisibilityChange = null;
+            this._visibilityListenerAdded = false;
+        }
+    }
     
     /**
      * Main unified render loop

@@ -389,7 +389,17 @@ export class FishLayer {
         const dasLure = dasLayer && dasLayer.fish ? dasLayer._getLurePos(dasLayer.fish) : null;
         const showCuriousFishDebug = !!(this.config.showDebug && curiousFish);
         const foodParticles = this.manager?.foodLayer?.getParticles?.() || [];
-        const foodLookup = foodParticles.length > 0 ? this._buildFoodLookup(foodParticles) : null;
+        // Rebuild spatial grid every other frame — halves the O(n) Map construction cost.
+        // Fish detect food at 120+px radius; positions stale by one frame (~2px drift) are
+        // imperceptible. Force a rebuild when activeFoods was empty (first spawn).
+        let foodLookup = null;
+        if (foodParticles.length > 0) {
+            this._foodSkipFrame = !this._foodSkipFrame;
+            if (!this._foodSkipFrame || this._foodLookup.activeFoods.length === 0) {
+                this._buildFoodLookup(foodParticles);
+            }
+            foodLookup = this._foodLookup;
+        }
         const hasFoodParticles = !!(foodLookup && foodLookup.activeFoods.length > 0);
 
         const schoolCentroids = this._updateSchoolCentroids(width);

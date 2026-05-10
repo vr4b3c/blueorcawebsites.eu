@@ -268,8 +268,10 @@ export class PlanktonLayer {
                 clipSpace.y = -clipSpace.y;
                 
                 // Bioluminiscence: ostrý záblesk (mocnina sinus → vzácné hroty)
+                // pow(x, 16) rozloženo na 4× násobení — identický výsledek, rychlejší na GPU
                 float raw = sin(u_time * 0.0002 * a_glimmerSpeed + a_glimmerOffset);
-                float glimmer = pow(max(0.0, raw), 16.0) * a_glimmerIntensity;
+                float t = max(0.0, raw); t *= t; t *= t; t *= t; t *= t;
+                float glimmer = t * a_glimmerIntensity;
                 v_glimmer = glimmer;
                 
                 gl_Position = vec4(clipSpace, 0.0, 1.0);

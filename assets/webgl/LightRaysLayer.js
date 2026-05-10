@@ -239,11 +239,20 @@ export class LightRaysLayer {
             : 0;
 
         gl.uniform1f(locs.time, currentTime);
-        gl.uniform1i(locs.rayCount, activeRayCount);
 
-        // Set toggle uniforms
-        gl.uniform1i(locs.rayBeamsEnabled, allowRayBeams ? 1 : 0);
-        gl.uniform1i(locs.sunGlowEnabled, allowSunGlow ? 1 : 0);
+        // Upload toggle uniforms only when they change — saves driver-side dirty state on weak GPU
+        if (activeRayCount !== this._lastRayCount) {
+            gl.uniform1i(locs.rayCount, activeRayCount);
+            this._lastRayCount = activeRayCount;
+        }
+        if ((allowRayBeams ? 1 : 0) !== this._lastRayBeams) {
+            gl.uniform1i(locs.rayBeamsEnabled, allowRayBeams ? 1 : 0);
+            this._lastRayBeams = allowRayBeams ? 1 : 0;
+        }
+        if ((allowSunGlow ? 1 : 0) !== this._lastSunGlow) {
+            gl.uniform1i(locs.sunGlowEnabled, allowSunGlow ? 1 : 0);
+            this._lastSunGlow = allowSunGlow ? 1 : 0;
+        }
         
         // Build ray data into pre-allocated typed arrays, then upload with 3 uniform1fv calls
         // instead of the previous 15 individual uniform1f calls.

@@ -46,7 +46,7 @@ if (canvas) {
 
         const renderer = new WebGLOceanRenderer(canvas, {
             enableGradient: true,
-            enableRays: true,
+            enableRays: false,
             enableBubbles: true,
             enablePlankton: true,
             enableWaterSurface: false,

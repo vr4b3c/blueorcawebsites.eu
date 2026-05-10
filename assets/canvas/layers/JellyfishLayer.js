@@ -165,6 +165,8 @@ export class JellyfishLayer {
         // ── Tentacle particle system ──────────────────────────────────────────
         if (this.particles.length > 0) {
             ctx.save();
+            // fillStyle is constant for all tentacle sparks — set once outside the loop
+            ctx.fillStyle = 'rgba(180, 240, 255, 1.0)';
             let pw = 0;
             for (let i = 0; i < this.particles.length; i++) {
                 const p = this.particles[i];
@@ -178,7 +180,6 @@ export class JellyfishLayer {
                 const fadeAlpha = t < 0.12 ? t / 0.12 : 1.0 - (t - 0.12) / 0.88;
 
                 ctx.globalAlpha = p.baseAlpha * fadeAlpha;
-                ctx.fillStyle   = 'rgba(180, 240, 255, 1.0)';
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
                 ctx.fill();
