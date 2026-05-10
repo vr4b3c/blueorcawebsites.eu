@@ -11,6 +11,7 @@
 import { 
     createCanvasBackground,
     FishLayer,
+    CuriousFishLayer,
     DasFishLayer,
     JellyfishLayer
 } from './index.js';
@@ -32,6 +33,25 @@ function supportsCanvasFilters() {
     ctx.filter = 'none';
     ctx.filter = testFilter;
     return ctx.filter === testFilter;
+}
+
+function scheduleCuriousFishPrewarm(manager) {
+    if (typeof window === 'undefined') return;
+
+    const prewarm = () => {
+        if (manager.getLayer('curiousFish')) return;
+
+        const curiousFishLayer = new CuriousFishLayer(manager.config.curiousFishConfig || {});
+        manager.addLayer('curiousFish', curiousFishLayer);
+        curiousFishLayer.enabled = false;
+        curiousFishLayer.gameState = 'idle';
+    };
+
+    if (typeof window.requestIdleCallback === 'function') {
+        window.requestIdleCallback(prewarm, { timeout: 1500 });
+    } else {
+        window.setTimeout(prewarm, 200);
+    }
 }
 
 export function initCanvasBackground() {
@@ -108,6 +128,10 @@ export function initCanvasBackground() {
     manager.performanceMonitor.onQualityChange(q => {
         window.webglOceanRenderer?.setQuality(q);
     });
+
+    // Prepare the interactive fish layer outside the first click task so
+    // user input only activates an existing instance instead of constructing it.
+    scheduleCuriousFishPrewarm(manager);
     
     // Start the unified render loop
     masterRenderer.start();

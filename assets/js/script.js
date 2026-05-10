@@ -1078,13 +1078,10 @@ BlueOrca.carousel = {};
 // ===================== FPS COUNTER =====================
 (function () {
     if (typeof window === 'undefined') return;
-    var params = new URLSearchParams(window.location.search);
-    var isLocalDebugHost = window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost';
-    if (params.get('debug-render') !== '1' && !isLocalDebugHost) return;
 
     var el = document.createElement('div');
     el.id = 'fps-counter';
-    el.textContent = 'FPS --\nMAX --\nRENDER --';
+    el.textContent = '-- FPS (--)';
     document.body.appendChild(el);
     var lastText = el.textContent;
 
@@ -1094,17 +1091,11 @@ BlueOrca.carousel = {};
     setInterval(function () {
         var master = window.blueOrcaMasterRenderer || null;
         var fps = master ? Math.round(master.currentFPS) : null;
-        var maxDisplay = master && Number.isFinite(master.maxDisplayFPS) && master.maxDisplayFPS > 0
+        var maxPossible = master && Number.isFinite(master.maxDisplayFPS) && master.maxDisplayFPS > 0
             ? Math.round(master.maxDisplayFPS)
             : fps;
-        var renderLimited = master && Number.isFinite(master.theoreticalFPS) && master.theoreticalFPS > 0
-            ? Math.round(master.theoreticalFPS)
-            : (master && Number.isFinite(master.lastRenderTime) && master.lastRenderTime > 0
-                ? Math.round(1000 / master.lastRenderTime)
-                : maxDisplay);
-        var nextText = 'FPS ' + (fps !== null ? fps : '--')
-            + '\nMAX ' + (maxDisplay !== null ? maxDisplay : '--')
-            + '\nRENDER ' + (renderLimited !== null ? renderLimited : '--');
+        var nextText = (fps !== null ? fps : '--')
+            + ' FPS (' + (maxPossible !== null ? maxPossible : '--') + ')';
         if (nextText === lastText) return;
         lastText = nextText;
         el.textContent = nextText;

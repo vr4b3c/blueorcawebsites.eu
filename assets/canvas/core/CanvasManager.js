@@ -258,8 +258,9 @@ export class CanvasManager {
             this.addLayer('curiousFish', curiousFishLayer);
         }
         if (!curiousFishLayer.enabled) {
-            curiousFishLayer.enabled = true;
-            curiousFishLayer.spawnFish();
+            if (!curiousFishLayer.fish) {
+                curiousFishLayer.spawnFish();
+            }
             curiousFishLayer.gameState = 'playing';
             // Nudge immediately toward the food — normal findFoodTarget loop takes over from here
             curiousFishLayer.setTargetPoint(x, spawnY, { immediate: true, speed: curiousFishLayer.config.maxSpeed });

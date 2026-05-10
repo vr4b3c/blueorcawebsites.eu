@@ -7,6 +7,9 @@ import { drawGlow } from '../utils/GlowCache.js';
 export class FishLayer {
     static MAX_FISH = 80;                // Hard cap on total fish in the array
     static MAX_PASSIVE_LIFESPAN = 300_000; // ms — passive/independent fish live max 5 min
+    static MAX_BLOOD_PARTICLES = 160;
+    static MAX_BLOOD_PARTICLES_PER_BURST = 36;
+    static MIN_BLOOD_PARTICLES_PER_BURST = 12;
 
     // Single source of truth for fish layer configuration
     static DEFAULT_CONFIG = {
@@ -26,6 +29,13 @@ export class FishLayer {
         this._sharkPool = [];       // Reusable fish objects — avoids GC churn on school spawn/death
         this._bloodPool = [];       // Reusable blood particle objects
         this._schoolCentroidsCache = new Map();
+        this._foodLookup = {
+            activeFoods: [],
+            rows: new Map(),
+            grid: null,
+            cellSize: 0,
+            usedBuckets: []
+        };
         this._schoolMembershipDirty = true;
         this.mouseX = null;
         this.mouseY = null;
@@ -225,7 +235,15 @@ export class FishLayer {
     }
 
     _buildFoodLookup(foodParticles) {
-        const activeFoods = [];
+        const lookup = this._foodLookup;
+        const activeFoods = lookup.activeFoods;
+        activeFoods.length = 0;
+
+        const usedBuckets = lookup.usedBuckets;
+        for (let i = 0; i < usedBuckets.length; i++) {
+            usedBuckets[i].length = 0;
+        }
+        usedBuckets.length = 0;
 
         for (let i = 0; i < foodParticles.length; i++) {
             const food = foodParticles[i];
@@ -233,27 +251,40 @@ export class FishLayer {
         }
 
         if (activeFoods.length <= 12) {
-            return { activeFoods, grid: null, cellSize: 0 };
+            lookup.grid = null;
+            lookup.cellSize = 0;
+            return lookup;
         }
 
         const cellSize = 160;
-        const grid = new Map();
+        const rows = lookup.rows;
 
         for (let i = 0; i < activeFoods.length; i++) {
             const food = activeFoods[i];
             const cellX = Math.floor(food.x / cellSize);
             const cellY = Math.floor(food.y / cellSize);
-            const key = `${cellX},${cellY}`;
-            const bucket = grid.get(key);
-
-            if (bucket) {
-                bucket.push(food);
-            } else {
-                grid.set(key, [food]);
+            let row = rows.get(cellY);
+            if (!row) {
+                row = new Map();
+                rows.set(cellY, row);
             }
+
+            let bucket = row.get(cellX);
+            if (!bucket) {
+                bucket = [];
+                row.set(cellX, bucket);
+            }
+
+            if (bucket.length === 0) {
+                usedBuckets.push(bucket);
+            }
+
+            bucket.push(food);
         }
 
-        return { activeFoods, grid, cellSize };
+        lookup.grid = rows;
+        lookup.cellSize = cellSize;
+        return lookup;
     }
 
     _findNearestFood(foodLookup, x, y, direction, detectR) {
@@ -285,8 +316,11 @@ export class FishLayer {
         const centerCellY = Math.floor(y / foodLookup.cellSize);
 
         for (let cellY = centerCellY - cellRadius; cellY <= centerCellY + cellRadius; cellY++) {
+            const row = foodLookup.grid.get(cellY);
+            if (!row) continue;
+
             for (let cellX = centerCellX - cellRadius; cellX <= centerCellX + cellRadius; cellX++) {
-                const bucket = foodLookup.grid.get(`${cellX},${cellY}`);
+                const bucket = row.get(cellX);
                 if (!bucket) continue;
 
                 for (let i = 0; i < bucket.length; i++) {
@@ -1103,8 +1137,17 @@ export class FishLayer {
      */
     _spawnBloodBurst(x, y, size, impactAngle = null, spawnTime = 0) {
         const PALETTE = ['#8b0000','#a80000','#c01010','#6a0000','#b02000','#cc0000'];
-        const now   = spawnTime;
-        const count = Math.max(30, Math.min(70, Math.floor(size * 0.65)));
+        const now = spawnTime;
+        const quality = this._qualityMultiplier || 1.0;
+        const maxConcurrent = Math.max(48, Math.round(FishLayer.MAX_BLOOD_PARTICLES * quality));
+        const availableSlots = Math.max(0, maxConcurrent - this.bloodParticles.length);
+        if (availableSlots === 0) return;
+
+        const desiredCount = Math.min(
+            Math.max(FishLayer.MIN_BLOOD_PARTICLES_PER_BURST, Math.floor(size * 0.5)),
+            Math.max(FishLayer.MIN_BLOOD_PARTICLES_PER_BURST, Math.round(FishLayer.MAX_BLOOD_PARTICLES_PER_BURST * quality))
+        );
+        const count = Math.min(desiredCount, availableSlots);
 
         for (let i = 0; i < count; i++) {
             const angle = impactAngle !== null

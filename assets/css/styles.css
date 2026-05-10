@@ -1274,6 +1274,7 @@ body.drawer-open {
 /* ===================== FILTER PILLS ===================== */
 .ref-filter {
     display: flex;
+    display: none;
     gap: 0.5rem;
     justify-content: center;
     flex-wrap: wrap;
@@ -3199,21 +3200,23 @@ a[target="_blank"]:hover::after {
 /* ===================== FPS COUNTER ===================== */
 #fps-counter {
     position: fixed;
-    top: 0.75rem;
+    bottom: 0.75rem;
     left: 0.75rem;
-    padding: 0.45rem 0.6rem;
-    min-width: 8.75rem;
-    background: rgba(3, 26, 42, 0.88);
-    border: 1px solid rgba(142, 210, 232, 0.15);
-    font-size: 0.86rem;
-    font-weight: 700;
-    font-family: monospace;
-    color: rgba(224, 240, 246, 0.92);
+    padding: 0;
+    min-width: 0;
+    background: none;
+    border: 0;
+    font-size: 0.65rem;
+    font-weight: 300;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    opacity: 0.5;
     pointer-events: none;
     z-index: 9999;
-    letter-spacing: 0.04em;
-    line-height: 1.35;
-    white-space: pre-line;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    white-space: nowrap;
+    text-shadow: 0 1px 1px rgba(0, 10, 40, 0.45);
 }
 
 /* footer-phone legacy rule removed */
