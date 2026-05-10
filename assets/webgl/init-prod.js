@@ -23,6 +23,7 @@ if (canvas) {
             enableRays: true,
             enableBubbles: true,
             enablePlankton: true,
+            enableWaterSurface: false,
             profiling: false,
             dprCap: budget.dprCap,
             raysConfig: {

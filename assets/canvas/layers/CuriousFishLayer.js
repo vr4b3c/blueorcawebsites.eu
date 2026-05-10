@@ -458,7 +458,7 @@ export class CuriousFishLayer {
             this.fish,
             width,
             height,
-            this.config.size,
+            this.fish.currentSize,  // use actual grown size, not initial config.size
             false
         );
         this.fish.x = clampedPos.x;

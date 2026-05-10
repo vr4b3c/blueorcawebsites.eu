@@ -397,7 +397,10 @@ export class FishLayer {
                 }
             }
 
-            // Mouse cursor avoidance — fish scatter gently when cursor is close
+            // Mouse cursor avoidance — fish scatter gently when cursor is close.
+            // Strength is capped to the fish's own speed so slow fish can never be
+            // reversed (which would send them far from the school and trigger a massive
+            // centroid snap-back — the "10× faster" bug).
             if (this.mouseX !== null && this.mouseY !== null) {
                 const mdx = shark.x - this.mouseX;
                 const mdy = currentY - this.mouseY;
@@ -405,7 +408,8 @@ export class FishLayer {
                 const MOUSE_AVOID_R = 175;
                 if (mDistSq < MOUSE_AVOID_R * MOUSE_AVOID_R && mDistSq > 0) {
                     const mDist = Math.sqrt(mDistSq);
-                    const strength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+                    const rawStrength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+                    const strength = Math.min(rawStrength, shark.speed * 0.9);
                     shark.x += (mdx / mDist) * strength;
                     shark.baseY += (mdy / mDist) * strength * 0.45;
                 }

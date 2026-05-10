@@ -93,11 +93,14 @@ export function findFoodTarget(fish, foodParticles, width, height, followDistanc
     const foodUpdates = []; // Track food particle updates for orchestrator to apply
     let newTargetedFood = fish.targetedFood; // Track new targeted food value
     
-    const EDGE_MARGIN = 100;
-    const TOP_MARGIN = 80; // must match SURFACE_Y + 10 (food spawn floor)
+    // Reachable area mirrors clampPosition: X uses fish.currentSize, Y top uses
+    // height*0.1 (same as clampPosition). This prevents the fish from chasing food
+    // it physically cannot navigate to due to canvas boundary clamping.
+    const edgeMargin = fish.currentSize;  // grows with fish size
+    const topBoundary = Math.max(80, height * 0.1);  // matches clampPosition Y-top
     const inEdgeZone = (food) =>
-        food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN ||
-        food.y < TOP_MARGIN || food.y > height - EDGE_MARGIN;
+        food.x < edgeMargin || food.x > width - edgeMargin ||
+        food.y < topBoundary || food.y > height - edgeMargin;
 
     // Check if targeted food still valid (use squared distance for performance)
     let shouldFindNewFood = true;

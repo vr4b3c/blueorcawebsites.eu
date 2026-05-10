@@ -2032,6 +2032,7 @@
         enableRays: true,
         enableBubbles: true,
         enablePlankton: true,
+        enableWaterSurface: false,
         profiling: false,
         dprCap: budget.dprCap,
         raysConfig: {
@@ -3221,9 +3222,9 @@
     const eatenFood = [];
     const foodUpdates = [];
     let newTargetedFood = fish.targetedFood;
-    const EDGE_MARGIN = 100;
-    const TOP_MARGIN = 80;
-    const inEdgeZone = (food) => food.x < EDGE_MARGIN || food.x > width - EDGE_MARGIN || food.y < TOP_MARGIN || food.y > height - EDGE_MARGIN;
+    const edgeMargin = fish.currentSize;
+    const topBoundary = Math.max(80, height * 0.1);
+    const inEdgeZone = (food) => food.x < edgeMargin || food.x > width - edgeMargin || food.y < topBoundary || food.y > height - edgeMargin;
     let shouldFindNewFood = true;
     if (fish.targetedFood) {
       const targeted = fish.targetedFood;
@@ -3965,7 +3966,8 @@
         this.fish,
         width,
         height,
-        this.config.size,
+        this.fish.currentSize,
+        // use actual grown size, not initial config.size
         false
       );
       this.fish.x = clampedPos.x;
@@ -5494,7 +5496,8 @@
           const MOUSE_AVOID_R = 175;
           if (mDistSq < MOUSE_AVOID_R * MOUSE_AVOID_R && mDistSq > 0) {
             const mDist = Math.sqrt(mDistSq);
-            const strength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+            const rawStrength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+            const strength = Math.min(rawStrength, shark.speed * 0.9);
             shark.x += mdx / mDist * strength;
             shark.baseY += mdy / mDist * strength * 0.45;
           }
