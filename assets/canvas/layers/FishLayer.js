@@ -16,6 +16,7 @@ export class FishLayer {
     static DEFAULT_CONFIG = {
         schoolCount: null,     // null = auto-scale by viewport (1 school per 600 000 px²)
         schoolDensity: 600000, // px² per school when schoolCount is null
+        maxSchoolSize: 10,     // hard cap on fish per school
         size: 1.2,              // Size multiplier (0.5-2x)
         avoidRadius: 100,       // Radius to avoid mouse cursor
         verticalMarginTop: 100, // Minimum distance from top edge (px)
@@ -1000,9 +1001,9 @@ export class FishLayer {
 
         // ── Fish count — more fish in deeper/smaller hejna ────────────────────
         const countVariation = 0.7 + Math.random() * 0.6;
-        const fishCount = Math.max(1, Math.floor(
+        const fishCount = Math.min(this.config.maxSchoolSize, Math.max(1, Math.floor(
             (fishCountBase[0] + Math.random() * (fishCountBase[1] - fishCountBase[0])) * countVariation
-        ));
+        )));
 
         // ── Y position: slot-based distribution across the full safe zone ─────
         // Divide the safe zone into totalSchools equal slots and assign this school
@@ -1093,7 +1094,7 @@ export class FishLayer {
     spawnIntroSchool(width, height, targetY) {
         const direction = 1; // left → right
         const schoolImage = this.fishImages[1]; // fish2.webp — small, dense
-        const fishCount = 35 + Math.floor(Math.random() * 20);
+        const fishCount = Math.min(this.config.maxSchoolSize, 35 + Math.floor(Math.random() * 20));
         const baseSize  = 16;
         const schoolSpeed = 1.4;
         const centreY = targetY ?? height * 0.60;
