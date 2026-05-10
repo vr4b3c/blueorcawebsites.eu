@@ -3199,19 +3199,21 @@ a[target="_blank"]:hover::after {
 /* ===================== FPS COUNTER ===================== */
 #fps-counter {
     position: fixed;
-    bottom: 0.75rem;
+    top: 0.75rem;
     left: 0.75rem;
-    padding: 0.35rem 0.5rem;
-    background: rgba(3, 26, 42, 0.78);
+    padding: 0.45rem 0.6rem;
+    min-width: 8.75rem;
+    background: rgba(3, 26, 42, 0.88);
     border: 1px solid rgba(142, 210, 232, 0.15);
-    font-size: 0.82rem;
-    font-weight: 600;
+    font-size: 0.86rem;
+    font-weight: 700;
     font-family: monospace;
     color: rgba(224, 240, 246, 0.92);
     pointer-events: none;
     z-index: 9999;
-    letter-spacing: 0.06em;
-    line-height: 1;
+    letter-spacing: 0.04em;
+    line-height: 1.35;
+    white-space: pre-line;
 }
 
 /* footer-phone legacy rule removed */

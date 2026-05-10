@@ -24,6 +24,9 @@ export class MasterRenderer {
         this.fpsUpdateTime = 0;
         this.frameCount = 0;
         this.currentFPS = 60;
+        this.maxDisplayFPS = 0;
+        this.theoreticalFPS = 0;
+        this.lastRenderTime = 0;
         this.fpsLogTime = 0;
         this.debug = options.debug || false;
 
@@ -256,6 +259,12 @@ export class MasterRenderer {
         
         const renderEnd = performance.now();
         this.lastRenderTime = renderEnd - renderStart;
+        if (this.lastRenderTime > 0) {
+            this.theoreticalFPS = Math.round(1000 / this.lastRenderTime);
+        }
+        if (deltaTime > 0) {
+            this.maxDisplayFPS = Math.round(1000 / deltaTime);
+        }
         
         // Update FPS display (moved from setInterval to rAF loop)
         this.updateFPSDisplay(currentTime, deltaTime);
@@ -302,11 +311,13 @@ export class MasterRenderer {
                 this.fpsLogTime = currentTime;
             }
             
-            // Calculate theoretical FPS from render time
+            // Pure render-limited ceiling from JS + GPU work only.
             const theoreticalFPS = this.lastRenderTime > 0 ? Math.round(1000 / this.lastRenderTime) : 0;
-            
-            // Calculate real maximum FPS from total frame time (including browser overhead)
+
+            // Display-limited ceiling from the total frame cadence, including browser overhead.
             const realMaxFPS = deltaTime > 0 ? Math.round(1000 / deltaTime) : 0;
+            this.theoreticalFPS = theoreticalFPS;
+            this.maxDisplayFPS = realMaxFPS;
             
             // Calculate idle time (browser overhead, VSync wait, compositor, etc.)
             const idleTime = deltaTime - this.lastRenderTime;
@@ -314,7 +325,8 @@ export class MasterRenderer {
             // Collect stats from all sources
             const stats = {
                 fps: this.currentFPS,
-                theoreticalFPS: realMaxFPS, // Real max based on total frame time
+                theoreticalFPS: theoreticalFPS,
+                maxDisplayFPS: realMaxFPS,
                 renderTime: this.lastRenderTime,
                 totalFrameTime: deltaTime,
                 idleTime: idleTime,

@@ -223,6 +223,80 @@ export class FishLayer {
 
         return this._schoolCentroidsCache;
     }
+
+    _buildFoodLookup(foodParticles) {
+        const activeFoods = [];
+
+        for (let i = 0; i < foodParticles.length; i++) {
+            const food = foodParticles[i];
+            if (!food.eaten) activeFoods.push(food);
+        }
+
+        if (activeFoods.length <= 12) {
+            return { activeFoods, grid: null, cellSize: 0 };
+        }
+
+        const cellSize = 160;
+        const grid = new Map();
+
+        for (let i = 0; i < activeFoods.length; i++) {
+            const food = activeFoods[i];
+            const cellX = Math.floor(food.x / cellSize);
+            const cellY = Math.floor(food.y / cellSize);
+            const key = `${cellX},${cellY}`;
+            const bucket = grid.get(key);
+
+            if (bucket) {
+                bucket.push(food);
+            } else {
+                grid.set(key, [food]);
+            }
+        }
+
+        return { activeFoods, grid, cellSize };
+    }
+
+    _findNearestFood(foodLookup, x, y, direction, detectR) {
+        let nearestFood = null;
+        let nearestDistSq = detectR * detectR;
+
+        const testFood = (food) => {
+            const fdx = food.x - x;
+            const fdy = food.y - y;
+            const fdistSq = fdx * fdx + fdy * fdy;
+            const isAhead = (direction > 0 && fdx > -40) || (direction < 0 && fdx < 40);
+
+            if (isAhead && fdistSq < nearestDistSq) {
+                nearestDistSq = fdistSq;
+                nearestFood = food;
+            }
+        };
+
+        if (!foodLookup.grid) {
+            for (let i = 0; i < foodLookup.activeFoods.length; i++) {
+                testFood(foodLookup.activeFoods[i]);
+            }
+
+            return { nearestFood, nearestDistSq };
+        }
+
+        const cellRadius = Math.ceil(detectR / foodLookup.cellSize);
+        const centerCellX = Math.floor(x / foodLookup.cellSize);
+        const centerCellY = Math.floor(y / foodLookup.cellSize);
+
+        for (let cellY = centerCellY - cellRadius; cellY <= centerCellY + cellRadius; cellY++) {
+            for (let cellX = centerCellX - cellRadius; cellX <= centerCellX + cellRadius; cellX++) {
+                const bucket = foodLookup.grid.get(`${cellX},${cellY}`);
+                if (!bucket) continue;
+
+                for (let i = 0; i < bucket.length; i++) {
+                    testFood(bucket[i]);
+                }
+            }
+        }
+
+        return { nearestFood, nearestDistSq };
+    }
     
     render(ctx, currentTime, deltaTime, width, height) {
         if (!this.enabled) return;
@@ -281,7 +355,8 @@ export class FishLayer {
         const dasLure = dasLayer && dasLayer.fish ? dasLayer._getLurePos(dasLayer.fish) : null;
         const showCuriousFishDebug = !!(this.config.showDebug && curiousFish);
         const foodParticles = this.manager?.foodLayer?.getParticles?.() || [];
-        const hasFoodParticles = foodParticles.length > 0;
+        const foodLookup = foodParticles.length > 0 ? this._buildFoodLookup(foodParticles) : null;
+        const hasFoodParticles = !!(foodLookup && foodLookup.activeFoods.length > 0);
 
         const schoolCentroids = this._updateSchoolCentroids(width);
         
@@ -549,7 +624,6 @@ export class FishLayer {
                 // fish1 (type 2), fish2 (type 1) and curiousfish school (type 3) have wider detection and stronger pull
                 const isHungry  = shark.fishType === 1 || shark.fishType === 2 || shark.fishType === 3;
                 const detectR   = isHungry ? 380 : 220;
-                const detectRSq = detectR * detectR;
                 let nearestFood = null;
                 let nearestDistSq = detectR * detectR;
                 const cachedFood = shark.targetFood;
@@ -559,25 +633,16 @@ export class FishLayer {
                     const cachedDy = cachedFood.y - currentY;
                     const cachedDistSq = cachedDx * cachedDx + cachedDy * cachedDy;
                     const cachedAhead = (shark.direction > 0 && cachedDx > -40) || (shark.direction < 0 && cachedDx < 40);
-                    if (cachedAhead && cachedDistSq < detectRSq) {
+                    if (cachedAhead && cachedDistSq < nearestDistSq) {
                         nearestFood = cachedFood;
                         nearestDistSq = cachedDistSq;
                     }
                 }
 
                 if (!nearestFood) {
-                    for (const food of foodParticles) {
-                        if (food.eaten) continue;
-                        const fdx = food.x - shark.x;
-                        const fdy = food.y - currentY;
-                        const fdistSq = fdx * fdx + fdy * fdy;
-                        // Only attract to food that is roughly ahead (same half of screen)
-                        const isAhead = (shark.direction > 0 && fdx > -40) || (shark.direction < 0 && fdx < 40);
-                        if (isAhead && fdistSq < nearestDistSq) {
-                            nearestDistSq = fdistSq;
-                            nearestFood = food;
-                        }
-                    }
+                    const nearest = this._findNearestFood(foodLookup, shark.x, currentY, shark.direction, detectR);
+                    nearestFood = nearest.nearestFood;
+                    nearestDistSq = nearest.nearestDistSq;
                 }
 
                 shark.targetFood = nearestFood;
