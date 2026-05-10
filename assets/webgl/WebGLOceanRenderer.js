@@ -149,12 +149,13 @@ export class WebGLOceanRenderer {
         this.gl = gl;
         gl.clearColor(0.02, 0.05, 0.1, 1.0);
         this.onResize(this.canvas.width, this.canvas.height);
-        // Drop stale layer references and reinitialise from scratch
-        this.gradientLayer = null;
-        this.raysLayer = null;
-        this.bubblesLayer = null;
-        this.planktonLayer = null;
-        this.waterSurfaceLayer = null;
+        // Destroy stale layer objects (GL calls on the dead context silently no-op per spec,
+        // but JS-side cleanup — typed arrays, state — still runs correctly).
+        if (this.gradientLayer)    { this.gradientLayer.destroy();    this.gradientLayer = null; }
+        if (this.raysLayer)         { this.raysLayer.destroy();         this.raysLayer = null; }
+        if (this.bubblesLayer)      { this.bubblesLayer.destroy();      this.bubblesLayer = null; }
+        if (this.planktonLayer)     { this.planktonLayer.destroy();     this.planktonLayer = null; }
+        if (this.waterSurfaceLayer) { this.waterSurfaceLayer.destroy(); this.waterSurfaceLayer = null; }
         this.initLayers();
     }
 
@@ -240,9 +241,12 @@ export class WebGLOceanRenderer {
 
         this.gl.enable(this.gl.BLEND);
 
-        // Elapsed time from session start — stays small so float32 precision is maintained
+        // Elapsed time from session start — kept small so float32 precision is maintained
         // even in long sessions (raw currentTime in ms degrades to ~64ms steps after 8+ min).
-        const elapsed = currentTime - this.startTime;
+        // Wrap at 3 600 000 ms (1 h): float32 up to 3.6e6 has ~0.25 ms resolution, well below
+        // any perceptible animation stutter. Periodic reset is invisible because all shader
+        // effects are periodic/trigonometric — they are continuous modulo their own cycle length.
+        const elapsed = (currentTime - this.startTime) % 3_600_000;
 
         if (this.raysLayer && this.raysLayer.enabled) {
             this.raysLayer.render(elapsed, deltaTime);

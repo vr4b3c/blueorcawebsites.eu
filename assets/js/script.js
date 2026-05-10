@@ -1004,20 +1004,15 @@ BlueOrca.carousel = {};
     el.textContent = '-- fps';
     document.body.appendChild(el);
 
-    var frames = 0;
-    var last = performance.now();
-
-    function tick() {
-        frames++;
-        var now = performance.now();
-        if (now - last >= 500) {
-            el.textContent = Math.round(frames * 1000 / (now - last)) + ' fps';
-            frames = 0;
-            last = now;
-        }
-        requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
+    // Read FPS from MasterRenderer instead of running a separate rAF loop.
+    // Using setInterval avoids the duplicate requestAnimationFrame that competed
+    // with MasterRenderer's own loop (confirmed as source of 2x rAF in DevTools trace).
+    setInterval(function () {
+        var fps = window.blueOrcaMasterRenderer
+            ? Math.round(window.blueOrcaMasterRenderer.currentFPS)
+            : null;
+        el.textContent = fps !== null ? fps + ' fps' : '-- fps';
+    }, 500);
 })();
 
 // ===================== SCROLL RULER =====================

@@ -183,6 +183,8 @@ export class MasterRenderer {
             cancelAnimationFrame(this.rafId);
             this.rafId = null;
         }
+        this.debugPanel?.destroy();
+        this.debugPanel = null;
     }
     
     /**

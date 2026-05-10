@@ -90,6 +90,7 @@ export class FishLayer {
         this.height = height;
         this.sharks = [];
         this._schoolsSpawned = 0;
+        this._nextSchoolId = 0;   // monotonic — never resets to avoid schoolId collisions on quality change
         this._qualityMultiplier = 1.0;
         this._recalcSchoolCount(width, height);
         
@@ -155,6 +156,7 @@ export class FishLayer {
         while (this._schoolsSpawned < effectiveSchoolCount) {
             this.spawnSchool(width, height, effectiveSchoolCount);
             this._schoolsSpawned++;
+            this._nextSchoolId++;  // always increases so new schools never reuse a living school's ID
         }
         
         // School count decreased — don't nuke the array, just accept fewer schools.
@@ -224,10 +226,6 @@ export class FishLayer {
             ctx.setLineDash([]); // Reset dash
         }
         
-        // Predation disabled — sharks behave like regular school fish
-        // this._predFrame = ((this._predFrame || 0) + 1) % 6;
-        // if (this._predFrame === 0) this._doPredation(currentTime);
-
         // Use swap-and-pop for efficient removal (O(1) instead of O(n))
         let writeIndex = 0;
         for (let readIndex = 0; readIndex < this.sharks.length; readIndex++) {
@@ -423,7 +421,10 @@ export class FishLayer {
             if (!shark.isIndependent) {
                 const baseSeparationRadius = 40 * (1 + (sizeFactor - 1) * 1.5);
 
-                // Centroid pull — spring-like: dead zone 20 px, progressive up to ~200 px
+                // Centroid pull — spring-like: dead zone 20 px, progressive up to ~200 px.
+                // When the centroid is BEHIND the fish (fish has advanced past centroid during
+                // screen-edge wrapping), the backward pull is 5× weaker so fish don't violently
+                // reverse direction and appear "crazy fast" while the school is transitioning.
                 if (centroid && centroid.count > 1) {
                     let cdx = centroid.x - shark.x;
                     if (Math.abs(cdx) > width * 0.5) cdx += cdx > 0 ? -width : width;
@@ -431,11 +432,16 @@ export class FishLayer {
                     const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
                     const pullT = Math.min(Math.max((cdist - 20) / 180, 0), 1.0);
                     const pullStrength = pullT * pullT * 0.10;
-                    shark.x += cdx * pullStrength;
+                    // attenuate x-pull when centroid is behind the fish's travel direction
+                    const xPullMul = cdx * shark.direction >= 0 ? 1.0 : 0.20;
+                    shark.x += cdx * pullStrength * xPullMul;
                     shark.baseY += cdy * pullStrength * 0.15;
-                    if (shark.baseSpeed !== undefined) {
-                        shark.speed += (shark.baseSpeed - shark.speed) * 0.02;
-                    }
+                }
+
+                // Restore swim speed toward baseSpeed — applied unconditionally so isolated
+                // fish (no centroid) and post-food-burst fish also normalise.
+                if (shark.baseSpeed !== undefined) {
+                    shark.speed += (shark.baseSpeed - shark.speed) * 0.02;
                 }
 
                 // Pairwise separation — only same school, max 5 checks
@@ -444,8 +450,8 @@ export class FishLayer {
                 let sepChecks = 0;
                 for (const other of this.sharks) {
                     if (other === shark || other.isDying) continue;
+                    if (shark.schoolId !== other.schoolId) continue;  // filter before counting
                     if (sepChecks++ >= 5) break;
-                    if (shark.schoolId !== other.schoolId) continue;
                     const odx = shark.x - other.x;
                     const ody = shark.baseY - other.baseY;
                     const odistSq = odx * odx + ody * ody;
@@ -844,7 +850,7 @@ export class FishLayer {
             shark.size = individualSize;
             shark.speed = fishSpeed;
             shark.baseSpeed = fishSpeed;
-            shark.schoolId = this._schoolsSpawned;
+            shark.schoolId = this._nextSchoolId;  // use monotonic counter, not _schoolsSpawned
             shark.fishType = fishType;
             shark.depthTier = depthTier;
             shark.direction = direction;
@@ -986,41 +992,6 @@ export class FishLayer {
             octx.drawImage(sourceImage, 0, 0);
             return oc;
         });
-    }
-
-    /**
-     * Predation pass: sharks (fishType 0) with size > 50 eat nearby smaller fish.
-     * Runs once per render frame before the main draw loop.
-     */
-    _doPredation(currentTime) {
-        const EAT_COOLDOWN = 1800;      // ms between individual shark eating events
-        const EAT_DIST_FACTOR = 1.4;   // eating radius = predator.size * factor
-        const PREY_SIZE_FACTOR = 0.65; // prey must be < this fraction of predator size
-        const MIN_PREDATOR_SIZE = 50;  // only meaningfully large sharks hunt
-
-        for (const predator of this.sharks) {
-            if (predator.isDying) continue;
-            if (predator.fishType !== 0) continue;
-            if (predator.size < MIN_PREDATOR_SIZE) continue;
-            if (predator.lastEatTime && currentTime - predator.lastEatTime < EAT_COOLDOWN) continue;
-
-            const eatRadiusSq = (predator.size * EAT_DIST_FACTOR) ** 2;
-
-            for (const prey of this.sharks) {
-                if (prey === predator) continue;
-                if (prey.isDying) continue;
-                if (prey.size >= predator.size * PREY_SIZE_FACTOR) continue;
-                if (prey.depthTier !== predator.depthTier) continue; // different depth level
-
-                const dx = prey.x - predator.x;
-                const dy = prey.baseY - predator.baseY;
-                if (dx * dx + dy * dy < eatRadiusSq) {
-                    prey.isDying = true;
-                    predator.lastEatTime = currentTime;
-                    break; // one prey per predator per cooldown window
-                }
-            }
-        }
     }
 
 }

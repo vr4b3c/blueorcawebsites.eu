@@ -1228,7 +1228,7 @@ body.drawer-open {
 .references,
 .vyhody,
 .cenik,
-.contact {
+.site-footer {
     scroll-snap-align: start;
     scroll-snap-stop: always;
     min-height: calc(100svh - 4.5rem);
@@ -1238,8 +1238,7 @@ body.drawer-open {
 }
 
 /* ===================== SEKCE ===================== */
-.references,
-.contact {
+.references {
     padding: 4rem 0;
 }
 
@@ -2483,7 +2482,7 @@ a[target="_blank"]:hover::after {
 }
 
 .section-heading {
-    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-size: clamp(2rem, 4vw, 3.2rem);
     font-weight: 700;
     color: var(--text-primary);
     line-height: 1.2;
@@ -2581,17 +2580,273 @@ a[target="_blank"]:hover::after {
 }
 
 /* ===================== FOOTER ===================== */
-.site-footer {
-    display: none;
-    text-align: center;
-    padding: 2rem 0;
-    color: var(--text-muted);
-    font-size: 0.82rem;
-    letter-spacing: 0.02em;
+.footer-inner {
+    width: 100%;
+    max-width: 1020px;
+    margin: 0 auto;
 }
 
-.site-footer p {
-    margin-bottom: 0.35rem;
+.footer-grid {
+    display: grid;
+    grid-template-columns: 260px 1fr 240px;
+    gap: 2rem;
+    align-items: stretch;
+}
+
+.footer-brand,
+.footer-col {
+    background: linear-gradient(160deg, rgba(15, 70, 99, 0.6) 0%, rgb(8, 32, 50) 100%);
+    border: 1px solid rgba(142, 210, 232, 0.18);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(142, 210, 232, 0.08);
+    padding: 2rem 2.2rem;
+}
+
+/* Branding column */
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+}
+
+/* Nav / form columns */
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-logo-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none;
+}
+
+.footer-logo-link:hover {
+    text-decoration: none;
+    opacity: 0.85;
+}
+
+.footer-logo-mark {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 0 8px rgba(142, 210, 232, 0.2));
+}
+
+.footer-brand-name {
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: var(--text-primary);
+    letter-spacing: 0.01em;
+    line-height: 1;
+}
+
+.footer-brand-name strong {
+    font-weight: 700;
+}
+
+.footer-desc {
+    font-size: 0.83rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+/* Column headings */
+.footer-col-title {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin-bottom: 1rem;
+}
+
+/* Nav / form columns */
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Links column */
+.footer-link-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+}
+
+.footer-link-list a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-link-list a::before {
+    content: '›';
+    color: var(--accent-mid);
+    font-size: 1.05rem;
+    line-height: 1;
+    opacity: 0.65;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.footer-link-list a:hover {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.footer-link-list a:hover::before {
+    transform: translateX(2px);
+    opacity: 1;
+}
+
+/* Contact list inside brand column */
+.footer-contact-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin-top: 0.15rem;
+}
+
+.footer-contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    font-size: 0.83rem;
+    text-decoration: none;
+    transition: color 0.2s;
+    word-break: break-all;
+}
+
+.footer-contact-link:hover {
+    color: var(--text-primary);
+    text-decoration: none;
+}
+
+.footer-contact-link svg {
+    flex-shrink: 0;
+    opacity: 0.7;
+    color: var(--accent-mid);
+}
+
+/* Contact form */
+.footer-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    flex: 1;
+}
+
+/* Grow message textarea to fill available column height */
+.footer-col--form .footer-form-field:has(textarea) {
+    flex: 1;
+}
+
+.footer-col--form .footer-form-field textarea {
+    flex: 1;
+    min-height: 120px;
+}
+
+.footer-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.1rem;
+}
+
+.footer-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.footer-form-field label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-secondary);
+}
+
+.footer-form-field input,
+.footer-form-field textarea {
+    background: rgba(10, 42, 61, 0.85);
+    border: 1px solid rgba(142, 210, 232, 0.18);
+    color: var(--text-primary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.88rem;
+    padding: 0.65rem 0.85rem;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: none;
+    border-radius: 0;
+    width: 100%;
+}
+
+.footer-form-field input::placeholder,
+.footer-form-field textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.footer-form-field input:focus,
+.footer-form-field textarea:focus {
+    border-color: rgba(142, 210, 232, 0.45);
+}
+
+/* Form notices — hidden by default, shown via JS */
+.footer-form-notice {
+    display: none;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    border: 1px solid;
+}
+
+.footer-form-notice.is-visible {
+    display: flex;
+}
+
+.footer-form-notice svg {
+    flex-shrink: 0;
+    margin-top: 0.08rem;
+}
+
+.footer-form-notice--error {
+    color: var(--red);
+    border-color: rgba(255, 78, 66, 0.3);
+    background: rgba(255, 78, 66, 0.07);
+}
+
+.footer-form-notice--success {
+    color: var(--green);
+    border-color: rgba(12, 206, 107, 0.3);
+    background: rgba(12, 206, 107, 0.07);
+}
+
+/* Footer bottom strip */
+.footer-strip {
+    padding: 1.1rem 0 0;
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba(142, 210, 232, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.footer-copy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0;
+    letter-spacing: 0.02em;
 }
 
 /* ===================== FPS COUNTER ===================== */
@@ -2608,15 +2863,7 @@ a[target="_blank"]:hover::after {
     line-height: 1;
 }
 
-.site-footer .footer-phone {
-    color: var(--text-secondary);
-    text-decoration: none;
-    transition: color 0.25s ease;
-}
-
-.site-footer .footer-phone:hover {
-    color: var(--accent);
-}
+/* footer-phone legacy rule removed */
 
 /* ===================== ANIMACE ===================== */
 @keyframes fadeIn {
@@ -2625,6 +2872,21 @@ a[target="_blank"]:hover::after {
 }
 
 /* ===================== RESPONSIVITA ===================== */
+@media (max-width: 1100px) {
+    .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .footer-col--form {
+        grid-column: 1 / -1;
+    }
+
+    .footer-form-row {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 @media (max-width: 900px) {
     .ref-card {
         grid-template-columns: 1fr;
@@ -2644,13 +2906,16 @@ a[target="_blank"]:hover::after {
         display: none;
     }
 
-    .contact-content {
-        flex-direction: column;
-        text-align: center;
+    .footer-grid {
+        grid-template-columns: 1fr;
     }
 
-    .contact-details {
-        align-items: center;
+    .footer-col--form {
+        grid-column: auto;
+    }
+
+    .site-footer {
+        min-height: auto;
     }
 
     .lighthouse-scores {
@@ -2688,6 +2953,15 @@ a[target="_blank"]:hover::after {
     .lighthouse-scores {
         flex-wrap: nowrap;
         justify-content: center;
+    }
+
+    .footer-form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .footer-strip {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 
@@ -2783,6 +3057,35 @@ a[target="_blank"]:hover::after {
     transform: rotate(10deg) translateY(-2px) translateX(-3px);
 }
 
+/* ===================== ORCA LOGO – Footer animations ===================== */
+#ft-tail {
+    transform-origin: 260px 560px;
+    will-change: transform;
+    animation: tailSwim 3.2s ease-in-out infinite;
+}
+#ft-body {
+    transform-origin: 380px 520px;
+    will-change: transform;
+    animation: bodySwim 3.2s ease-in-out infinite;
+}
+#ft-fin-left, #ft-fin-right {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    will-change: transform;
+    animation: finFlap 3.2s ease-in-out infinite;
+}
+#ft-fin-left  { animation-delay: 0.7s; }
+#ft-fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
+#ft-mouth {
+    transform-box: fill-box;
+    transform-origin: 50% 20%;
+    transform: rotate(0deg);
+    transition: transform 0.35s ease-out;
+}
+#orca_footer:hover #ft-mouth {
+    transform: rotate(10deg) translateY(-2px) translateX(-3px);
+}
+
 /* ===================== ORCA LOGO – shared keyframes ===================== */
 @keyframes tailSwim {
     0%   { transform: rotate(0deg); }
@@ -2802,7 +3105,8 @@ a[target="_blank"]:hover::after {
 }
 @media (prefers-reduced-motion: reduce) {
     #tail, #body, #fin-left, #fin-right,
-    #c-tail, #c-body, #c-fin-left, #c-fin-right { animation: none; }
+    #c-tail, #c-body, #c-fin-left, #c-fin-right,
+    #ft-tail, #ft-body, #ft-fin-left, #ft-fin-right { animation: none; }
 }
 
 /* ===================== ORCA LOGO – canvas background ===================== */

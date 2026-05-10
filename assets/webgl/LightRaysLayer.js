@@ -214,8 +214,10 @@ export class LightRaysLayer {
         gl.bindVertexArray(null);
 
         // Upload resolution once here; onResize() keeps it current
-        gl.useProgram(this.program);
-        gl.uniform2f(this.locs.resolution, this.width, this.height);
+        if (this.program) {
+            gl.useProgram(this.program);
+            gl.uniform2f(this.locs.resolution, this.width, this.height);
+        }
     }
 
     render(currentTime, deltaTime) {
