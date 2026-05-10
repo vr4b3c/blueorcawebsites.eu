@@ -49,6 +49,7 @@ export class CanvasManager {
         this.config = {
             zIndex: options.zIndex || 0,
             devicePixelRatio: window.devicePixelRatio || 1,
+            resolutionScale: options.resolutionScale || 1,
             debug: options.debug || false,
             errorHandling: options.errorHandling !== false, // Error handling enabled by default
             ...options
@@ -154,7 +155,12 @@ export class CanvasManager {
         const rect = this.canvas.getBoundingClientRect();
         // Use device-tier-aware DPR cap so mobile/weak devices render fewer physical pixels.
         const { tier, entityBudget } = getDeviceProfile();
-        const dpr = Math.min(window.devicePixelRatio || this.config.devicePixelRatio || 1, entityBudget.dprCap);
+        const baseDpr = Math.min(
+            window.devicePixelRatio || this.config.devicePixelRatio || 1,
+            entityBudget.dprCap
+        );
+        const resolutionScale = Math.max(0.5, Math.min(1, this.config.resolutionScale || 1));
+        const dpr = Math.max(0.5, baseDpr * resolutionScale);
         
         // Set actual canvas size (device pixels)
         const deviceW = Math.max(1, Math.round(rect.width * dpr));
@@ -184,7 +190,8 @@ export class CanvasManager {
                 rectHeight: rect.height, 
                 deviceW, 
                 deviceH, 
-                dpr 
+                dpr,
+                resolutionScale 
             });
         }
     }

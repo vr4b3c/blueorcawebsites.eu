@@ -22,6 +22,7 @@ import {
 import {
     drawFish as drawFishRenderer
 } from '../curious-fish/render/CuriousFishRenderer.js';
+import { subscribePointerMove } from '../utils/PointerTracker.js';
 
 /**
  * Fish behavior constants - Size multipliers for various behaviors
@@ -157,8 +158,8 @@ export class CuriousFishLayer {
 
         this.skeletons = [];
         this._fishDepthCache = null;
-        this.handleMouseMove = this.handleMouseMove.bind(this);
-        this.handleTouchMove = this.handleTouchMove.bind(this);
+        this._unsubscribePointerMove = null;
+        this.handlePointerMove = this.handlePointerMove.bind(this);
     }
     
     /**
@@ -188,22 +189,14 @@ export class CuriousFishLayer {
             window.setCuriousTarget = (x, y, opts) => { try { this.setTargetPoint(x, y, opts || {}); } catch (e) { console.error(e); } };
         }
         
-        document.addEventListener('mousemove', this.handleMouseMove);
-        document.addEventListener('touchmove', this.handleTouchMove, { passive: true });
+        this._unsubscribePointerMove = subscribePointerMove(this.handlePointerMove);
         console.log('CuriousFishLayer initialized');
     }
     
-    handleMouseMove(e) {
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
-        this.lastMouseMoveTime = Date.now();
-    }
-
-    handleTouchMove(e) {
-        if (e.touches.length === 0) return;
-        this.mouseX = e.touches[0].clientX;
-        this.mouseY = e.touches[0].clientY;
-        this.lastMouseMoveTime = Date.now();
+    handlePointerMove(x, y, timestamp) {
+        this.mouseX = x;
+        this.mouseY = y;
+        this.lastMouseMoveTime = timestamp;
     }
     
     onResize(width, height) {
@@ -998,8 +991,8 @@ export class CuriousFishLayer {
      * Cleanup resources and event listeners
      */
     destroy() {
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('touchmove', this.handleTouchMove);
+        this._unsubscribePointerMove?.();
+        this._unsubscribePointerMove = null;
         this.fish = null;
         this.hearts = [];
         this._iconSpriteCache.clear();

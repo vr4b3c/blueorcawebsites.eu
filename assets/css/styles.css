@@ -1773,25 +1773,28 @@ body.drawer-open {
 
 .ref-minimap-dim {
     position: absolute;
+    top: 0;
+    bottom: 0;
     left: 0;
     right: 0;
     background: rgba(3, 26, 42, 0.62);
     pointer-events: none;
     z-index: 1;
+    transform: scaleY(0);
+    will-change: transform;
 }
 
 .ref-minimap-dim-top {
-    top: 0;
-    height: 0;
+    transform-origin: top center;
 }
 
 .ref-minimap-dim-bottom {
-    bottom: 0;
-    height: 0;
+    transform-origin: bottom center;
 }
 
 .ref-minimap-indicator {
     position: absolute;
+    top: 0;
     left: 0;
     right: 0;
     border: 1px solid rgba(142, 210, 232, 0.7);
@@ -1800,7 +1803,8 @@ body.drawer-open {
     z-index: 2;
     box-sizing: border-box;
     min-height: 4px;
-    transition: top 0.05s linear, height 0.05s linear;
+    transition: transform 0.05s linear, height 0.05s linear;
+    will-change: transform, height;
 }
 
 @media (max-width: 480px) {

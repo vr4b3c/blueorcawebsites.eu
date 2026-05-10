@@ -538,6 +538,43 @@ BlueOrca.carousel = {};
 // ===================== MINIMAP =====================
 (function () {
     var outers = document.querySelectorAll('.ref-image-outer');
+    if (!outers.length) return;
+
+    var instances = [];
+    var activeMinimapDrag = null;
+    var activePreviewDrag = null;
+
+    function stopPreviewDrag() {
+        if (!activePreviewDrag) return;
+        if (activePreviewDrag.previewDragging) {
+            activePreviewDrag.previewSuppressClick = true;
+            activePreviewDrag.scrollEl.classList.remove('is-dragging');
+        }
+        activePreviewDrag = null;
+    }
+
+    document.addEventListener('mousemove', function (e) {
+        if (activeMinimapDrag) {
+            activeMinimapDrag.scrollTo(e.clientY);
+        }
+
+        if (!activePreviewDrag) return;
+
+        var dy = e.clientY - activePreviewDrag.previewStartY;
+        if (Math.abs(dy) > 3 && !activePreviewDrag.previewDragging) {
+            activePreviewDrag.previewDragging = true;
+            activePreviewDrag.scrollEl.classList.add('is-dragging');
+        }
+
+        if (activePreviewDrag.previewDragging) {
+            activePreviewDrag.scrollEl.scrollTop = activePreviewDrag.previewStartScroll - dy;
+        }
+    }, { passive: true });
+
+    document.addEventListener('mouseup', function () {
+        activeMinimapDrag = null;
+        stopPreviewDrag();
+    });
 
     outers.forEach(function (outer) {
         var scrollEl = outer.querySelector('.ref-image-wrap');
@@ -552,8 +589,26 @@ BlueOrca.carousel = {};
             clientHeight: 0,
             mapHeight: 0,
             mapTop: 0,
+            scrollRange: 0,
+            indicatorHeight: 4,
+            indicatorRange: 0,
         };
         var indicatorRaf = 0;
+        var state = {
+            scrollEl: scrollEl,
+            previewStartY: 0,
+            previewStartScroll: 0,
+            previewDragging: false,
+            previewSuppressClick: false,
+            lastIndicatorHeight: null,
+            lastIndicatorTop: null,
+            lastTopScale: null,
+            lastBottomScale: null,
+            refreshIndicatorMetrics: refreshIndicatorMetrics,
+            scrollTo: minimapScrollTo,
+        };
+
+        instances.push(state);
 
         function readMetrics() {
             var rect = minimap.getBoundingClientRect();
@@ -561,48 +616,70 @@ BlueOrca.carousel = {};
             metrics.clientHeight = scrollEl.clientHeight;
             metrics.mapHeight = minimap.clientHeight;
             metrics.mapTop = rect.top;
+            metrics.scrollRange = Math.max(metrics.scrollHeight - metrics.clientHeight, 0);
+            metrics.indicatorHeight = Math.max(
+                metrics.scrollHeight > 0 ? (metrics.clientHeight / metrics.scrollHeight) * metrics.mapHeight : 0,
+                4
+            );
+            metrics.indicatorRange = Math.max(metrics.mapHeight - metrics.indicatorHeight, 0);
         }
 
         // --- Indicator sync ---
-        function updateIndicator() {
-            var scrollH = metrics.scrollHeight;
-            var clientH = metrics.clientHeight;
-            var scrollT = scrollEl.scrollTop;
+        function updateIndicatorPosition() {
             var mapH = metrics.mapHeight;
-            if (!scrollH || !mapH) return;
+            var indH = metrics.indicatorHeight;
+            if (!mapH) return;
 
-            var indTop = (scrollT / scrollH) * mapH;
-            var indH = Math.max((clientH / scrollH) * mapH, 4);
+            var scrollT = Math.max(0, Math.min(scrollEl.scrollTop, metrics.scrollRange));
+            var indTop = metrics.scrollRange > 0 ? (scrollT / metrics.scrollRange) * metrics.indicatorRange : 0;
+            var topScale = indTop / mapH;
+            var bottomScale = Math.max(mapH - indTop - indH, 0) / mapH;
 
-            dimTop.style.height = indTop + 'px';
-            indicator.style.top = indTop + 'px';
-            indicator.style.height = indH + 'px';
-            dimBottom.style.top = (indTop + indH) + 'px';
-            dimBottom.style.height = (mapH - indTop - indH) + 'px';
+            if (state.lastTopScale !== topScale) {
+                dimTop.style.transform = 'scaleY(' + topScale + ')';
+                state.lastTopScale = topScale;
+            }
+
+            if (state.lastIndicatorTop !== indTop) {
+                indicator.style.transform = 'translateY(' + indTop + 'px)';
+                state.lastIndicatorTop = indTop;
+            }
+
+            if (state.lastBottomScale !== bottomScale) {
+                dimBottom.style.transform = 'scaleY(' + bottomScale + ')';
+                state.lastBottomScale = bottomScale;
+            }
+        }
+
+        function applyIndicatorMetrics() {
+            if (state.lastIndicatorHeight !== metrics.indicatorHeight) {
+                indicator.style.height = metrics.indicatorHeight + 'px';
+                state.lastIndicatorHeight = metrics.indicatorHeight;
+            }
+
+            updateIndicatorPosition();
         }
 
         function scheduleIndicatorUpdate() {
             if (indicatorRaf) return;
             indicatorRaf = requestAnimationFrame(function () {
                 indicatorRaf = 0;
-                updateIndicator();
+                updateIndicatorPosition();
             });
         }
 
         function refreshIndicatorMetrics() {
             readMetrics();
-            updateIndicator();
+            applyIndicatorMetrics();
         }
 
-        readMetrics();
+        refreshIndicatorMetrics();
         scrollEl.addEventListener('scroll', scheduleIndicatorUpdate, { passive: true });
 
         var mainImg = scrollEl.querySelector('img');
         if (mainImg) {
             if (mainImg.complete) refreshIndicatorMetrics();
-            else mainImg.addEventListener('load', refreshIndicatorMetrics);
-        } else {
-            updateIndicator();
+            else mainImg.addEventListener('load', refreshIndicatorMetrics, { once: true });
         }
 
         // --- Minimap drag → scroll preview ---
@@ -611,24 +688,15 @@ BlueOrca.carousel = {};
             if (!mapH) return;
             var y = Math.max(0, Math.min(clientY - metrics.mapTop, mapH));
             var frac = y / mapH;
-            scrollEl.scrollTop = frac * metrics.scrollHeight - metrics.clientHeight / 2;
+            var nextScrollTop = frac * metrics.scrollHeight - metrics.clientHeight / 2;
+            scrollEl.scrollTop = Math.max(0, Math.min(nextScrollTop, metrics.scrollRange));
         }
 
-        var mmDragging = false;
-
         minimap.addEventListener('mousedown', function (e) {
-            mmDragging = true;
+            activeMinimapDrag = state;
             readMetrics();
             minimapScrollTo(e.clientY);
             e.preventDefault();
-        });
-
-        document.addEventListener('mousemove', function (e) {
-            if (mmDragging) minimapScrollTo(e.clientY);
-        }, { passive: true });
-
-        document.addEventListener('mouseup', function () {
-            mmDragging = false;
         });
 
         minimap.addEventListener('touchstart', function (e) {
@@ -656,37 +724,19 @@ BlueOrca.carousel = {};
 
         scrollEl.addEventListener('mousedown', function (e) {
             if (e.button !== 0) return;
-            prevDragging = true;
-            prevStartY = e.clientY;
-            prevStartScroll = scrollEl.scrollTop;
-            prevMoved = false;
+            state.previewStartY = e.clientY;
+            state.previewStartScroll = scrollEl.scrollTop;
+            state.previewDragging = false;
+            state.previewSuppressClick = false;
+            activePreviewDrag = state;
             e.preventDefault();
-        });
-
-        document.addEventListener('mousemove', function (e) {
-            if (!prevDragging) return;
-            var dy = e.clientY - prevStartY;
-            if (Math.abs(dy) > 3) {
-                prevMoved = true;
-                scrollEl.classList.add('is-dragging');
-            }
-            if (prevMoved) {
-                scrollEl.scrollTop = prevStartScroll - dy;
-            }
-        }, { passive: true });
-
-        document.addEventListener('mouseup', function () {
-            if (prevDragging) {
-                prevDragging = false;
-                scrollEl.classList.remove('is-dragging');
-            }
         });
 
         // Prevent lightbox from opening after a drag
         scrollEl.addEventListener('click', function (e) {
-            if (prevMoved) {
+            if (state.previewSuppressClick) {
                 e.stopImmediatePropagation();
-                prevMoved = false;
+                state.previewSuppressClick = false;
             }
         }, true);
 
@@ -726,9 +776,8 @@ BlueOrca.carousel = {};
 
     // Re-sync on resize
     window.addEventListener('resize', function () {
-        document.querySelectorAll('.ref-image-outer').forEach(function (outer) {
-            var scrollEl = outer.querySelector('.ref-image-wrap');
-            if (scrollEl) scrollEl.dispatchEvent(new Event('scroll'));
+        instances.forEach(function (instance) {
+            instance.refreshIndicatorMetrics();
         });
     });
 })();

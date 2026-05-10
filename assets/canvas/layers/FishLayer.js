@@ -3,6 +3,7 @@
  * Renders schools of fish swimming across the screen
  */
 import { drawGlow } from '../utils/GlowCache.js';
+import { subscribePointerMove } from '../utils/PointerTracker.js';
 
 export class FishLayer {
     static MAX_FISH = 80;                // Hard cap on total fish in the array
@@ -86,14 +87,13 @@ export class FishLayer {
         };
         
         this._schoolsSpawned = 0;
-        
-        // Bind mouse event handler
-        this.handleMouseMove = this.handleMouseMove.bind(this);
+        this._unsubscribePointerMove = null;
+        this.handlePointerMove = this.handlePointerMove.bind(this);
     }
     
-    handleMouseMove(e) {
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
+    handlePointerMove(x, y) {
+        this.mouseX = x;
+        this.mouseY = y;
     }
     
     init(width, height, canvasManager) {
@@ -110,8 +110,7 @@ export class FishLayer {
         // Store reference to manager for food access
         this.manager = canvasManager || window.blueOrcaCanvas;
         
-        // Add mouse listener
-        document.addEventListener('mousemove', this.handleMouseMove);
+        this._unsubscribePointerMove = subscribePointerMove(this.handlePointerMove);
         console.log('SharkLayer initialized');
     }
 
@@ -128,7 +127,8 @@ export class FishLayer {
      * Cleanup resources and event listeners
      */
     destroy() {
-        document.removeEventListener('mousemove', this.handleMouseMove);
+        this._unsubscribePointerMove?.();
+        this._unsubscribePointerMove = null;
         this.sharks = [];
         this._schoolsSpawned = 0;
         this._schoolCentroidsCache.clear();

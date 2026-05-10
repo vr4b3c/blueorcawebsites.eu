@@ -35,6 +35,46 @@ function supportsCanvasFilters() {
     return ctx.filter === testFilter;
 }
 
+function getCanvasRuntimeBudget(baseBudget) {
+    const viewportArea = window.innerWidth * window.innerHeight;
+    const webglStatus = window.blueOrcaRenderBootstrap?.webglStatus;
+    const preferLiteCanvasEffects = window.blueOrcaRenderBootstrap?.preferLiteCanvasEffects === true;
+    const canvasOnlyMode = webglStatus !== 'active';
+
+    const runtimeBudget = {
+        canvas2dFPS: baseBudget.canvas2dFPS,
+        schoolDensity: baseBudget.schoolDensity,
+        jellyfishSchoolDensity: 600,
+        resolutionScale: 1,
+        allowHighCostEffects: !preferLiteCanvasEffects && baseBudget.canvas2dFPS >= 40 && supportsCanvasFilters(),
+    };
+
+    if (!canvasOnlyMode) {
+        return runtimeBudget;
+    }
+
+    runtimeBudget.allowHighCostEffects = false;
+
+    if (viewportArea >= 4_000_000) {
+        runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, 30);
+        runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, 1_200_000);
+        runtimeBudget.jellyfishSchoolDensity = 1_400;
+        runtimeBudget.resolutionScale = 0.67;
+    } else if (viewportArea >= 2_500_000) {
+        runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, 35);
+        runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, 900_000);
+        runtimeBudget.jellyfishSchoolDensity = 1_000;
+        runtimeBudget.resolutionScale = 0.8;
+    } else if (viewportArea >= 1_500_000) {
+        runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, 40);
+        runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, 650_000);
+        runtimeBudget.jellyfishSchoolDensity = 850;
+        runtimeBudget.resolutionScale = 0.9;
+    }
+
+    return runtimeBudget;
+}
+
 function scheduleCuriousFishPrewarm(manager) {
     if (typeof window === 'undefined') return;
 
@@ -59,16 +99,17 @@ export function initCanvasBackground() {
     const renderDebugEnabled = isRenderDebugEnabled();
 
     const { entityBudget: budget } = getDeviceProfile();
-    const preferLiteCanvasEffects = window.blueOrcaRenderBootstrap?.preferLiteCanvasEffects === true;
-    const allowHighCostEffects = !preferLiteCanvasEffects && budget.canvas2dFPS >= 40 && supportsCanvasFilters();
+    const canvasRuntimeBudget = getCanvasRuntimeBudget(budget);
+    const allowHighCostEffects = canvasRuntimeBudget.allowHighCostEffects;
 
     const manager = createCanvasBackground({
         zIndex: 0,
         showStats: renderDebugEnabled,
-        targetFPS: 60,
+        targetFPS: canvasRuntimeBudget.canvas2dFPS,
         debug: renderDebugEnabled,
         errorHandling: false, // Disable error handling for max performance
         profilePerformance: false, // Disabled: triggers CpuProfiler overhead every session
+        resolutionScale: canvasRuntimeBudget.resolutionScale,
         skipDefaultLayers: true,
         // Layer configurations - optional overrides of DEFAULT_CONFIG
         foodConfig: {
@@ -79,7 +120,7 @@ export function initCanvasBackground() {
             // shrinkRate: 0.05 // Shrink rate in px/second
         },
         fishConfig: {
-            schoolDensity: budget.schoolDensity,
+            schoolDensity: canvasRuntimeBudget.schoolDensity,
             // schoolCount: 6,      // Number of schools — set null to use density-based auto-scaling
             // size: 1.2,           // Size multiplier (0.5-2x)
             // avoidRadius: 100,    // Radius to avoid mouse cursor
@@ -104,13 +145,19 @@ export function initCanvasBackground() {
     const dasFishLayer = new DasFishLayer({ allowHighCostEffects });
     manager.addLayer('das', dasFishLayer);
 
-    const jellyfishLayer = new JellyfishLayer({ allowHighCostEffects });
+    const jellyfishLayer = new JellyfishLayer({
+        allowHighCostEffects,
+        schoolDensity: canvasRuntimeBudget.jellyfishSchoolDensity,
+    });
     manager.addLayer('jellyfish', jellyfishLayer);
 
     // Create MasterRenderer to coordinate both WebGL and Canvas rendering.
     // canvas2dFPS is device-tier-aware — lower values on weak devices reduce
     // CPU load while keeping WebGL visuals smooth.
-    const masterRenderer = new MasterRenderer({ canvas2dFPS: budget.canvas2dFPS, debug: renderDebugEnabled });
+    const masterRenderer = new MasterRenderer({
+        canvas2dFPS: canvasRuntimeBudget.canvas2dFPS,
+        debug: renderDebugEnabled
+    });
     
     // Register WebGL renderer if it exists
     if (window.webglOceanRenderer) {

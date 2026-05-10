@@ -217,7 +217,7 @@ export class WebGLOceanRenderer {
     }
 
     setDprCap(dprCap) {
-        const nextCap = Math.max(1.0, Math.min(this.baseDprCap, dprCap));
+        const nextCap = Math.max(0.5, Math.min(this.baseDprCap, dprCap));
         if (Math.abs(nextCap - this.options.dprCap) < 0.01) return;
 
         this.options.dprCap = nextCap;

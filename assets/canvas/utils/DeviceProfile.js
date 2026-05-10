@@ -92,6 +92,44 @@ const TIER_LABELS = ['mobile-low', 'mobile-medium', 'desktop-light', 'desktop-fu
 /** @type {DeviceProfile|null} */
 let _cached = null;
 
+function getViewportScaledBudget(baseBudget, area) {
+    const scaledBudget = { ...baseBudget };
+
+    if (area >= 7_000_000) {
+        scaledBudget.swarmCount = Math.min(scaledBudget.swarmCount, 16);
+        scaledBudget.particlesPerSwarm = Math.min(scaledBudget.particlesPerSwarm, 32);
+        scaledBudget.fineCount = Math.min(scaledBudget.fineCount, 700);
+        scaledBudget.microCount = Math.min(scaledBudget.microCount, 180);
+        scaledBudget.lightRayCount = Math.min(scaledBudget.lightRayCount, 3);
+        scaledBudget.bubbleSourceWidthBase = Math.max(scaledBudget.bubbleSourceWidthBase, 800);
+        scaledBudget.schoolDensity = Math.max(scaledBudget.schoolDensity, 1_000_000);
+        scaledBudget.canvas2dFPS = Math.min(scaledBudget.canvas2dFPS, 30);
+        scaledBudget.dprCap = Math.min(scaledBudget.dprCap, 0.75);
+    } else if (area >= 4_000_000) {
+        scaledBudget.swarmCount = Math.min(scaledBudget.swarmCount, 20);
+        scaledBudget.particlesPerSwarm = Math.min(scaledBudget.particlesPerSwarm, 36);
+        scaledBudget.fineCount = Math.min(scaledBudget.fineCount, 900);
+        scaledBudget.microCount = Math.min(scaledBudget.microCount, 250);
+        scaledBudget.lightRayCount = Math.min(scaledBudget.lightRayCount, 4);
+        scaledBudget.bubbleSourceWidthBase = Math.max(scaledBudget.bubbleSourceWidthBase, 650);
+        scaledBudget.schoolDensity = Math.max(scaledBudget.schoolDensity, 800_000);
+        scaledBudget.canvas2dFPS = Math.min(scaledBudget.canvas2dFPS, 35);
+        scaledBudget.dprCap = Math.min(scaledBudget.dprCap, 0.85);
+    } else if (area >= 2_500_000) {
+        scaledBudget.swarmCount = Math.min(scaledBudget.swarmCount, 24);
+        scaledBudget.particlesPerSwarm = Math.min(scaledBudget.particlesPerSwarm, 42);
+        scaledBudget.fineCount = Math.min(scaledBudget.fineCount, 1100);
+        scaledBudget.microCount = Math.min(scaledBudget.microCount, 320);
+        scaledBudget.lightRayCount = Math.min(scaledBudget.lightRayCount, 4);
+        scaledBudget.bubbleSourceWidthBase = Math.max(scaledBudget.bubbleSourceWidthBase, 520);
+        scaledBudget.schoolDensity = Math.max(scaledBudget.schoolDensity, 550_000);
+        scaledBudget.canvas2dFPS = Math.min(scaledBudget.canvas2dFPS, 40);
+        scaledBudget.dprCap = Math.min(scaledBudget.dprCap, 1.0);
+    }
+
+    return scaledBudget;
+}
+
 /**
  * Detect the device tier and return the corresponding profile.
  * Result is cached — multiple calls are free.
@@ -128,11 +166,11 @@ export function getDeviceProfile() {
     _cached = {
         tier,
         label: TIER_LABELS[tier],
-        entityBudget: BUDGETS[tier],
+        entityBudget: getViewportScaledBudget(BUDGETS[tier], area),
     };
 
     console.info(
-        `[DeviceProfile] tier=${tier} (${_cached.label}) | ${vw}×${vh}px | cores=${cores} dpr=${dpr} conn=${connType || 'unknown'}`
+        `[DeviceProfile] tier=${tier} (${_cached.label}) | ${vw}×${vh}px | cores=${cores} dpr=${dpr} conn=${connType || 'unknown'} | budgetDprCap=${_cached.entityBudget.dprCap}`
     );
 
     return _cached;
