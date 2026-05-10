@@ -11,6 +11,7 @@ export class DasFishLayer {
         speed: 0.5,         // px per frame at 60 fps
         turnRate: 0.005,    // max radians turned per frame — very slow
         lureRadius: 30,     // kill radius around the lure orb
+        allowHighCostEffects: true,
     };
 
     constructor(options = {}) {
@@ -20,9 +21,11 @@ export class DasFishLayer {
         this.config = { ...DasFishLayer.DEFAULT_CONFIG, ...options };
 
         this.fish = null;       // single entity object
+    this._qualityMultiplier = 1.0;
         this._image = new Image();
         this._imageLoaded = false;
         this._depthCache = null;
+        this._effectCache = null;
 
         // WordPress glitch state
         this._glitch = {
@@ -39,6 +42,7 @@ export class DasFishLayer {
         this._image.onload = () => {
             this._imageLoaded = true;
             this._depthCache = this._buildDepthCache(this._image);
+            this._effectCache = this._buildEffectCache(this._depthCache);
         };
         this._image.onerror = () => {
             console.warn('[DasFishLayer] Failed to load das.png');
@@ -56,6 +60,10 @@ export class DasFishLayer {
     onResize(width, height) {
         this.width = width;
         this.height = height;
+    }
+
+    setQuality(quality) {
+        this._qualityMultiplier = quality;
     }
 
     destroy() {
@@ -189,6 +197,12 @@ export class DasFishLayer {
         if (g.effect) {
             g.timer -= dt;
             if (g.effect === 'freeze') g.data.elapsed = (g.data.elapsed || 0) + dt;
+            if (g.effect === 'tear' || g.effect === 'tearV') {
+                g.data.offsetRefresh = (g.data.offsetRefresh || 0) - dt;
+                if (g.data.offsetRefresh <= 0) {
+                    this._refreshGlitchSlices(g);
+                }
+            }
             if (g.timer <= 0) {
                 g.effect   = null;
                 g.speedMul = 1;
@@ -208,10 +222,29 @@ export class DasFishLayer {
         g.data   = {};
         switch (g.effect) {
             case 'freeze': g.timer = 700 + Math.random() * 500;  g.speedMul = 0.05; g.data.total = g.timer; break;
-            case 'tear':   g.timer = 100 + Math.random() * 250;  g.speedMul = 1;    break;
-            case 'tearV':  g.timer = 100 + Math.random() * 250;  g.speedMul = 1;    break;
+            case 'tear':   g.timer = 100 + Math.random() * 250;  g.speedMul = 1;    this._refreshGlitchSlices(g); break;
+            case 'tearV':  g.timer = 100 + Math.random() * 250;  g.speedMul = 1;    this._refreshGlitchSlices(g); break;
             case 'ghost':  g.timer = 150 + Math.random() * 280;  g.speedMul = 0.4;  break;
             case 'ghost2': g.timer = 150 + Math.random() * 280;  g.speedMul = 0.4;  break;
+        }
+    }
+
+    _refreshGlitchSlices(glitch) {
+        glitch.data.offsetRefresh = 48 + Math.random() * 24;
+
+        if (glitch.effect === 'tear') {
+            glitch.data.horizontalOffsets = Array.from({ length: 3 }, (_, index) => {
+                const direction = index % 2 === 0 ? 1 : -1;
+                return direction * (3 + Math.floor(Math.random() * 10));
+            });
+            return;
+        }
+
+        if (glitch.effect === 'tearV') {
+            glitch.data.verticalOffsets = Array.from({ length: 5 }, (_, index) => {
+                const direction = index % 2 === 0 ? 1 : -1;
+                return direction * (3 + Math.floor(Math.random() * 10));
+            });
         }
     }
 
@@ -244,8 +277,10 @@ export class DasFishLayer {
         }
 
         const g = this._glitch;
+        const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
         const depthTier = height > 0 ? Math.min(3, Math.max(0, Math.floor((f.y / height) * 4))) : 3;
         const drawSrc = (this._depthCache && this._depthCache[depthTier]) || this._image;
+        const effectCache = this._effectCache && this._effectCache[depthTier];
         const imgW = f.size * 2;
         const imgH = imgW * (this._image.height / this._image.width);
         ctx.save();
@@ -266,33 +301,31 @@ export class DasFishLayer {
                 } else {
                     sat = 0;
                 }
-                ctx.filter = `saturate(${sat.toFixed(1)}%)`;
-                ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2, imgW, imgH);
-                ctx.filter = 'none';
+                const freezeSrc = useHighCostEffects
+                    ? (this._pickFreezeVariant(effectCache, sat) || drawSrc)
+                    : drawSrc;
+                ctx.drawImage(freezeSrc, -imgW / 2, -imgH / 2, imgW, imgH);
                 break;
             }
             case 'ghost':
                 ctx.globalAlpha = 0.35;
-                ctx.filter = 'hue-rotate(120deg) saturate(300%)';
-                ctx.drawImage(drawSrc, -imgW / 2 + 9, -imgH / 2 - 5, imgW, imgH);
-                ctx.filter = 'none';
+                ctx.drawImage(useHighCostEffects ? (effectCache?.ghost || drawSrc) : drawSrc, -imgW / 2 + 9, -imgH / 2 - 5, imgW, imgH);
                 ctx.globalAlpha = 1;
                 ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2, imgW, imgH);
                 break;
 
             case 'ghost2':
                 ctx.globalAlpha = 0.35;
-                ctx.filter = 'hue-rotate(255deg) saturate(300%)';
-                ctx.drawImage(drawSrc, -imgW / 2 - 7, -imgH / 2 + 8, imgW, imgH);
-                ctx.filter = 'none';
+                ctx.drawImage(useHighCostEffects ? (effectCache?.ghost2 || drawSrc) : drawSrc, -imgW / 2 - 7, -imgH / 2 + 8, imgW, imgH);
                 ctx.globalAlpha = 1;
                 ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2, imgW, imgH);
                 break;
 
             case 'tear': {
                 const sliceH = imgH / 3;
+                const offsets = g.data.horizontalOffsets || [6, -6, 6];
                 for (let i = 0; i < 3; i++) {
-                    const ox = (i % 2 === 0 ? 1 : -1) * (3 + Math.floor(Math.random() * 10));
+                    const ox = offsets[i] ?? 0;
                     ctx.save();
                     ctx.beginPath();
                     ctx.rect(-imgW / 2 + ox - 1, -imgH / 2 + i * sliceH, imgW + 2, sliceH);
@@ -305,8 +338,9 @@ export class DasFishLayer {
 
             case 'tearV': {
                 const sliceW = imgW / 5;
+                const offsets = g.data.verticalOffsets || [6, -6, 6, -6, 6];
                 for (let i = 0; i < 5; i++) {
-                    const oy = (i % 2 === 0 ? 1 : -1) * (3 + Math.floor(Math.random() * 10));
+                    const oy = offsets[i] ?? 0;
                     ctx.save();
                     ctx.beginPath();
                     ctx.rect(-imgW / 2 + i * sliceW, -imgH / 2 + oy - 1, sliceW, imgH + 2);
@@ -375,5 +409,50 @@ export class DasFishLayer {
             octx.drawImage(sourceImage, 0, 0);
             return oc;
         });
+    }
+
+    _buildEffectCache(depthCache) {
+        if (!depthCache) return null;
+
+        const freezeLevels = [0, 25, 50, 75, 100];
+        return depthCache.map(source => ({
+            freeze: freezeLevels.reduce((variants, level) => {
+                variants[level] = level >= 100 ? source : this._createFilteredVariant(source, `saturate(${level}%)`);
+                return variants;
+            }, {}),
+            ghost: this._createFilteredVariant(source, 'hue-rotate(120deg) saturate(300%)'),
+            ghost2: this._createFilteredVariant(source, 'hue-rotate(255deg) saturate(300%)'),
+        }));
+    }
+
+    _createFilteredVariant(source, filter) {
+        const w = source.naturalWidth || source.width;
+        const h = source.naturalHeight || source.height;
+        if (!w || !h) return source;
+
+        const oc = new OffscreenCanvas(w, h);
+        const octx = oc.getContext('2d');
+        if (!octx) return source;
+
+        octx.filter = filter;
+        octx.drawImage(source, 0, 0);
+        return oc;
+    }
+
+    _pickFreezeVariant(effectCache, saturation) {
+        const variants = effectCache && effectCache.freeze;
+        if (!variants) return null;
+
+        const levels = [0, 25, 50, 75, 100];
+        const clamped = Math.max(0, Math.min(100, saturation));
+        let nearestLevel = levels[0];
+
+        for (let i = 1; i < levels.length; i++) {
+            if (Math.abs(levels[i] - clamped) < Math.abs(nearestLevel - clamped)) {
+                nearestLevel = levels[i];
+            }
+        }
+
+        return variants[nearestLevel] || null;
     }
 }

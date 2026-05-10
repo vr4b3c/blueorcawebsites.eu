@@ -76,7 +76,8 @@ export class CuriousFishLayer {
         imageSrc: 'assets/images/fish/curiousfish.webp',
         showDebug: false,
         swimAwaySpeed: 3,
-        enableBob: true
+        enableBob: true,
+        allowHighCostEffects: true
     };
 
     /**
@@ -93,6 +94,7 @@ export class CuriousFishLayer {
         this.mouseY = null;
         this.hearts = [];
         this._iconPool = []; // Object pool — reuses icon objects to avoid GC churn
+        this._iconSpriteCache = new Map();
         this._qualityMultiplier = 1.0;
         this._cachedFontSize = 16;
         this.isStaring = false;
@@ -278,6 +280,7 @@ export class CuriousFishLayer {
             
             // Draw big heart if in phase 2 (kiss phase) and danceState still exists
             if (this.danceState && this.danceState.phase === 2 && this.danceState.bigHeart) {
+                const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
                 ctx.save();
                 ctx.globalAlpha = this.danceState.bigHeart.opacity;
                 ctx.fillStyle = '#ff69b4'; // Hot pink
@@ -285,9 +288,11 @@ export class CuriousFishLayer {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 
-                // Add glow effect
-                ctx.shadowColor = '#ff69b4';
-                ctx.shadowBlur = 30;
+                if (useHighCostEffects) {
+                    // Add glow effect only on devices that can afford it.
+                    ctx.shadowColor = '#ff69b4';
+                    ctx.shadowBlur = 30;
+                }
                 
                 ctx.fillText('❤️', this.danceState.bigHeart.x, this.danceState.bigHeart.y);
                 ctx.restore();
@@ -685,60 +690,99 @@ export class CuriousFishLayer {
         ctx.fill();
         ctx.restore();
     }
-    
-    drawHearts(ctx) {
-        // Font string cache — avoids allocating a new string per heart per frame
-        const fontCache = (this._fontCache ||= {});
-        const font = (size) => (fontCache[size] ||= `${size}px Arial`);
-        const boldFont = (size) => (fontCache[`b${size}`] ||= `bold ${size}px Arial`);
 
-        ctx.save();
+    _getIconSprite(type, size) {
+        const spriteSize = Math.max(8, Math.round(size / 2) * 2);
+        const key = `${type}:${spriteSize}`;
+        const cached = this._iconSpriteCache.get(key);
+        if (cached) return cached;
+
+        const dimension = Math.max(24, Math.ceil(spriteSize * 2.8));
+        const sprite = new OffscreenCanvas(dimension, dimension);
+        const spriteCtx = sprite.getContext('2d');
+        if (!spriteCtx) return null;
+
+        this._drawIconSprite(spriteCtx, type, spriteSize, dimension * 0.5, dimension * 0.5);
+        this._iconSpriteCache.set(key, sprite);
+        return sprite;
+    }
+
+    _drawIconSprite(ctx, type, size, x, y) {
+        if (type === 'bubble') {
+            ctx.fillStyle = 'rgba(100, 200, 255, 0.6)';
+            ctx.strokeStyle = 'rgba(150, 220, 255, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            return;
+        }
+
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
+
+        if (type === 'star') {
+            ctx.fillStyle = '#ffdd00';
+            ctx.font = `${size}px Arial`;
+            ctx.fillText('⭐', x, y);
+            return;
+        }
+
+        if (type === 'zzz') {
+            ctx.fillStyle = '#cccccc';
+            ctx.font = `${size}px Arial`;
+            ctx.fillText('Z', x, y);
+            return;
+        }
+
+        if (type === 'lightning') {
+            ctx.fillStyle = '#ffff00';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.font = `bold ${size}px Arial`;
+            ctx.strokeText('⚡', x, y);
+            ctx.fillText('⚡', x, y);
+            return;
+        }
+
+        if (type === 'food') {
+            ctx.fillStyle = '#ff6b6b';
+            ctx.font = `${size}px Arial`;
+            ctx.fillText('🍎', x, y);
+            return;
+        }
+
+        if (type === 'question') {
+            ctx.fillStyle = '#ffaa00';
+            ctx.font = `bold ${size}px Arial`;
+            ctx.fillText('?', x, y);
+            return;
+        }
+
+        if (type === 'exclamation') {
+            ctx.fillStyle = '#ff0000';
+            ctx.font = `bold ${size}px Arial`;
+            ctx.fillText('!', x, y);
+            return;
+        }
+
+        ctx.fillStyle = '#ff69b4';
+        ctx.font = `${size}px Arial`;
+        ctx.fillText('❤️', x, y);
+    }
+    
+    drawHearts(ctx) {
+        ctx.save();
         for (const heart of this.hearts) {
             const ageRatio = heart.age / heart.maxAge;
             const opacity = 1 - ageRatio;
             ctx.globalAlpha = opacity;
-            if (heart.type === 'star') {
-                ctx.fillStyle = '#ffdd00';
-                ctx.font = font(heart.size);
-                ctx.fillText('⭐', heart.x, heart.y);
-            } else if (heart.type === 'bubble') {
-                ctx.fillStyle = 'rgba(100, 200, 255, 0.6)';
-                ctx.strokeStyle = 'rgba(150, 220, 255, 0.8)';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.arc(heart.x, heart.y, heart.size * 0.5, 0, Math.PI * 2);
-                ctx.fill();
-                ctx.stroke();
-            } else if (heart.type === 'zzz') {
-                ctx.fillStyle = '#cccccc';
-                ctx.font = font(heart.size);
-                ctx.fillText('Z', heart.x, heart.y);
-            } else if (heart.type === 'lightning') {
-                ctx.fillStyle = '#ffff00';
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 1;
-                ctx.font = boldFont(heart.size);
-                ctx.strokeText('⚡', heart.x, heart.y);
-                ctx.fillText('⚡', heart.x, heart.y);
-            } else if (heart.type === 'food') {
-                ctx.fillStyle = '#ff6b6b';
-                ctx.font = font(heart.size);
-                ctx.fillText('🍎', heart.x, heart.y);
-            } else if (heart.type === 'question') {
-                ctx.fillStyle = '#ffaa00';
-                ctx.font = boldFont(heart.size);
-                ctx.fillText('?', heart.x, heart.y);
-            } else if (heart.type === 'exclamation') {
-                ctx.fillStyle = '#ff0000';
-                ctx.font = boldFont(heart.size);
-                ctx.fillText('!', heart.x, heart.y);
+            const sprite = this._getIconSprite(heart.type, heart.size);
+            if (sprite) {
+                ctx.drawImage(sprite, heart.x - sprite.width * 0.5, heart.y - sprite.height * 0.5);
             } else {
-                // Hearts in romantic phase - pink color
-                ctx.fillStyle = '#ff69b4';
-                ctx.font = font(heart.size);
-                ctx.fillText('❤️', heart.x, heart.y);
+                this._drawIconSprite(ctx, heart.type, heart.size, heart.x, heart.y);
             }
         }
         ctx.restore();
@@ -958,6 +1002,7 @@ export class CuriousFishLayer {
         document.removeEventListener('touchmove', this.handleTouchMove);
         this.fish = null;
         this.hearts = [];
+        this._iconSpriteCache.clear();
         this.allFish = [];
         this.skeletons = [];
         this.dancePartner = null;

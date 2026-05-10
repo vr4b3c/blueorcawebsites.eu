@@ -29,6 +29,7 @@ export class JellyfishLayer {
         pulsePerMax: 0.0032,    // rad/ms  → ~2 s period
         pulseAmpMin: 12,        // px vertical travel per pulse
         pulseAmpMax: 28,
+        allowHighCostEffects: true,
     };
 
     constructor(options = {}) {
@@ -37,13 +38,20 @@ export class JellyfishLayer {
         this.particles = [];   // bioluminescent tentacle sparks
         this._schoolsSpawned = 0;
         this.manager = null;
+        this._qualityMultiplier = 1.0;
+        this.imageAspectRatio = 1.4;
+        this._tintedVariants = null;
 
         this.config = { ...JellyfishLayer.DEFAULT_CONFIG, ...options };
 
         this.image = new Image();
         this.imageLoaded = false;
         this.tintedImage = null; // OffscreenCanvas with cyan tint pre-baked
-        this.image.onload = () => { this.imageLoaded = true; this._buildTintedImage(); };
+        this.image.onload = () => {
+            this.imageLoaded = true;
+            this.imageAspectRatio = (this.image.naturalHeight / this.image.naturalWidth) || 1.4;
+            this._buildTintedImage();
+        };
         this.image.onerror = () => { console.warn('JellyfishLayer: failed to load medusa.webp'); };
         this.image.src = 'assets/images/fish/medusa.webp';
     }
@@ -59,6 +67,11 @@ export class JellyfishLayer {
         this.jellyfish = [];
         this.particles = [];
         this._schoolsSpawned = 0;
+        this._tintedVariants = null;
+    }
+
+    setQuality(quality) {
+        this._qualityMultiplier = quality;
     }
 
     onResize(width, height) {
@@ -182,11 +195,24 @@ export class JellyfishLayer {
     // Pre-bake the static colour transforms (sepia + saturate + hue-rotate) into an
     // OffscreenCanvas so that per-frame we only need a cheap single brightness() filter.
     _buildTintedImage() {
+        if (!this.config.allowHighCostEffects) return;
+
         const oc   = new OffscreenCanvas(this.image.naturalWidth, this.image.naturalHeight);
         const octx = oc.getContext('2d');
+        if (!octx) return;
         octx.filter = 'sepia(1) saturate(3) hue-rotate(170deg)';
         octx.drawImage(this.image, 0, 0);
         this.tintedImage = oc;
+
+        const brightnessSteps = [1.10, 1.18, 1.26, 1.35];
+        this._tintedVariants = brightnessSteps.map((brightness) => {
+            const variant = new OffscreenCanvas(this.image.naturalWidth, this.image.naturalHeight);
+            const variantCtx = variant.getContext('2d');
+            if (!variantCtx) return oc;
+            variantCtx.filter = `brightness(${brightness})`;
+            variantCtx.drawImage(oc, 0, 0);
+            return variant;
+        });
     }
 
     // -----------------------------------------------------------------
@@ -197,29 +223,30 @@ export class JellyfishLayer {
         // velVal 0..1 — peaks at max contraction speed (cos of same phase)
         const velVal   = Math.max(0, Math.sin(phase));  // == d/dt(sineVal), peaks at mid-stroke
 
-        const aspect = this.imageLoaded ? (this.image.height / this.image.width || 1.4) : 1.4;
+        const aspect = this.imageAspectRatio;
         const w = jf.size * 2;
         const h = w * aspect;
-
-        ctx.save();
-        ctx.translate(jf.x, y);
+        const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
 
         // Subtle bell deformation — reduced from 0.22/0.48
         const scaleX = 1 - velVal * 0.09;
         const scaleY = 1 + velVal * 0.18;
-        ctx.scale(scaleX, scaleY);
-
+        ctx.setTransform(scaleX, 0, 0, scaleY, jf.x, y);
         ctx.globalAlpha = jf.alpha * (0.85 + sineVal * 0.15);
 
         if (this.tintedImage) {
-            // Only brightness changes per-frame — cheapest possible filter
-            ctx.filter = `brightness(${1.1 + sineVal * 0.25})`;
-            ctx.drawImage(this.tintedImage, -w / 2, -h / 2, w, h);
-            ctx.filter = 'none';
+            const drawSource = useHighCostEffects && this._tintedVariants?.length
+                ? this._tintedVariants[Math.min(this._tintedVariants.length - 1, Math.floor(sineVal * this._tintedVariants.length))]
+                : this.tintedImage;
+            ctx.drawImage(drawSource, -w / 2, -h / 2, w, h);
         } else if (this.imageLoaded) {
-            ctx.filter = `sepia(1) saturate(3) hue-rotate(170deg) brightness(${1.1 + sineVal * 0.25})`;
+            if (useHighCostEffects) {
+                ctx.filter = `sepia(1) saturate(3) hue-rotate(170deg) brightness(${1.1 + sineVal * 0.25})`;
+            }
             ctx.drawImage(this.image, -w / 2, -h / 2, w, h);
-            ctx.filter = 'none';
+            if (useHighCostEffects) {
+                ctx.filter = 'none';
+            }
         } else {
             ctx.fillStyle = `rgba(100, 215, 255, ${0.5 + sineVal * 0.2})`;
             ctx.beginPath();
@@ -227,7 +254,11 @@ export class JellyfishLayer {
             ctx.fill();
         }
 
-        ctx.restore();
+        if (useHighCostEffects && !this.tintedImage) {
+            ctx.filter = 'none';
+        }
+        ctx.globalAlpha = 1.0;
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
 
     // -----------------------------------------------------------------

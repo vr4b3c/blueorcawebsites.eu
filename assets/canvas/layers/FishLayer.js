@@ -26,6 +26,7 @@ export class FishLayer {
         this._sharkPool = [];       // Reusable fish objects — avoids GC churn on school spawn/death
         this._bloodPool = [];       // Reusable blood particle objects
         this._schoolCentroidsCache = new Map();
+        this._schoolMembershipDirty = true;
         this.mouseX = null;
         this.mouseY = null;
         this.manager = null; // Reference to manager for food particles
@@ -92,6 +93,8 @@ export class FishLayer {
         this._schoolsSpawned = 0;
         this._nextSchoolId = 0;   // monotonic — never resets to avoid schoolId collisions on quality change
         this._qualityMultiplier = 1.0;
+        this._schoolCentroidsCache.clear();
+        this._schoolMembershipDirty = true;
         this._recalcSchoolCount(width, height);
         
         // Store reference to manager for food access
@@ -118,6 +121,8 @@ export class FishLayer {
         document.removeEventListener('mousemove', this.handleMouseMove);
         this.sharks = [];
         this._schoolsSpawned = 0;
+        this._schoolCentroidsCache.clear();
+        this._schoolMembershipDirty = true;
         console.log('FishLayer destroyed');
     }
     
@@ -134,6 +139,89 @@ export class FishLayer {
         const density = this.config.schoolDensity || 600000;
         const count = Math.max(1, Math.min(8, Math.round(area / density)));
         this._autoSchoolCount = count;
+    }
+
+    _ensureSchoolMembershipCache() {
+        if (!this._schoolMembershipDirty) return;
+
+        for (const [, centroid] of this._schoolCentroidsCache) {
+            centroid.members.length = 0;
+        }
+
+        for (const shark of this.sharks) {
+            if (shark.isDying || typeof shark.schoolId === 'undefined') continue;
+
+            let centroid = this._schoolCentroidsCache.get(shark.schoolId);
+            if (!centroid) {
+                centroid = {
+                    x: 0,
+                    y: 0,
+                    speed: 0,
+                    count: 0,
+                    members: [],
+                };
+                this._schoolCentroidsCache.set(shark.schoolId, centroid);
+            }
+
+            centroid.members.push(shark);
+        }
+
+        for (const [schoolId, centroid] of this._schoolCentroidsCache) {
+            if (centroid.members.length === 0) {
+                this._schoolCentroidsCache.delete(schoolId);
+            }
+        }
+
+        this._schoolMembershipDirty = false;
+    }
+
+    _updateSchoolCentroids(width) {
+        this._ensureSchoolMembershipCache();
+
+        for (const [schoolId, centroid] of this._schoolCentroidsCache) {
+            let count = 0;
+            let sumX = 0;
+            let sumY = 0;
+            let sumSpeed = 0;
+            let writeIndex = 0;
+            let referenceX = 0;
+
+            for (let i = 0; i < centroid.members.length; i++) {
+                const fish = centroid.members[i];
+                if (!fish || fish.isDying || fish.schoolId !== schoolId) {
+                    this._schoolMembershipDirty = true;
+                    continue;
+                }
+
+                centroid.members[writeIndex++] = fish;
+
+                let fx = fish.x;
+                if (count === 0) {
+                    referenceX = fx;
+                } else if (Math.abs(fx - referenceX) > width * 0.5) {
+                    fx += fx < referenceX ? width : -width;
+                }
+
+                sumX += fx;
+                sumY += fish.baseY;
+                sumSpeed += fish.speed;
+                count++;
+            }
+
+            centroid.members.length = writeIndex;
+
+            if (count === 0) {
+                this._schoolCentroidsCache.delete(schoolId);
+                continue;
+            }
+
+            centroid.count = count;
+            centroid.x = ((sumX / count) % width + width) % width;
+            centroid.y = sumY / count;
+            centroid.speed = sumSpeed / count;
+        }
+
+        return this._schoolCentroidsCache;
     }
     
     render(ctx, currentTime, deltaTime, width, height) {
@@ -178,32 +266,24 @@ export class FishLayer {
             }
         }
 
-        // Get targeted fish from curious fish layer
-        const curiousFishLayer = this.manager && this.manager.getLayer('curiousFish');
+        const curiousFishLayer = this.manager && this.manager.getLayer
+            ? this.manager.getLayer('curiousFish')
+            : null;
+        const curiousFish = curiousFishLayer && curiousFishLayer.enabled ? curiousFishLayer.fish : null;
+        const curiousFishSize = curiousFish
+            ? (curiousFish.currentSize || curiousFishLayer.config.size)
+            : 0;
+        const canAvoidCuriousFish = !!(curiousFish && !curiousFishLayer.isAttackingSchoolFish);
         const targetedFish = curiousFishLayer && curiousFishLayer.targetSchoolFish;
+        const dasLayer = this.manager && this.manager.getLayer
+            ? this.manager.getLayer('das')
+            : null;
+        const dasLure = dasLayer && dasLayer.fish ? dasLayer._getLurePos(dasLayer.fish) : null;
+        const showCuriousFishDebug = !!(this.config.showDebug && curiousFish);
+        const foodParticles = this.manager?.foodLayer?.getParticles?.() || [];
+        const hasFoodParticles = foodParticles.length > 0;
 
-        // Pre-compute per-school centroids using wrap-aware (circular) averaging
-        // so schools stay coherent even when fish span the screen wrap boundary.
-        this._schoolCentroidsCache.clear();
-        const schoolCentroids = this._schoolCentroidsCache;
-        for (const f of this.sharks) {
-            if (f.isDying || typeof f.schoolId === 'undefined') continue;
-            const c = schoolCentroids.get(f.schoolId);
-            if (c) {
-                // Accumulate wrap-normalised X: offset fish that are on the far side
-                let fx = f.x;
-                if (Math.abs(fx - c.x / c.count) > width * 0.5) {
-                    fx += fx < c.x / c.count ? width : -width;
-                }
-                c.x += fx; c.y += f.baseY; c.speed += f.speed; c.count++;
-            } else {
-                schoolCentroids.set(f.schoolId, { x: f.x, y: f.baseY, speed: f.speed, count: 1 });
-            }
-        }
-        for (const [, c] of schoolCentroids) {
-            c.x = ((c.x / c.count) % width + width) % width; // wrap back 0..width
-            c.y /= c.count; c.speed /= c.count;
-        }
+        const schoolCentroids = this._updateSchoolCentroids(width);
         
         // Debug visualization - draw vertical margin boundaries
         if (this.config.showDebug) {
@@ -338,6 +418,7 @@ export class FishLayer {
 
             // Cache centroid once per fish (flocking + screen-wrap both use it)
             const centroid = schoolCentroids.get(shark.schoolId);
+            const schoolMembers = centroid?.members || null;
 
             // Update position
             // Capture previous X to detect near-zero net movement later
@@ -371,18 +452,12 @@ export class FishLayer {
             }
             
             // Curious fish avoidance (disabled during combat) - Use squared distance
-            if (this.manager && this.manager.getLayer && !shark.isBeingAttacked) {
-                const curiousFishLayer = this.manager.getLayer('curiousFish');
-                if (curiousFishLayer && curiousFishLayer.enabled && curiousFishLayer.fish && !curiousFishLayer.isAttackingSchoolFish) {
-                    const cfx = curiousFishLayer.fish.x;
-                    const cfy = curiousFishLayer.fish.y;
-                    const cfSize = curiousFishLayer.fish.currentSize || curiousFishLayer.config.size;
-                    
-                    const dx = shark.x - cfx;
-                    const dy = currentY - cfy;
+            if (canAvoidCuriousFish && !shark.isBeingAttacked) {
+                    const dx = shark.x - curiousFish.x;
+                    const dy = currentY - curiousFish.y;
                     const distanceSquared = dx * dx + dy * dy; // Avoid sqrt for performance
                     
-                    const avoidRadius = this.config.avoidRadius + cfSize;
+                    const avoidRadius = this.config.avoidRadius + curiousFishSize;
                     const avoidRadiusSquared = avoidRadius * avoidRadius;
                     
                     if (distanceSquared < avoidRadiusSquared && distanceSquared > 0) {
@@ -392,7 +467,6 @@ export class FishLayer {
                         shark.x += (dx / distance) * avoidStrength;
                         shark.baseY += (dy / distance) * avoidStrength * 0.5;
                     }
-                }
             }
 
             // Mouse cursor avoidance — fish scatter gently when cursor is close.
@@ -420,6 +494,7 @@ export class FishLayer {
 
             if (!shark.isIndependent) {
                 const baseSeparationRadius = 40 * (1 + (sizeFactor - 1) * 1.5);
+                const baseSeparationRadiusSq = baseSeparationRadius * baseSeparationRadius;
 
                 // Centroid pull — spring-like: dead zone 20 px, progressive up to ~200 px.
                 // When the centroid is BEHIND the fish (fish has advanced past centroid during
@@ -452,14 +527,13 @@ export class FishLayer {
                 let separationX = 0;
                 let separationY = 0;
                 let sepChecks = 0;
-                for (const other of this.sharks) {
+                for (const other of schoolMembers || this.sharks) {
                     if (other === shark || other.isDying) continue;
-                    if (shark.schoolId !== other.schoolId) continue;  // filter before counting
                     if (sepChecks++ >= 5) break;
                     const odx = shark.x - other.x;
                     const ody = shark.baseY - other.baseY;
                     const odistSq = odx * odx + ody * ody;
-                    if (odistSq < baseSeparationRadius * baseSeparationRadius && odistSq > 0) {
+                    if (odistSq < baseSeparationRadiusSq && odistSq > 0) {
                         const odist = Math.sqrt(odistSq);
                         separationX += odx / odist;
                         separationY += ody / odist;
@@ -471,25 +545,42 @@ export class FishLayer {
             }
             
             // Food attraction — only food ahead in travel direction, no direction reversal
-            if (this.manager && this.manager.foodLayer && this.manager.foodLayer.getParticles().length > 0) {
+            if (hasFoodParticles) {
                 // fish1 (type 2), fish2 (type 1) and curiousfish school (type 3) have wider detection and stronger pull
                 const isHungry  = shark.fishType === 1 || shark.fishType === 2 || shark.fishType === 3;
                 const detectR   = isHungry ? 380 : 220;
+                const detectRSq = detectR * detectR;
                 let nearestFood = null;
                 let nearestDistSq = detectR * detectR;
+                const cachedFood = shark.targetFood;
 
-                for (const food of this.manager.foodLayer.getParticles()) {
-                    if (food.eaten) continue;
-                    const fdx = food.x - shark.x;
-                    const fdy = food.y - currentY;
-                    const fdistSq = fdx * fdx + fdy * fdy;
-                    // Only attract to food that is roughly ahead (same half of screen)
-                    const isAhead = (shark.direction > 0 && fdx > -40) || (shark.direction < 0 && fdx < 40);
-                    if (isAhead && fdistSq < nearestDistSq) {
-                        nearestDistSq = fdistSq;
-                        nearestFood = food;
+                if (cachedFood && !cachedFood.eaten) {
+                    const cachedDx = cachedFood.x - shark.x;
+                    const cachedDy = cachedFood.y - currentY;
+                    const cachedDistSq = cachedDx * cachedDx + cachedDy * cachedDy;
+                    const cachedAhead = (shark.direction > 0 && cachedDx > -40) || (shark.direction < 0 && cachedDx < 40);
+                    if (cachedAhead && cachedDistSq < detectRSq) {
+                        nearestFood = cachedFood;
+                        nearestDistSq = cachedDistSq;
                     }
                 }
+
+                if (!nearestFood) {
+                    for (const food of foodParticles) {
+                        if (food.eaten) continue;
+                        const fdx = food.x - shark.x;
+                        const fdy = food.y - currentY;
+                        const fdistSq = fdx * fdx + fdy * fdy;
+                        // Only attract to food that is roughly ahead (same half of screen)
+                        const isAhead = (shark.direction > 0 && fdx > -40) || (shark.direction < 0 && fdx < 40);
+                        if (isAhead && fdistSq < nearestDistSq) {
+                            nearestDistSq = fdistSq;
+                            nearestFood = food;
+                        }
+                    }
+                }
+
+                shark.targetFood = nearestFood;
 
                 if (nearestFood) {
                     const fdx = nearestFood.x - shark.x;
@@ -515,20 +606,22 @@ export class FishLayer {
                     // Eat
                     if (nearestDistSq < 14 * 14) {
                         nearestFood.eaten = true;
+                        shark.targetFood = null;
                         shark.size = Math.min(80, shark.size + 0.5);
                         shark.speed = shark.baseSpeed;
                     }
                 } else {
+                    shark.targetFood = null;
                     shark.speed = Math.max(shark.baseSpeed, shark.speed - 0.02);
                 }
+            } else {
+                shark.targetFood = null;
             }
 
             // Das lure attraction — same gentle pull as food, but toward kill zone
-            const dasLayer = this.manager && this.manager.getLayer('das');
-            if (dasLayer && dasLayer.fish) {
-                const lure = dasLayer._getLurePos(dasLayer.fish);
-                const ldx = lure.x - shark.x;
-                const ldy = lure.y - currentY;
+            if (dasLure) {
+                const ldx = dasLure.x - shark.x;
+                const ldy = dasLure.y - currentY;
                 const ldistSq = ldx * ldx + ldy * ldy;
                 const LURE_RANGE = 220 * 220;
                 const isAhead = (shark.direction > 0 && ldx > -40) || (shark.direction < 0 && ldx < 40);
@@ -576,16 +669,13 @@ export class FishLayer {
                 this.drawShark(ctx, shark.x, currentY, shark.size, shark.direction, verticalPhase, shark.image, 0, 0, shark);
                 
                 // Debug visualization
-                if (this.config.showDebug && this.manager && this.manager.getLayer) {
-                    const curiousFishLayer = this.manager.getLayer('curiousFish');
-                    if (curiousFishLayer && curiousFishLayer.enabled && curiousFishLayer.fish) {
-                        ctx.strokeStyle = shark.isBeingAttacked ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 255, 0, 0.3)';
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        // Draw ellipse instead of circle - fish are elongated
-                        ctx.ellipse(shark.x, currentY, shark.size * 1.0, shark.size * 0.4, 0, 0, Math.PI * 2);
-                        ctx.stroke();
-                    }
+                if (showCuriousFishDebug) {
+                    ctx.strokeStyle = shark.isBeingAttacked ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 255, 0, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    // Draw ellipse instead of circle - fish are elongated
+                    ctx.ellipse(shark.x, currentY, shark.size * 1.0, shark.size * 0.4, 0, 0, Math.PI * 2);
+                    ctx.stroke();
                 }
             }
             
@@ -594,6 +684,9 @@ export class FishLayer {
         }
         
         // Return dropped fish objects to pool before truncating — avoids GC churn
+        if (writeIndex < this.sharks.length) {
+            this._schoolMembershipDirty = true;
+        }
         for (let i = writeIndex; i < this.sharks.length; i++) {
             this._sharkPool.push(this.sharks[i]);
         }
@@ -878,6 +971,8 @@ export class FishLayer {
             shark.isIndependent = undefined;
             this.sharks.push(shark);
         }
+
+        this._schoolMembershipDirty = true;
     }
 
     /**
@@ -930,6 +1025,8 @@ export class FishLayer {
             fish.isIndependent   = undefined;
             this.sharks.push(fish);
         }
+
+        this._schoolMembershipDirty = true;
     }
 
     /**

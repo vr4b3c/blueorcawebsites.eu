@@ -35,6 +35,7 @@ export class WebGLOceanRenderer {
             // DPR cap — set by DeviceProfile to prevent memory waste on hi-DPI mobile
             dprCap: options.dprCap || 1.5,
         };
+        this.baseDprCap = this.options.dprCap;
         
         // Quality settings
         this.qualityMultiplier = 1.0;
@@ -52,6 +53,7 @@ export class WebGLOceanRenderer {
         this.bubblesLayer = null;
         this.planktonLayer = null;
         this.waterSurfaceLayer = null;
+        this.rendererInfo = null;
     }
     
     init() {
@@ -89,6 +91,30 @@ export class WebGLOceanRenderer {
         document.body.classList.add('has-webgl');
         
         return this;
+    }
+
+    getRendererInfo() {
+        if (!this.gl) return null;
+        if (this.rendererInfo) return this.rendererInfo;
+
+        const ext = this.gl.getExtension('WEBGL_debug_renderer_info');
+        const vendorParam = ext ? ext.UNMASKED_VENDOR_WEBGL : this.gl.VENDOR;
+        const rendererParam = ext ? ext.UNMASKED_RENDERER_WEBGL : this.gl.RENDERER;
+
+        this.rendererInfo = {
+            vendor: String(this.gl.getParameter(vendorParam) || ''),
+            renderer: String(this.gl.getParameter(rendererParam) || ''),
+        };
+
+        return this.rendererInfo;
+    }
+
+    isSoftwareRenderer() {
+        const info = this.getRendererInfo();
+        if (!info) return false;
+
+        const label = `${info.vendor} ${info.renderer}`.toLowerCase();
+        return /swiftshader|llvmpipe|softpipe|software|microsoft basic render|mesa offscreen/.test(label);
     }
     
     initLayers() {
@@ -128,6 +154,7 @@ export class WebGLOceanRenderer {
     handleContextLost(e) {
         e.preventDefault(); // Required to allow contextrestored to fire
         this.gl = null;
+        this.rendererInfo = null;
         console.warn('WebGL context lost — rendering paused until restored');
         // Notify MasterRenderer so it can jump to CANVAS_GRADIENT level immediately
         if (typeof this.onContextLost === 'function') this.onContextLost();
@@ -147,6 +174,7 @@ export class WebGLOceanRenderer {
         });
         if (!gl) return;
         this.gl = gl;
+        this.rendererInfo = null;
         gl.clearColor(0.02, 0.05, 0.1, 1.0);
         this.onResize(this.canvas.width, this.canvas.height);
         // Destroy stale layer objects (GL calls on the dead context silently no-op per spec,
@@ -186,6 +214,19 @@ export class WebGLOceanRenderer {
         this.canvas.style.height = height + 'px';
 
         this.pendingResize = null;
+    }
+
+    setDprCap(dprCap) {
+        const nextCap = Math.max(1.0, Math.min(this.baseDprCap, dprCap));
+        if (Math.abs(nextCap - this.options.dprCap) < 0.01) return;
+
+        this.options.dprCap = nextCap;
+        this.pendingResize = {
+            dpr: Math.min(window.devicePixelRatio || 1, this.options.dprCap),
+            width: window.innerWidth,
+            height: window.innerHeight,
+        };
+        this.applyResize();
     }
     
     onResize(width, height) {
@@ -311,6 +352,12 @@ export class WebGLOceanRenderer {
     }
     
     applyQualitySettings() {
+        if (this.gradientLayer) {
+            this.gradientLayer.setQuality(this.qualityMultiplier);
+        }
+        if (this.raysLayer) {
+            this.raysLayer.setQuality(this.qualityMultiplier);
+        }
         if (this.bubblesLayer) {
             this.bubblesLayer.setQuality(this.qualityMultiplier);
         }
@@ -399,9 +446,7 @@ export class WebGLOceanRenderer {
      */
     setQuality(quality) {
         this.qualityMultiplier = quality;
-        if (this.bubblesLayer) this.bubblesLayer.setQuality(quality);
-        if (this.planktonLayer) this.planktonLayer.setQuality(quality);
-        if (this.waterSurfaceLayer) this.waterSurfaceLayer.setQuality(quality);
+        this.applyQualitySettings();
     }
 
     /**
@@ -411,6 +456,10 @@ export class WebGLOceanRenderer {
      * @param {number} factor - 0.0–1.0  (0.5 = half budget)
      */
     reduceBudget(factor) {
+        const budgetFactor = Math.max(0.1, factor);
+        const nextDprCap = budgetFactor <= 0.6 ? Math.min(this.baseDprCap, 1.25) : this.baseDprCap;
+
+        this.setDprCap(nextDprCap);
         if (this.raysLayer)          this.raysLayer.reduceBudget(factor);
         if (this.bubblesLayer)       this.bubblesLayer.reduceBudget(factor);
         if (this.planktonLayer)      this.planktonLayer.reduceBudget(factor);
@@ -431,5 +480,6 @@ export class WebGLOceanRenderer {
         this.canvas.removeEventListener('webglcontextrestored', this.handleContextRestored);
         
         this.gl = null;
+        this.rendererInfo = null;
     }
 }

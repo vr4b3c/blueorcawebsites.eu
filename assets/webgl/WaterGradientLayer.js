@@ -6,6 +6,7 @@ export class WaterGradientLayer {
         this.gl = gl;
         this.program = null;
         this.buffers = {};
+        this.qualityMultiplier = 1.0;
         
         // Color palette - ocean colors from dark to light
         const paletteHex = [
@@ -57,6 +58,7 @@ export class WaterGradientLayer {
         gl.useProgram(this.program);
         if (this.locs.topColor) gl.uniform4fv(this.locs.topColor, this.gradient.topColor);
         if (this.locs.bottomColor) gl.uniform4fv(this.locs.bottomColor, this.gradient.bottomColor);
+        if (this.locs.causticsStrength) gl.uniform1f(this.locs.causticsStrength, 1.0);
     }
 
     compileShaders() {
@@ -81,6 +83,7 @@ export class WaterGradientLayer {
             uniform vec4 u_topColor;
             uniform vec4 u_bottomColor;
             uniform float u_time;
+            uniform float u_causticsStrength;
             
             float random(vec2 p) {
                 return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453123);
@@ -120,10 +123,10 @@ export class WaterGradientLayer {
                 // Early-exit skips the expensive caustics call for deeply-submerged pixels
                 // where the contribution (0.13 * surfaceFade * c) would be below ~1/255.
                 float surfaceFade = smoothstep(0.0, 0.65, v_uv.y); // 0 at bottom, 1 near top
-                if (surfaceFade > 0.05) {
+                if (u_causticsStrength > 0.0 && surfaceFade > 0.05) {
                     float c = caustics(v_uv, u_time);
                     vec3 causticColor = vec3(0.55, 0.88, 1.0);
-                    baseColor.rgb += causticColor * c * 0.13 * surfaceFade;
+                    baseColor.rgb += causticColor * c * 0.13 * surfaceFade * u_causticsStrength;
                 }
             
                 // Dithering to kill banding
@@ -147,6 +150,7 @@ export class WaterGradientLayer {
             const p = this.program;
             this.locs = {
                 time: gl.getUniformLocation(p, 'u_time'),
+                causticsStrength: gl.getUniformLocation(p, 'u_causticsStrength'),
                 topColor: gl.getUniformLocation(p, 'u_topColor'),
                 bottomColor: gl.getUniformLocation(p, 'u_bottomColor'),
                 position: gl.getAttribLocation(p, 'a_position'),
@@ -237,6 +241,15 @@ export class WaterGradientLayer {
     onResize(width, height) {
         this.width = width;
         this.height = height;
+    }
+
+    setQuality(quality) {
+        this.qualityMultiplier = quality;
+        if (!this.program || !this.locs?.causticsStrength) return;
+
+        const strength = quality >= 0.8 ? 1.0 : quality >= 0.6 ? 0.35 : 0.0;
+        this.gl.useProgram(this.program);
+        this.gl.uniform1f(this.locs.causticsStrength, strength);
     }
 
     destroy() {

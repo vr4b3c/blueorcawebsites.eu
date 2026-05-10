@@ -18,15 +18,35 @@ import {
 import { MasterRenderer } from '../core/MasterRenderer.js';
 import { getDeviceProfile } from './utils/DeviceProfile.js';
 
+function isRenderDebugEnabled() {
+    if (typeof window === 'undefined') return false;
+    return new URLSearchParams(window.location.search).get('debug-render') === '1';
+}
+
+function supportsCanvasFilters() {
+    const probe = document.createElement('canvas');
+    const ctx = probe.getContext('2d');
+    if (!ctx) return false;
+
+    const testFilter = 'brightness(1.05)';
+    ctx.filter = 'none';
+    ctx.filter = testFilter;
+    return ctx.filter === testFilter;
+}
+
 export function initCanvasBackground() {
 
+    const renderDebugEnabled = isRenderDebugEnabled();
+
     const { entityBudget: budget } = getDeviceProfile();
+    const preferLiteCanvasEffects = window.blueOrcaRenderBootstrap?.preferLiteCanvasEffects === true;
+    const allowHighCostEffects = !preferLiteCanvasEffects && budget.canvas2dFPS >= 40 && supportsCanvasFilters();
 
     const manager = createCanvasBackground({
         zIndex: 0,
-        showStats: true,
+        showStats: renderDebugEnabled,
         targetFPS: 60,
-        debug: false,
+        debug: renderDebugEnabled,
         errorHandling: false, // Disable error handling for max performance
         profilePerformance: false, // Disabled: triggers CpuProfiler overhead every session
         skipDefaultLayers: true,
@@ -46,6 +66,7 @@ export function initCanvasBackground() {
             // showDebug: false     // Debug visualization
         },
         curiousFishConfig: {
+            allowHighCostEffects,
             // speed: 5.0,          // Fish movement speed (CuriousFishLayer.DEFAULT_CONFIG)
             // maxSpeed: 2.0,       // Maximum speed
             // size: 30,            // Initial fish size
@@ -60,16 +81,16 @@ export function initCanvasBackground() {
     const fishLayer = new FishLayer(manager.config.fishConfig || {});
     manager.addLayer('fish', fishLayer);
 
-    const dasFishLayer = new DasFishLayer();
+    const dasFishLayer = new DasFishLayer({ allowHighCostEffects });
     manager.addLayer('das', dasFishLayer);
 
-    const jellyfishLayer = new JellyfishLayer();
+    const jellyfishLayer = new JellyfishLayer({ allowHighCostEffects });
     manager.addLayer('jellyfish', jellyfishLayer);
 
     // Create MasterRenderer to coordinate both WebGL and Canvas rendering.
     // canvas2dFPS is device-tier-aware — lower values on weak devices reduce
     // CPU load while keeping WebGL visuals smooth.
-    const masterRenderer = new MasterRenderer({ canvas2dFPS: budget.canvas2dFPS });
+    const masterRenderer = new MasterRenderer({ canvas2dFPS: budget.canvas2dFPS, debug: renderDebugEnabled });
     
     // Register WebGL renderer if it exists
     if (window.webglOceanRenderer) {

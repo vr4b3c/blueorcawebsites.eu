@@ -8,6 +8,8 @@ export class LightRaysLayer {
         this.buffers = {};
         this.rays = [];
         this.options = { rayCount: 5, ...options };
+        this.qualityMultiplier = 1.0;
+        this._budgetFactor = 1.0;
         // Sub-layer toggles
         this.rayBeamsEnabled = true;
         this.sunGlowEnabled = true;
@@ -229,17 +231,24 @@ export class LightRaysLayer {
         gl.useProgram(program);
 
         const locs = this.locs;
+        const activeBudgetFactor = Math.max(0.0, this._budgetFactor || 1.0);
+        const allowRayBeams = this.rayBeamsEnabled && this.qualityMultiplier >= 0.55 && activeBudgetFactor > 0.35;
+        const allowSunGlow = this.sunGlowEnabled && this.qualityMultiplier >= 0.75 && activeBudgetFactor > 0.6;
+        const activeRayCount = allowRayBeams
+            ? Math.max(1, Math.round(this.rays.length * activeBudgetFactor))
+            : 0;
+
         gl.uniform1f(locs.time, currentTime);
-        gl.uniform1i(locs.rayCount, this.rays.length);
+        gl.uniform1i(locs.rayCount, activeRayCount);
 
         // Set toggle uniforms
-        gl.uniform1i(locs.rayBeamsEnabled, this.rayBeamsEnabled ? 1 : 0);
-        gl.uniform1i(locs.sunGlowEnabled, this.sunGlowEnabled ? 1 : 0);
+        gl.uniform1i(locs.rayBeamsEnabled, allowRayBeams ? 1 : 0);
+        gl.uniform1i(locs.sunGlowEnabled, allowSunGlow ? 1 : 0);
         
         // Build ray data into pre-allocated typed arrays, then upload with 3 uniform1fv calls
         // instead of the previous 15 individual uniform1f calls.
         const raySpeed = 0.00005;
-        for (let i = 0; i < this.rays.length; i++) {
+        for (let i = 0; i < activeRayCount; i++) {
             const ray = this.rays[i];
             this._raysArr[i]     = ray.x;
             this._swaysArr[i]    = Math.sin(currentTime * raySpeed * ray.speed + ray.offset) * 30;
@@ -282,11 +291,11 @@ export class LightRaysLayer {
      * @param {number} factor - 0.0–1.0  (0.5 = halve count, minimum 1 ray)
      */
     reduceBudget(factor) {
-        if (!this.program || !this.locs) return;
-        const activeCount = Math.max(1, Math.round(this.options.rayCount * factor));
-        const gl = this.gl;
-        gl.useProgram(this.program);
-        gl.uniform1i(this.locs.rayCount, activeCount);
+        this._budgetFactor = Math.max(0.0, factor);
+    }
+
+    setQuality(quality) {
+        this.qualityMultiplier = quality;
     }
 
     toggle(enabled) {

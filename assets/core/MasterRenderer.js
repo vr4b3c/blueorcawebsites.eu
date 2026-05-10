@@ -32,7 +32,8 @@ export class MasterRenderer {
         // heavy (both textures, high variance p90=6.81ms), causing Chrome's frame scheduler
         // to drop into a conservative 3-slot/37ms cadence (27fps). The throttle keeps
         // WebGL-only 'easy' frames that stabilise the compositor pacing.
-        this.canvas2dInterval = 1000 / (options.canvas2dFPS || 45);
+        this.baseCanvas2dFPS = options.canvas2dFPS || 45;
+        this.canvas2dInterval = 1000 / this.baseCanvas2dFPS;
         this.lastCanvas2dTime = 0;
 
         // 5-level degradation ladder:
@@ -75,12 +76,44 @@ export class MasterRenderer {
         
         this.render = this.render.bind(this);
     }
+
+    hasWebGLRenderer() {
+        return Boolean(this.webglRenderer && this.webglRenderer.canvas && this.webglRenderer.gl);
+    }
+
+    hasCanvasRenderer() {
+        if (!this.canvasManager) return false;
+        if (typeof this.canvasManager.canRender === 'function') {
+            return this.canvasManager.canRender();
+        }
+        return Boolean(this.canvasManager.ctx);
+    }
+
+    getCurrentLowFpsThreshold() {
+        if (this.tier <= 1) return this.LOW_FPS_THRESHOLD;
+        if (this.tier === 2) return this.LOW_FPS_THRESHOLD_CANVAS;
+        return this.LOW_FPS_THRESHOLD_FINAL;
+    }
+
+    syncCanvasThrottle() {
+        let targetFPS = this.baseCanvas2dFPS;
+
+        if (this.tier >= 4) {
+            targetFPS = 0;
+        } else if (this.tier >= 3) {
+            targetFPS = Math.min(targetFPS, 30);
+        }
+
+        this.canvas2dInterval = targetFPS > 0 ? 1000 / targetFPS : Number.POSITIVE_INFINITY;
+    }
     
     /**
      * Register WebGL renderer and disable its internal rAF loop
      * @param {WebGLOceanRenderer} renderer 
      */
     registerWebGLRenderer(renderer) {
+        if (!renderer || !renderer.canvas) return;
+
         this.webglRenderer = renderer;
         // Zakázat vlastní rAF loop
         if (renderer.rafId) {
@@ -115,8 +148,19 @@ export class MasterRenderer {
      */
     start() {
         if (this.isRunning) return;
+        const hasWebGL = this.hasWebGLRenderer();
+        const hasCanvas = this.hasCanvasRenderer();
+
+        if (!hasWebGL && !hasCanvas) {
+            this.tier = 4;
+            document.body.classList.remove('has-webgl');
+            console.warn('[MasterRenderer] No usable render backends available — CSS-only fallback active');
+            return;
+        }
+
         // Sync tier with actually registered renderers
-        if (!this.webglRenderer && this.tier === 0) this.tier = 1;
+        if (!hasWebGL && this.tier === 0) this.tier = 1;
+        this.syncCanvasThrottle();
 
         // Always start at full budget — no ramp-up, no adaptive scaling.
         this._rampFactor   = 1.0;
@@ -128,7 +172,9 @@ export class MasterRenderer {
         this.fpsUpdateTime = this.lastTime;
         this.frameCount = 0;
         this._warmupUntil = this.lastTime + this._warmupDuration;
-        this.debugPanel = new DebugPanel();
+        if (this.debug) {
+            this.debugPanel = new DebugPanel();
+        }
         this.rafId = requestAnimationFrame(this.render);
 
         // Pause the loop when the tab is hidden, resume when visible again.
@@ -194,13 +240,13 @@ export class MasterRenderer {
         const renderStart = performance.now();
         
         // Render WebGL background FIRST (z-index nejnižší) — full display rate
-        if (this.webglRenderer && this.webglRenderer.gl) {
+        if (this.hasWebGLRenderer()) {
             this.webglRenderer.renderFrame(currentTime, deltaTime);
         }
         
         // Render 2D Canvas foreground — throttled to 45fps so WebGL-only frames provide
         // compositor breathing room and keep the frame schedule stable
-        if (this.canvasManager && this.canvasManager.ctx) {
+        if (this.hasCanvasRenderer()) {
             if (currentTime - this.lastCanvas2dTime >= this.canvas2dInterval) {
                 const canvas2dDelta = currentTime - this.lastCanvas2dTime;
                 this.lastCanvas2dTime = currentTime;
@@ -213,8 +259,10 @@ export class MasterRenderer {
         
         // Update FPS display (moved from setInterval to rAF loop)
         this.updateFPSDisplay(currentTime, deltaTime);
-        
-        this.rafId = requestAnimationFrame(this.render);
+
+        if (this.isRunning) {
+            this.rafId = requestAnimationFrame(this.render);
+        }
     }
     
     /**
@@ -230,8 +278,23 @@ export class MasterRenderer {
             this.frameCount = 0;
             this.fpsUpdateTime = currentTime;
 
-            // No adaptive degradation — WebGL either works (full power) or was
-            // disabled at init (tier 0) / on context loss.
+            const canDegrade = currentTime >= this._warmupUntil && this.tier < 4;
+            if (canDegrade) {
+                const threshold = this.getCurrentLowFpsThreshold();
+
+                if (this.currentFPS < threshold) {
+                    if (this.lowFpsSince === null) {
+                        this.lowFpsSince = currentTime;
+                    } else if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+                        this._stepDown();
+                        this.lowFpsSince = null;
+                    }
+                } else {
+                    this.lowFpsSince = null;
+                }
+            } else if (this.lowFpsSince !== null) {
+                this.lowFpsSince = null;
+            }
 
             // Log average FPS to console every 5 seconds (debug builds only)
             if (currentTime - this.fpsLogTime >= 5000) {
@@ -345,6 +408,7 @@ export class MasterRenderer {
             // WEBGL_LITE: cut particle budgets by 50%, WebGL stays running
             if (this.webglRenderer) this.webglRenderer.reduceBudget(0.5);
             this.tier = 1;
+            this.syncCanvasThrottle();
             console.warn('[MasterRenderer] Level 1 (WEBGL_LITE): particle budget halved');
         } else if (next === 2) {
             // CANVAS_GRADIENT: kill WebGL, CSS gradient visible, canvas still running
@@ -353,11 +417,13 @@ export class MasterRenderer {
             // CANVAS_REDUCED: push canvas quality to 0.4 (fewer fish, no decorative icons)
             this._reduceCanvasQuality(0.4);
             this.tier = 3;
+            this.syncCanvasThrottle();
             console.warn('[MasterRenderer] Level 3 (CANVAS_REDUCED): quality forced to 0.4');
         } else if (next === 4) {
             // GRADIENT_ONLY: stop canvas entirely, only CSS gradient remains
             this._stopCanvas();
             this.tier = 4;
+            this.syncCanvasThrottle();
             console.warn('[MasterRenderer] Level 4 (GRADIENT_ONLY): all animations stopped');
         }
     }
@@ -371,6 +437,7 @@ export class MasterRenderer {
         if (this.tier === 4) {
             this._resumeCanvas();
             this.tier = 3;
+            this.syncCanvasThrottle();
             console.log('[MasterRenderer] Recovery: Level 3 (canvas resumed after background)');
         }
     }
@@ -383,8 +450,19 @@ export class MasterRenderer {
             this.webglRenderer.canvas.style.display = 'none';
             this.webglRenderer = null;
         }
+        window.webglOceanRenderer = null;
         document.body.classList.remove('has-webgl');
+
+        if (!this.hasCanvasRenderer()) {
+            this.tier = 4;
+            this.syncCanvasThrottle();
+            console.warn('[MasterRenderer] Level 4 (GRADIENT_ONLY): no usable canvas backend after WebGL loss');
+            this.stop();
+            return;
+        }
+
         this.tier = 2;
+        this.syncCanvasThrottle();
         console.warn('[MasterRenderer] Level 2 (CANVAS_GRADIENT): WebGL off — CSS gradient active');
     }
 

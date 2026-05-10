@@ -890,7 +890,14 @@ body.drawer-open {
     transform-origin: left center;
     will-change: transform;
     background: var(--accent-mid);
+}
+
+.cta-slider-dot.is-active.is-progressing-a::after {
     animation: ctaTabProgress 10s linear forwards;
+}
+
+.cta-slider-dot.is-active.is-progressing-b::after {
+    animation: ctaTabProgressAlt 10s linear forwards;
 }
 
 @keyframes ctaTabProgress {
@@ -898,7 +905,13 @@ body.drawer-open {
     to   { transform: scaleX(1); }
 }
 
-.cta-slider:hover .cta-slider-dot.is-active::after {
+@keyframes ctaTabProgressAlt {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+}
+
+.cta-slider:hover .cta-slider-dot.is-active.is-progressing-a::after,
+.cta-slider:hover .cta-slider-dot.is-active.is-progressing-b::after {
     animation-play-state: paused;
 }
 
@@ -3188,12 +3201,16 @@ a[target="_blank"]:hover::after {
     position: fixed;
     bottom: 0.75rem;
     left: 0.75rem;
-    font-size: 0.65rem;
+    padding: 0.35rem 0.5rem;
+    background: rgba(3, 26, 42, 0.78);
+    border: 1px solid rgba(142, 210, 232, 0.15);
+    font-size: 0.82rem;
+    font-weight: 600;
     font-family: monospace;
-    color: rgba(142, 210, 232, 0.45);
+    color: rgba(224, 240, 246, 0.92);
     pointer-events: none;
     z-index: 9999;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.06em;
     line-height: 1;
 }
 

@@ -7,6 +7,12 @@ BlueOrca.carousel = {};
     var thumbs = document.querySelectorAll('.ref-thumb');
     var cards  = document.querySelectorAll('.ref-card.ref-detail');
 
+    function afterNextPaint(fn) {
+        requestAnimationFrame(function () {
+            requestAnimationFrame(fn);
+        });
+    }
+
     // --- Activate a reference card by data-ref (detail panel only) ---
     // DRUM PRISM: preserve-3d stage with front/top faces, rotates as rigid body
     var prismLock = null;
@@ -72,13 +78,13 @@ BlueOrca.carousel = {};
             'backface-visibility:hidden;' +
             'transform:rotate' + axis + '(' + sideAngle + 'deg) translateZ(' + r + 'px);';
 
-        void stage.offsetWidth; // force layout
-
         // Animate height and drum simultaneously
         var drumAngle = mobile ? (dir === 'right' ? 90 : -90) : (dir === 'right' ? -90 : 90);
-        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
-        stage.style.transform  = 'translateZ(-' + r + 'px) rotate' + axis + '(' + drumAngle + 'deg)';
         stage.style.height     = newH + 'px';
+        afterNextPaint(function () {
+            stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
+            stage.style.transform  = 'translateZ(-' + r + 'px) rotate' + axis + '(' + drumAngle + 'deg)';
+        });
 
         function finish() {
             panel.insertBefore(currentCard, stage);
@@ -157,6 +163,7 @@ BlueOrca.carousel = {};
     var activeIdx     = 0;
     var _animating    = false;
     var _queued       = null;   // last requested idx received during animation lock
+    var _restoreTransitionRaf = 0;
 
     // Transition string used for animated moves
     var CF_TRANSITION = 'transform 1.0s cubic-bezier(0.4,0,0.2,1)';
@@ -249,6 +256,11 @@ BlueOrca.carousel = {};
         var n = thumbs.length;
         if (!n) return;
 
+        if (_restoreTransitionRaf) {
+            cancelAnimationFrame(_restoreTransitionRaf);
+            _restoreTransitionRaf = 0;
+        }
+
         activeIdx = wrapIdx(activeIdx, n);
 
         var range        = getRange();
@@ -259,6 +271,7 @@ BlueOrca.carousel = {};
         var half         = Math.round(cardW / 2);
         var step         = cardW * overlapRatio;
         var cardH        = thumbs[0].offsetHeight;
+        var hiddenToShow = [];
 
         row.style.height = (cardH + 32) + 'px';
 
@@ -288,14 +301,22 @@ BlueOrca.carousel = {};
             if (wasHidden) {
                 // Snap silently from off-screen into the underlaid slot
                 applyStyle(t, tx, cfg, rel, half, null);
-                void t.offsetWidth;
-                t.style.transition = CF_TRANSITION;
+                hiddenToShow.push(t);
             } else {
                 // Normal animated move — delay z-index swap so stacking order
                 // changes at 1/3 through the animation, not at its start
                 applyStyle(t, tx, cfg, rel, half, CF_TRANSITION, true);
             }
         });
+
+        if (hiddenToShow.length) {
+            _restoreTransitionRaf = requestAnimationFrame(function () {
+                hiddenToShow.forEach(function (thumb) {
+                    thumb.style.transition = CF_TRANSITION;
+                });
+                _restoreTransitionRaf = 0;
+            });
+        }
     }
 
     // ── Navigation ─────────────────────────────────────────────────────────
@@ -526,13 +547,28 @@ BlueOrca.carousel = {};
         var dimTop = minimap.querySelector('.ref-minimap-dim-top');
         var indicator = minimap.querySelector('.ref-minimap-indicator');
         var dimBottom = minimap.querySelector('.ref-minimap-dim-bottom');
+        var metrics = {
+            scrollHeight: 0,
+            clientHeight: 0,
+            mapHeight: 0,
+            mapTop: 0,
+        };
+        var indicatorRaf = 0;
+
+        function readMetrics() {
+            var rect = minimap.getBoundingClientRect();
+            metrics.scrollHeight = scrollEl.scrollHeight;
+            metrics.clientHeight = scrollEl.clientHeight;
+            metrics.mapHeight = minimap.clientHeight;
+            metrics.mapTop = rect.top;
+        }
 
         // --- Indicator sync ---
         function updateIndicator() {
-            var scrollH = scrollEl.scrollHeight;
-            var clientH = scrollEl.clientHeight;
+            var scrollH = metrics.scrollHeight;
+            var clientH = metrics.clientHeight;
             var scrollT = scrollEl.scrollTop;
-            var mapH = minimap.clientHeight;
+            var mapH = metrics.mapHeight;
             if (!scrollH || !mapH) return;
 
             var indTop = (scrollT / scrollH) * mapH;
@@ -545,26 +581,44 @@ BlueOrca.carousel = {};
             dimBottom.style.height = (mapH - indTop - indH) + 'px';
         }
 
-        scrollEl.addEventListener('scroll', updateIndicator, { passive: true });
+        function scheduleIndicatorUpdate() {
+            if (indicatorRaf) return;
+            indicatorRaf = requestAnimationFrame(function () {
+                indicatorRaf = 0;
+                updateIndicator();
+            });
+        }
+
+        function refreshIndicatorMetrics() {
+            readMetrics();
+            updateIndicator();
+        }
+
+        readMetrics();
+        scrollEl.addEventListener('scroll', scheduleIndicatorUpdate, { passive: true });
 
         var mainImg = scrollEl.querySelector('img');
         if (mainImg) {
-            if (mainImg.complete) updateIndicator();
-            else mainImg.addEventListener('load', updateIndicator);
+            if (mainImg.complete) refreshIndicatorMetrics();
+            else mainImg.addEventListener('load', refreshIndicatorMetrics);
+        } else {
+            updateIndicator();
         }
 
         // --- Minimap drag → scroll preview ---
         function minimapScrollTo(clientY) {
-            var rect = minimap.getBoundingClientRect();
-            var y = Math.max(0, Math.min(clientY - rect.top, minimap.clientHeight));
-            var frac = y / minimap.clientHeight;
-            scrollEl.scrollTop = frac * scrollEl.scrollHeight - scrollEl.clientHeight / 2;
+            var mapH = metrics.mapHeight;
+            if (!mapH) return;
+            var y = Math.max(0, Math.min(clientY - metrics.mapTop, mapH));
+            var frac = y / mapH;
+            scrollEl.scrollTop = frac * metrics.scrollHeight - metrics.clientHeight / 2;
         }
 
         var mmDragging = false;
 
         minimap.addEventListener('mousedown', function (e) {
             mmDragging = true;
+            readMetrics();
             minimapScrollTo(e.clientY);
             e.preventDefault();
         });
@@ -578,6 +632,7 @@ BlueOrca.carousel = {};
         });
 
         minimap.addEventListener('touchstart', function (e) {
+            readMetrics();
             minimapScrollTo(e.touches[0].clientY);
             e.preventDefault();
         }, { passive: false });
@@ -661,6 +716,12 @@ BlueOrca.carousel = {};
                 touchMoved = false;
             }
         }, { passive: true });
+
+        if (typeof ResizeObserver !== 'undefined') {
+            var ro = new ResizeObserver(refreshIndicatorMetrics);
+            ro.observe(scrollEl);
+            ro.observe(minimap);
+        }
     });
 
     // Re-sync on resize
@@ -782,21 +843,33 @@ BlueOrca.carousel = {};
     var remainingTime = INTERVAL;
     var tickStart = 0;
     var isPaused = false;
+    var dotProgressPhase = false;
 
     function clearTimers() {
         clearTimeout(autoplayTimer);
         clearInterval(autoplayTimer);
     }
 
+    function syncActiveDotProgress() {
+        dots.forEach(function (dot) {
+            dot.classList.remove('is-progressing-a', 'is-progressing-b');
+        });
+
+        var activeDot = dots[current];
+        if (!activeDot) return;
+
+        dotProgressPhase = !dotProgressPhase;
+        activeDot.classList.add(dotProgressPhase ? 'is-progressing-a' : 'is-progressing-b');
+    }
+
     function show(idx) {
         if (idx === current) return;
         var prevIdx = current;
-        dots[current].classList.remove('is-active');
+        dots[current].classList.remove('is-active', 'is-progressing-a', 'is-progressing-b');
         current = (idx + slides.length) % slides.length;
         var newDot = dots[current];
-        newDot.classList.remove('is-active');
-        void newDot.offsetWidth; // force reflow → restartuje ::after animaci
         newDot.classList.add('is-active');
+        syncActiveDotProgress();
 
         var outSlide = slides[prevIdx];
         var inSlide  = slides[current];
@@ -819,6 +892,7 @@ BlueOrca.carousel = {};
         clearTimers();
         remainingTime = INTERVAL;
         tickStart = Date.now();
+        syncActiveDotProgress();
         autoplayTimer = setInterval(function () {
             next();
             remainingTime = INTERVAL;
@@ -941,8 +1015,11 @@ BlueOrca.carousel = {};
     if (!navLinks.length || !sections.length) return;
 
     var ratios = {};
+    var activeId = null;
 
     function setActive(id) {
+        if (id === activeId) return;
+        activeId = id;
         navLinks.forEach(function (link) {
             link.classList.toggle('is-active', link.getAttribute('href') === '#' + id);
         });
@@ -1000,10 +1077,14 @@ BlueOrca.carousel = {};
 
 // ===================== FPS COUNTER =====================
 (function () {
+    if (typeof window === 'undefined') return;
+    if (new URLSearchParams(window.location.search).get('debug-render') !== '1') return;
+
     var el = document.createElement('div');
     el.id = 'fps-counter';
     el.textContent = '-- fps';
     document.body.appendChild(el);
+    var lastText = el.textContent;
 
     // Read FPS from MasterRenderer instead of running a separate rAF loop.
     // Using setInterval avoids the duplicate requestAnimationFrame that competed
@@ -1012,7 +1093,10 @@ BlueOrca.carousel = {};
         var fps = window.blueOrcaMasterRenderer
             ? Math.round(window.blueOrcaMasterRenderer.currentFPS)
             : null;
-        el.textContent = fps !== null ? fps + ' fps' : '-- fps';
+        var nextText = fps !== null ? fps + ' fps' : '-- fps';
+        if (nextText === lastText) return;
+        lastText = nextText;
+        el.textContent = nextText;
     }, 500);
 })();
 
@@ -1160,6 +1244,7 @@ BlueOrca.carousel = {};
 
     // active state via IntersectionObserver
     var ratios = {};
+    var activeSection = null;
     var observer = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             ratios[entry.target.id] = entry.intersectionRatio;
@@ -1170,7 +1255,8 @@ BlueOrca.carousel = {};
             var r = ratios[sec.id] || 0;
             if (r > bestRatio) { bestRatio = r; best = sec.id; }
         });
-        if (best) {
+        if (best && best !== activeSection) {
+            activeSection = best;
             rulerItems.forEach(function (item) {
                 item.classList.toggle('is-active', item.dataset.section === best);
             });
@@ -1263,6 +1349,12 @@ BlueOrca.carousel = {};
 
     var prismLock = null;
 
+    function afterNextPaint(fn) {
+        requestAnimationFrame(function () {
+            requestAnimationFrame(fn);
+        });
+    }
+
     function activateService(key) {
         var prev = null;
         var next = null;
@@ -1330,10 +1422,10 @@ BlueOrca.carousel = {};
             'backface-visibility:hidden;visibility:visible;opacity:1;pointer-events:none;' +
             'transform:rotateY(90deg) translateZ(' + r + 'px);';
 
-        void stage.offsetWidth; // force layout
-
-        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
-        stage.style.transform  = 'translateZ(-' + r + 'px) rotateY(-90deg)';
+        afterNextPaint(function () {
+            stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
+            stage.style.transform  = 'translateZ(-' + r + 'px) rotateY(-90deg)';
+        });
 
         function finish() {
             next.style.cssText = '';

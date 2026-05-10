@@ -24,6 +24,7 @@ export class WaterSurfaceLayer {
         this.enabled = true;
         this.qualityMultiplier = 1.0;
         this._budgetFactor = 1.0;
+        this._targetBudgetFactor = 1.0;
         this._foam = [];
         this._foamBuf = null;      // Float32Array pro upload na GPU
 
@@ -325,6 +326,8 @@ export class WaterSurfaceLayer {
     render(elapsed, deltaTime) {
         const gl = this.gl;
 
+        this._budgetFactor += (this._targetBudgetFactor - this._budgetFactor) * 0.06;
+
         // 1. Wave ribbon
         if (this.program && this.vao) {
             gl.useProgram(this.program);
@@ -351,7 +354,7 @@ export class WaterSurfaceLayer {
     }
 
     reduceBudget(factor) {
-        this._budgetFactor = Math.max(0.1, factor);
+        this._targetBudgetFactor = Math.max(0.1, factor);
     }
 
     onResize(width, height) {

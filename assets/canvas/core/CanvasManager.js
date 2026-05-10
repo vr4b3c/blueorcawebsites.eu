@@ -20,6 +20,7 @@ export class CanvasManager {
         // Canvas elements
         this.canvas = null;
         this.ctx = null;
+        this.isContextAvailable = false;
         
         // Layer management
         this.layers = new Map();
@@ -106,6 +107,7 @@ export class CanvasManager {
             alpha: true,
             desynchronized: true // Hint for better performance
         });
+        this.isContextAvailable = Boolean(this.ctx);
         
         // Add to DOM: insert immediately after the WebGL background canvas when present,
         // otherwise fall back to inserting at the document start.
@@ -116,6 +118,12 @@ export class CanvasManager {
         } else {
             document.body.insertBefore(this.canvas, document.body.firstChild);
             if (this.config.debug) console.log('Canvas element appended to DOM (no webgl anchor found)');
+        }
+
+        if (!this.ctx) {
+            this.canvas.style.display = 'none';
+            console.warn('[Canvas] 2D context unavailable — CSS-only fallback active');
+            return;
         }
         
         // Set initial size
@@ -141,6 +149,8 @@ export class CanvasManager {
      * Update canvas size for viewport and device pixel ratio
      */
     updateCanvasSize() {
+        if (!this.canvas || !this.ctx) return;
+
         const rect = this.canvas.getBoundingClientRect();
         // Use device-tier-aware DPR cap so mobile/weak devices render fewer physical pixels.
         const { tier, entityBudget } = getDeviceProfile();
@@ -210,10 +220,11 @@ export class CanvasManager {
 
         // Clamp spawn position to the water surface — food and ripples must not appear above the waterline
         const spawnY = Math.max(SURFACE_Y + 10, y);
+        const now = performance.now();
 
         // Check if clicking on a school fish — if so, trigger attack/dance and skip food
         const fishLayer = this.getLayer('fish');
-        let clickedFish = false;
+        let clickedShark = null;
         if (fishLayer && fishLayer.sharks) {
             for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
                 const shark = fishLayer.sharks[i];
@@ -221,11 +232,13 @@ export class CanvasManager {
                 const dx = x - shark.x;
                 const dy = y - (shark.baseY || shark.y);
                 if (dx * dx + dy * dy < shark.size * shark.size) {
-                    clickedFish = true;
+                    clickedShark = shark;
                     break;
                 }
             }
         }
+
+        const clickedFish = Boolean(clickedShark);
 
         // Spawn food only when NOT clicking a fish
         if (!clickedFish) {
@@ -235,13 +248,13 @@ export class CanvasManager {
 
         // Ripple feedback only when NOT clicking a fish (fish click gets red death ripple later)
         if (!clickedFish) {
-            this._ripples.push({ x, y: spawnY, startTime: performance.now(), maxR: 80, duration: 900 });
+            this._ripples.push({ x, y: spawnY, startTime: now, maxR: 80, duration: 900 });
         }
 
         // Get or lazily create curious fish layer
         let curiousFishLayer = this.getLayer('curiousFish');
         if (!curiousFishLayer) {
-            curiousFishLayer = new CuriousFishLayer();
+            curiousFishLayer = new CuriousFishLayer(this.config.curiousFishConfig || {});
             this.addLayer('curiousFish', curiousFishLayer);
         }
         if (!curiousFishLayer.enabled) {
@@ -252,31 +265,22 @@ export class CanvasManager {
             curiousFishLayer.setTargetPoint(x, spawnY, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
         }
 
-        // Check if clicking on a school fish
-        if (fishLayer && fishLayer.sharks) {
-            for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
-                const shark = fishLayer.sharks[i];
-                if (shark.isDying) continue;
-
-                const dx = x - shark.x;
-                const dy = y - (shark.baseY || shark.y);
-                if (dx * dx + dy * dy < shark.size * shark.size) {
-                    const isSameSpecies = shark.image?.src?.includes('curiousfish');
-                    if (isSameSpecies) {
-                        // Always mate with same species
-                        curiousFishLayer.startDance(shark);
-                    } else {
-                        // Always attack other species (with cooldown)
-                        const timeSinceLastAttack = performance.now() - curiousFishLayer.lastAttackTime;
-                        if (timeSinceLastAttack >= curiousFishLayer.attackCooldown) {
-                            curiousFishLayer.targetSchoolFish = shark;
-                            curiousFishLayer.isAttackingSchoolFish = true;
-                            curiousFishLayer.lastAttackTime = performance.now();
-                        }
-                    }
-                    return;
+        // Handle school fish click using the hit-test result from above.
+        if (clickedShark) {
+            const isSameSpecies = clickedShark.image?.src?.includes('curiousfish');
+            if (isSameSpecies) {
+                // Always mate with same species
+                curiousFishLayer.startDance(clickedShark);
+            } else {
+                // Always attack other species (with cooldown)
+                const timeSinceLastAttack = now - curiousFishLayer.lastAttackTime;
+                if (timeSinceLastAttack >= curiousFishLayer.attackCooldown) {
+                    curiousFishLayer.targetSchoolFish = clickedShark;
+                    curiousFishLayer.isAttackingSchoolFish = true;
+                    curiousFishLayer.lastAttackTime = now;
                 }
             }
+            return;
         }
     }
     
@@ -444,15 +448,22 @@ export class CanvasManager {
         this.frameCounter++;
         this.performanceProfiler.endFrame(currentTime);
     }
+
+    canRender() {
+        return Boolean(this.canvas && this.ctx && this.isContextAvailable);
+    }
     
     /**
      * Start rendering loop
      */
     start() {
+        if (!this.canRender()) return false;
+
         if (this.isRunning) return;
         
         this.isRunning = true;
         this.lastTime = performance.now();
+        return true;
     }
     
     /**
