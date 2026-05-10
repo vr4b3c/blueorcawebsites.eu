@@ -429,13 +429,17 @@ export class FishLayer {
                     let cdx = centroid.x - shark.x;
                     if (Math.abs(cdx) > width * 0.5) cdx += cdx > 0 ? -width : width;
                     const cdy = centroid.y - shark.baseY;
-                    const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-                    const pullT = Math.min(Math.max((cdist - 20) / 180, 0), 1.0);
-                    const pullStrength = pullT * pullT * 0.10;
-                    // attenuate x-pull when centroid is behind the fish's travel direction
-                    const xPullMul = cdx * shark.direction >= 0 ? 1.0 : 0.20;
-                    shark.x += cdx * pullStrength * xPullMul;
-                    shark.baseY += cdy * pullStrength * 0.15;
+                    const cdistSq = cdx * cdx + cdy * cdy;
+                    // Skip sqrt when inside the 20-px dead zone (pullT would be 0 anyway)
+                    if (cdistSq > 20 * 20) {
+                        const cdist = Math.sqrt(cdistSq);
+                        const pullT = Math.min((cdist - 20) / 180, 1.0);
+                        const pullStrength = pullT * pullT * 0.10;
+                        // attenuate x-pull when centroid is behind the fish's travel direction
+                        const xPullMul = cdx * shark.direction >= 0 ? 1.0 : 0.20;
+                        shark.x += cdx * pullStrength * xPullMul;
+                        shark.baseY += cdy * pullStrength * 0.15;
+                    }
                 }
 
                 // Restore swim speed toward baseSpeed — applied unconditionally so isolated
@@ -658,32 +662,39 @@ export class FishLayer {
     drawShark(ctx, x, y, size, direction, swimPhase, sharkImage, deathRotation = 0, fadeProgress = 0, fishData = null) {
         // Fallback rendering if images not loaded
         if (this.imagesLoaded + this.imagesFailed < this.fishImages.length) {
-            // Draw simple placeholder while loading
-            ctx.save();
-            ctx.translate(x, y);
-            if (direction < 0) ctx.scale(-1, 1);
+            // Draw simple placeholder while loading — setTransform avoids save/restore overhead
+            const psx = direction < 0 ? -1 : 1;
+            ctx.setTransform(psx, 0, 0, 1, x, y);
             ctx.fillStyle = 'rgba(100, 150, 200, 0.5)';
             ctx.beginPath();
             ctx.ellipse(0, 0, size, size * 0.4, 0, 0, Math.PI * 2);
             ctx.fill();
-            ctx.restore();
+            ctx.setTransform(1, 0, 0, 1, 0, 0);
             return;
         }
 
         // Skip draw if this specific image failed to load
         if (!sharkImage || sharkImage._failed) return;
 
-        ctx.save();
-        ctx.translate(x, y);
+        // Compute horizontal scale: mating dance uses continuous flipX, others use binary direction
+        const sx = (fishData && fishData.flipX !== undefined) ? fishData.flipX : (direction < 0 ? -1 : 1);
 
-        // During mating dance the partner gets a smooth flipX (cos-driven X-axis rotation).
-        // Use it when present; otherwise fall back to binary direction flip.
-        if (fishData && fishData.flipX !== undefined) {
-            ctx.scale(fishData.flipX, 1);
-        } else if (direction < 0) {
-            ctx.scale(-1, 1);
+        // Compute rotation angle (fold translate+scale+rotate into one setTransform call)
+        let angle;
+        if (deathRotation > 0) {
+            angle = deathRotation;
+        } else {
+            // Very slow underwater drift — ~2.5 s and ~4 s cycles, barely visible
+            const t = fishData ? fishData.age : swimPhase * 2000;
+            angle = Math.sin(t / 2500 * Math.PI * 2) * 0.007
+                  + Math.sin(t / 4100 * Math.PI * 2 + 1.3) * 0.004;
         }
 
+        // setTransform(a,b,c,d,e,f) = translate(x,y) * scale(sx,1) * rotate(angle)
+        // → a=sx·cos, b=sin, c=−sx·sin, d=cos, e=x, f=y
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        ctx.setTransform(sx * cos, sin, -sx * sin, cos, x, y);
         ctx.globalAlpha = 1.0;
 
         // Pick depth-tinted cached image (0=deep/dark … 3=surface/full colour)
@@ -697,21 +708,13 @@ export class FishLayer {
         const drawSrc = (imgIndex >= 0 && this._imageDepthCache[imgIndex])
             ? this._imageDepthCache[imgIndex][tier]
             : sharkImage;
-        
-        if (deathRotation > 0) {
-            ctx.rotate(deathRotation);
-        } else {
-            // Very slow underwater drift — ~2.5 s and ~4 s cycles, barely visible
-            const t = fishData ? fishData.age : swimPhase * 2000;
-            const tilt = Math.sin(t / 2500 * Math.PI * 2) * 0.007
-                       + Math.sin(t / 4100 * Math.PI * 2 + 1.3) * 0.004;
-            ctx.rotate(tilt);
-        }
-        
+
+        let usedFilter = false;
         if (fadeProgress > 0) {
             const grayscale = Math.round(fadeProgress * 100);
             const brightness = Math.round(100 - (fadeProgress * 70));
             ctx.filter = `grayscale(${grayscale}%) brightness(${brightness}%)`;
+            usedFilter = true;
         }
 
         // Red hit-flash on impact (set by AttackBehavior via _hitFlashTime)
@@ -730,8 +733,10 @@ export class FishLayer {
             ctx.globalCompositeOperation = 'source-over';
             ctx.globalAlpha = 1.0;
         }
-        
-        ctx.restore();
+
+        // Reset only what was changed — cheaper than ctx.restore() restoring full state
+        if (usedFilter) ctx.filter = 'none';
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
     
     spawnSchool(width, height, totalSchools = 8) {

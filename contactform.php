@@ -30,7 +30,7 @@ function json_error(string $msg, int $code = 422): void
 
 $service = sanitize($_POST['service'] ?? '');
 $name    = sanitize($_POST['name']    ?? '');
-$email   = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+$contact = sanitize($_POST['email']   ?? '');
 $message = sanitize($_POST['message'] ?? '');
 
 // Honeypot: robotí pole musí zůstat prázdné
@@ -41,9 +41,11 @@ if (!empty($_POST['website'])) {
     exit;
 }
 
-if (!$name)    json_error('Vyplňte prosím jméno.');
-if (!$email)   json_error('Zadejte platnou e-mailovou adresu.');
-if (!$message) json_error('Napište prosím zprávu.');
+// Kontakt = e-mail nebo telefon (min. 6 znaků)
+$isEmail = (bool) filter_var($contact, FILTER_VALIDATE_EMAIL);
+if (!$name)                      json_error('Vyplňte prosím jméno.');
+if (strlen($contact) < 6)        json_error('Zadejte platný e-mail nebo telefonní číslo.');
+if (!$message)                   json_error('Napište prosím zprávu.');
 
 // ── Sestavení e-mailu ──────────────────────────────────────────────────────────
 
@@ -62,13 +64,15 @@ $body  = "Nová poptávka z webu BlueOrca Websites\n";
 $body .= str_repeat('─', 44) . "\n\n";
 $body .= "Služba:  {$serviceLabel}\n";
 $body .= "Jméno:   {$name}\n";
-$body .= "E-mail:  {$email}\n\n";
+$body .= "Kontakt: {$contact}\n\n";
 $body .= "Zpráva:\n{$message}\n\n";
 $body .= str_repeat('─', 44) . "\n";
 $body .= "Odesláno z blueorcawebsites.eu\n";
 
 $headers  = "From: BlueOrca Websites <info@blueorcawebsites.eu>\r\n";
-$headers .= "Reply-To: {$name} <{$email}>\r\n";
+if ($isEmail) {
+    $headers .= "Reply-To: {$name} <{$contact}>\r\n";
+}
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
 $headers .= "Content-Transfer-Encoding: 8bit\r\n";

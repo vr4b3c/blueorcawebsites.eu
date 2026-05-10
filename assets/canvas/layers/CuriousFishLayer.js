@@ -687,16 +687,21 @@ export class CuriousFishLayer {
     }
     
     drawHearts(ctx) {
+        // Font string cache — avoids allocating a new string per heart per frame
+        const fontCache = (this._fontCache ||= {});
+        const font = (size) => (fontCache[size] ||= `${size}px Arial`);
+        const boldFont = (size) => (fontCache[`b${size}`] ||= `bold ${size}px Arial`);
+
         ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
         for (const heart of this.hearts) {
             const ageRatio = heart.age / heart.maxAge;
             const opacity = 1 - ageRatio;
             ctx.globalAlpha = opacity;
             if (heart.type === 'star') {
                 ctx.fillStyle = '#ffdd00';
-                ctx.font = `${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = font(heart.size);
                 ctx.fillText('⭐', heart.x, heart.y);
             } else if (heart.type === 'bubble') {
                 ctx.fillStyle = 'rgba(100, 200, 255, 0.6)';
@@ -708,43 +713,31 @@ export class CuriousFishLayer {
                 ctx.stroke();
             } else if (heart.type === 'zzz') {
                 ctx.fillStyle = '#cccccc';
-                ctx.font = `${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = font(heart.size);
                 ctx.fillText('Z', heart.x, heart.y);
             } else if (heart.type === 'lightning') {
                 ctx.fillStyle = '#ffff00';
                 ctx.strokeStyle = '#ffffff';
                 ctx.lineWidth = 1;
-                ctx.font = `bold ${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = boldFont(heart.size);
                 ctx.strokeText('⚡', heart.x, heart.y);
                 ctx.fillText('⚡', heart.x, heart.y);
             } else if (heart.type === 'food') {
                 ctx.fillStyle = '#ff6b6b';
-                ctx.font = `${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = font(heart.size);
                 ctx.fillText('🍎', heart.x, heart.y);
             } else if (heart.type === 'question') {
                 ctx.fillStyle = '#ffaa00';
-                ctx.font = `bold ${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = boldFont(heart.size);
                 ctx.fillText('?', heart.x, heart.y);
             } else if (heart.type === 'exclamation') {
                 ctx.fillStyle = '#ff0000';
-                ctx.font = `bold ${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = boldFont(heart.size);
                 ctx.fillText('!', heart.x, heart.y);
             } else {
                 // Hearts in romantic phase - pink color
                 ctx.fillStyle = '#ff69b4';
-                ctx.font = `${heart.size}px Arial`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
+                ctx.font = font(heart.size);
                 ctx.fillText('❤️', heart.x, heart.y);
             }
         }

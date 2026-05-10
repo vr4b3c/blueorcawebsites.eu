@@ -216,7 +216,7 @@
                     </div>
                     <div class="cta-cms-visual" aria-hidden="true">
                         <div class="cta-cms-visual-frame no-shadow">
-                            <img src="assets/images/web/banner-cms.webp" alt="Ukázka administrace CMS BlueOrca" width="750W" height="600" loading="lazy">
+                            <img src="assets/images/web/banner-cms.webp" alt="Ukázka administrace CMS BlueOrca" width="750" height="600" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -235,7 +235,7 @@
                     </div>
                     <div class="cta-cms-visual" aria-hidden="true">
                         <div class="cta-cms-visual-frame">
-                            <img src="assets/images/web/banner-cms.webp" alt="Ukázka administrace CMS BlueOrca" width="750W" height="600" loading="lazy">
+                            <img src="assets/images/web/banner-cms.webp" alt="Ukázka administrace CMS BlueOrca" width="750" height="600" loading="lazy">
                         </div>
                     </div>
                 </div>
@@ -284,9 +284,9 @@
             </header>
 
             <div class="ref-filter">
-                <button class="filter-pill active" data-filter="all">Vše</button>
-                <button class="filter-pill" data-filter="single">Jednostránkové</button>
-                <button class="filter-pill" data-filter="multi">Vícestránkové</button>
+                <button class="filter-pill active" aria-pressed="true" data-filter="all">Vše</button>
+                <button class="filter-pill" aria-pressed="false" data-filter="single">Jednostránkové</button>
+                <button class="filter-pill" aria-pressed="false" data-filter="multi">Vícestránkové</button>
             </div>
 
             <div class="ref-thumbs-track">
@@ -1112,8 +1112,8 @@
                                 <input type="text" id="f-name" name="name" placeholder="Vaše jméno" autocomplete="name">
                             </div>
                             <div class="contact-field">
-                                <label for="f-email">E-mail</label>
-                                <input type="email" id="f-email" name="email" placeholder="vas@email.cz" autocomplete="email">
+                                <label for="f-email">E-mail nebo telefon</label>
+                                <input type="text" id="f-email" name="email" placeholder="vas@email.cz nebo +420 773 202 288" autocomplete="email">
                             </div>
                         </div>
                         <div class="contact-field contact-field--grow">
@@ -1130,8 +1130,9 @@
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                             Zpráva odeslána! Ozveme se do 24 hodin.
                         </div>
+                        <p class="contact-gdpr">Odesláním souhlasíte se zpracováním osobních údajů.</p>
                         <button type="submit" class="contact-submit">
-                            Odeslat poptávku
+                            Odeslat zprávu
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                         </button>
                     </form>

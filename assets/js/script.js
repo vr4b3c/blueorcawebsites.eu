@@ -126,8 +126,9 @@ BlueOrca.carousel = {};
     // --- Filter pills ---
     pills.forEach(function (pill) {
         pill.addEventListener('click', function () {
-            pills.forEach(function (p) { p.classList.remove('active'); });
+            pills.forEach(function (p) { p.classList.remove('active'); p.setAttribute('aria-pressed', 'false'); });
             pill.classList.add('active');
+            pill.setAttribute('aria-pressed', 'true');
 
             var filter = pill.getAttribute('data-filter');
 
@@ -1475,7 +1476,7 @@ BlueOrca.carousel = {};
         if (okBox)  okBox.classList.remove('is-visible');
 
         if (!name.trim() || !email.trim() || !message.trim()) {
-            showError('Vyplňte prosím jméno, e-mail a zprávu.');
+            showError('Vyplňte prosím jméno, e-mail nebo telefon a zprávu.');
             return;
         }
 

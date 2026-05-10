@@ -222,6 +222,9 @@ export class WebGLOceanRenderer {
     }
     
     renderFrame(currentTime, deltaTime) {
+        // Guard against WebGL context loss mid-frame
+        if (!this.gl || this.gl.isContextLost()) return;
+
         this.lastFrameTime = currentTime;
         
         const profiling = this.options.profiling || false;

@@ -1762,6 +1762,7 @@
       }
     }
     renderFrame(currentTime, deltaTime) {
+      if (!this.gl || this.gl.isContextLost()) return;
       this.lastFrameTime = currentTime;
       const profiling = this.options.profiling || false;
       const times = {};
@@ -4171,16 +4172,19 @@
       ctx.restore();
     }
     drawHearts(ctx) {
+      const fontCache = this._fontCache ||= {};
+      const font = (size) => fontCache[size] ||= `${size}px Arial`;
+      const boldFont = (size) => fontCache[`b${size}`] ||= `bold ${size}px Arial`;
       ctx.save();
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       for (const heart of this.hearts) {
         const ageRatio = heart.age / heart.maxAge;
         const opacity = 1 - ageRatio;
         ctx.globalAlpha = opacity;
         if (heart.type === "star") {
           ctx.fillStyle = "#ffdd00";
-          ctx.font = `${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = font(heart.size);
           ctx.fillText("\u2B50", heart.x, heart.y);
         } else if (heart.type === "bubble") {
           ctx.fillStyle = "rgba(100, 200, 255, 0.6)";
@@ -4192,42 +4196,30 @@
           ctx.stroke();
         } else if (heart.type === "zzz") {
           ctx.fillStyle = "#cccccc";
-          ctx.font = `${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = font(heart.size);
           ctx.fillText("Z", heart.x, heart.y);
         } else if (heart.type === "lightning") {
           ctx.fillStyle = "#ffff00";
           ctx.strokeStyle = "#ffffff";
           ctx.lineWidth = 1;
-          ctx.font = `bold ${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = boldFont(heart.size);
           ctx.strokeText("\u26A1", heart.x, heart.y);
           ctx.fillText("\u26A1", heart.x, heart.y);
         } else if (heart.type === "food") {
           ctx.fillStyle = "#ff6b6b";
-          ctx.font = `${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = font(heart.size);
           ctx.fillText("\u{1F34E}", heart.x, heart.y);
         } else if (heart.type === "question") {
           ctx.fillStyle = "#ffaa00";
-          ctx.font = `bold ${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = boldFont(heart.size);
           ctx.fillText("?", heart.x, heart.y);
         } else if (heart.type === "exclamation") {
           ctx.fillStyle = "#ff0000";
-          ctx.font = `bold ${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = boldFont(heart.size);
           ctx.fillText("!", heart.x, heart.y);
         } else {
           ctx.fillStyle = "#ff69b4";
-          ctx.font = `${heart.size}px Arial`;
-          ctx.textAlign = "center";
-          ctx.textBaseline = "middle";
+          ctx.font = font(heart.size);
           ctx.fillText("\u2764\uFE0F", heart.x, heart.y);
         }
       }
@@ -5516,12 +5508,15 @@
             let cdx = centroid.x - shark.x;
             if (Math.abs(cdx) > width * 0.5) cdx += cdx > 0 ? -width : width;
             const cdy = centroid.y - shark.baseY;
-            const cdist = Math.sqrt(cdx * cdx + cdy * cdy);
-            const pullT = Math.min(Math.max((cdist - 20) / 180, 0), 1);
-            const pullStrength = pullT * pullT * 0.1;
-            const xPullMul = cdx * shark.direction >= 0 ? 1 : 0.2;
-            shark.x += cdx * pullStrength * xPullMul;
-            shark.baseY += cdy * pullStrength * 0.15;
+            const cdistSq = cdx * cdx + cdy * cdy;
+            if (cdistSq > 20 * 20) {
+              const cdist = Math.sqrt(cdistSq);
+              const pullT = Math.min((cdist - 20) / 180, 1);
+              const pullStrength = pullT * pullT * 0.1;
+              const xPullMul = cdx * shark.direction >= 0 ? 1 : 0.2;
+              shark.x += cdx * pullStrength * xPullMul;
+              shark.baseY += cdy * pullStrength * 0.15;
+            }
           }
           if (shark.baseSpeed !== void 0) {
             shark.speed += (shark.baseSpeed - shark.speed) * 0.02;
@@ -5693,39 +5688,37 @@
     }
     drawShark(ctx, x, y, size, direction, swimPhase, sharkImage, deathRotation = 0, fadeProgress = 0, fishData = null) {
       if (this.imagesLoaded + this.imagesFailed < this.fishImages.length) {
-        ctx.save();
-        ctx.translate(x, y);
-        if (direction < 0) ctx.scale(-1, 1);
+        const psx = direction < 0 ? -1 : 1;
+        ctx.setTransform(psx, 0, 0, 1, x, y);
         ctx.fillStyle = "rgba(100, 150, 200, 0.5)";
         ctx.beginPath();
         ctx.ellipse(0, 0, size, size * 0.4, 0, 0, Math.PI * 2);
         ctx.fill();
-        ctx.restore();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         return;
       }
       if (!sharkImage || sharkImage._failed) return;
-      ctx.save();
-      ctx.translate(x, y);
-      if (fishData && fishData.flipX !== void 0) {
-        ctx.scale(fishData.flipX, 1);
-      } else if (direction < 0) {
-        ctx.scale(-1, 1);
+      const sx = fishData && fishData.flipX !== void 0 ? fishData.flipX : direction < 0 ? -1 : 1;
+      let angle;
+      if (deathRotation > 0) {
+        angle = deathRotation;
+      } else {
+        const t = fishData ? fishData.age : swimPhase * 2e3;
+        angle = Math.sin(t / 2500 * Math.PI * 2) * 7e-3 + Math.sin(t / 4100 * Math.PI * 2 + 1.3) * 4e-3;
       }
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      ctx.setTransform(sx * cos, sin, -sx * sin, cos, x, y);
       ctx.globalAlpha = 1;
       const imgIndex = fishData && fishData._imageIndex !== void 0 ? fishData._imageIndex : this.fishImages.indexOf(sharkImage);
       const tier = fishData && fishData.depthTier !== void 0 ? fishData.depthTier : this.height > 0 ? Math.max(0, Math.min(3, Math.floor(y / this.height * 4))) : 3;
       const drawSrc = imgIndex >= 0 && this._imageDepthCache[imgIndex] ? this._imageDepthCache[imgIndex][tier] : sharkImage;
-      if (deathRotation > 0) {
-        ctx.rotate(deathRotation);
-      } else {
-        const t = fishData ? fishData.age : swimPhase * 2e3;
-        const tilt = Math.sin(t / 2500 * Math.PI * 2) * 7e-3 + Math.sin(t / 4100 * Math.PI * 2 + 1.3) * 4e-3;
-        ctx.rotate(tilt);
-      }
+      let usedFilter = false;
       if (fadeProgress > 0) {
         const grayscale = Math.round(fadeProgress * 100);
         const brightness = Math.round(100 - fadeProgress * 70);
         ctx.filter = `grayscale(${grayscale}%) brightness(${brightness}%)`;
+        usedFilter = true;
       }
       const hitAge = fishData?._hitFlashTime ? Date.now() - fishData._hitFlashTime : Infinity;
       const isHitFlash = hitAge < 220;
@@ -5740,7 +5733,8 @@
         ctx.globalCompositeOperation = "source-over";
         ctx.globalAlpha = 1;
       }
-      ctx.restore();
+      if (usedFilter) ctx.filter = "none";
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
     spawnSchool(width, height, totalSchools = 8) {
       const direction = Math.random() > 0.5 ? 1 : -1;
