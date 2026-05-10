@@ -162,6 +162,27 @@ footer {
 .bo-navy  { fill: var(--accent-dark); }
 .bo-blue  { fill: var(--accent-mid); }
 .bo-sky   { fill: var(--accent); }
+
+/* ===================== GLASS PANEL (utility) ===================== */
+.glass-panel {
+    background: rgba(8, 28, 46, 0.72);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    border: 1px solid rgba(142, 210, 232, 0.15);
+    border-radius: var(--radius);
+    position: relative;
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.35), 0 0 32px rgba(60, 164, 197, 0.12), inset 0 1px 0 rgba(142, 210, 232, 0.1);
+}
+
+.glass-panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(142, 210, 232, 0.34) 50%, transparent);
+    pointer-events: none;
+}
+
 /* ===================== TOPNAV ===================== */
 .site-header {
     position: fixed;
@@ -900,7 +921,9 @@ body.drawer-open {
 }
 
 .cta-slider-dot.is-active {
-    background: rgb(8, 32, 50);
+    background: rgba(8, 28, 46, 0.72);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border-color: rgba(142, 210, 232, 0.2);
     border-top: 1px solid transparent;
     color: var(--accent);
@@ -978,14 +1001,9 @@ body.drawer-open {
 
 
 .cta-cms-inner {
-    position: relative;
     z-index: 2;
     display: block;
     padding: 3rem 48% 3rem 3.5rem;
-    background: linear-gradient(to top, rgb(8, 32, 50) 0%, rgba(15, 70, 99, 0.55) 100%);
-    border: 1px solid rgba(142, 210, 232, 0.2);
-    border-radius: 0;
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(142, 210, 232, 0.1);
     overflow: visible;
 }
 
@@ -1252,16 +1270,12 @@ body.drawer-open {
 }
 
 .vyhody-box {
-    background: linear-gradient(160deg, rgba(15, 70, 99, 0.6) 0%, rgb(8, 32, 50) 100%);
-    border: 1px solid rgba(142, 210, 232, 0.18);
-    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(142, 210, 232, 0.08);
     padding: 2rem 1.75rem 1.75rem;
     display: flex;
     flex-direction: column;
     gap: 0.55rem;
-    position: relative;
     overflow: hidden;
-    transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s;
+    transition: border-color 0.25s, box-shadow 0.25s;
 }
 
 .vyhody-box::before {
@@ -1279,7 +1293,6 @@ body.drawer-open {
 .vyhody-box:hover {
     border-color: rgba(142, 210, 232, 0.35);
     box-shadow: 0 16px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(142, 210, 232, 0.15);
-    transform: translateY(-3px);
 }
 
 .vyhody-box:hover::before {
@@ -1669,15 +1682,10 @@ body.drawer-open {
 }
 
 .ref-card {
-    background: linear-gradient(to top, rgb(8, 32, 50) 0%, rgba(15, 70, 99, 0.55) 100%);
-    border-radius: var(--radius);
     overflow: hidden;
-    border: 1px solid rgba(142, 210, 232, 0.2);
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(142, 210, 232, 0.1);
     transition: box-shadow 0.3s ease;
     display: grid;
     grid-template-columns: minmax(500px, 3fr) minmax(450px, 1fr);
-    position: relative;
     isolation: isolate;
 }
 
@@ -1752,7 +1760,6 @@ body.drawer-open {
 }
 
 .ref-nocapture {
-    position: relative;
     z-index: 1;
     display: flex;
     flex-direction: column;
@@ -1761,10 +1768,6 @@ body.drawer-open {
     text-align: center;
     gap: 0.75rem;
     padding: 1.75rem 2rem;
-    background: rgba(3, 26, 42, 0.88);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    border: 1px solid rgba(142, 210, 232, 0.15);
     border-radius: 0;
     min-width: 390px;
     max-width: 420px;
@@ -2666,7 +2669,7 @@ a[target="_blank"]:hover::after {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.72rem;
+    font-size: 0.85rem;
     color: var(--green);
     letter-spacing: 0.04em;
     margin-bottom: 0.35rem;
@@ -2698,30 +2701,10 @@ a[target="_blank"]:hover::after {
 /* ── Form panel (glassmorphism) ── */
 .contact-form-panel {
     flex: 1;
-    background: rgba(8, 28, 46, 0.72);
-    backdrop-filter: blur(2px);
-    -webkit-backdrop-filter: blur(2px);
-    border: 1px solid rgba(142, 210, 232, 0.17);
-    border-radius: 4px;
-    box-shadow:
-        0 24px 80px rgba(0, 0, 0, 0.6),
-        0 0 48px rgba(56, 165, 200, 0.07),
-        inset 0 1px 0 rgba(142, 210, 232, 0.15);
     padding: 2.5rem 2.8rem;
-    position: relative;
     display: flex;
     flex-direction: column;
     min-height: 0;
-}
-
-/* Top highlight streak */
-.contact-form-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(142, 210, 232, 0.38) 50%, transparent);
-    pointer-events: none;
 }
 
 .contact-form-label {
@@ -2913,7 +2896,7 @@ a[target="_blank"]:hover::after {
     transition: color 0.2s, background 0.2s;
     white-space: nowrap;
     padding: 0.55rem 0.75rem;
-    margin: 0 -0.75rem;
+    margin: 0;
     border-radius: 3px;
 }
 
@@ -3049,15 +3032,9 @@ a[target="_blank"]:hover::after {
     flex: 0 0 420px;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 0rem;
     min-height: 0;
     position: relative;
-    /* single shadow for the whole unit */
-    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.55));
-}
-
-.contact-info-panel::before {
-    display: none;
 }
 
 /* Panel slots wrapper */
@@ -3085,22 +3062,6 @@ a[target="_blank"]:hover::after {
     pointer-events: none;
     will-change: transform, opacity;
     backface-visibility: hidden;
-    position: relative;
-    background: rgba(8, 28, 46, 0.72);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(142, 210, 232, 0.14);
-    border-bottom-color: rgba(142, 210, 232, 0.22);
-    border-radius: 4px 4px 0 0;
-}
-
-.info-panel-content::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 10%; right: 10%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(142, 210, 232, 0.3) 50%, transparent);
-    pointer-events: none;
 }
 
 .info-panel-content.is-active {
@@ -3179,46 +3140,56 @@ a[target="_blank"]:hover::after {
 /* Static contact / availability block */
 .info-panel-contact {
     display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 0;
+    padding: 0;
+    margin-top: -2px;
+    position: relative;
+    overflow: visible;
+}
+
+.info-panel-contact-text {
+    flex: 1;
+    display: flex;
     flex-direction: column;
-    align-items: stretch;
-    gap: 0.25rem;
-    margin-top: -1px;
-    padding: 1.1rem 1.25rem 1.25rem;
-    background: rgba(8, 28, 46, 0.72);
-    backdrop-filter: blur(28px);
-    -webkit-backdrop-filter: blur(28px);
-    border: 1px solid rgba(142, 210, 232, 0.14);
-    border-radius: 0 0 4px 4px;
+    gap: 0.35rem;
+    padding: 1rem 2rem;
 }
 
 .info-panel-contact .contact-status {
-    margin-bottom: 0.6rem;
-    justify-content: center;
+    margin-bottom: 0.35rem;
+    justify-content: flex-start;
+    gap: 0;
 }
 
-.info-panel-contact .footer-contact-link {
-    justify-content: center;
-    gap: 0.75rem;
-    font-size: 1.05rem;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+/* dot je 7px, ikony 20px + gap 0.55rem → vyrovnáme margin-right aby text začínal na stejném místě */
+.info-panel-contact .contact-status-dot {
+    margin-right: calc(20px - 7px + 0.55rem);
+}
+
+.info-panel-links-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.info-panel-links-row .footer-contact-link {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    padding: 0;
+    border: none;
+    background: none;
+    transition: color 0.2s;
+    white-space: nowrap;
+}
+
+.info-panel-links-row .footer-contact-link:hover {
     color: var(--accent);
-    padding: 0.65rem 1rem;
-    margin: 0;
-    border-radius: 3px;
-    border: 1px solid rgba(142, 210, 232, 0.15);
-    background: rgba(142, 210, 232, 0.06);
-    transition: color 0.2s, background 0.2s, border-color 0.2s;
-}
-
-.info-panel-contact .footer-contact-link + .footer-contact-link {
-    margin-top: 0.35rem;
-}
-
-.info-panel-contact .footer-contact-link:hover {
-    color: #fff;
-    background: rgba(142, 210, 232, 0.13);
-    border-color: rgba(142, 210, 232, 0.35);
     text-decoration: none;
 }
 
@@ -3250,6 +3221,18 @@ a[target="_blank"]:hover::after {
 
 .footer-logo-link--strip:hover .footer-brand-svg {
     color: var(--text-primary);
+}
+
+/* Avatar — absolútne pozicionovaný v rámci .contact-info-panel, hlava přečuhuje přes horní box */
+.contact-avatar {
+    display: block;
+    width: 175px;
+    height: auto;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    bottom: 1px;
+    z-index: 10;
 }
 
 /* Responsive: tablets */
@@ -3334,6 +3317,10 @@ a[target="_blank"]:hover::after {
 
     .contact-info-panel {
         width: 100%;
+    }
+
+    .contact-avatar {
+        display: none;
     }
 
     .info-panel-content {

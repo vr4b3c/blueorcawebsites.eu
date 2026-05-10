@@ -304,20 +304,6 @@ export class WebGLOceanRenderer {
             this.fps = this.frameCount;
             this.frameCount = 0;
             this.fpsUpdateTime = currentTime;
-            
-            if (this.fps < this.targetFPS) {
-                this.lowFpsFrames++;
-                if (this.lowFpsFrames > 3 && this.qualityMultiplier > 0.5) {
-                    this.qualityMultiplier *= 0.9;
-                    this.applyQualitySettings();
-                }
-            } else {
-                this.lowFpsFrames = 0;
-                if (this.qualityMultiplier < 1.0) {
-                    this.qualityMultiplier = Math.min(1.0, this.qualityMultiplier * 1.05);
-                    this.applyQualitySettings();
-                }
-            }
         }
     }
     
