@@ -77,7 +77,10 @@ a:hover {
     text-decoration: underline;
 }
 
-strong {font-weight: 600;}
+strong { font-weight: 600; }
+
+
+
 
 body {
     padding-top: 4.5rem;
@@ -1010,11 +1013,6 @@ body.drawer-open {
     margin-bottom: 0.9rem;
     letter-spacing: -0.01em;
 }
-.cta-cms-title strong {
-    color: var(--accent);
-}
-
-
 .cta-cms-title br {
     display: block;
 }
@@ -1309,7 +1307,7 @@ body.drawer-open {
 
 .vyhody-box h3 {
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--text-primary);
     line-height: 1.3;
 }
@@ -1892,7 +1890,7 @@ body.drawer-open {
 
 .ref-body h3 {
     font-size: 1.35rem;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1.3;
     color: var(--text-primary);
     margin: 0;
@@ -2458,6 +2456,15 @@ a[target="_blank"]:hover::after {
     justify-content: center;
 }
 
+.cenik-heading {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+}
+
 /* ===================== SECTION HEADER ===================== */
 /* Universal intro block: eyebrow label + heading + subtitle.
    Usage:
@@ -2477,18 +2484,20 @@ a[target="_blank"]:hover::after {
     font-weight: 600;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--accent-mid);
+    color: var(--accent);
     margin-bottom: 0.6rem;
 }
 
 .section-heading {
     font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 700;
-    color: var(--text-primary);
+    font-weight: 300;
+    color: var(--accent);
     line-height: 1.2;
     letter-spacing: -0.01em;
     margin-bottom: 0.9rem;
 }
+.section-heading  strong { color: var(--text-primary); font-weight: 800; }
+
 
 .section-sub {
     font-size: 0.95rem;
@@ -2628,8 +2637,8 @@ a[target="_blank"]:hover::after {
 .contact-layout {
     display: flex;
     gap: 3.5rem;
-    align-items: flex-start;
-    max-width: 880px;
+    align-items: stretch;
+    max-width: 1100px;
     margin: 0 auto;
     position: relative;
     z-index: 1;
@@ -2660,6 +2669,7 @@ a[target="_blank"]:hover::after {
     font-size: 0.72rem;
     color: var(--green);
     letter-spacing: 0.04em;
+    margin-bottom: 0.35rem;
 }
 
 .contact-status-dot {
@@ -2689,8 +2699,8 @@ a[target="_blank"]:hover::after {
 .contact-form-panel {
     flex: 1;
     background: rgba(8, 28, 46, 0.72);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
     border: 1px solid rgba(142, 210, 232, 0.17);
     border-radius: 4px;
     box-shadow:
@@ -2701,6 +2711,7 @@ a[target="_blank"]:hover::after {
     position: relative;
     display: flex;
     flex-direction: column;
+    min-height: 0;
 }
 
 /* Top highlight streak */
@@ -2784,7 +2795,7 @@ a[target="_blank"]:hover::after {
 }
 
 .contact-field input {
-    height: 48px;
+    height: 52px;
 }
 
 .contact-field input::placeholder,
@@ -2892,25 +2903,32 @@ a[target="_blank"]:hover::after {
 
 /* Contact links (info column) */
 .footer-contact-link {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: var(--accent);
-    font-size: 0.83rem;
+    gap: 0.65rem;
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    font-weight: 500;
     text-decoration: none;
-    transition: color 0.2s;
-    word-break: break-all;
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+    padding: 0.55rem 0.75rem;
+    margin: 0 -0.75rem;
+    border-radius: 3px;
 }
 
 .footer-contact-link:hover {
-    color: var(--text-primary);
+    color: var(--accent);
+    background: rgba(142, 210, 232, 0.07);
     text-decoration: none;
 }
 
 .footer-contact-link svg {
     flex-shrink: 0;
-    opacity: 0.7;
+    opacity: 0.75;
     color: var(--accent-mid);
+    width: 15px;
+    height: 15px;
 }
 
 /* Form notices — hidden by default, toggled via JS (.is-visible) */
@@ -2949,11 +2967,10 @@ a[target="_blank"]:hover::after {
 /* Footer bottom strip */
 .footer-strip {
     padding: 1.5rem 0 0;
-    margin-top: 2.5rem;
-    border-top: 1px solid rgba(142, 210, 232, 0.07);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    gap: 0.65rem;
     position: relative;
     z-index: 1;
 }
@@ -2963,6 +2980,303 @@ a[target="_blank"]:hover::after {
     color: var(--text-muted);
     margin: 0;
     letter-spacing: 0.04em;
+}
+
+/* ===================== INQUIRY SYSTEM – Tabs, Info Panel ===================== */
+
+/* Header */
+.inquiry-header {
+    margin-bottom: 2rem;
+}
+
+.inquiry-headline {
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    margin: 0.35rem 0 0.5rem;
+    color: var(--text-primary);
+}
+
+.inquiry-sub {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 300;
+    margin: 0;
+}
+
+/* Pill tab bar */
+.inquiry-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.45rem;
+    margin: 0 auto 2rem;
+    max-width: 960px;
+    position: relative;
+    z-index: 1;
+}
+
+.inquiry-tab {
+    padding: 0.42rem 1rem;
+    border-radius: 999px;
+    border: 1px solid rgba(142, 210, 232, 0.2);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, color 0.2s;
+    white-space: nowrap;
+}
+
+.inquiry-tab:hover:not(.is-active) {
+    background: rgba(142, 210, 232, 0.07);
+    border-color: rgba(142, 210, 232, 0.38);
+    color: var(--text-primary);
+}
+
+.inquiry-tab.is-active {
+    background: rgba(26, 184, 216, 0.16);
+    border-color: rgba(26, 184, 216, 0.55);
+    color: var(--accent);
+}
+
+/* Contextual info panel */
+.contact-info-panel {
+    flex: 0 0 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+    position: relative;
+    /* single shadow for the whole unit */
+    filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.55));
+}
+
+.contact-info-panel::before {
+    display: none;
+}
+
+/* Panel slots wrapper */
+.info-panel-slots {
+    display: grid;
+    grid-template-areas: 'p';
+    flex: 1;
+    min-height: 0;
+    perspective: 680px;
+    perspective-origin: 50% 42%;
+    position: relative;
+    z-index: 2;
+}
+
+/* Panel content slots — each is the full glass box that rotates */
+.info-panel-content {
+    grid-area: p;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 2rem;
+    padding-bottom: 1.5rem;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    position: relative;
+    background: rgba(8, 28, 46, 0.72);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(142, 210, 232, 0.14);
+    border-bottom-color: rgba(142, 210, 232, 0.22);
+    border-radius: 4px 4px 0 0;
+}
+
+.info-panel-content::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(142, 210, 232, 0.3) 50%, transparent);
+    pointer-events: none;
+}
+
+.info-panel-content.is-active {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+}
+
+
+.info-panel-label {
+    font-size: 0.6rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-mid);
+    margin: 0 0 0.65rem;
+}
+
+.info-panel-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+}
+
+.info-panel-list li {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    padding-left: 1.1rem;
+    position: relative;
+    line-height: 1.6;
+}
+
+.info-panel-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent-mid);
+    opacity: 0.65;
+}
+
+/* Timeline badge */
+.info-panel-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem 1rem;
+    background: rgba(142, 210, 232, 0.05);
+    border-left: 2px solid rgba(142, 210, 232, 0.25);
+    border-radius: 2px;
+    margin-top: auto;
+}
+
+.info-timeline-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.info-timeline-value {
+    font-size: 0.92rem;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: -0.01em;
+}
+
+/* Static contact / availability block */
+.info-panel-contact {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    margin-top: -1px;
+    padding: 1.1rem 1.25rem 1.25rem;
+    background: rgba(8, 28, 46, 0.72);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(142, 210, 232, 0.14);
+    border-radius: 0 0 4px 4px;
+}
+
+.info-panel-contact .contact-status {
+    margin-bottom: 0.6rem;
+    justify-content: center;
+}
+
+.info-panel-contact .footer-contact-link {
+    justify-content: center;
+    gap: 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--accent);
+    padding: 0.65rem 1rem;
+    margin: 0;
+    border-radius: 3px;
+    border: 1px solid rgba(142, 210, 232, 0.15);
+    background: rgba(142, 210, 232, 0.06);
+    transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+
+.info-panel-contact .footer-contact-link + .footer-contact-link {
+    margin-top: 0.35rem;
+}
+
+.info-panel-contact .footer-contact-link:hover {
+    color: #fff;
+    background: rgba(142, 210, 232, 0.13);
+    border-color: rgba(142, 210, 232, 0.35);
+    text-decoration: none;
+}
+
+.info-panel-contact .footer-contact-link svg {
+    width: 20px;
+    height: 20px;
+    opacity: 0.8;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+/* Footer strip logo modifier */
+.footer-logo-link--strip .footer-logo-mark {
+    width: 62px;
+    height: 62px;
+}
+
+.footer-logo-link--strip .footer-brand-name {
+    font-size: 0.85rem;
+}
+
+.footer-brand-svg {
+    height: 24px;
+    width: auto;
+    color: rgba(142, 210, 232, 0.45);
+    transition: color 0.2s;
+    display: block;
+}
+
+.footer-logo-link--strip:hover .footer-brand-svg {
+    color: var(--text-primary);
+}
+
+/* Responsive: tablets */
+@media (max-width: 1100px) {
+    .contact-info-panel {
+        flex: 0 0 360px;
+    }
+}
+
+/* Responsive: mobile — stack tabs and hide info panel inline */
+@media (max-width: 640px) {
+    .inquiry-tabs {
+        gap: 0.35rem;
+    }
+
+    .inquiry-tab {
+        font-size: 0.72rem;
+        padding: 0.38rem 0.8rem;
+    }
+
+    .contact-info-panel {
+        min-height: auto;
+    }
+
+    .info-panel-content {
+        padding: 1.25rem;
+    }
 }
 
 /* ===================== FPS COUNTER ===================== */
@@ -3018,12 +3332,12 @@ a[target="_blank"]:hover::after {
         gap: 2rem;
     }
 
-    .contact-info {
+    .contact-info-panel {
         width: 100%;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 1.2rem 2rem;
-        align-items: flex-start;
+    }
+
+    .info-panel-content {
+        width: 100%;
     }
 
     .site-footer {

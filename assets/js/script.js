@@ -1240,3 +1240,273 @@ BlueOrca.carousel = {};
 })();
 
 // HERO SLOGAN ROTATOR – animace řeší čistě CSS (@keyframes sloganDrum)
+
+
+// ===================== INQUIRY SERVICE TAB SYSTEM =====================
+(function () {
+    'use strict';
+
+    var SERVICE_PLACEHOLDERS = {
+        web:      'Popište projekt \u2014 c\u00edlov\u00e1 skupina, rozsah, deadline\u2026',
+        redesign: 'Odkaz na st\u00e1vaj\u00edc\u00ed web a co v\u00e1s na n\u011bm trap\u00ed\u2026',
+        audit:    'URL webu, kter\u00fd chcete prov\u011b\u0159it\u2026',
+        other:    'Popi\u0161te, co pot\u0159ebujete. Neb\u00f3jte se b\u00fdt konkr\u00e9tn\u00ed\u2026'
+    };
+
+    var tabs       = document.querySelectorAll('.inquiry-tab[data-service]');
+    var panels     = document.querySelectorAll('.info-panel-content[data-service]');
+    var serviceInp = document.getElementById('f-service');
+    var msgField   = document.getElementById('f-message');
+
+    if (!tabs.length) return;
+
+    var prismLock = null;
+
+    function activateService(key) {
+        var prev = null;
+        var next = null;
+        panels.forEach(function (p) {
+            if (p.classList.contains('is-active')) prev = p;
+            if (p.dataset.service === key) next = p;
+        });
+        if (!next || next === prev) return;
+
+        // Update tabs + inputs
+        tabs.forEach(function (t) {
+            var active = t.dataset.service === key;
+            t.classList.toggle('is-active', active);
+            t.setAttribute('aria-selected', active ? 'true' : 'false');
+        });
+        if (serviceInp) serviceInp.value = key;
+        if (msgField && SERVICE_PLACEHOLDERS[key]) {
+            msgField.setAttribute('placeholder', SERVICE_PLACEHOLDERS[key]);
+        }
+
+        if (!prev) {
+            next.classList.add('is-active');
+            return;
+        }
+
+        // Abort any running prism
+        if (prismLock) {
+            clearTimeout(prismLock.timer);
+            prismLock.finish();
+            prismLock = null;
+        }
+
+        var slots  = prev.parentNode;   // .info-panel-slots
+        var DUR    = 700;
+        var h      = prev.offsetHeight;
+        var r      = Math.round(prev.offsetWidth / 2);
+
+        // Measure new card before hiding it inside stage
+        next.style.display = 'flex';
+        var newH = next.offsetHeight;
+
+        // Build preserve-3d stage — identical to ref carousel
+        var stage = document.createElement('div');
+        stage.style.cssText =
+            'grid-area:p;position:relative;width:100%;height:' + h + 'px;' +
+            'transform-style:preserve-3d;' +
+            'transform:translateZ(-' + r + 'px) rotateY(0deg);';
+
+        slots.insertBefore(stage, prev);
+        stage.appendChild(prev);
+        stage.appendChild(next);
+
+        // Front face (current) — at z = +r  →  world z = 0
+        prev.classList.remove('is-active');
+        prev.style.cssText =
+            'display:flex;position:absolute;top:0;left:0;width:100%;height:100%;' +
+            'backface-visibility:hidden;visibility:visible;opacity:1;pointer-events:none;' +
+            'transform:rotateY(0deg) translateZ(' + r + 'px);';
+
+        // Right face (new) — 90° to the right, at z = +r
+        // drum rotates -90° → brings right face to front
+        next.classList.add('is-active');
+        next.style.cssText =
+            'display:flex;position:absolute;top:0;left:0;width:100%;height:' + newH + 'px;' +
+            'backface-visibility:hidden;visibility:visible;opacity:1;pointer-events:none;' +
+            'transform:rotateY(90deg) translateZ(' + r + 'px);';
+
+        void stage.offsetWidth; // force layout
+
+        stage.style.transition = 'transform ' + DUR + 'ms cubic-bezier(0.4,0,0.2,1)';
+        stage.style.transform  = 'translateZ(-' + r + 'px) rotateY(-90deg)';
+
+        function finish() {
+            next.style.cssText = '';
+            prev.style.cssText = '';
+            next.classList.add('is-active');
+            if (stage.parentNode) {
+                slots.insertBefore(next, stage);
+                slots.insertBefore(prev, stage);
+                slots.removeChild(stage);
+            }
+        }
+
+        var timer = setTimeout(function () {
+            finish();
+            prismLock = null;
+        }, DUR + 50);
+
+        prismLock = { timer: timer, finish: finish };
+
+        stage.addEventListener('transitionend', function () {
+            clearTimeout(timer);
+            prismLock = null;
+            finish();
+        }, { once: true });
+    }
+
+    var VALID_KEYS = Array.from(tabs).map(function (t) { return t.dataset.service; });
+
+    function activateServiceWithHash(key, pushState) {
+        activateService(key);
+        var hash = '#kontakt-' + key;
+        if (pushState) {
+            history.pushState(null, '', hash);
+        } else {
+            history.replaceState(null, '', hash);
+        }
+    }
+
+    tabs.forEach(function (t) {
+        t.addEventListener('click', function () { activateServiceWithHash(t.dataset.service, true); });
+    });
+
+    // Keyboard: left/right arrow navigation across tabs
+    tabs.forEach(function (t, i) {
+        t.addEventListener('keydown', function (e) {
+            var dir = (e.key === 'ArrowRight') ? 1 : (e.key === 'ArrowLeft') ? -1 : 0;
+            if (!dir) return;
+            var next = tabs[(i + dir + tabs.length) % tabs.length];
+            next.focus();
+            activateServiceWithHash(next.dataset.service, true);
+        });
+    });
+
+    // Back/forward browser navigation
+    window.addEventListener('popstate', function () {
+        var key = (location.hash.match(/^#kontakt-(.+)$/) || [])[1];
+        if (key && VALID_KEYS.indexOf(key) !== -1) activateService(key);
+    });
+
+    // Init: read hash from URL, fallback to 'web'
+    var initHash = (location.hash.match(/^#kontakt-(.+)$/) || [])[1];
+    var initKey  = (initHash && VALID_KEYS.indexOf(initHash) !== -1) ? initHash : 'web';
+    activateService(initKey);
+    if (initKey !== 'web' || location.hash === '#kontakt-web') {
+        history.replaceState(null, '', '#kontakt-' + initKey);
+    }
+
+    BlueOrca.activateInquiryService = function (key, push) { activateServiceWithHash(key, push); };
+})();
+
+
+// ===================== CTA → INQUIRY TAB BRIDGE =====================
+(function () {
+    'use strict';
+
+    var pending = null;
+
+    document.querySelectorAll('a[href="#kontakt"][data-service]').forEach(function (a) {
+        a.addEventListener('click', function () { pending = a.dataset.service; });
+    });
+
+    var footer = document.getElementById('kontakt');
+    if (!footer || !window.IntersectionObserver) return;
+
+    new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting && pending) {
+                if (BlueOrca.activateInquiryService) {
+                    BlueOrca.activateInquiryService(pending, true);
+                }
+                pending = null;
+            }
+        });
+    }, { threshold: 0.15 }).observe(footer);
+})();
+
+
+// ===================== CONTACT FORM – AJAX ODESLÁNÍ =====================
+(function () {
+    'use strict';
+
+    var form      = document.querySelector('.contact-form');
+    if (!form) return;
+
+    var btnSubmit = form.querySelector('.contact-submit');
+    var errBox    = form.querySelector('.footer-form-notice--error');
+    var okBox     = form.querySelector('.footer-form-notice--success');
+    var btnHtml   = btnSubmit ? btnSubmit.innerHTML : '';
+
+    function setLoading(on) {
+        if (!btnSubmit) return;
+        btnSubmit.disabled = on;
+        if (on) {
+            btnSubmit.innerHTML = 'Odesílám\u2026';
+        } else {
+            btnSubmit.innerHTML = btnHtml;
+        }
+    }
+
+    function showError(msg) {
+        if (errBox) {
+            // Nahradit textový uzel (SVG ponechat)
+            var nodes = errBox.childNodes;
+            for (var i = nodes.length - 1; i >= 0; i--) {
+                if (nodes[i].nodeType === 3) errBox.removeChild(nodes[i]);
+            }
+            errBox.appendChild(document.createTextNode(' ' + msg));
+            errBox.classList.add('is-visible');
+        }
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var name    = (form.querySelector('#f-name')    || {}).value || '';
+        var email   = (form.querySelector('#f-email')   || {}).value || '';
+        var message = (form.querySelector('#f-message') || {}).value || '';
+
+        if (errBox) errBox.classList.remove('is-visible');
+        if (okBox)  okBox.classList.remove('is-visible');
+
+        if (!name.trim() || !email.trim() || !message.trim()) {
+            showError('Vyplňte prosím jméno, e-mail a zprávu.');
+            return;
+        }
+
+        setLoading(true);
+
+        fetch('contactform.php', {
+            method: 'POST',
+            body: new FormData(form)
+        })
+        .then(function (res) {
+            return res.json().then(function (json) {
+                return { ok: res.ok, json: json };
+            });
+        })
+        .then(function (result) {
+            if (result.json.ok) {
+                if (okBox) okBox.classList.add('is-visible');
+                form.reset();
+                // Reset tabs na výchozí
+                if (BlueOrca.activateInquiryService) {
+                    BlueOrca.activateInquiryService('web');
+                }
+            } else {
+                showError(result.json.error || 'Zprávu se nepodařilo odeslat. Zkuste to prosím znovu.');
+            }
+        })
+        .catch(function () {
+            showError('Připojení selhalo. Zkontrolujte internet a zkuste znovu.');
+        })
+        .finally(function () {
+            setLoading(false);
+        });
+    });
+})();
