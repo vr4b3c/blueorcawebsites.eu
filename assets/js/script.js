@@ -1,17 +1,18 @@
 var BlueOrca = window.BlueOrca = window.BlueOrca || {};
 BlueOrca.carousel = {};
 
+var afterNextPaint = BlueOrca.afterNextPaint || function (fn) {
+    requestAnimationFrame(function () {
+        requestAnimationFrame(fn);
+    });
+};
+
+BlueOrca.afterNextPaint = afterNextPaint;
+
 // ===================== REFERENCE THUMB & FILTER =====================
 (function () {
     var pills  = document.querySelectorAll('.filter-pill');
     var thumbs = document.querySelectorAll('.ref-thumb');
-    var cards  = document.querySelectorAll('.ref-card.ref-detail');
-
-    function afterNextPaint(fn) {
-        requestAnimationFrame(function () {
-            requestAnimationFrame(fn);
-        });
-    }
 
     // --- Activate a reference card by data-ref (detail panel only) ---
     // DRUM PRISM: preserve-3d stage with front/top faces, rotates as rigid body
@@ -1400,12 +1401,6 @@ BlueOrca.carousel = {};
 
     var prismLock = null;
 
-    function afterNextPaint(fn) {
-        requestAnimationFrame(function () {
-            requestAnimationFrame(fn);
-        });
-    }
-
     function activateService(key) {
         var prev = null;
         var next = null;
@@ -1584,7 +1579,19 @@ BlueOrca.carousel = {};
     var btnSubmit = form.querySelector('.contact-submit');
     var errBox    = form.querySelector('.footer-form-notice--error');
     var okBox     = form.querySelector('.footer-form-notice--success');
+    var nameField = form.querySelector('#f-name');
+    var emailField = form.querySelector('#f-email');
+    var messageField = form.querySelector('#f-message');
+    var startedAtField = form.querySelector('input[name="started_at"]');
     var btnHtml   = btnSubmit ? btnSubmit.innerHTML : '';
+
+    function refreshBotProtection() {
+        if (startedAtField) {
+            startedAtField.value = String(Math.floor(Date.now() / 1000));
+        }
+    }
+
+    refreshBotProtection();
 
     function setLoading(on) {
         if (!btnSubmit) return;
@@ -1596,6 +1603,15 @@ BlueOrca.carousel = {};
         }
     }
 
+    function setNoticeVisible(box, visible) {
+        if (box) box.classList.toggle('is-visible', visible);
+    }
+
+    function clearNotices() {
+        setNoticeVisible(errBox, false);
+        setNoticeVisible(okBox, false);
+    }
+
     function showError(msg) {
         if (errBox) {
             // Nahradit textový uzel (SVG ponechat)
@@ -1604,19 +1620,19 @@ BlueOrca.carousel = {};
                 if (nodes[i].nodeType === 3) errBox.removeChild(nodes[i]);
             }
             errBox.appendChild(document.createTextNode(' ' + msg));
-            errBox.classList.add('is-visible');
         }
+
+        setNoticeVisible(errBox, true);
     }
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
 
-        var name    = (form.querySelector('#f-name')    || {}).value || '';
-        var email   = (form.querySelector('#f-email')   || {}).value || '';
-        var message = (form.querySelector('#f-message') || {}).value || '';
+        var name    = nameField ? nameField.value : '';
+        var email   = emailField ? emailField.value : '';
+        var message = messageField ? messageField.value : '';
 
-        if (errBox) errBox.classList.remove('is-visible');
-        if (okBox)  okBox.classList.remove('is-visible');
+        clearNotices();
 
         if (!name.trim() || !email.trim() || !message.trim()) {
             showError('Vyplňte prosím jméno, e-mail nebo telefon a zprávu.');
@@ -1636,12 +1652,13 @@ BlueOrca.carousel = {};
         })
         .then(function (result) {
             if (result.json.ok) {
-                if (okBox) okBox.classList.add('is-visible');
+                setNoticeVisible(okBox, true);
                 form.reset();
                 // Reset tabs na výchozí
                 if (BlueOrca.activateInquiryService) {
                     BlueOrca.activateInquiryService('web');
                 }
+                refreshBotProtection();
             } else {
                 showError(result.json.error || 'Zprávu se nepodařilo odeslat. Zkuste to prosím znovu.');
             }

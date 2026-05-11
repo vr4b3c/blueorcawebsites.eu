@@ -1104,8 +1104,9 @@
                     <p class="contact-form-label">Kontaktní formulář</p>
                     <form class="contact-form" novalidate aria-label="Kontaktní formulář">
                         <input type="hidden" id="f-service" name="service" value="web">
+                        <input type="hidden" name="started_at" value="">
                         <!-- Honeypot – skryté pole pro ochranu před spamboty -->
-                        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" class="u-honeypot">
                         <div class="contact-form-row">
                             <div class="contact-field">
                                 <label for="f-name">Jméno</label>

@@ -138,6 +138,14 @@ body.has-webgl::before {
     display: none; /* WebGL canvas handles the visual — no need to paint the CSS fallback */
 }
 
+.u-honeypot {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
 /* Ensure page content sits above WebGL (-1) and 2D canvas (0) layers */
 section,
 main,
@@ -378,11 +386,11 @@ footer {
 
 /* ===================== btn-primary ===================== */
 
-.btn-primary {
+.btn-primary,
+.btn-secondary {
     display: inline-flex;
     align-items: center;
     padding: 0.3rem 1rem;
-    background: #1ab8d8;
     color: #fff;
     font-size: 0.75rem;
     font-weight: 600;
@@ -399,6 +407,10 @@ footer {
     -webkit-appearance: none;
     appearance: none;
     transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.btn-primary {
+    background: #1ab8d8;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.15), 0 1px 8px rgba(26,184,216,0.25);
 }
 
@@ -419,13 +431,8 @@ footer {
     text-decoration: none;
 }
 
-.btn-primary:hover::after {
-    transform: translateX(267%);
-}
-
 .btn-primary:active {
     background: #0fa8c5;
-    box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
 }
 
 /* ===================== btn-lg ===================== */
@@ -439,26 +446,7 @@ footer {
 /* ===================== btn-secondary ===================== */
 
 .btn-secondary {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.3rem 1rem;
     background: #d3a33b;
-    color: #fff;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-decoration: none;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border: none;
-    border-radius: 0;
-    white-space: nowrap;
-    cursor: pointer;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-    -webkit-appearance: none;
-    appearance: none;
-    transition: color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
     box-shadow: inset 0 1px 0 rgba(255,255,255,0.12), 0 1px 8px rgba(224,120,0,0.25);
 }
 
@@ -478,12 +466,12 @@ footer {
     text-decoration: none;
 }
 
-.btn-secondary:hover::after {
-    transform: translateX(267%);
-}
-
 .btn-secondary:active {
     background: #c96d00;
+}
+
+.btn-primary:active,
+.btn-secondary:active {
     box-shadow: inset 0 2px 6px rgba(0,0,0,0.18);
 }
 
@@ -1982,45 +1970,6 @@ a[target="_blank"]:hover::after {
     gap: 0.3rem;
 }
 
-.btn-tercial {
-    display: inline-flex;
-    align-items: center;
-    padding: 0.15rem 0.5rem;
-    background: rgba(142, 210, 232, 0.08);
-    border: 1px solid rgba(142, 210, 232, 0.25);
-    color: var(--accent);
-    font-size: 0.72rem;
-    font-weight: 500;
-    text-decoration: none;
-    letter-spacing: 0.1em;
-    border-radius: 0;
-    white-space: nowrap;
-    cursor: pointer;
-    transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.btn-tercial:hover {
-    background: rgba(142, 210, 232, 0.18);
-    border-color: rgba(142, 210, 232, 0.5);
-    text-decoration: none;
-}
-
-.btn-tercial::after {
-    display: none;
-}
-
-.btn-tercial-nolink {
-    color: var(--text-muted);
-    border-color: rgba(255, 255, 255, 0.08);
-    background: rgba(255, 255, 255, 0.04);
-    cursor: default;
-}
-
-.btn-tercial-nolink:hover {
-    background: rgba(255, 255, 255, 0.04);
-    border-color: rgba(255, 255, 255, 0.08);
-}
-
 .ref-tech {
     margin-top: 0.75rem;
     padding-top: 0.75rem;
@@ -3346,7 +3295,6 @@ a[target="_blank"]:hover::after {
 }
 
 /* ===================== ORCA LOGO – SVG fill colours ===================== */
-/* Shared by both the header logo (#orca_logo) and the contact logo (#orca_contact) */
 .color1 { fill: #061824; }
 .color2 { fill: #0b2a3f; }
 .color3 { fill: #0f4a6b; }
@@ -3354,89 +3302,48 @@ a[target="_blank"]:hover::after {
 .color5 { fill: #4fc3dd; }
 .color6 { fill: #bdefff; }
 
-/* ===================== ORCA LOGO – Header animations ===================== */
-#tail {
-    transform-origin: 260px 560px;
-    will-change: transform;
-    animation: tailSwim 3.2s ease-in-out infinite;
-}
-#body {
-    transform-origin: 380px 520px;
-    will-change: transform;
-    animation: bodySwim 3.2s ease-in-out infinite;
-}
-#fin-left, #fin-right {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    will-change: transform;
-    animation: finFlap 3.2s ease-in-out infinite;
-}
-#fin-left  { animation-delay: 0.7s; }
-#fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
-#mouth {
-    transform-box: fill-box;
-    transform-origin: 50% 20%;
-    transform: rotate(0deg);
-    transition: transform 0.35s ease-out;
-}
-#orca_logo:hover #mouth {
-    transform: rotate(10deg) translateY(-2px) translateX(-3px);
-}
-
-/* ===================== ORCA LOGO – Contact animations ===================== */
-#c-tail {
-    transform-origin: 260px 560px;
-    will-change: transform;
-    animation: tailSwim 3.2s ease-in-out infinite;
-}
-#c-body {
-    transform-origin: 380px 520px;
-    will-change: transform;
-    animation: bodySwim 3.2s ease-in-out infinite;
-}
-#c-fin-left, #c-fin-right {
-    transform-box: fill-box;
-    transform-origin: 50% 50%;
-    will-change: transform;
-    animation: finFlap 3.2s ease-in-out infinite;
-}
-#c-fin-left  { animation-delay: 0.7s; }
-#c-fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
-#c-mouth {
-    transform-box: fill-box;
-    transform-origin: 50% 20%;
-    transform: rotate(0deg);
-    transition: transform 0.35s ease-out;
-}
-#orca_contact:hover #c-mouth {
-    transform: rotate(10deg) translateY(-2px) translateX(-3px);
-}
-
-/* ===================== ORCA LOGO – Footer animations ===================== */
+/* ===================== ORCA LOGO – shared animations ===================== */
+#tail,
 #ft-tail {
     transform-origin: 260px 560px;
     will-change: transform;
     animation: tailSwim 3.2s ease-in-out infinite;
 }
+#body,
 #ft-body {
     transform-origin: 380px 520px;
     will-change: transform;
     animation: bodySwim 3.2s ease-in-out infinite;
 }
-#ft-fin-left, #ft-fin-right {
+#fin-left,
+#fin-right,
+#ft-fin-left,
+#ft-fin-right {
     transform-box: fill-box;
     transform-origin: 50% 50%;
     will-change: transform;
     animation: finFlap 3.2s ease-in-out infinite;
 }
-#ft-fin-left  { animation-delay: 0.7s; }
-#ft-fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
+#fin-left,
+#ft-fin-left {
+    animation-delay: 0.7s;
+}
+
+#fin-right,
+#ft-fin-right {
+    animation-delay: 0.4s;
+    transform-origin: 50% 5%;
+}
+
+#mouth,
 #ft-mouth {
     transform-box: fill-box;
     transform-origin: 50% 20%;
     transform: rotate(0deg);
     transition: transform 0.35s ease-out;
 }
+
+#orca_logo:hover #mouth,
 #orca_footer:hover #ft-mouth {
     transform: rotate(10deg) translateY(-2px) translateX(-3px);
 }
@@ -3460,7 +3367,6 @@ a[target="_blank"]:hover::after {
 }
 @media (prefers-reduced-motion: reduce) {
     #tail, #body, #fin-left, #fin-right,
-    #c-tail, #c-body, #c-fin-left, #c-fin-right,
     #ft-tail, #ft-body, #ft-fin-left, #ft-fin-right { animation: none; }
 }
 
@@ -3571,6 +3477,11 @@ a[target="_blank"]:hover::after {
     transform: translateX(-200%);
     transition: transform 0.5s ease;
     pointer-events: none;
+}
+
+.btn-primary:hover::after,
+.btn-secondary:hover::after {
+    transform: translateX(267%);
 }
 
 /* Suppress external-link arrow on all buttons — ::after is the shimmer overlay */

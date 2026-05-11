@@ -12,6 +12,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 header('Content-Type: application/json; charset=utf-8');
 
+const BOT_MIN_FILL_SECONDS = 3;
+const RATE_LIMIT_WINDOW_SECONDS = 600;
+const RATE_LIMIT_MAX_ATTEMPTS = 6;
+
 // ── Pomocné funkce ─────────────────────────────────────────────────────────────
 
 function sanitize(string $val): string
@@ -26,12 +30,92 @@ function json_error(string $msg, int $code = 422): void
     exit;
 }
 
+function get_client_ip(): string
+{
+    $cloudflareIp = trim((string) ($_SERVER['HTTP_CF_CONNECTING_IP'] ?? ''));
+    if ($cloudflareIp && filter_var($cloudflareIp, FILTER_VALIDATE_IP)) {
+        return $cloudflareIp;
+    }
+
+    $remoteAddr = trim((string) ($_SERVER['REMOTE_ADDR'] ?? ''));
+    if ($remoteAddr && filter_var($remoteAddr, FILTER_VALIDATE_IP)) {
+        return $remoteAddr;
+    }
+
+    return 'unknown';
+}
+
+function validate_started_at(string $startedAt): void
+{
+    if (!preg_match('/^\d{10}$/', $startedAt)) {
+        json_error('Formulář není připravený k odeslání. Obnovte stránku a zkuste to znovu.', 400);
+    }
+
+    $age = time() - (int) $startedAt;
+    if ($age < BOT_MIN_FILL_SECONDS) {
+        json_error('Odeslání proběhlo příliš rychle. Zkuste to prosím znovu.', 422);
+    }
+}
+
+function enforce_rate_limit(string $clientKey, int $maxAttempts, int $windowSeconds): void
+{
+    $directory = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'blueorca-contactform';
+    if (!is_dir($directory) && !mkdir($directory, 0700, true) && !is_dir($directory)) {
+        return;
+    }
+
+    $filePath = $directory . DIRECTORY_SEPARATOR . hash('sha256', $clientKey) . '.json';
+    $handle = fopen($filePath, 'c+');
+    if ($handle === false) {
+        return;
+    }
+
+    if (!flock($handle, LOCK_EX)) {
+        fclose($handle);
+        return;
+    }
+
+    $now = time();
+    $cutoff = $now - $windowSeconds;
+    $stored = stream_get_contents($handle);
+    $decoded = json_decode($stored ?: '[]', true);
+    $attempts = [];
+
+    if (is_array($decoded)) {
+        foreach ($decoded as $timestamp) {
+            if (is_numeric($timestamp)) {
+                $timestamp = (int) $timestamp;
+                if ($timestamp >= $cutoff) {
+                    $attempts[] = $timestamp;
+                }
+            }
+        }
+    }
+
+    if (count($attempts) >= $maxAttempts) {
+        $retryAfter = max(1, (min($attempts) + $windowSeconds) - $now);
+        flock($handle, LOCK_UN);
+        fclose($handle);
+        header('Retry-After: ' . $retryAfter);
+        json_error('Zkoušíte to příliš často. Zkuste to prosím znovu za pár minut.', 429);
+    }
+
+    $attempts[] = $now;
+    rewind($handle);
+    ftruncate($handle, 0);
+    fwrite($handle, json_encode($attempts));
+    fflush($handle);
+    flock($handle, LOCK_UN);
+    fclose($handle);
+}
+
 // ── Načtení a validace vstupů ──────────────────────────────────────────────────
 
 $service = sanitize($_POST['service'] ?? '');
 $name    = sanitize($_POST['name']    ?? '');
 $contact = sanitize($_POST['email']   ?? '');
 $message = sanitize($_POST['message'] ?? '');
+$startedAt = trim((string) ($_POST['started_at'] ?? ''));
 
 // Honeypot: robotí pole musí zůstat prázdné
 if (!empty($_POST['website'])) {
@@ -41,11 +125,15 @@ if (!empty($_POST['website'])) {
     exit;
 }
 
+validate_started_at($startedAt);
+
 // Kontakt = e-mail nebo telefon (min. 6 znaků)
 $isEmail = (bool) filter_var($contact, FILTER_VALIDATE_EMAIL);
 if (!$name)                      json_error('Vyplňte prosím jméno.');
 if (strlen($contact) < 6)        json_error('Zadejte platný e-mail nebo telefonní číslo.');
 if (!$message)                   json_error('Napište prosím zprávu.');
+
+enforce_rate_limit(get_client_ip(), RATE_LIMIT_MAX_ATTEMPTS, RATE_LIMIT_WINDOW_SECONDS);
 
 // ── Sestavení e-mailu ──────────────────────────────────────────────────────────
 
