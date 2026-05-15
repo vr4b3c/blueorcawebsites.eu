@@ -783,103 +783,6 @@ BlueOrca.afterNextPaint = afterNextPaint;
     });
 })();
 
-// ===================== FLIP TILE TRANSITION =====================
-// 5×4 dlaždic, každá má na přední straně výřez starého obrázku
-// a na zadní straně výřez nového obrázku. Jšou diagonální vlna otočení.
-// Slide swap se stane instantě, animace probhá pouze na obrázku.
-(function () {
-    var COLS     = 5;
-    var ROWS     = 4;
-    var FLIP_DUR = 0.45;  // s - délka otočení jedné dlaždice
-    var SPREAD   = 0.55;  // s - diagonální stagger rozsah
-    var DONE_MS  = Math.round((SPREAD + FLIP_DUR) * 1000 + 80);
-
-    var transitioning = false;
-
-    function buildGrid(frame) {
-        var g = document.createElement('div');
-        g.className = 'tile-flip-grid';
-        for (var row = 0; row < ROWS; row++) {
-            for (var col = 0; col < COLS; col++) {
-                var tile  = document.createElement('div');
-                tile.className = 'tf-tile';
-                tile.style.setProperty('--tf-col', col);
-                tile.style.setProperty('--tf-row', row);
-                tile.style.setProperty('--tf-dur', FLIP_DUR + 's');
-                var delay = ((col + row) / (COLS + ROWS - 2) * SPREAD).toFixed(3);
-                tile.style.setProperty('--tf-delay', delay + 's');
-                var front = document.createElement('div'); front.className = 'tf-front';
-                var back  = document.createElement('div'); back.className  = 'tf-back';
-                tile.appendChild(front);
-                tile.appendChild(back);
-                g.appendChild(tile);
-            }
-        }
-        frame.style.position = 'relative';
-        frame.appendChild(g);
-        return g;
-    }
-
-    function getGrid(slide) {
-        var frame = slide.querySelector('.cta-cms-visual-frame');
-        if (!frame) return null;
-        return frame.querySelector('.tile-flip-grid') || buildGrid(frame);
-    }
-
-    window.triggerFlipTransition = function (outSlide, inSlide) {
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            outSlide.classList.remove('is-active');
-            inSlide.classList.add('is-active');
-            return;
-        }
-        if (transitioning) return;
-        transitioning = true;
-
-        var outImg = outSlide.querySelector('.cta-cms-visual-frame img');
-        var inImg  =  inSlide.querySelector('.cta-cms-visual-frame img');
-        var grid   = getGrid(inSlide);
-
-        if (!grid || !outImg || !inImg) {
-            outSlide.classList.remove('is-active');
-            inSlide.classList.add('is-active');
-            transitioning = false;
-            return;
-        }
-
-        // Nastav obrázky na přední a zadní strany
-        grid.querySelectorAll('.tf-front').forEach(function (f) {
-            f.style.backgroundImage = 'url("' + outImg.src + '")';
-        });
-        grid.querySelectorAll('.tf-back').forEach(function (b) {
-            b.style.backgroundImage = 'url("' + inImg.src + '")';
-        });
-
-        // Reset dlaždic do výchozí polohy (bez animace)
-        var tiles = grid.querySelectorAll('.tf-tile');
-        tiles.forEach(function (t) {
-            t.classList.add('tf-no-anim');
-            t.classList.remove('is-flipping');
-        });
-
-        // Grid zakryje obrázek
-        grid.style.opacity = '1';
-
-        // rAF×2: browser vykreslí resetovaný stav, pak spustí přechod
-        requestAnimationFrame(function () {
-            requestAnimationFrame(function () {
-                tiles.forEach(function (t) { t.classList.remove('tf-no-anim'); });
-                tiles.forEach(function (t) { t.classList.add('is-flipping'); });
-            });
-        });
-
-        // Po dokončení: jen skryj grid – slide a text řeší show() nezávisle
-        setTimeout(function () {
-            grid.style.opacity = '0';
-            transitioning = false;
-        }, DONE_MS);
-    };
-})();
-
 // ===================== CTA SLIDER =====================
 (function () {
     var slider = document.querySelector('[data-slider]');
@@ -894,6 +797,7 @@ BlueOrca.afterNextPaint = afterNextPaint;
     var tickStart = 0;
     var isPaused = false;
     var dotProgressPhase = false;
+    var fadeCleanupTimer = 0;
 
     function clearTimers() {
         clearTimeout(autoplayTimer);
@@ -914,6 +818,15 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
     function show(idx) {
         if (idx === current) return;
+
+        if (fadeCleanupTimer) {
+            clearTimeout(fadeCleanupTimer);
+            fadeCleanupTimer = 0;
+        }
+        slides.forEach(function (slide) {
+            slide.classList.remove('is-text-out', 'is-leaving', 'is-image-fading');
+        });
+
         var prevIdx = current;
         dots[current].classList.remove('is-active', 'is-progressing-a', 'is-progressing-b');
         current = (idx + slides.length) % slides.length;
@@ -924,16 +837,20 @@ BlueOrca.afterNextPaint = afterNextPaint;
         var outSlide = slides[prevIdx];
         var inSlide  = slides[current];
 
-        // TEXT: swap okamžitě – fadeout na outSlide, pak ihned fadein na inSlide
+        // Text se přepne rychle, obrázek zůstane nad novým slidem a prostě vyfadeuje.
         outSlide.classList.add('is-text-out');
+        outSlide.classList.add('is-leaving');
         outSlide.classList.remove('is-active');
         inSlide.classList.add('is-active');
-        setTimeout(function () { outSlide.classList.remove('is-text-out'); }, 200);
-
-        // OBRÁZEK: flip-tile animace běží zcela asynchronně, nezávisle na textu
-        if (typeof triggerFlipTransition === 'function') {
-            triggerFlipTransition(outSlide, inSlide);
-        }
+        requestAnimationFrame(function () {
+            if (outSlide.classList.contains('is-leaving')) {
+                outSlide.classList.add('is-image-fading');
+            }
+        });
+        fadeCleanupTimer = setTimeout(function () {
+            outSlide.classList.remove('is-text-out', 'is-leaving', 'is-image-fading');
+            fadeCleanupTimer = 0;
+        }, 750);
     }
 
     function next() { show(current + 1); }
