@@ -977,9 +977,9 @@ body.drawer-open {
 .cta-cms-visual {
     position: absolute;
     top: 50%;
-    right: -2%;
+    right: -3%;
     transform: translateY(-50%);
-    width: 50%;
+    width: auto;
     display: flex;
     align-items: center;
     justify-content: flex-end;
@@ -994,7 +994,7 @@ body.drawer-open {
 
 .cta-cms-visual-frame {
     position: relative;
-    left: -100px;
+    left: 0;
     pointer-events: auto;
     transform:
         perspective(900px)
@@ -1009,7 +1009,7 @@ body.drawer-open {
         -2px 4px 16px rgba(0, 0, 0, 0.4),
         0 0 0 1px rgba(142, 210, 232, 0.15);
     transition: transform 0.4s ease;
-    width: 100%;
+    width: auto;
 }
 
 .cta-cms-visual-frame.no-shadow {
@@ -1026,8 +1026,8 @@ body.drawer-open {
 }
 
 .cta-cms-visual-frame img {
-    width: 100%;
-    height: auto;
+    width: 1000px;
+    height: 800px;
     display: block;
     border-radius: 0;
 }
@@ -1058,7 +1058,13 @@ body.drawer-open {
     .cta-cms-visual-frame {
         transform: perspective(900px) rotateY(-8deg) rotateX(4deg) rotate(-1deg);
         transform-origin: center center;
+        width: 100%;
         max-width: 100%;
+    }
+
+    .cta-cms-visual-frame img {
+        width: 100%;
+        height: auto;
     }
 
     .cta-cms-visual-frame:hover {
