@@ -27,8 +27,9 @@
     --text-muted: #5a7a8a;
     --green: #0cce6b;
     --orange: #ffd549;
+    --cta: #ffd549;
     --red: #ff4e42;
-    --radius: 0;
+    --radius: 0px;
     --scrollbar-button-h: 12px; /* explicit arrow height – read by JS ruler */
 }
 
@@ -2532,29 +2533,57 @@ a[target="_blank"]:hover::after {
 }
 
 .cenik-list li strong {
-    color: var(--text-primary);
+    font-weight: 700;
 }
+
+/* Utility color classes for list items */
+.text-cta   { color: var(--cta); }
+.text-white { color: var(--text-primary); }
+.text-blue  { color: var(--accent); }
 
 .cenik-check {
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    width: 1.35rem;
-    height: 1.35rem;
-    margin-top: 0.12rem;
-    background: rgba(12, 206, 107, 0.12);
-    border: 1px solid rgba(12, 206, 107, 0.3);
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.15rem;
 }
 
 .cenik-check::after {
     content: '';
     display: block;
-    width: 0.65rem;
-    height: 0.65rem;
-    background-color: var(--green);
+    width: 1.1rem;
+    height: 1.1rem;
+    background-color: var(--accent-mid);
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
     mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+.cenik-plus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin-top: 0.15rem;
+    opacity: 0.65;
+}
+
+.cenik-plus::after {
+    content: '';
+    display: block;
+    width: 1.1rem;
+    height: 1.1rem;
+    background-color: var(--accent);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='12' y1='5' x2='12' y2='19'/%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     -webkit-mask-size: contain;
@@ -2582,6 +2611,284 @@ a[target="_blank"]:hover::after {
 
     .cenik-heading {
         font-size: 1.65rem;
+    }
+}
+
+/* ===================== CENÍK — CARD GRID ===================== */
+
+.cenik-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    align-items: stretch;
+}
+
+/* Base card */
+.cenik-card {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem 1.75rem 1.75rem;
+    position: relative;
+}
+
+/* Featured card (karta 2) — accent blue border + glow */
+.cenik-card--featured {
+    border-color: rgba(60, 164, 197, 0.8);
+    box-shadow:
+        0 8px 48px rgba(0, 0, 0, 0.45),
+        0 0 48px rgba(60, 164, 197, 0.28),
+        inset 0 1px 0 rgba(142, 210, 232, 0.3);
+}
+
+/* Premium card (karta 3) — gold border + glow */
+.cenik-card--premium {
+    border-color: rgba(255, 213, 73, 0.45);
+    box-shadow:
+        0 8px 48px rgba(0, 0, 0, 0.5),
+        0 0 52px rgba(255, 213, 73, 0.15),
+        inset 0 1px 0 rgba(255, 213, 73, 0.18);
+}
+
+/* Badge: "Nejoblíbenější" */
+.cenik-card-badge {
+    display: none;
+}
+
+/* Card header */
+.cenik-card-header {
+    margin-bottom: 1.5rem;
+}
+
+.cenik-card-tier {
+    display: none;
+}
+
+.cenik-card-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.85rem;
+    line-height: 1.2;
+}
+
+.cenik-card-price {
+    font-size: clamp(1.9rem, 3.5vw, 2.6rem);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.6rem;
+}
+
+.cenik-price-value {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+.cenik-card--featured .cenik-card-price,
+.cenik-card--featured .cenik-card-name {
+    color: var(--accent);
+}
+
+.cenik-card--premium .cenik-card-price,
+.cenik-card--premium .cenik-card-name {
+    color: var(--cta);
+}
+
+.cenik-card-currency {
+    font-size: 0.55em;
+    font-weight: 600;
+    letter-spacing: 0;
+    vertical-align: super;
+}
+
+.cenik-card-from {
+    font-size: 0.45em;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    color: var(--text-secondary);
+    margin-right: 0.15em;
+}
+
+.cenik-card-delivery {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.cenik-card-desc {
+    margin-top: 0.75rem;
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding-top: 0.75rem;
+    border-top: 1px solid rgba(142, 210, 232, 0.08);
+}
+
+/* Card body — grows to fill height so footers align */
+.cenik-card-body {
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+/* Override list gap inside cards — slightly tighter */
+.cenik-card .cenik-list {
+    gap: 0.7rem;
+    margin-bottom: 0;
+}
+
+/* Card footer */
+.cenik-card-footer {
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(142, 210, 232, 0.1);
+    display: flex;
+    justify-content: center;
+    display: none;
+}
+
+/* Note below the grid */
+.cenik-footer-note {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 2rem;
+    line-height: 1.6;
+}
+
+.cenik-footer-note strong {
+    color: var(--text-secondary);
+}
+
+/* ── Design toggle ── */
+.cenik-toggle-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+}
+
+.cenik-toggle-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: color 0.2s;
+    line-height: 1.3;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.cenik-toggle-label--right {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.cenik-toggle-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    transition: color 0.2s;
+}
+
+/* active state labels */
+.cenik-toggle-wrap.is-design .cenik-toggle-label--right { color: var(--cta); }
+.cenik-toggle-wrap.is-design .cenik-toggle-badge { color: var(--cta); opacity: 0.7; }
+.cenik-toggle-wrap:not(.is-design) .cenik-toggle-label--left { color: var(--accent); }
+
+.cenik-toggle {
+    position: relative;
+    width: 3.25rem;
+    height: 1.75rem;
+    background: rgba(var(--accent-dark),0.9);
+    border: 1px solid rgba(142, 210, 232, 0.2);
+    border-radius: 999px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background 0.25s, border-color 0.25s;
+    padding: 0;
+}
+
+.cenik-toggle[aria-checked="true"] {
+    background: rgba(255, 213, 73, 0.15);
+    border-color: rgba(255, 213, 73, 0.45);
+}
+
+.cenik-toggle-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0.2rem;
+    transform: translateY(-50%);
+    width: 1.2rem;
+    height: 1.2rem;
+    background: var(--accent);
+    border-radius: 50%;
+    transition: transform 0.25s, background 0.25s;
+    pointer-events: none;
+}
+
+.cenik-toggle[aria-checked="true"] .cenik-toggle-thumb {
+    transform: translateY(-50%) translateX(1.45rem);
+    background: var(--cta);
+}
+
+/* price addon diff indicator */
+.cenik-price-diff {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--cta);
+    margin-left: 0.35rem;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s, transform 0.25s;
+    vertical-align: middle;
+}
+
+.cenik-toggle-wrap.is-design ~ .cenik-grid .cenik-price-diff {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── Responsive ── */
+
+/* Tablet: 2 columns, card 3 goes full width */
+@media (max-width: 960px) {
+    .cenik-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .cenik-grid .cenik-card:last-child {
+        grid-column: 1 / -1;
+        max-width: 520px;
+        margin-inline: auto;
+        width: 100%;
+    }
+}
+
+/* Mobile: single column */
+@media (max-width: 600px) {
+    .cenik-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .cenik-grid .cenik-card:last-child {
+        grid-column: auto;
+        max-width: none;
+        margin-inline: 0;
+    }
+
+    .cenik-card {
+        padding: 1.75rem 1.25rem 1.25rem;
     }
 }
 

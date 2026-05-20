@@ -1588,3 +1588,94 @@ BlueOrca.afterNextPaint = afterNextPaint;
         });
     });
 })();
+
+// ===================== CENÍK — DESIGN TOGGLE =====================
+(function () {
+    var toggle = document.getElementById('cenikDesignToggle');
+    if (!toggle) return;
+
+    var wrap = toggle.closest('.cenik-toggle-wrap');
+    var activeCounters = [];
+
+    function formatPrice(num) {
+        return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0');
+    }
+
+    function animateCounter(el, from, to, duration) {
+        var start = null;
+        var raf = requestAnimationFrame(function step(ts) {
+            if (!start) start = ts;
+            var progress = Math.min((ts - start) / duration, 1);
+            // ease-out cubic
+            var eased = 1 - Math.pow(1 - progress, 3);
+            var current = Math.round(from + (to - from) * eased);
+            el.textContent = formatPrice(current);
+            if (progress < 1) {
+                activeCounters.push(requestAnimationFrame(step));
+            }
+        });
+        activeCounters.push(raf);
+    }
+
+    function setDesignMode(active) {
+        // cancel any running counters
+        activeCounters.forEach(function (id) { cancelAnimationFrame(id); });
+        activeCounters = [];
+
+        toggle.setAttribute('aria-checked', active ? 'true' : 'false');
+        wrap.classList.toggle('is-design', active);
+
+        document.querySelectorAll('.cenik-card-price[data-base-price]').forEach(function (priceEl) {
+            var base  = parseInt(priceEl.getAttribute('data-base-price'), 10);
+            var addon = parseInt(priceEl.getAttribute('data-design-addon'), 10);
+            var from  = active ? base : base + addon;
+            var to    = active ? base + addon : base;
+            var valueEl = priceEl.querySelector('.cenik-price-value');
+            if (valueEl) animateCounter(valueEl, from, to, 480);
+        });
+
+        var designItem = document.getElementById('cenikDesignItem');
+        if (designItem) {
+            var span = designItem.querySelector('span:last-child');
+            if (active) {
+                span.className = '';
+                span.innerHTML = 'Design: <strong class="text-white">Na míru</strong> přesně pro vás';
+            } else {
+                span.className = '';
+                span.innerHTML = 'Design: <strong class="text-white">Upravená šablona</strong> přesně pro vás';
+            }
+        }
+
+        document.querySelectorAll('.cenik-card-delivery[data-base-delivery]').forEach(function (el) {
+            var base  = parseInt(el.getAttribute('data-base-delivery'), 10);
+            var addon = parseInt(el.getAttribute('data-delivery-addon'), 10);
+            var d = active ? base + addon : base;
+            var textEl = el.querySelector('.cenik-delivery-text');
+            if (!textEl) return;
+            var label;
+            if (d <= 7)       label = 'do 7 dní';
+            else if (d <= 14) label = 'do 14 dní';
+            else if (d <= 21) label = 'do 21 dní';
+            else if (d <= 30) label = 'do měsíce';
+            else {
+                var w = Math.ceil(d / 7);
+                var unit = w < 5 ? 'týdny' : 'týdnů';
+                label = 'do ' + w + ' ' + unit;
+            }
+            textEl.textContent = 'Spuštění webu ' + label;
+        });
+    }
+
+    toggle.addEventListener('click', function () {
+        var isActive = toggle.getAttribute('aria-checked') === 'true';
+        setDesignMode(!isActive);
+    });
+
+    wrap.querySelectorAll('[data-cenik-toggle-target]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            setDesignMode(btn.getAttribute('data-cenik-toggle-target') === 'true');
+        });
+    });
+
+    setDesignMode(false);
+})();
