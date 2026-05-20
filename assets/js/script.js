@@ -1639,10 +1639,10 @@ BlueOrca.afterNextPaint = afterNextPaint;
             var span = designItem.querySelector('span:last-child');
             if (active) {
                 span.className = '';
-                span.innerHTML = 'Design: <strong class="text-white">Na míru</strong> přesně pro vás';
+                span.innerHTML = '<strong class="text-white">Design na míru</strong>';
             } else {
                 span.className = '';
-                span.innerHTML = 'Design: <strong class="text-white">Upravená šablona</strong> přesně pro vás';
+                span.innerHTML = 'Design <strong class="text-white">Upravená šablona</strong>';
             }
         }
 
