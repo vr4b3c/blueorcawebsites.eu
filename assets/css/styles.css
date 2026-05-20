@@ -2452,15 +2452,6 @@ a[target="_blank"]:hover::after {
     justify-content: center;
 }
 
-.cenik-heading {
-    font-size: clamp(2rem, 4vw, 3.2rem);
-    font-weight: 700;
-    color: var(--text-primary);
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-    margin-bottom: 1.5rem;
-}
-
 /* ===================== SECTION HEADER ===================== */
 /* Universal intro block: eyebrow label + heading + subtitle.
    Usage:
@@ -2505,15 +2496,6 @@ a[target="_blank"]:hover::after {
     text-shadow: none;
 }
 
-
-.cenik-box {
-    background: linear-gradient(160deg, rgba(15, 70, 99, 0.6) 0%, rgb(8, 32, 50) 100%);
-    border: 1px solid rgba(142, 210, 232, 0.2);
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(142, 210, 232, 0.1);
-    padding: 2.5rem 3rem;
-    max-width: 780px;
-    margin: 0 auto;
-}
 
 .cenik-list {
     list-style: none;
@@ -2590,30 +2572,6 @@ a[target="_blank"]:hover::after {
     mask-size: contain;
 }
 
-.cenik-cta {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex-wrap: wrap;
-    padding-top: 1.75rem;
-    border-top: 1px solid rgba(142, 210, 232, 0.1);
-}
-
-.cenik-note {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-}
-
-@media (max-width: 600px) {
-    .cenik-box {
-        padding: 1.75rem 1.25rem;
-    }
-
-    .cenik-heading {
-        font-size: 1.65rem;
-    }
-}
-
 /* ===================== CENÍK — CARD GRID ===================== */
 
 .cenik-grid {
@@ -2632,23 +2590,6 @@ a[target="_blank"]:hover::after {
     position: relative;
 }
 
-/* Progressive rotateY tilt — každá další karta nakloněná víc doprava */
-/*
-.cenik-grid > :nth-child(1) {
-    transform: rotateY(9deg);
-    transform-origin: right center;
-}
-
-.cenik-grid > :nth-child(2) {
-    transform: rotateY(9deg);
-    transform-origin: center center;
-}
-
-.cenik-grid > :nth-child(3) {
-    transform: rotateY(9deg);
-    transform-origin: left center;
-}
-*/
 /* Featured card (karta 2) — accent blue border + glow */
 .cenik-card--featured {
     border-color: rgba(60, 164, 197, 0.8);
@@ -2764,9 +2705,9 @@ a[target="_blank"]:hover::after {
 .cenik-card-footer {
     padding-top: 1.5rem;
     border-top: 1px solid rgba(142, 210, 232, 0.1);
-    display: flex;
-    justify-content: center;
     display: none;
+    justify-content: center;
+
 }
 
 /* Note below the grid */
@@ -2827,7 +2768,7 @@ a[target="_blank"]:hover::after {
     position: relative;
     width: 3.25rem;
     height: 1.75rem;
-    background: rgba(var(--accent-dark),0.9);
+    background: var(--accent-dark);
     border: 1px solid rgba(142, 210, 232, 0.2);
     border-radius: 999px;
     cursor: pointer;
@@ -2879,10 +2820,11 @@ a[target="_blank"]:hover::after {
 
 /* ── Responsive ── */
 
-/* Tablet: 2 columns, card 3 goes full width */
+/* Tablet: 2 columns */
 @media (max-width: 960px) {
     .cenik-grid {
         grid-template-columns: repeat(2, 1fr);
+        perspective: none;
     }
 
     .cenik-card--premium {
@@ -2891,12 +2833,17 @@ a[target="_blank"]:hover::after {
         margin-inline: auto;
         width: 100%;
     }
+
+    .cenik-card {
+        padding: 1.75rem 1.5rem 1.5rem;
+    }
 }
 
 /* Mobile: single column */
 @media (max-width: 600px) {
     .cenik-grid {
         grid-template-columns: 1fr;
+        perspective: none;
     }
 
     .cenik-card--premium {
@@ -2906,18 +2853,15 @@ a[target="_blank"]:hover::after {
     }
 
     .cenik-card {
-        padding: 1.75rem 1.25rem 1.25rem;
+        padding: 1.5rem 1.25rem 1.25rem;
     }
 
-    .cenik-card--featured,
-    .cenik-card--premium {
-        transform: none;
+    .cenik-toggle-wrap {
+        gap: 0.65rem;
     }
 
-    .cenik-grid > :nth-child(1),
-    .cenik-grid > :nth-child(2),
-    .cenik-grid > :nth-child(3) {
-        transform: none;
+    .cenik-toggle-label {
+        font-size: 0.88rem;
     }
 }
 
