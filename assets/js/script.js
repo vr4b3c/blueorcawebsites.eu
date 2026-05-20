@@ -1636,13 +1636,11 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
         var designItem = document.getElementById('cenikDesignItem');
         if (designItem) {
-            var span = designItem.querySelector('span:last-child');
+            var span = designItem.querySelector('.cenik-design-label');
             if (active) {
-                span.className = '';
                 span.innerHTML = '<strong class="text-white">Design na míru</strong>';
             } else {
-                span.className = '';
-                span.innerHTML = 'Design <strong class="text-white">Upravená šablona</strong>';
+                span.innerHTML = '<strong class="text-white">Upravená šablona</strong>';
             }
         }
 
