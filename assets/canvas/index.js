@@ -47,5 +47,4 @@ export {
     JellyfishLayer
 };
 
-// Log module load
-console.log('Canvas Background System 2.0 loaded');
+

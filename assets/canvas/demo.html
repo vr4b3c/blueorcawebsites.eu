@@ -170,14 +170,11 @@
         window.toggleStats = () => {
             manager.togglePerformanceStats();
         };
-        
-        // Legacy bubbles toggle removed (use WebGL bubbles)
-        
+
         window.toggleRays = () => {
             const layer = manager.getLayer('lightRays');
             if (layer) {
                 layer.enabled = !layer.enabled;
-                console.log('Light rays:', layer.enabled ? 'ON' : 'OFF');
             }
         };
         
@@ -186,12 +183,10 @@
             const x = (typeof clickX === 'number') ? clickX : Math.random() * manager.width;
             const y = (typeof clickY === 'number') ? clickY : Math.random() * manager.height;
             manager.foodSystem.spawn(x, y, 1.0);
-            console.log('Food spawned at', x, y);
 
-            // On first food spawn, enable curious fish and slide-in HUD
+            // On first food spawn, enable curious fish
             try {
                 let curiousFishLayer = manager.getLayer && manager.getLayer('curiousFish');
-                const hudLayer = manager.getLayer && manager.getLayer('hud');
 
                 // If curious fish layer was not created at startup, create it now
                 if (!curiousFishLayer) {
@@ -236,16 +231,20 @@
         };
         
         window.showInfo = () => {
-            console.log('=== Canvas System Info ===');
-            console.log('FPS:', manager.performanceMonitor.getFPS());
-            console.log('Quality:', manager.performanceMonitor.getQuality());
-            console.log('Food particles:', manager.foodSystem.getCount());
-            console.log('Layers:', Array.from(manager.layers.keys()));
-            console.log('Canvas size:', manager.width, 'x', manager.height);
+            const status = document.getElementById('status');
+            if (!status) return;
+            const fps = manager.performanceMonitor?.getFPS() ?? '--';
+            const q = manager.performanceMonitor ? Math.round(manager.performanceMonitor.getQuality() * 100) : '--';
+            const food = manager.foodSystem?.getCount() ?? '--';
+            const layers = manager.layers ? Array.from(manager.layers.keys()).join(', ') : '--';
+            status.innerHTML = `
+                <div>📊 FPS: ${fps}</div>
+                <div>🎨 Quality: ${q}%</div>
+                <div>🍎 Food particles: ${food}</div>
+                <div>🗂️ Layers: ${layers}</div>
+                <div>📐 Canvas: ${manager.width} × ${manager.height}</div>
+            `;
         };
-        
-        console.log('Canvas Background System 2.0 Demo loaded');
-        console.log('Try clicking anywhere on the page to spawn food particles!');
     </script>
 </body>
 </html>

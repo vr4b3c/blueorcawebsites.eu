@@ -63,7 +63,6 @@ export class FishLayer {
                 // Build depth-tinted cache for this image
                 this._imageDepthCache[index] = this._buildDepthCache(img);
                 if (this.imagesLoaded === imagePaths.length) {
-                    console.log('All fish images loaded');
                 }
             };
             img.onerror = () => {
@@ -112,7 +111,6 @@ export class FishLayer {
         this.manager = canvasManager || window.blueOrcaCanvas;
         
         this._unsubscribePointerMove = subscribePointerMove(this.handlePointerMove);
-        console.log('SharkLayer initialized');
     }
 
     /**

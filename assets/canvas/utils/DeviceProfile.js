@@ -169,9 +169,5 @@ export function getDeviceProfile() {
         entityBudget: getViewportScaledBudget(BUDGETS[tier], area),
     };
 
-    console.info(
-        `[DeviceProfile] tier=${tier} (${_cached.label}) | ${vw}×${vh}px | cores=${cores} dpr=${dpr} conn=${connType || 'unknown'} | budgetDprCap=${_cached.entityBudget.dprCap}`
-    );
-
     return _cached;
 }

@@ -133,7 +133,6 @@ export class CuriousFishLayer {
         this.fishImage.onload = () => {
             this.imageLoaded = true;
             this._fishDepthCache = this._buildDepthCache(this.fishImage);
-            console.log('Curious fish image loaded');
         };
         
         this.fishImage.onerror = () => {
@@ -149,7 +148,6 @@ export class CuriousFishLayer {
         this.boneLoaded = false;
         this.boneImage.onload = () => {
             this.boneLoaded = true;
-            console.log('Fishbone image loaded');
         };
         this.boneImage.onerror = () => {
             console.warn('Failed to load fishbone image at assets/images/fish/fishbone.webp');
@@ -190,7 +188,6 @@ export class CuriousFishLayer {
         }
         
         this._unsubscribePointerMove = subscribePointerMove(this.handlePointerMove);
-        console.log('CuriousFishLayer initialized');
     }
     
     handlePointerMove(x, y, timestamp) {
@@ -532,9 +529,6 @@ export class CuriousFishLayer {
         // Enable layer if not enabled
         if (!this.enabled) {
             this.enabled = true;
-            if (opts.hold || opts.immediate) {
-                console.log('CuriousFishLayer enabled by setTargetPoint');
-            }
         }
     }
     
