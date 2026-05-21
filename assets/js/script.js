@@ -1061,6 +1061,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         overlay.classList.add('is-open');
         document.body.classList.add('drawer-open');
         hamburger.setAttribute('aria-expanded', 'true');
+        drawer.removeAttribute('inert');
         drawer.setAttribute('aria-hidden', 'false');
         overlay.setAttribute('aria-hidden', 'false');
         // focus first link for accessibility
@@ -1074,6 +1075,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         document.body.classList.remove('drawer-open');
         hamburger.setAttribute('aria-expanded', 'false');
         drawer.setAttribute('aria-hidden', 'true');
+        drawer.setAttribute('inert', '');
         overlay.setAttribute('aria-hidden', 'true');
         hamburger.focus();
     }

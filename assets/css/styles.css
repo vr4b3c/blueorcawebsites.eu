@@ -62,7 +62,7 @@ html {
     scroll-snap-type: y mandatory;
     scroll-padding-top: 4.5rem;
     scrollbar-width: 0.75rem;
-    scrollbar-color:  #3ca4c5 rgba(0,0,0,0.15);
+    scrollbar-color:  var(--cta) rgba(0,0,0,0.15);
 }
 
 /* Themed global scrollbar (Chromium) */
@@ -74,12 +74,12 @@ html {
     background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--accent-mid);
+    background: var(--cta);
     border-radius: 99px;
     border: 2px solid var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--accent);
+    background: var(--cta);
 }
 
 ::-webkit-scrollbar-button {
@@ -496,9 +496,9 @@ footer {
 }
 
 .btn-secondary:hover {
-    background: #f58a00;
-    color: #fff;
-    box-shadow: 0 0 16px rgba(245,138,0,0.55), inset 0 1px 0 rgba(255,255,255,0.15);
+    background: var(--accent);
+    color: #031A2A;
+    box-shadow: 0 0 16px rgba(142,210,232,0.45), inset 0 1px 0 rgba(255,255,255,0.15);
     text-decoration: none;
 }
 
@@ -1435,12 +1435,13 @@ body.drawer-open {
     color: var(--accent-mid);
     margin-bottom: 0.5rem;
     flex-shrink: 0;
-    transition: background 0.25s, border-color 0.25s;
+    transition: background 0.25s, border-color 0.25s, color 0.25s;
 }
 
 .vyhody-box:hover .vyhody-icon {
-    background: rgba(60, 164, 197, 0.22);
-    border-color: rgba(60, 164, 197, 0.45);
+    background: rgba(245, 215, 117, 0.14);
+    border-color: var(--cta);
+    color: var(--cta);
 }
 
 .vyhody-box h3 {

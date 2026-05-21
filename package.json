@@ -1,10 +1,15 @@
 {
   "scripts": {
-    "build": "npx esbuild assets/js/animations.js --bundle --format=iife --minify --outfile=assets/js/dist/animations.js && npx esbuild assets/js/main.js --bundle --format=iife --minify --outfile=assets/js/dist/app.js && npx esbuild assets/css/styles.css --minify --outfile=assets/css/dist/styles.min.css",
-    "watch": "npx esbuild assets/js/animations.js --bundle --format=iife --outfile=assets/js/dist/animations.js --watch=forever & npx esbuild assets/js/main.js --bundle --format=iife --outfile=assets/js/dist/app.js --watch=forever & npx esbuild assets/css/styles.css --outfile=assets/css/dist/styles.min.css --watch=forever"
+    "build": "node scripts/build-assets.mjs",
+    "watch": "node scripts/build-assets.mjs --watch",
+    "watch:prod": "node scripts/build-assets.mjs --watch"
   },
   "dependencies": {
     "motion": "^12.38.0",
     "puppeteer": "^24.40.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.0",
+    "purgecss": "^8.0.0"
   }
 }
