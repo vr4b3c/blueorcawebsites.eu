@@ -215,9 +215,11 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
     var _animating    = false;
     var _queued       = null;   // last requested idx received during animation lock
     var _restoreTransitionRaf = 0;
+    var _zIndexDelayMs = Math.round(1050 / 5);
 
     // Transition string used for animated moves
-    var CF_TRANSITION = 'transform 1.0s cubic-bezier(0.4,0,0.2,1)';
+    var CF_BASE_MS = 1000;
+    var CF_TRANSITION = 'transform ' + CF_BASE_MS + 'ms cubic-bezier(0.4,0,0.2,1)';
 
     // 3-D config per relative position; rel=±(range+1) shares position with ±range
     // but sits one z-index layer below — always ready behind the boundary items.
@@ -245,6 +247,29 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         return d;
     }
 
+    function isUnderlayWrap(prevRel, rel, edgeSlot, moveDelta) {
+        var steps = Math.abs(moveDelta || 1);
+        if (steps <= 1) {
+            return (prevRel === -edgeSlot && rel === edgeSlot) ||
+                   (prevRel ===  edgeSlot && rel === -edgeSlot);
+        }
+
+        // Multi-slot moves are one continuous animation. The cards crossing the
+        // circular seam are snapped into their final under-edge/edge slots so
+        // they never fly across the whole row or leave a boundary slot empty.
+        if (moveDelta > 0) return prevRel <= -edgeSlot + steps - 1;
+        return prevRel >= edgeSlot - steps + 1;
+    }
+
+    function getMoveMs(delta) {
+        var steps = Math.max(1, Math.min(Math.abs(delta || 1), 3));
+        return CF_BASE_MS + (steps - 1) * 420;
+    }
+
+    function getMoveTransition(delta) {
+        return 'transform ' + getMoveMs(delta) + 'ms cubic-bezier(0.4,0,0.2,1)';
+    }
+
     // How many items to show each side of centre (responsive)
     // Desktop ≥1024: range 2 (5 visible); tablet <1024: range 1 (3 visible)
     function getRange() { return window.innerWidth < 1024 ? 1 : 2; }
@@ -263,19 +288,21 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
         if (delayZIndex) {
             var newZ = String(cfZIndex(rel));
-            setTimeout(function () { t.style.zIndex = newZ; }, Math.round(CF_LOCK_MS / 5));
+            setTimeout(function () { t.style.zIndex = newZ; }, _zIndexDelayMs);
         } else {
             t.style.zIndex = String(cfZIndex(rel));
         }
         t.style.opacity    = '1';
         t.style.left       = 'calc(50% - ' + half + 'px)';
         t.style.setProperty('--cf-overlay', String(cfg.overlay));
-        t.style.visibility = '';
+        t.style.visibility = 'visible';
     }
 
     // ── Position functions ─────────────────────────────────────────────────
 
-    // Reset all thumbs to the centre (used when section scrolls out of view)
+    // Reset all thumbs to the centre (kept only as a fallback/debug helper).
+    // The live carousel must stay in its slot layout, otherwise edge underlays
+    // can be emptied while the section observer toggles during page movement.
     function centerPositions() {
         var thumbs = getVisible();
         var n = thumbs.length;
@@ -292,17 +319,18 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
             t.style.opacity    = '1';
             t.style.zIndex     = String(cfZIndex(rel));
             t.style.left       = 'calc(50% - ' + half + 'px)';
-            t.style.visibility = '';
+            t.style.visibility = 'visible';
             t.style.setProperty('--cf-overlay', '0');
         });
     }
 
     // Spread all thumbs into coverflow positions.
-    // Items at |rel| == range+1 are positioned identically to |rel| == range
-    // but with lower z-index — they act as permanent "underwings" so there's
-    // never an empty gap when boundary items slide inward.
-    // Items beyond range+1 are hidden (visibility:hidden).
-    function updatePositions() {
+    // Desktop uses 7 physical slots: -3, -2, -1, 0, +1, +2, +3.
+    // The visible row is -2..+2; slots -3 and +3 stay visible in DOM, stacked
+    // directly under the outer cards. Tablet uses the same model with 5 slots
+    // (-2..+2), where -2/+2 are the underlaid edge slots. Only items outside
+    // those fixed slots are hidden when there are more references than slots.
+    function updatePositions(moveDelta, transition) {
         var thumbs = getVisible();
         var n = thumbs.length;
         if (!n) return;
@@ -315,55 +343,60 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         activeIdx = wrapIdx(activeIdx, n);
 
         var range        = getRange();
-        var visRange     = range + 1;          // slots ±visRange are visible but underlaid
+        var edgeSlot     = range + 1;          // ±edgeSlot are underlaid but still occupied
         var vw           = window.innerWidth;
         var overlapRatio = vw >= 1024 ? 0.60 : 0.72; // tablet: wider spacing between 3 items
         var cardW        = thumbs[0].offsetWidth;
         var half         = Math.round(cardW / 2);
         var step         = cardW * overlapRatio;
         var cardH        = thumbs[0].offsetHeight;
-        var hiddenToShow = [];
+        var snapToSlot   = [];
+        var moveTransition = transition || CF_TRANSITION;
 
         row.style.height = (cardH + 32) + 'px';
 
         thumbs.forEach(function (t, i) {
             var rel = normalizeDelta(i - activeIdx, n);
 
-            // Items beyond visRange: invisible, no layout needed
-            if (Math.abs(rel) > visRange) {
+            // Items beyond the fixed slot set are parked invisible. This only
+            // happens when there are more references than the carousel slots.
+            if (Math.abs(rel) > edgeSlot) {
                 t.style.visibility = 'hidden';
                 t.setAttribute('data-cf-rel', String(rel));
                 return;
             }
 
-            // rel clamped for config lookup; ±visRange uses same visual config as ±range
+            // ±edgeSlot uses the exact same visual transform as the outer card
+            // (±range), just a lower z-index, so every edge has two cards stacked.
             var relC = clamp(rel, -range, range);
             var cfg  = posCfg[String(relC)];
 
-            // ±visRange items sit at the same tx as ±range (behind them, same position)
+            // ±edgeSlot items sit at the same tx as ±range (behind them).
             var txRel = clamp(rel, -range, range);
             var tx    = txRel * step;
 
             var prevRel = parseInt(t.getAttribute('data-cf-rel') || String(rel), 10);
-            var wasHidden = Math.abs(prevRel) > visRange;
+            var wasHidden = Math.abs(prevRel) > edgeSlot;
+            var wrapsUnderlay = isUnderlayWrap(prevRel, rel, edgeSlot, moveDelta);
 
             t.setAttribute('data-cf-rel', String(rel));
 
-            if (wasHidden) {
-                // Snap silently from off-screen into the underlaid slot
+            if (wasHidden || wrapsUnderlay) {
+                // Snap only the parked/underlaid spare card. All occupied slots
+                // remain filled; the user never sees a card flying across the row.
                 applyStyle(t, tx, cfg, rel, half, null);
-                hiddenToShow.push(t);
+                snapToSlot.push(t);
             } else {
                 // Normal animated move — delay z-index swap so stacking order
                 // changes at 1/3 through the animation, not at its start
-                applyStyle(t, tx, cfg, rel, half, CF_TRANSITION, true);
+                applyStyle(t, tx, cfg, rel, half, moveTransition, true);
             }
         });
 
-        if (hiddenToShow.length) {
+        if (snapToSlot.length) {
             _restoreTransitionRaf = requestAnimationFrame(function () {
-                hiddenToShow.forEach(function (thumb) {
-                    thumb.style.transition = CF_TRANSITION;
+                snapToSlot.forEach(function (thumb) {
+                    thumb.style.transition = moveTransition;
                 });
                 _restoreTransitionRaf = 0;
             });
@@ -390,11 +423,13 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         var n = thumbs.length;
         if (!n) return;
 
+        newIdx = wrapIdx(newIdx, n);
+
+        var delta = normalizeDelta(newIdx - activeIdx, n);
+        if (delta === 0) return;
+
         setOneStep(newIdx);
     }
-
-    // Duration must match CF_TRANSITION (1.0s) + small buffer
-    var CF_LOCK_MS = 1050;
 
     function setOneStep(newIdx) {
         var thumbs = getVisible();
@@ -402,7 +437,11 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         if (!n) return;
 
         var delta = normalizeDelta(newIdx - activeIdx, n);
+        if (delta === 0) return;
         var dir = delta >= 0 ? 'right' : 'left';
+        var moveMs = getMoveMs(delta);
+        var moveTransition = getMoveTransition(delta);
+        _zIndexDelayMs = Math.round(moveMs / 5);
 
         activeIdx = wrapIdx(newIdx, n);
 
@@ -414,7 +453,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
             BlueOrca.carousel.activateRef(thumbs[activeIdx].getAttribute('data-ref'), dir);
         }
 
-        updatePositions();
+        updatePositions(delta, moveTransition);
         updateArrows();
 
         // Lock input for the duration of the transition, then handle any queued request
@@ -426,7 +465,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
                 _queued = null;
                 setActive(q);
             }
-        }, CF_LOCK_MS);
+        }, moveMs + 50);
     }
 
     // ── Event listeners ────────────────────────────────────────────────────
@@ -531,7 +570,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
             thumbs[0].classList.add('active');
             if (BlueOrca.carousel.activateRef) BlueOrca.carousel.activateRef(thumbs[0].getAttribute('data-ref'));
         }
-        centerPositions();
+        updatePositions();
         updateArrows();
 
         // Enable panel height transition after initial render
@@ -562,7 +601,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
 
     // Called by IntersectionObserver when section enters / leaves viewport
     BlueOrca.carousel.enter = function () { updatePositions(); };
-    BlueOrca.carousel.leave = function () { centerPositions(); };
+    BlueOrca.carousel.leave = function () { updatePositions(); };
 })();
 
 // ===================== REFERENCE SECTION SCROLL TRIGGER =====================

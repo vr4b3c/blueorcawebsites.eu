@@ -1,4 +1,7 @@
-(()=>{function Et(){console.log(`
+(() => {
+  // assets/js/signature.js
+  function blueOrcaSignature() {
+    console.log(`
 \u2588\u2588\u2588\u2588\u2588\u2588\u2557 \u2588\u2588\u2557     \u2588\u2588\u2557   \u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557     \u2588\u2588\u2588\u2588\u2588\u2588\u2557 \u2588\u2588\u2588\u2588\u2588\u2588\u2557  \u2588\u2588\u2588\u2588\u2588\u2588\u2557 \u2588\u2588\u2588\u2588\u2588\u2557
 \u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2551     \u2588\u2588\u2551   \u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255D    \u2588\u2588\u2554\u2550\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u2588\u2588\u2554\u2550\u2550\u2550\u2550\u255D\u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557
 \u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u2588\u2588\u2551     \u2588\u2588\u2551   \u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2557      \u2588\u2588\u2551   \u2588\u2588\u2551\u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u2588\u2588\u2551     \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2551
@@ -12,7 +15,78 @@
 \u2588\u2588\u2551\u2588\u2588\u2588\u2557\u2588\u2588\u2551\u2588\u2588\u2554\u2550\u2550\u255D  \u2588\u2588\u2554\u2550\u2550\u2588\u2588\u2557\u255A\u2550\u2550\u2550\u2550\u2588\u2588\u2551\u2588\u2588\u2551   \u2588\u2588\u2551   \u2588\u2588\u2554\u2550\u2550\u255D  \u255A\u2550\u2550\u2550\u2550\u2588\u2588\u2551
 \u255A\u2588\u2588\u2588\u2554\u2588\u2588\u2588\u2554\u255D\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2554\u255D\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2551\u2588\u2588\u2551   \u2588\u2588\u2551   \u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2557\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u2551
 \u255A\u2550\u2550\u255D\u255A\u2550\u2550\u255D \u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D\u255A\u2550\u2550\u2550\u2550\u2550\u255D \u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D\u255A\u2550\u255D   \u255A\u2550\u255D   \u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D\u255A\u2550\u2550\u2550\u2550\u2550\u2550\u255D
-`),console.log("%chttps://blueorcawebsites.eu","font-size:14px;font-family:sans-serif;")}Et();var $=class{constructor(t){this.gl=t,this.program=null,this.buffers={},this.qualityMultiplier=1;let e=["#000011","#000a28","#00395f","#0e4462","#155d80","#1f7da5","#3ca4c5","#8ed2e8","#c7e9f4","#ffffff"],i=u=>{let d=u.replace("#",""),r=parseInt(d.substring(0,2),16)/255,c=parseInt(d.substring(2,4),16)/255,g=parseInt(d.substring(4,6),16)/255;return[r,c,g]},s=e.map(i),a=(u,d)=>{let r=s[u];return[r[0],r[1],r[2],d]},n=a(6,1),h=a(1,1);this.gradient={topColor:h,bottomColor:n}}init(t,e){this.width=t,this.height=e,this.compileShaders(),this.createBuffers();let i=this.gl;i.useProgram(this.program),this.locs.topColor&&i.uniform4fv(this.locs.topColor,this.gradient.topColor),this.locs.bottomColor&&i.uniform4fv(this.locs.bottomColor,this.gradient.bottomColor),this.locs.causticsStrength&&i.uniform1f(this.locs.causticsStrength,1)}compileShaders(){let t=this.gl,e=`#version 300 es
+`);
+    console.log(
+      "%chttps://blueorcawebsites.eu",
+      "font-size:14px;font-family:sans-serif;"
+    );
+  }
+  blueOrcaSignature();
+
+  // assets/webgl/WaterGradientLayer.js
+  var WaterGradientLayer = class {
+    constructor(gl) {
+      this.gl = gl;
+      this.program = null;
+      this.buffers = {};
+      this.qualityMultiplier = 1;
+      const paletteHex = [
+        "#000011",
+        // 0 - deepest black-blue
+        "#000a28",
+        // 1 - very dark blue
+        "#00395f",
+        // 2 - dark blue
+        "#0e4462",
+        // 3 - dark ocean blue
+        "#155d80",
+        // 4 - medium dark blue
+        "#1f7da5",
+        // 5 - medium blue
+        "#3ca4c5",
+        // 6 - bright blue
+        "#8ed2e8",
+        // 7 - light blue
+        "#c7e9f4",
+        // 8 - very light blue
+        "#ffffff"
+        // 9 - white
+      ];
+      const hexToRgb = (hex) => {
+        const h = hex.replace("#", "");
+        const r = parseInt(h.substring(0, 2), 16) / 255;
+        const g = parseInt(h.substring(2, 4), 16) / 255;
+        const b = parseInt(h.substring(4, 6), 16) / 255;
+        return [r, g, b];
+      };
+      const paletteRgb = paletteHex.map(hexToRgb);
+      const getColor = (index, alpha) => {
+        const rgb = paletteRgb[index];
+        return [rgb[0], rgb[1], rgb[2], alpha];
+      };
+      const surfaceColor = getColor(6, 1);
+      const depthColor = getColor(1, 1);
+      this.gradient = {
+        topColor: depthColor,
+        // Dark at top of screen
+        bottomColor: surfaceColor
+        // Light at bottom (surface)
+      };
+    }
+    init(width, height) {
+      this.width = width;
+      this.height = height;
+      this.compileShaders();
+      this.createBuffers();
+      const gl = this.gl;
+      gl.useProgram(this.program);
+      if (this.locs.topColor) gl.uniform4fv(this.locs.topColor, this.gradient.topColor);
+      if (this.locs.bottomColor) gl.uniform4fv(this.locs.bottomColor, this.gradient.bottomColor);
+      if (this.locs.causticsStrength) gl.uniform1f(this.locs.causticsStrength, 1);
+    }
+    compileShaders() {
+      const gl = this.gl;
+      const vertexShaderSource = `#version 300 es
             in vec2 a_position;
             out vec2 v_uv;
             
@@ -20,7 +94,8 @@
                 v_uv = a_position * 0.5 + 0.5;
                 gl_Position = vec4(a_position, 0.0, 1.0);
             }
-        `,i=`#version 300 es
+        `;
+      const fragmentShaderSource = `#version 300 es
             precision highp float;
             
             in vec2 v_uv;
@@ -88,7 +163,154 @@
 
                 outColor = baseColor;
             }
-        `;if(this.program=this.createProgram(e,i),this.program){let s=this.gl,a=this.program;this.locs={time:s.getUniformLocation(a,"u_time"),causticsStrength:s.getUniformLocation(a,"u_causticsStrength"),topColor:s.getUniformLocation(a,"u_topColor"),bottomColor:s.getUniformLocation(a,"u_bottomColor"),position:s.getAttribLocation(a,"a_position")}}}createProgram(t,e){let i=this.gl,s=i.createShader(i.VERTEX_SHADER);if(i.shaderSource(s,t),i.compileShader(s),!i.getShaderParameter(s,i.COMPILE_STATUS))return console.error("Vertex shader error:",i.getShaderInfoLog(s)),i.deleteShader(s),null;let a=i.createShader(i.FRAGMENT_SHADER);if(i.shaderSource(a,e),i.compileShader(a),!i.getShaderParameter(a,i.COMPILE_STATUS))return console.error("Fragment shader error:",i.getShaderInfoLog(a)),i.deleteShader(a),null;let n=i.createProgram();return i.attachShader(n,s),i.attachShader(n,a),i.linkProgram(n),i.getProgramParameter(n,i.LINK_STATUS)?(i.deleteShader(s),i.deleteShader(a),n):(console.error("Program link error:",i.getProgramInfoLog(n)),null)}createBuffers(){let t=this.gl,e=new Float32Array([-1,-1,1,-1,-1,1,1,1]),i=t.createBuffer();t.bindBuffer(t.ARRAY_BUFFER,i),t.bufferData(t.ARRAY_BUFFER,e,t.STATIC_DRAW),this.buffers.position=i,this.vao=t.createVertexArray(),t.bindVertexArray(this.vao),t.enableVertexAttribArray(this.locs.position),t.bindBuffer(t.ARRAY_BUFFER,i),t.vertexAttribPointer(this.locs.position,2,t.FLOAT,!1,0,0),t.bindVertexArray(null)}render(t,e){let i=this.gl,s=this.program;if(!s)return;i.useProgram(s);let a=this.locs;a.time&&i.uniform1f(a.time,t*.001),i.bindVertexArray(this.vao),i.drawArrays(i.TRIANGLE_STRIP,0,4),i.bindVertexArray(null)}onResize(t,e){this.width=t,this.height=e}setQuality(t){if(this.qualityMultiplier=t,!this.program||!this.locs?.causticsStrength)return;let e=t>=.8?1:t>=.6?.35:0;this.gl.useProgram(this.program),this.gl.uniform1f(this.locs.causticsStrength,e)}destroy(){let t=this.gl;this.program&&t.deleteProgram(this.program),this.buffers.position&&t.deleteBuffer(this.buffers.position),this.vao&&t.deleteVertexArray(this.vao)}toggle(t){this.enabled=!!t,this.enabled&&!this.program&&this.width&&this.height&&this.init(this.width,this.height)}};var G=class{constructor(t,e={}){this.gl=t,this.program=null,this.buffers={},this.rays=[],this.options={rayCount:5,...e},this.qualityMultiplier=1,this._budgetFactor=1,this.rayBeamsEnabled=!0,this.sunGlowEnabled=!0,this._raysArr=new Float32Array(5),this._swaysArr=new Float32Array(5),this._shimmersArr=new Float32Array(5)}init(t,e){this.width=t,this.height=e,this.initRays(t),this.compileShaders(),this.createBuffers()}initRays(t){this.rays=[];let e=this.options.rayCount,i=t/(e+1);for(let s=0;s<e;s++)this.rays.push({x:i*(s+1),offset:Math.random()*Math.PI*2,speed:.8+Math.random()*.4,shimFreqA:18e-5+Math.random()*22e-5,shimPhaseA:Math.random()*Math.PI*2,shimFreqB:31e-5+Math.random()*19e-5,shimPhaseB:Math.random()*Math.PI*2})}compileShaders(){let t=this.gl,e=`#version 300 es
+        `;
+      this.program = this.createProgram(vertexShaderSource, fragmentShaderSource);
+      if (this.program) {
+        const gl2 = this.gl;
+        const p = this.program;
+        this.locs = {
+          time: gl2.getUniformLocation(p, "u_time"),
+          causticsStrength: gl2.getUniformLocation(p, "u_causticsStrength"),
+          topColor: gl2.getUniformLocation(p, "u_topColor"),
+          bottomColor: gl2.getUniformLocation(p, "u_bottomColor"),
+          position: gl2.getAttribLocation(p, "a_position")
+        };
+      }
+    }
+    createProgram(vertexSource, fragmentSource) {
+      const gl = this.gl;
+      const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertexShader, vertexSource);
+      gl.compileShader(vertexShader);
+      if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error("Vertex shader error:", gl.getShaderInfoLog(vertexShader));
+        gl.deleteShader(vertexShader);
+        return null;
+      }
+      const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragmentShader, fragmentSource);
+      gl.compileShader(fragmentShader);
+      if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment shader error:", gl.getShaderInfoLog(fragmentShader));
+        gl.deleteShader(fragmentShader);
+        return null;
+      }
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Program link error:", gl.getProgramInfoLog(program));
+        return null;
+      }
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      return program;
+    }
+    createBuffers() {
+      const gl = this.gl;
+      const positions = new Float32Array([
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ]);
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      this.buffers.position = positionBuffer;
+      this.vao = gl.createVertexArray();
+      gl.bindVertexArray(this.vao);
+      gl.enableVertexAttribArray(this.locs.position);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.vertexAttribPointer(this.locs.position, 2, gl.FLOAT, false, 0, 0);
+      gl.bindVertexArray(null);
+    }
+    render(currentTime, deltaTime) {
+      const gl = this.gl;
+      const program = this.program;
+      if (!program) return;
+      gl.useProgram(program);
+      const locs = this.locs;
+      if (locs.time) gl.uniform1f(locs.time, currentTime * 1e-3);
+      gl.bindVertexArray(this.vao);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      gl.bindVertexArray(null);
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+    }
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+      if (!this.program || !this.locs?.causticsStrength) return;
+      const strength = quality >= 0.8 ? 1 : quality >= 0.6 ? 0.35 : 0;
+      this.gl.useProgram(this.program);
+      this.gl.uniform1f(this.locs.causticsStrength, strength);
+    }
+    destroy() {
+      const gl = this.gl;
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.buffers.position) gl.deleteBuffer(this.buffers.position);
+      if (this.vao) gl.deleteVertexArray(this.vao);
+    }
+    toggle(enabled) {
+      this.enabled = !!enabled;
+      if (this.enabled && !this.program) {
+        if (this.width && this.height) {
+          this.init(this.width, this.height);
+        }
+      }
+    }
+  };
+
+  // assets/webgl/LightRaysLayer.js
+  var LightRaysLayer = class {
+    constructor(gl, options = {}) {
+      this.gl = gl;
+      this.program = null;
+      this.buffers = {};
+      this.rays = [];
+      this.options = { rayCount: 5, ...options };
+      this.qualityMultiplier = 1;
+      this._budgetFactor = 1;
+      this.rayBeamsEnabled = true;
+      this.sunGlowEnabled = true;
+      this._raysArr = new Float32Array(5);
+      this._swaysArr = new Float32Array(5);
+      this._shimmersArr = new Float32Array(5);
+    }
+    init(width, height) {
+      this.width = width;
+      this.height = height;
+      this.initRays(width);
+      this.compileShaders();
+      this.createBuffers();
+    }
+    initRays(width) {
+      this.rays = [];
+      const rayCount = this.options.rayCount;
+      const spacing = width / (rayCount + 1);
+      for (let i = 0; i < rayCount; i++) {
+        this.rays.push({
+          x: spacing * (i + 1),
+          offset: Math.random() * Math.PI * 2,
+          speed: 0.8 + Math.random() * 0.4,
+          // Two independent shimmer frequencies per ray — keeps them visually distinct
+          shimFreqA: 18e-5 + Math.random() * 22e-5,
+          shimPhaseA: Math.random() * Math.PI * 2,
+          shimFreqB: 31e-5 + Math.random() * 19e-5,
+          shimPhaseB: Math.random() * Math.PI * 2
+        });
+      }
+    }
+    compileShaders() {
+      const gl = this.gl;
+      const vertexShaderSource = `#version 300 es
             in vec2 a_position;
             out vec2 v_uv;
             
@@ -96,7 +318,8 @@
                 v_uv = a_position * 0.5 + 0.5;
                 gl_Position = vec4(a_position, 0.0, 1.0);
             }
-        `,i=`#version 300 es
+        `;
+      const fragmentShaderSource = `#version 300 es
             precision highp float;
             
             in vec2 v_uv;
@@ -166,7 +389,208 @@
                 
                 outColor = color;
             }
-        `;if(this.program=this.createProgram(e,i),this.program){let s=this.gl,a=this.program;this.locs={resolution:s.getUniformLocation(a,"u_resolution"),time:s.getUniformLocation(a,"u_time"),rayCount:s.getUniformLocation(a,"u_rayCount"),rayBeamsEnabled:s.getUniformLocation(a,"u_rayBeamsEnabled"),sunGlowEnabled:s.getUniformLocation(a,"u_sunGlowEnabled"),position:s.getAttribLocation(a,"a_position"),rays:s.getUniformLocation(a,"u_rays[0]"),sways:s.getUniformLocation(a,"u_sways[0]"),shimmers:s.getUniformLocation(a,"u_shimmers[0]")}}}createProgram(t,e){let i=this.gl,s=i.createShader(i.VERTEX_SHADER);if(i.shaderSource(s,t),i.compileShader(s),!i.getShaderParameter(s,i.COMPILE_STATUS))return console.error("Vertex shader error:",i.getShaderInfoLog(s)),null;let a=i.createShader(i.FRAGMENT_SHADER);if(i.shaderSource(a,e),i.compileShader(a),!i.getShaderParameter(a,i.COMPILE_STATUS))return console.error("Fragment shader error:",i.getShaderInfoLog(a)),null;let n=i.createProgram();return i.attachShader(n,s),i.attachShader(n,a),i.linkProgram(n),i.getProgramParameter(n,i.LINK_STATUS)?(i.deleteShader(s),i.deleteShader(a),n):(console.error("Program link error:",i.getProgramInfoLog(n)),null)}createBuffers(){let t=this.gl,e=new Float32Array([-1,-1,1,-1,-1,1,1,1]),i=t.createBuffer();t.bindBuffer(t.ARRAY_BUFFER,i),t.bufferData(t.ARRAY_BUFFER,e,t.STATIC_DRAW),this.buffers.position=i,this.vao=t.createVertexArray(),t.bindVertexArray(this.vao),t.enableVertexAttribArray(this.locs.position),t.bindBuffer(t.ARRAY_BUFFER,i),t.vertexAttribPointer(this.locs.position,2,t.FLOAT,!1,0,0),t.bindVertexArray(null),this.program&&(t.useProgram(this.program),t.uniform2f(this.locs.resolution,this.width,this.height))}render(t,e){let i=this.gl,s=this.program;if(!s)return;i.useProgram(s);let a=this.locs,n=Math.max(0,this._budgetFactor||1),h=this.rayBeamsEnabled&&this.qualityMultiplier>=.55&&n>.35,u=this.sunGlowEnabled&&this.qualityMultiplier>=.75&&n>.6,d=h?Math.max(1,Math.round(this.rays.length*n)):0;i.uniform1f(a.time,t),d!==this._lastRayCount&&(i.uniform1i(a.rayCount,d),this._lastRayCount=d),(h?1:0)!==this._lastRayBeams&&(i.uniform1i(a.rayBeamsEnabled,h?1:0),this._lastRayBeams=h?1:0),(u?1:0)!==this._lastSunGlow&&(i.uniform1i(a.sunGlowEnabled,u?1:0),this._lastSunGlow=u?1:0);let r=5e-5;for(let c=0;c<d;c++){let g=this.rays[c];this._raysArr[c]=g.x,this._swaysArr[c]=Math.sin(t*r*g.speed+g.offset)*30,this._shimmersArr[c]=.55+.45*.5*((1+Math.sin(t*g.shimFreqA+g.shimPhaseA))*(1+Math.sin(t*g.shimFreqB+g.shimPhaseB))/4)}i.uniform1fv(a.rays,this._raysArr),i.uniform1fv(a.sways,this._swaysArr),i.uniform1fv(a.shimmers,this._shimmersArr),i.bindVertexArray(this.vao),i.drawArrays(i.TRIANGLE_STRIP,0,4),i.bindVertexArray(null)}onResize(t,e){this.width=t,this.height=e,this.initRays(t),this.program&&(this.gl.useProgram(this.program),this.gl.uniform2f(this.locs.resolution,t,e))}destroy(){let t=this.gl;this.program&&t.deleteProgram(this.program),this.buffers.position&&t.deleteBuffer(this.buffers.position),this.vao&&t.deleteVertexArray(this.vao)}reduceBudget(t){this._budgetFactor=Math.max(0,t)}setQuality(t){this.qualityMultiplier=t}toggle(t){this.enabled=!!t,this.enabled&&!this.program&&this.width&&this.height&&this.init(this.width,this.height)}};var Q=class{constructor(t,e={}){this.gl=t,this.program=null,this.buffers={},this.bubbles=[],this._bubblePool=[],this.sources=[],this.qualityMultiplier=1,this._allSources=null,this._targetBudgetFactor=1,this._currentBudgetFactor=1,this.config={sourceWidthBase:600,minSourceSpacing:200,minSize:2,maxSize:6,riseSpeed:.3,swayAmount:10,bubblesPerSource:.02,...e}}init(t,e){this.width=t,this.height=e,this.initSources(t,e),this.compileShaders(),this.createBuffers()}initSources(t,e){this.sources=[];let i=Math.min(50,t*.1),s=Math.max(0,t-i*2),a=Math.max(1,Math.floor(s/this.config.sourceWidthBase));for(let n=0;n<a*10&&this.sources.length<a;n++){let h=i+Math.random()*(t-i*2),u=!1;for(let d of this.sources)if(Math.abs(d.x-h)<this.config.minSourceSpacing){u=!0;break}u||this.sources.push({x:h,y:e+5})}this._allSources=this.sources.slice(),this._currentBudgetFactor=this._targetBudgetFactor}compileShaders(){let t=this.gl,e=`#version 300 es
+        `;
+      this.program = this.createProgram(vertexShaderSource, fragmentShaderSource);
+      if (this.program) {
+        const gl2 = this.gl;
+        const p = this.program;
+        this.locs = {
+          resolution: gl2.getUniformLocation(p, "u_resolution"),
+          time: gl2.getUniformLocation(p, "u_time"),
+          rayCount: gl2.getUniformLocation(p, "u_rayCount"),
+          rayBeamsEnabled: gl2.getUniformLocation(p, "u_rayBeamsEnabled"),
+          sunGlowEnabled: gl2.getUniformLocation(p, "u_sunGlowEnabled"),
+          position: gl2.getAttribLocation(p, "a_position"),
+          // Array uniforms: get location of first element, upload all with uniform1fv
+          rays: gl2.getUniformLocation(p, "u_rays[0]"),
+          sways: gl2.getUniformLocation(p, "u_sways[0]"),
+          shimmers: gl2.getUniformLocation(p, "u_shimmers[0]")
+        };
+      }
+    }
+    createProgram(vertexSource, fragmentSource) {
+      const gl = this.gl;
+      const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertexShader, vertexSource);
+      gl.compileShader(vertexShader);
+      if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error("Vertex shader error:", gl.getShaderInfoLog(vertexShader));
+        return null;
+      }
+      const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragmentShader, fragmentSource);
+      gl.compileShader(fragmentShader);
+      if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment shader error:", gl.getShaderInfoLog(fragmentShader));
+        return null;
+      }
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Program link error:", gl.getProgramInfoLog(program));
+        return null;
+      }
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      return program;
+    }
+    createBuffers() {
+      const gl = this.gl;
+      const positions = new Float32Array([
+        -1,
+        -1,
+        1,
+        -1,
+        -1,
+        1,
+        1,
+        1
+      ]);
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+      this.buffers.position = positionBuffer;
+      this.vao = gl.createVertexArray();
+      gl.bindVertexArray(this.vao);
+      gl.enableVertexAttribArray(this.locs.position);
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.vertexAttribPointer(this.locs.position, 2, gl.FLOAT, false, 0, 0);
+      gl.bindVertexArray(null);
+      if (this.program) {
+        gl.useProgram(this.program);
+        gl.uniform2f(this.locs.resolution, this.width, this.height);
+      }
+    }
+    render(currentTime, deltaTime) {
+      const gl = this.gl;
+      const program = this.program;
+      if (!program) return;
+      gl.useProgram(program);
+      const locs = this.locs;
+      const activeBudgetFactor = Math.max(0, this._budgetFactor || 1);
+      const allowRayBeams = this.rayBeamsEnabled && this.qualityMultiplier >= 0.55 && activeBudgetFactor > 0.35;
+      const allowSunGlow = this.sunGlowEnabled && this.qualityMultiplier >= 0.75 && activeBudgetFactor > 0.6;
+      const activeRayCount = allowRayBeams ? Math.max(1, Math.round(this.rays.length * activeBudgetFactor)) : 0;
+      gl.uniform1f(locs.time, currentTime);
+      if (activeRayCount !== this._lastRayCount) {
+        gl.uniform1i(locs.rayCount, activeRayCount);
+        this._lastRayCount = activeRayCount;
+      }
+      if ((allowRayBeams ? 1 : 0) !== this._lastRayBeams) {
+        gl.uniform1i(locs.rayBeamsEnabled, allowRayBeams ? 1 : 0);
+        this._lastRayBeams = allowRayBeams ? 1 : 0;
+      }
+      if ((allowSunGlow ? 1 : 0) !== this._lastSunGlow) {
+        gl.uniform1i(locs.sunGlowEnabled, allowSunGlow ? 1 : 0);
+        this._lastSunGlow = allowSunGlow ? 1 : 0;
+      }
+      const raySpeed = 5e-5;
+      for (let i = 0; i < activeRayCount; i++) {
+        const ray = this.rays[i];
+        this._raysArr[i] = ray.x;
+        this._swaysArr[i] = Math.sin(currentTime * raySpeed * ray.speed + ray.offset) * 30;
+        this._shimmersArr[i] = 0.55 + 0.45 * 0.5 * ((1 + Math.sin(currentTime * ray.shimFreqA + ray.shimPhaseA)) * (1 + Math.sin(currentTime * ray.shimFreqB + ray.shimPhaseB)) / 4);
+      }
+      gl.uniform1fv(locs.rays, this._raysArr);
+      gl.uniform1fv(locs.sways, this._swaysArr);
+      gl.uniform1fv(locs.shimmers, this._shimmersArr);
+      gl.bindVertexArray(this.vao);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      gl.bindVertexArray(null);
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      this.initRays(width);
+      if (this.program) {
+        this.gl.useProgram(this.program);
+        this.gl.uniform2f(this.locs.resolution, width, height);
+      }
+    }
+    destroy() {
+      const gl = this.gl;
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.buffers.position) gl.deleteBuffer(this.buffers.position);
+      if (this.vao) gl.deleteVertexArray(this.vao);
+    }
+    /**
+     * Reduce the number of active light rays proportionally.
+     * Called by WebGLOceanRenderer.reduceBudget() when the system steps down to WEBGL_LITE.
+     * @param {number} factor - 0.0–1.0  (0.5 = halve count, minimum 1 ray)
+     */
+    reduceBudget(factor) {
+      this._budgetFactor = Math.max(0, factor);
+    }
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+    }
+    toggle(enabled) {
+      this.enabled = !!enabled;
+      if (this.enabled && !this.program) {
+        if (this.width && this.height) {
+          this.init(this.width, this.height);
+        }
+      }
+    }
+  };
+
+  // assets/webgl/BubblesLayer.js
+  var BubblesLayer = class {
+    constructor(gl, config = {}) {
+      this.gl = gl;
+      this.program = null;
+      this.buffers = {};
+      this.bubbles = [];
+      this._bubblePool = [];
+      this.sources = [];
+      this.qualityMultiplier = 1;
+      this._allSources = null;
+      this._targetBudgetFactor = 1;
+      this._currentBudgetFactor = 1;
+      this.config = {
+        sourceWidthBase: 600,
+        minSourceSpacing: 200,
+        minSize: 2,
+        maxSize: 6,
+        riseSpeed: 0.3,
+        swayAmount: 10,
+        bubblesPerSource: 0.02,
+        ...config
+      };
+    }
+    init(width, height) {
+      this.width = width;
+      this.height = height;
+      this.initSources(width, height);
+      this.compileShaders();
+      this.createBuffers();
+    }
+    initSources(width, height) {
+      this.sources = [];
+      const edgeMargin = Math.min(50, width * 0.1);
+      const usableWidth = Math.max(0, width - edgeMargin * 2);
+      const targetSourceCount = Math.max(1, Math.floor(usableWidth / this.config.sourceWidthBase));
+      for (let attempt = 0; attempt < targetSourceCount * 10 && this.sources.length < targetSourceCount; attempt++) {
+        const x = edgeMargin + Math.random() * (width - edgeMargin * 2);
+        let tooClose = false;
+        for (const source of this.sources) {
+          if (Math.abs(source.x - x) < this.config.minSourceSpacing) {
+            tooClose = true;
+            break;
+          }
+        }
+        if (!tooClose) {
+          this.sources.push({ x, y: height + 5 });
+        }
+      }
+      this._allSources = this.sources.slice();
+      this._currentBudgetFactor = this._targetBudgetFactor;
+    }
+    compileShaders() {
+      const gl = this.gl;
+      const vertexShaderSource = `#version 300 es
             in vec2 a_position;
             in float a_size;
             in float a_age;
@@ -198,7 +622,8 @@
                 v_size = a_size;
                 v_riseProgress = 1.0 - (a_position.y / u_resolution.y);
             }
-        `,i=`#version 300 es
+        `;
+      const fragmentShaderSource = `#version 300 es
             precision highp float;
             
             in float v_age;
@@ -220,7 +645,292 @@
                 
                 outColor = vec4(color, alpha);
             }
-        `;if(this.program=this.createProgram(e,i),this.program){let s=this.gl,a=this.program;this.locs={resolution:s.getUniformLocation(a,"u_resolution"),swayAmount:s.getUniformLocation(a,"u_swayAmount"),position:s.getAttribLocation(a,"a_position"),size:s.getAttribLocation(a,"a_size"),age:s.getAttribLocation(a,"a_age"),swayPeriod:s.getAttribLocation(a,"a_swayPeriod"),startX:s.getAttribLocation(a,"a_startX")}}}createProgram(t,e){let i=this.gl,s=i.createShader(i.VERTEX_SHADER);if(i.shaderSource(s,t),i.compileShader(s),!i.getShaderParameter(s,i.COMPILE_STATUS))return console.error("Vertex shader error:",i.getShaderInfoLog(s)),null;let a=i.createShader(i.FRAGMENT_SHADER);if(i.shaderSource(a,e),i.compileShader(a),!i.getShaderParameter(a,i.COMPILE_STATUS))return console.error("Fragment shader error:",i.getShaderInfoLog(a)),null;let n=i.createProgram();return i.attachShader(n,s),i.attachShader(n,a),i.linkProgram(n),i.getProgramParameter(n,i.LINK_STATUS)?(i.deleteShader(s),i.deleteShader(a),n):(console.error("Program link error:",i.getProgramInfoLog(n)),null)}createBuffers(){let t=this.gl;this.MAX_BUBBLES=200;let e=this.MAX_BUBBLES;this._cpu={positions:new Float32Array(e*2),sizes:new Float32Array(e),ages:new Float32Array(e),swayPeriods:new Float32Array(e),startXs:new Float32Array(e)};let i=n=>{let h=t.createBuffer();return t.bindBuffer(t.ARRAY_BUFFER,h),t.bufferData(t.ARRAY_BUFFER,n,t.DYNAMIC_DRAW),h};this.buffers.position=i(e*2*4),this.buffers.size=i(e*4),this.buffers.age=i(e*4),this.buffers.swayPeriod=i(e*4),this.buffers.startX=i(e*4);let s=this.locs;this.vao=t.createVertexArray(),t.bindVertexArray(this.vao);let a=(n,h,u)=>{n<0||(t.enableVertexAttribArray(n),t.bindBuffer(t.ARRAY_BUFFER,h),t.vertexAttribPointer(n,u,t.FLOAT,!1,0,0))};a(s.position,this.buffers.position,2),a(s.size,this.buffers.size,1),a(s.age,this.buffers.age,1),a(s.swayPeriod,this.buffers.swayPeriod,1),a(s.startX,this.buffers.startX,1),t.bindVertexArray(null)}render(t,e){let i=this.gl,s=this.program;if(!s)return;this._currentBudgetFactor+=(this._targetBudgetFactor-this._currentBudgetFactor)*.04;let a=this._allSources||this.sources,n=Math.max(1,Math.round(a.length*this._currentBudgetFactor)),h=this.config.bubblesPerSource*this.qualityMultiplier;for(let m=0;m<n;m++)Math.random()<h&&this.spawnBubble(a[m]);let u=Math.min(e,50),d=0;for(let m=0;m<this.bubbles.length;m++){let p=this.bubbles[m];p.y-=p.riseSpeed*this.config.riseSpeed,p.age+=u;let b=1-p.y/this.height;p.size=p.baseSize*(1-b*.6),p.y+p.size>=0?this.bubbles[d++]=p:this._bubblePool.push(p)}this.bubbles.length=d;let r=Math.min(this.bubbles.length,this.MAX_BUBBLES);if(r===0)return;let c=this._cpu;for(let m=0;m<r;m++){let p=this.bubbles[m];c.positions[m*2]=p.startX,c.positions[m*2+1]=p.y,c.sizes[m]=p.size,c.ages[m]=p.age,c.swayPeriods[m]=p.swayPeriod,c.startXs[m]=p.startX}i.useProgram(s);let g=this.locs;i.uniform2f(g.resolution,this.width,this.height),i.uniform1f(g.swayAmount,this.config.swayAmount);let f=(m,p,b,v)=>{i.bindBuffer(i.ARRAY_BUFFER,m),i.bufferSubData(i.ARRAY_BUFFER,0,p.subarray(0,b*v))};f(this.buffers.position,c.positions,r,2),f(this.buffers.size,c.sizes,r,1),f(this.buffers.age,c.ages,r,1),f(this.buffers.swayPeriod,c.swayPeriods,r,1),f(this.buffers.startX,c.startXs,r,1),i.bindVertexArray(this.vao),i.drawArrays(i.POINTS,0,r),i.bindVertexArray(null)}spawnBubble(t){let e=this.config.minSize+Math.random()*(this.config.maxSize-this.config.minSize),i=(Math.random()-.5)*20,s=this._bubblePool.pop()||{};s.startX=t.x+i,s.y=t.y,s.baseSize=e,s.size=e,s.riseSpeed=.5+Math.random()*1.5,s.swayPeriod=2e3+Math.random()*3e3,s.age=Math.random()*1e3,this.bubbles.push(s)}setQuality(t){this.qualityMultiplier=t}reduceBudget(t){this._allSources||(this._allSources=this.sources.slice()),this._targetBudgetFactor=Math.max(.1,t)}toggle(t){this.enabled=!!t,this.enabled&&!this.program&&this.width&&this.height&&this.init(this.width,this.height)}onResize(t,e){this.width=t,this.height=e,this.initSources(t,e)}destroy(){let t=this.gl;this.program&&t.deleteProgram(this.program),this.vao&&t.deleteVertexArray(this.vao);for(let e in this.buffers)t.deleteBuffer(this.buffers[e]);this.bubbles.length=0,this._bubblePool.length=0}};var j=class{constructor(t,e={}){this.gl=t,this.program=null,this.microProgram=null,this.buffers={},this.microBuffers={},this.particles=[],this.microParticles=[],this.qualityMultiplier=1,this._lastOpacity=null,this._budgetFactor=1,this._targetBudgetFactor=1,this.config={swarmCount:30,particlesPerSwarm:50,fineCount:1500,microCount:500,...e}}init(t,e){this.width=t,this.height=e,this.initParticles(t,e),this.initMicroParticles(),this.compileShaders(),this.compileMicroShaders(),this.createBuffers(),this.createMicroBuffers();let i=this.gl;i.useProgram(this.program),i.uniform3f(this.locs.color,.45,.78,.95),i.uniform2f(this.locs.resolution,t,e),i.useProgram(this.microProgram),i.uniform2f(this.microLocs.resolution,t,e)}initParticles(t,e){this.particles=[];let i=80/e;for(let s=0;s<this.config.swarmCount;s++){let a=Math.random(),n=Math.pow(Math.random(),2)*(.75-i)+i,h=.02+Math.random()*.03,u=.015+Math.random()*.02;for(let d=0;d<this.config.particlesPerSwarm;d++){let r=(Math.random()-.5)*h,c=(Math.random()-.5)*u,g=Math.min(.9,Math.max(i,n+c));this.particles.push({x:Math.min(1,Math.max(0,a+r)),y:g,size:Math.random()<.7?1:Math.random()<.8?2:3,driftX:Math.random()*16-8,duration:Math.random()*12+4,phase:Math.random()*Math.PI*2,opacity:.25+Math.random()*.45,green:170+Math.floor(Math.random()*85),glimmerIntensity:g<.3?(.3-g)/.3:0,glimmerOffset:Math.random()*Math.PI*2,glimmerSpeed:.4+Math.random()*.8})}}for(let s=0;s<this.config.fineCount;s++){let a=Math.pow(Math.random(),2)*(.95-i)+i;this.particles.push({x:Math.random(),y:a,size:Math.random()<.9?1:2,driftX:Math.random()*18-9,duration:6+Math.random()*28,phase:Math.random()*Math.PI*2,opacity:.05+Math.random()*.2,green:170+Math.floor(Math.random()*70),glimmerIntensity:a<.3?(.3-a)/.3:0,glimmerOffset:Math.random()*Math.PI*2,glimmerSpeed:.4+Math.random()*.8})}}initMicroParticles(){this.microParticles=[];for(let t=0;t<this.config.microCount;t++)this.microParticles.push({x:Math.random(),baseY:Math.random(),speed:3+Math.random()*8,phase:Math.random()*Math.PI*2,opacity:.06+Math.random()*.12})}compileMicroShaders(){let t=`#version 300 es
+        `;
+      this.program = this.createProgram(vertexShaderSource, fragmentShaderSource);
+      if (this.program) {
+        const gl2 = this.gl;
+        const p = this.program;
+        this.locs = {
+          resolution: gl2.getUniformLocation(p, "u_resolution"),
+          swayAmount: gl2.getUniformLocation(p, "u_swayAmount"),
+          position: gl2.getAttribLocation(p, "a_position"),
+          size: gl2.getAttribLocation(p, "a_size"),
+          age: gl2.getAttribLocation(p, "a_age"),
+          swayPeriod: gl2.getAttribLocation(p, "a_swayPeriod"),
+          startX: gl2.getAttribLocation(p, "a_startX")
+        };
+      }
+    }
+    createProgram(vertexSource, fragmentSource) {
+      const gl = this.gl;
+      const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertexShader, vertexSource);
+      gl.compileShader(vertexShader);
+      if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error("Vertex shader error:", gl.getShaderInfoLog(vertexShader));
+        return null;
+      }
+      const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragmentShader, fragmentSource);
+      gl.compileShader(fragmentShader);
+      if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment shader error:", gl.getShaderInfoLog(fragmentShader));
+        return null;
+      }
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Program link error:", gl.getProgramInfoLog(program));
+        return null;
+      }
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      return program;
+    }
+    createBuffers() {
+      const gl = this.gl;
+      this.MAX_BUBBLES = 200;
+      const maxN = this.MAX_BUBBLES;
+      this._cpu = {
+        positions: new Float32Array(maxN * 2),
+        sizes: new Float32Array(maxN),
+        ages: new Float32Array(maxN),
+        swayPeriods: new Float32Array(maxN),
+        startXs: new Float32Array(maxN)
+      };
+      const allocGPU = (byteSize) => {
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, byteSize, gl.DYNAMIC_DRAW);
+        return buf;
+      };
+      this.buffers.position = allocGPU(maxN * 2 * 4);
+      this.buffers.size = allocGPU(maxN * 4);
+      this.buffers.age = allocGPU(maxN * 4);
+      this.buffers.swayPeriod = allocGPU(maxN * 4);
+      this.buffers.startX = allocGPU(maxN * 4);
+      const locs = this.locs;
+      this.vao = gl.createVertexArray();
+      gl.bindVertexArray(this.vao);
+      const setupVertexAttribute = (loc, buf, size) => {
+        if (loc < 0) return;
+        gl.enableVertexAttribArray(loc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+      };
+      setupVertexAttribute(locs.position, this.buffers.position, 2);
+      setupVertexAttribute(locs.size, this.buffers.size, 1);
+      setupVertexAttribute(locs.age, this.buffers.age, 1);
+      setupVertexAttribute(locs.swayPeriod, this.buffers.swayPeriod, 1);
+      setupVertexAttribute(locs.startX, this.buffers.startX, 1);
+      gl.bindVertexArray(null);
+    }
+    render(currentTime, deltaTime) {
+      const gl = this.gl;
+      const program = this.program;
+      if (!program) return;
+      this._currentBudgetFactor += (this._targetBudgetFactor - this._currentBudgetFactor) * 0.04;
+      const srcArr = this._allSources || this.sources;
+      const srcCount = Math.max(1, Math.round(srcArr.length * this._currentBudgetFactor));
+      const spawnChance = this.config.bubblesPerSource * this.qualityMultiplier;
+      for (let si = 0; si < srcCount; si++) {
+        if (Math.random() < spawnChance) this.spawnBubble(srcArr[si]);
+      }
+      const dt = Math.min(deltaTime, 50);
+      let bWrite = 0;
+      for (let bi = 0; bi < this.bubbles.length; bi++) {
+        const bubble = this.bubbles[bi];
+        bubble.y -= bubble.riseSpeed * this.config.riseSpeed;
+        bubble.age += dt;
+        const riseProgress = 1 - bubble.y / this.height;
+        bubble.size = bubble.baseSize * (1 - riseProgress * 0.6);
+        if (bubble.y + bubble.size >= 0) {
+          this.bubbles[bWrite++] = bubble;
+        } else {
+          this._bubblePool.push(bubble);
+        }
+      }
+      this.bubbles.length = bWrite;
+      const n = Math.min(this.bubbles.length, this.MAX_BUBBLES);
+      if (n === 0) return;
+      const cpu = this._cpu;
+      for (let i = 0; i < n; i++) {
+        const b = this.bubbles[i];
+        cpu.positions[i * 2] = b.startX;
+        cpu.positions[i * 2 + 1] = b.y;
+        cpu.sizes[i] = b.size;
+        cpu.ages[i] = b.age;
+        cpu.swayPeriods[i] = b.swayPeriod;
+        cpu.startXs[i] = b.startX;
+      }
+      gl.useProgram(program);
+      const locs = this.locs;
+      gl.uniform2f(locs.resolution, this.width, this.height);
+      gl.uniform1f(locs.swayAmount, this.config.swayAmount);
+      const sub = (buf, data, count, stride) => {
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, data.subarray(0, count * stride));
+      };
+      sub(this.buffers.position, cpu.positions, n, 2);
+      sub(this.buffers.size, cpu.sizes, n, 1);
+      sub(this.buffers.age, cpu.ages, n, 1);
+      sub(this.buffers.swayPeriod, cpu.swayPeriods, n, 1);
+      sub(this.buffers.startX, cpu.startXs, n, 1);
+      gl.bindVertexArray(this.vao);
+      gl.drawArrays(gl.POINTS, 0, n);
+      gl.bindVertexArray(null);
+    }
+    spawnBubble(source) {
+      const baseSize = this.config.minSize + Math.random() * (this.config.maxSize - this.config.minSize);
+      const offsetX = (Math.random() - 0.5) * 20;
+      const bubble = this._bubblePool.pop() || {};
+      bubble.startX = source.x + offsetX;
+      bubble.y = source.y;
+      bubble.baseSize = baseSize;
+      bubble.size = baseSize;
+      bubble.riseSpeed = 0.5 + Math.random() * 1.5;
+      bubble.swayPeriod = 2e3 + Math.random() * 3e3;
+      bubble.age = Math.random() * 1e3;
+      this.bubbles.push(bubble);
+    }
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+    }
+    /**
+     * Reduce particle source count proportionally.
+     * Separate from setQuality (which scales opacity/rate); this removes entire sources
+     * so fewer bubbles are ever spawned. One-way — call at half-budget level.
+     * @param {number} factor - 0.0–1.0
+     */
+    reduceBudget(factor) {
+      if (!this._allSources) this._allSources = this.sources.slice();
+      this._targetBudgetFactor = Math.max(0.1, factor);
+    }
+    toggle(enabled) {
+      this.enabled = !!enabled;
+      if (this.enabled && !this.program) {
+        if (this.width && this.height) {
+          this.init(this.width, this.height);
+        }
+      }
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      this.initSources(width, height);
+    }
+    destroy() {
+      const gl = this.gl;
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.vao) gl.deleteVertexArray(this.vao);
+      for (const key in this.buffers) {
+        gl.deleteBuffer(this.buffers[key]);
+      }
+      this.bubbles.length = 0;
+      this._bubblePool.length = 0;
+    }
+  };
+
+  // assets/webgl/PlanktonLayer.js
+  var PlanktonLayer = class {
+    constructor(gl, config = {}) {
+      this.gl = gl;
+      this.program = null;
+      this.microProgram = null;
+      this.buffers = {};
+      this.microBuffers = {};
+      this.particles = [];
+      this.microParticles = [];
+      this.qualityMultiplier = 1;
+      this._lastOpacity = null;
+      this._budgetFactor = 1;
+      this._targetBudgetFactor = 1;
+      this.config = {
+        swarmCount: 30,
+        particlesPerSwarm: 50,
+        fineCount: 1500,
+        microCount: 500,
+        ...config
+      };
+    }
+    init(width, height) {
+      this.width = width;
+      this.height = height;
+      this.initParticles(width, height);
+      this.initMicroParticles();
+      this.compileShaders();
+      this.compileMicroShaders();
+      this.createBuffers();
+      this.createMicroBuffers();
+      const gl = this.gl;
+      gl.useProgram(this.program);
+      gl.uniform3f(this.locs.color, 0.45, 0.78, 0.95);
+      gl.uniform2f(this.locs.resolution, width, height);
+      gl.useProgram(this.microProgram);
+      gl.uniform2f(this.microLocs.resolution, width, height);
+    }
+    initParticles(width, height) {
+      this.particles = [];
+      const topGap = 80 / height;
+      for (let s = 0; s < this.config.swarmCount; s++) {
+        const centerX = Math.random();
+        const centerY = Math.pow(Math.random(), 2) * (0.75 - topGap) + topGap;
+        const swarmSpreadX = 0.02 + Math.random() * 0.03;
+        const swarmSpreadY = 0.015 + Math.random() * 0.02;
+        for (let i = 0; i < this.config.particlesPerSwarm; i++) {
+          const spreadX = (Math.random() - 0.5) * swarmSpreadX;
+          const spreadY = (Math.random() - 0.5) * swarmSpreadY;
+          const yPos = Math.min(0.9, Math.max(topGap, centerY + spreadY));
+          this.particles.push({
+            x: Math.min(1, Math.max(0, centerX + spreadX)),
+            y: yPos,
+            size: Math.random() < 0.7 ? 1 : Math.random() < 0.8 ? 2 : 3,
+            driftX: Math.random() * 16 - 8,
+            duration: Math.random() * 12 + 4,
+            phase: Math.random() * Math.PI * 2,
+            opacity: 0.25 + Math.random() * 0.45,
+            green: 170 + Math.floor(Math.random() * 85),
+            glimmerIntensity: yPos < 0.3 ? (0.3 - yPos) / 0.3 : 0,
+            glimmerOffset: Math.random() * Math.PI * 2,
+            glimmerSpeed: 0.4 + Math.random() * 0.8
+          });
+        }
+      }
+      for (let i = 0; i < this.config.fineCount; i++) {
+        const yPos = Math.pow(Math.random(), 2) * (0.95 - topGap) + topGap;
+        this.particles.push({
+          x: Math.random(),
+          y: yPos,
+          size: Math.random() < 0.9 ? 1 : 2,
+          driftX: Math.random() * 18 - 9,
+          duration: 6 + Math.random() * 28,
+          phase: Math.random() * Math.PI * 2,
+          opacity: 0.05 + Math.random() * 0.2,
+          green: 170 + Math.floor(Math.random() * 70),
+          glimmerIntensity: yPos < 0.3 ? (0.3 - yPos) / 0.3 : 0,
+          glimmerOffset: Math.random() * Math.PI * 2,
+          glimmerSpeed: 0.4 + Math.random() * 0.8
+        });
+      }
+    }
+    initMicroParticles() {
+      this.microParticles = [];
+      for (let i = 0; i < this.config.microCount; i++) {
+        this.microParticles.push({
+          x: Math.random(),
+          baseY: Math.random(),
+          // 0–1, startovní výška
+          speed: 3 + Math.random() * 8,
+          // px/s stoupání
+          phase: Math.random() * Math.PI * 2,
+          opacity: 0.06 + Math.random() * 0.12
+        });
+      }
+    }
+    compileMicroShaders() {
+      const vertSrc = `#version 300 es
             in float a_x;
             in float a_baseY;
             in float a_speed;
@@ -250,7 +960,8 @@
                 gl_Position = vec4(clip, 0.0, 1.0);
                 gl_PointSize = 1.0;
             }
-        `,e=`#version 300 es
+        `;
+      const fragSrc = `#version 300 es
             precision mediump float;
             uniform float u_baseOpacity;
             in float v_fade;
@@ -258,7 +969,75 @@
             void main() {
                 outColor = vec4(0.52, 0.82, 0.94, u_baseOpacity * v_fade);
             }
-        `;if(this.microProgram=this.createProgram(t,e),this.microProgram){let i=this.gl,s=this.microProgram;this.microLocs={resolution:i.getUniformLocation(s,"u_resolution"),time:i.getUniformLocation(s,"u_time"),baseOpacity:i.getUniformLocation(s,"u_baseOpacity"),x:i.getAttribLocation(s,"a_x"),baseY:i.getAttribLocation(s,"a_baseY"),speed:i.getAttribLocation(s,"a_speed"),phase:i.getAttribLocation(s,"a_phase")}}}createMicroBuffers(){let t=this.gl,e=this.microParticles.length,i=new Float32Array(e),s=new Float32Array(e),a=new Float32Array(e),n=new Float32Array(e);for(let r=0;r<e;r++){let c=this.microParticles[r];i[r]=c.x,s[r]=c.baseY,a[r]=c.speed,n[r]=c.phase}let h=r=>{let c=t.createBuffer();return t.bindBuffer(t.ARRAY_BUFFER,c),t.bufferData(t.ARRAY_BUFFER,r,t.STATIC_DRAW),c};this.microBuffers.x=h(i),this.microBuffers.baseY=h(s),this.microBuffers.speed=h(a),this.microBuffers.phase=h(n),this.microVao=t.createVertexArray(),t.bindVertexArray(this.microVao);let u=this.microLocs,d=(r,c)=>{t.enableVertexAttribArray(r),t.bindBuffer(t.ARRAY_BUFFER,c),t.vertexAttribPointer(r,1,t.FLOAT,!1,0,0)};d(u.x,this.microBuffers.x),d(u.baseY,this.microBuffers.baseY),d(u.speed,this.microBuffers.speed),d(u.phase,this.microBuffers.phase),t.bindVertexArray(null)}renderMicro(t){let e=this.gl;if(!this.microProgram)return;e.useProgram(this.microProgram);let i=this.microLocs;e.uniform1f(i.time,t),e.uniform1f(i.baseOpacity,.55*this.qualityMultiplier),e.bindVertexArray(this.microVao);let s=Math.min(this.qualityMultiplier,this._budgetFactor||1),a=Math.floor(this.microParticles.length*s);e.drawArrays(e.POINTS,0,a)}compileShaders(){let t=this.gl,e=`#version 300 es
+        `;
+      this.microProgram = this.createProgram(vertSrc, fragSrc);
+      if (this.microProgram) {
+        const gl = this.gl;
+        const p = this.microProgram;
+        this.microLocs = {
+          resolution: gl.getUniformLocation(p, "u_resolution"),
+          time: gl.getUniformLocation(p, "u_time"),
+          baseOpacity: gl.getUniformLocation(p, "u_baseOpacity"),
+          x: gl.getAttribLocation(p, "a_x"),
+          baseY: gl.getAttribLocation(p, "a_baseY"),
+          speed: gl.getAttribLocation(p, "a_speed"),
+          phase: gl.getAttribLocation(p, "a_phase")
+        };
+      }
+    }
+    createMicroBuffers() {
+      const gl = this.gl;
+      const n = this.microParticles.length;
+      const xs = new Float32Array(n);
+      const baseYs = new Float32Array(n);
+      const speeds = new Float32Array(n);
+      const phases = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        const p = this.microParticles[i];
+        xs[i] = p.x;
+        baseYs[i] = p.baseY;
+        speeds[i] = p.speed;
+        phases[i] = p.phase;
+      }
+      const upload = (data) => {
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        return buf;
+      };
+      this.microBuffers.x = upload(xs);
+      this.microBuffers.baseY = upload(baseYs);
+      this.microBuffers.speed = upload(speeds);
+      this.microBuffers.phase = upload(phases);
+      this.microVao = gl.createVertexArray();
+      gl.bindVertexArray(this.microVao);
+      const ml = this.microLocs;
+      const bindM = (loc, buf) => {
+        gl.enableVertexAttribArray(loc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.vertexAttribPointer(loc, 1, gl.FLOAT, false, 0, 0);
+      };
+      bindM(ml.x, this.microBuffers.x);
+      bindM(ml.baseY, this.microBuffers.baseY);
+      bindM(ml.speed, this.microBuffers.speed);
+      bindM(ml.phase, this.microBuffers.phase);
+      gl.bindVertexArray(null);
+    }
+    renderMicro(currentTime) {
+      const gl = this.gl;
+      if (!this.microProgram) return;
+      gl.useProgram(this.microProgram);
+      const l = this.microLocs;
+      gl.uniform1f(l.time, currentTime);
+      gl.uniform1f(l.baseOpacity, 0.55 * this.qualityMultiplier);
+      gl.bindVertexArray(this.microVao);
+      const effectiveMicro = Math.min(this.qualityMultiplier, this._budgetFactor || 1);
+      const count = Math.floor(this.microParticles.length * effectiveMicro);
+      gl.drawArrays(gl.POINTS, 0, count);
+    }
+    compileShaders() {
+      const gl = this.gl;
+      const vertexShaderSource = `#version 300 es
             in vec2 a_basePosition;
             in float a_size;
             in float a_driftX;
@@ -303,7 +1082,8 @@
                 gl_Position = vec4(clipSpace, 0.0, 1.0);
                 gl_PointSize = a_size + glimmer * 1.5;
             }
-        `,i=`#version 300 es
+        `;
+      const fragmentShaderSource = `#version 300 es
             precision highp float;
             
             uniform vec3 u_color;
@@ -333,7 +1113,222 @@
                 
                 outColor = vec4(glowColor, finalOpacity);
             }
-        `;if(this.program=this.createProgram(e,i),this.program){let s=this.gl,a=this.program;this.locs={resolution:s.getUniformLocation(a,"u_resolution"),time:s.getUniformLocation(a,"u_time"),color:s.getUniformLocation(a,"u_color"),opacity:s.getUniformLocation(a,"u_opacity"),basePosition:s.getAttribLocation(a,"a_basePosition"),size:s.getAttribLocation(a,"a_size"),driftX:s.getAttribLocation(a,"a_driftX"),duration:s.getAttribLocation(a,"a_duration"),phase:s.getAttribLocation(a,"a_phase"),glimmerIntensity:s.getAttribLocation(a,"a_glimmerIntensity"),glimmerOffset:s.getAttribLocation(a,"a_glimmerOffset"),glimmerSpeed:s.getAttribLocation(a,"a_glimmerSpeed")}}}createProgram(t,e){let i=this.gl,s=i.createShader(i.VERTEX_SHADER);if(i.shaderSource(s,t),i.compileShader(s),!i.getShaderParameter(s,i.COMPILE_STATUS))return console.error("Vertex shader error:",i.getShaderInfoLog(s)),null;let a=i.createShader(i.FRAGMENT_SHADER);if(i.shaderSource(a,e),i.compileShader(a),!i.getShaderParameter(a,i.COMPILE_STATUS))return console.error("Fragment shader error:",i.getShaderInfoLog(a)),null;let n=i.createProgram();return i.attachShader(n,s),i.attachShader(n,a),i.linkProgram(n),i.getProgramParameter(n,i.LINK_STATUS)?(i.deleteShader(s),i.deleteShader(a),n):(console.error("Program link error:",i.getProgramInfoLog(n)),null)}createBuffers(){let t=this.gl,e=new Float32Array(this.particles.length*2),i=new Float32Array(this.particles.length),s=new Float32Array(this.particles.length),a=new Float32Array(this.particles.length),n=new Float32Array(this.particles.length);for(let f=0;f<this.particles.length;f++){let m=this.particles[f];e[f*2]=m.x,e[f*2+1]=m.y,i[f]=m.size,s[f]=m.driftX,a[f]=m.duration,n[f]=m.phase}let h=new Float32Array(this.particles.length),u=new Float32Array(this.particles.length),d=new Float32Array(this.particles.length);for(let f=0;f<this.particles.length;f++){let m=this.particles[f];h[f]=m.glimmerIntensity,u[f]=m.glimmerOffset,d[f]=m.glimmerSpeed}let r=f=>{let m=t.createBuffer();return t.bindBuffer(t.ARRAY_BUFFER,m),t.bufferData(t.ARRAY_BUFFER,f,t.STATIC_DRAW),m};this.buffers.position=r(e),this.buffers.size=r(i),this.buffers.drift=r(s),this.buffers.duration=r(a),this.buffers.phase=r(n),this.buffers.glimmerIntensity=r(h),this.buffers.glimmerOffset=r(u),this.buffers.glimmerSpeed=r(d),this.vao=t.createVertexArray(),t.bindVertexArray(this.vao);let c=this.locs,g=(f,m,p)=>{t.enableVertexAttribArray(f),t.bindBuffer(t.ARRAY_BUFFER,m),t.vertexAttribPointer(f,p,t.FLOAT,!1,0,0)};g(c.basePosition,this.buffers.position,2),g(c.size,this.buffers.size,1),g(c.driftX,this.buffers.drift,1),g(c.duration,this.buffers.duration,1),g(c.phase,this.buffers.phase,1),g(c.glimmerIntensity,this.buffers.glimmerIntensity,1),g(c.glimmerOffset,this.buffers.glimmerOffset,1),g(c.glimmerSpeed,this.buffers.glimmerSpeed,1),t.bindVertexArray(null)}render(t,e){let i=this.gl,s=this.program;if(!s||this.particles.length===0)return;this._budgetFactor+=(this._targetBudgetFactor-this._budgetFactor)*.04,i.useProgram(s);let a=this.locs;i.uniform1f(a.time,t);let n=.45*this.qualityMultiplier;this._lastOpacity!==n&&(i.uniform1f(a.opacity,n),this._lastOpacity=n),i.bindVertexArray(this.vao);let h=Math.min(this.qualityMultiplier,this._budgetFactor||1),u=Math.floor(this.particles.length*h);i.drawArrays(i.POINTS,0,u),this.renderMicro(t)}setQuality(t){this.qualityMultiplier=t}reduceBudget(t){this._targetBudgetFactor=Math.max(.1,t)}onResize(t,e){this.width=t,this.height=e,this.program&&(this.gl.useProgram(this.program),this.gl.uniform2f(this.locs.resolution,t,e)),this.microProgram&&(this.gl.useProgram(this.microProgram),this.gl.uniform2f(this.microLocs.resolution,t,e))}toggle(t){this.enabled=!!t,this.enabled&&!this.program&&this.width&&this.height&&this.init(this.width,this.height)}destroy(){let t=this.gl;this.program&&t.deleteProgram(this.program),this.microProgram&&t.deleteProgram(this.microProgram),this.vao&&t.deleteVertexArray(this.vao),this.microVao&&t.deleteVertexArray(this.microVao);for(let e in this.buffers)t.deleteBuffer(this.buffers[e]);for(let e in this.microBuffers)t.deleteBuffer(this.microBuffers[e])}};var rt=class{constructor(t,e={}){this.gl=t,this.program=null,this.foamProgram=null,this.vao=null,this.foamVao=null,this.buffers={},this.enabled=!0,this.qualityMultiplier=1,this._budgetFactor=1,this._targetBudgetFactor=1,this._foam=[],this._foamBuf=null,this.config={columns:256,foamCount:120,...e}}init(t,e){this.width=t,this.height=e,this.compileWaveShaders(),this.compileFoamShaders(),this.createWaveBuffers(),this.initFoamParticles(),this.createFoamBuffers();let i=this.gl;this.program&&(i.useProgram(this.program),i.uniform2f(this.locs.resolution,t,e)),this.foamProgram&&(i.useProgram(this.foamProgram),i.uniform2f(this.foamLocs.resolution,t,e))}compileWaveShaders(){let t=`#version 300 es
+        `;
+      this.program = this.createProgram(vertexShaderSource, fragmentShaderSource);
+      if (this.program) {
+        const gl2 = this.gl;
+        const p = this.program;
+        this.locs = {
+          resolution: gl2.getUniformLocation(p, "u_resolution"),
+          time: gl2.getUniformLocation(p, "u_time"),
+          color: gl2.getUniformLocation(p, "u_color"),
+          opacity: gl2.getUniformLocation(p, "u_opacity"),
+          basePosition: gl2.getAttribLocation(p, "a_basePosition"),
+          size: gl2.getAttribLocation(p, "a_size"),
+          driftX: gl2.getAttribLocation(p, "a_driftX"),
+          duration: gl2.getAttribLocation(p, "a_duration"),
+          phase: gl2.getAttribLocation(p, "a_phase"),
+          glimmerIntensity: gl2.getAttribLocation(p, "a_glimmerIntensity"),
+          glimmerOffset: gl2.getAttribLocation(p, "a_glimmerOffset"),
+          glimmerSpeed: gl2.getAttribLocation(p, "a_glimmerSpeed")
+        };
+      }
+    }
+    createProgram(vertexSource, fragmentSource) {
+      const gl = this.gl;
+      const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertexShader, vertexSource);
+      gl.compileShader(vertexShader);
+      if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
+        console.error("Vertex shader error:", gl.getShaderInfoLog(vertexShader));
+        return null;
+      }
+      const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragmentShader, fragmentSource);
+      gl.compileShader(fragmentShader);
+      if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
+        console.error("Fragment shader error:", gl.getShaderInfoLog(fragmentShader));
+        return null;
+      }
+      const program = gl.createProgram();
+      gl.attachShader(program, vertexShader);
+      gl.attachShader(program, fragmentShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("Program link error:", gl.getProgramInfoLog(program));
+        return null;
+      }
+      gl.deleteShader(vertexShader);
+      gl.deleteShader(fragmentShader);
+      return program;
+    }
+    createBuffers() {
+      const gl = this.gl;
+      const positions = new Float32Array(this.particles.length * 2);
+      const sizes = new Float32Array(this.particles.length);
+      const drifts = new Float32Array(this.particles.length);
+      const durations = new Float32Array(this.particles.length);
+      const phases = new Float32Array(this.particles.length);
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        positions[i * 2] = p.x;
+        positions[i * 2 + 1] = p.y;
+        sizes[i] = p.size;
+        drifts[i] = p.driftX;
+        durations[i] = p.duration;
+        phases[i] = p.phase;
+      }
+      const glimmerIntensities = new Float32Array(this.particles.length);
+      const glimmerOffsets = new Float32Array(this.particles.length);
+      const glimmerSpeeds = new Float32Array(this.particles.length);
+      for (let i = 0; i < this.particles.length; i++) {
+        const p = this.particles[i];
+        glimmerIntensities[i] = p.glimmerIntensity;
+        glimmerOffsets[i] = p.glimmerOffset;
+        glimmerSpeeds[i] = p.glimmerSpeed;
+      }
+      const upload = (data) => {
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        return buf;
+      };
+      this.buffers.position = upload(positions);
+      this.buffers.size = upload(sizes);
+      this.buffers.drift = upload(drifts);
+      this.buffers.duration = upload(durations);
+      this.buffers.phase = upload(phases);
+      this.buffers.glimmerIntensity = upload(glimmerIntensities);
+      this.buffers.glimmerOffset = upload(glimmerOffsets);
+      this.buffers.glimmerSpeed = upload(glimmerSpeeds);
+      this.vao = gl.createVertexArray();
+      gl.bindVertexArray(this.vao);
+      const l = this.locs;
+      const bindAttr = (loc, buf, size) => {
+        gl.enableVertexAttribArray(loc);
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+      };
+      bindAttr(l.basePosition, this.buffers.position, 2);
+      bindAttr(l.size, this.buffers.size, 1);
+      bindAttr(l.driftX, this.buffers.drift, 1);
+      bindAttr(l.duration, this.buffers.duration, 1);
+      bindAttr(l.phase, this.buffers.phase, 1);
+      bindAttr(l.glimmerIntensity, this.buffers.glimmerIntensity, 1);
+      bindAttr(l.glimmerOffset, this.buffers.glimmerOffset, 1);
+      bindAttr(l.glimmerSpeed, this.buffers.glimmerSpeed, 1);
+      gl.bindVertexArray(null);
+    }
+    render(currentTime, deltaTime) {
+      const gl = this.gl;
+      const program = this.program;
+      if (!program || this.particles.length === 0) return;
+      this._budgetFactor += (this._targetBudgetFactor - this._budgetFactor) * 0.04;
+      gl.useProgram(program);
+      const locs = this.locs;
+      gl.uniform1f(locs.time, currentTime);
+      const opacity = 0.45 * this.qualityMultiplier;
+      if (this._lastOpacity !== opacity) {
+        gl.uniform1f(locs.opacity, opacity);
+        this._lastOpacity = opacity;
+      }
+      gl.bindVertexArray(this.vao);
+      const effectiveFactor = Math.min(this.qualityMultiplier, this._budgetFactor || 1);
+      const particleCount = Math.floor(this.particles.length * effectiveFactor);
+      gl.drawArrays(gl.POINTS, 0, particleCount);
+      this.renderMicro(currentTime);
+    }
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+    }
+    /**
+     * Reduce drawn particle count independently of the quality (opacity) multiplier.
+     * The effective count = particles * min(qualityMultiplier, budgetFactor).
+     * @param {number} factor - 0.0–1.0
+     */
+    reduceBudget(factor) {
+      this._targetBudgetFactor = Math.max(0.1, factor);
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      if (this.program) {
+        this.gl.useProgram(this.program);
+        this.gl.uniform2f(this.locs.resolution, width, height);
+      }
+      if (this.microProgram) {
+        this.gl.useProgram(this.microProgram);
+        this.gl.uniform2f(this.microLocs.resolution, width, height);
+      }
+    }
+    toggle(enabled) {
+      this.enabled = !!enabled;
+      if (this.enabled && !this.program) {
+        if (this.width && this.height) {
+          this.init(this.width, this.height);
+        }
+      }
+    }
+    destroy() {
+      const gl = this.gl;
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.microProgram) gl.deleteProgram(this.microProgram);
+      if (this.vao) gl.deleteVertexArray(this.vao);
+      if (this.microVao) gl.deleteVertexArray(this.microVao);
+      for (const key in this.buffers) gl.deleteBuffer(this.buffers[key]);
+      for (const key in this.microBuffers) gl.deleteBuffer(this.microBuffers[key]);
+    }
+  };
+
+  // assets/webgl/WaterSurfaceLayer.js
+  var SURFACE_Y = 70;
+  var WaterSurfaceLayer = class {
+    constructor(gl, config = {}) {
+      this.gl = gl;
+      this.program = null;
+      this.foamProgram = null;
+      this.vao = null;
+      this.foamVao = null;
+      this.buffers = {};
+      this.enabled = true;
+      this.qualityMultiplier = 1;
+      this._budgetFactor = 1;
+      this._targetBudgetFactor = 1;
+      this._foam = [];
+      this._foamBuf = null;
+      this.config = {
+        columns: 256,
+        // rozlišení vlny
+        foamCount: 120,
+        // počet foam částic
+        ...config
+      };
+    }
+    init(width, height) {
+      this.width = width;
+      this.height = height;
+      this.compileWaveShaders();
+      this.compileFoamShaders();
+      this.createWaveBuffers();
+      this.initFoamParticles();
+      this.createFoamBuffers();
+      const gl = this.gl;
+      if (this.program) {
+        gl.useProgram(this.program);
+        gl.uniform2f(this.locs.resolution, width, height);
+      }
+      if (this.foamProgram) {
+        gl.useProgram(this.foamProgram);
+        gl.uniform2f(this.foamLocs.resolution, width, height);
+      }
+    }
+    // ─── Surface fill shaders ────────────────────────────────────────────────
+    // Geometrie: TRIANGLE_STRIP, každý sloupec má dva vrcholy:
+    //   a_t = -1.0 → horní hrana pásku
+    //   a_t = +1.0 → dolní hrana pásku
+    // Fragment: alpha bell-curve — maximum uprostřed, 0 na krajích
+    compileWaveShaders() {
+      const vertSrc = `#version 300 es
             in float a_x;    // normalized column 0..1
             in float a_t;    // -1 = top edge, +1 = bottom edge of ribbon
 
@@ -353,14 +1348,15 @@
                            + 0.3  * sin(xPx * 0.143 + u_time * 0.00094);
 
                 // \xB14px geometrie \u2014 nikdy sub-pixel, pow() to vizu\xE1ln\u011B o\u0159e\u017Ee na ~1px
-                float yPx = 70.0 + wave + a_t * 4.0;
+                float yPx = ${SURFACE_Y}.0 + wave + a_t * 4.0;
 
                 vec2 clip = (vec2(xPx, yPx) / u_resolution) * 2.0 - 1.0;
                 clip.y = -clip.y;
                 gl_Position = vec4(clip, 0.0, 1.0);
                 v_t = a_t;
             }
-        `,e=`#version 300 es
+        `;
+      const fragSrc = `#version 300 es
             precision mediump float;
             in float v_t;
             out vec4 outColor;
@@ -373,7 +1369,55 @@
                 if (alpha < 0.005) discard;
                 outColor = vec4(0.88, 0.97, 1.0, alpha);
             }
-        `;if(this.program=this.createProgram(t,e),this.program){let i=this.gl,s=this.program;this.locs={resolution:i.getUniformLocation(s,"u_resolution"),time:i.getUniformLocation(s,"u_time"),x:i.getAttribLocation(s,"a_x"),t:i.getAttribLocation(s,"a_t")}}}createWaveBuffers(){let t=this.gl,e=this.config.columns,i=new Float32Array(e*2),s=new Float32Array(e*2);for(let n=0;n<e;n++){let h=n/(e-1);i[n*2]=h,i[n*2+1]=h,s[n*2]=-1,s[n*2+1]=1}let a=n=>{let h=t.createBuffer();return t.bindBuffer(t.ARRAY_BUFFER,h),t.bufferData(t.ARRAY_BUFFER,n,t.STATIC_DRAW),h};this.buffers.x=a(i),this.buffers.t=a(s),this.buffers.vertexCount=e*2,this.locs&&(this.vao=t.createVertexArray(),t.bindVertexArray(this.vao),t.enableVertexAttribArray(this.locs.x),t.bindBuffer(t.ARRAY_BUFFER,this.buffers.x),t.vertexAttribPointer(this.locs.x,1,t.FLOAT,!1,0,0),t.enableVertexAttribArray(this.locs.t),t.bindBuffer(t.ARRAY_BUFFER,this.buffers.t),t.vertexAttribPointer(this.locs.t,1,t.FLOAT,!1,0,0),t.bindVertexArray(null))}compileFoamShaders(){let t=`#version 300 es
+        `;
+      this.program = this.createProgram(vertSrc, fragSrc);
+      if (this.program) {
+        const gl = this.gl;
+        const p = this.program;
+        this.locs = {
+          resolution: gl.getUniformLocation(p, "u_resolution"),
+          time: gl.getUniformLocation(p, "u_time"),
+          x: gl.getAttribLocation(p, "a_x"),
+          t: gl.getAttribLocation(p, "a_t")
+        };
+      }
+    }
+    createWaveBuffers() {
+      const gl = this.gl;
+      const N = this.config.columns;
+      const xs = new Float32Array(N * 2);
+      const ts = new Float32Array(N * 2);
+      for (let i = 0; i < N; i++) {
+        const nx = i / (N - 1);
+        xs[i * 2] = nx;
+        xs[i * 2 + 1] = nx;
+        ts[i * 2] = -1;
+        ts[i * 2 + 1] = 1;
+      }
+      const upload = (data) => {
+        const buf = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+        gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+        return buf;
+      };
+      this.buffers.x = upload(xs);
+      this.buffers.t = upload(ts);
+      this.buffers.vertexCount = N * 2;
+      if (this.locs) {
+        this.vao = gl.createVertexArray();
+        gl.bindVertexArray(this.vao);
+        gl.enableVertexAttribArray(this.locs.x);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.x);
+        gl.vertexAttribPointer(this.locs.x, 1, gl.FLOAT, false, 0, 0);
+        gl.enableVertexAttribArray(this.locs.t);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.t);
+        gl.vertexAttribPointer(this.locs.t, 1, gl.FLOAT, false, 0, 0);
+        gl.bindVertexArray(null);
+      }
+    }
+    // ─── Foam particle shaders ───────────────────────────────────────────────
+    compileFoamShaders() {
+      const vertSrc = `#version 300 es
             in float a_normX;    // normalized x position [0..1]
             in float a_yOffset;  // pixels above wave surface (always >= 8)
             in float a_size;     // point size in px
@@ -391,14 +1435,15 @@
                            + 0.9  * sin(xPx * 0.051 + u_time * 0.00110)
                            + 0.5  * sin(xPx * 0.089 + u_time * 0.00161)
                            + 0.3  * sin(xPx * 0.143 + u_time * 0.00094);
-                float yPx = 70.0 + wave - a_yOffset;
+                float yPx = ${SURFACE_Y}.0 + wave - a_yOffset;
                 vec2 clip = (vec2(xPx, yPx) / u_resolution) * 2.0 - 1.0;
                 clip.y = -clip.y;
                 gl_Position = vec4(clip, 0.0, 1.0);
                 gl_PointSize = a_size;
                 v_opacity = a_opacity;
             }
-        `,e=`#version 300 es
+        `;
+      const fragSrc = `#version 300 es
             precision mediump float;
             in float v_opacity;
             out vec4 outColor;
@@ -409,7 +1454,3283 @@
                 float alpha = smoothstep(0.5, 0.15, length(c)) * v_opacity;
                 outColor = vec4(0.90, 0.97, 1.0, alpha);
             }
-        `;if(this.foamProgram=this.createProgram(t,e),this.foamProgram){let i=this.gl,s=this.foamProgram;this.foamLocs={resolution:i.getUniformLocation(s,"u_resolution"),time:i.getUniformLocation(s,"u_time"),normX:i.getAttribLocation(s,"a_normX"),yOffset:i.getAttribLocation(s,"a_yOffset"),size:i.getAttribLocation(s,"a_size"),opacity:i.getAttribLocation(s,"a_opacity")}}}initFoamParticles(){let t=this.config.foamCount;this._foam=[];for(let e=0;e<t;e++){let i=this._newFoamParticle();i.age=Math.random()*i.maxAge,i.yOffset=i.riseSpeed*(i.age/1e3),this._foam.push(i)}this._foamBuf=new Float32Array(t*4)}_newFoamParticle(){return{x:Math.random(),size:2+Math.random()*4,age:0,maxAge:1200+Math.random()*1600,driftX:(Math.random()-.5)*1e-5,riseSpeed:6+Math.random()*12,yOffset:0}}_waveYpx(t,e){let i=t*this.width;return 70+3*Math.sin(i*.012+e*45e-5)+1.5*Math.sin(i*.027+e*73e-5)+.9*Math.sin(i*.051+e*.0011)+.5*Math.sin(i*.089+e*.00161)+.3*Math.sin(i*.143+e*94e-5)}createFoamBuffers(){let t=this.gl,e=this._foam.length;if(this.buffers.foam=t.createBuffer(),t.bindBuffer(t.ARRAY_BUFFER,this.buffers.foam),t.bufferData(t.ARRAY_BUFFER,this._foamBuf,t.DYNAMIC_DRAW),this.foamLocs){this.foamVao=t.createVertexArray(),t.bindVertexArray(this.foamVao);let i=16;t.bindBuffer(t.ARRAY_BUFFER,this.buffers.foam),t.enableVertexAttribArray(this.foamLocs.normX),t.vertexAttribPointer(this.foamLocs.normX,1,t.FLOAT,!1,i,0),t.enableVertexAttribArray(this.foamLocs.yOffset),t.vertexAttribPointer(this.foamLocs.yOffset,1,t.FLOAT,!1,i,4),t.enableVertexAttribArray(this.foamLocs.size),t.vertexAttribPointer(this.foamLocs.size,1,t.FLOAT,!1,i,8),t.enableVertexAttribArray(this.foamLocs.opacity),t.vertexAttribPointer(this.foamLocs.opacity,1,t.FLOAT,!1,i,12),t.bindVertexArray(null)}}updateFoam(t,e){let i=Math.floor(this._foam.length*Math.min(this.qualityMultiplier,this._budgetFactor));for(let s=0;s<i;s++){let a=this._foam[s];if(a.age+=e,a.age>=a.maxAge){let n=this._newFoamParticle();this._foam[s]=n,this._writeFoamVertex(s,n,t,0);continue}a.x=(a.x+a.driftX*e+1)%1,a.yOffset+=a.riseSpeed*e/1e3,this._writeFoamVertex(s,a,t,a.age)}return i}_writeFoamVertex(t,e,i,s){let a=s/e.maxAge,n;a<.12?n=a/.12:n=1-(a-.12)/.88,n*=.55*this.qualityMultiplier;let h=t*4;this._foamBuf[h]=e.x,this._foamBuf[h+1]=Math.max(e.yOffset,8),this._foamBuf[h+2]=e.size,this._foamBuf[h+3]=n}render(t,e){let i=this.gl;if(this._budgetFactor+=(this._targetBudgetFactor-this._budgetFactor)*.06,this.program&&this.vao&&(i.useProgram(this.program),i.uniform1f(this.locs.time,t),i.bindVertexArray(this.vao),i.drawArrays(i.TRIANGLE_STRIP,0,this.buffers.vertexCount)),this.foamProgram&&this.foamVao){let s=this.updateFoam(t,e);i.bindBuffer(i.ARRAY_BUFFER,this.buffers.foam),i.bufferSubData(i.ARRAY_BUFFER,0,this._foamBuf,0,s*4),i.useProgram(this.foamProgram),i.uniform1f(this.foamLocs.time,t),i.bindVertexArray(this.foamVao),i.drawArrays(i.POINTS,0,s)}}setQuality(t){this.qualityMultiplier=t}reduceBudget(t){this._targetBudgetFactor=Math.max(.1,t)}onResize(t,e){this.width=t,this.height=e,this.program&&(this.gl.useProgram(this.program),this.gl.uniform2f(this.locs.resolution,t,e)),this.foamProgram&&(this.gl.useProgram(this.foamProgram),this.gl.uniform2f(this.foamLocs.resolution,t,e))}toggle(t){this.enabled=!!t,this.enabled&&!this.program&&this.width&&this.height&&this.init(this.width,this.height)}destroy(){let t=this.gl;this.program&&t.deleteProgram(this.program),this.foamProgram&&t.deleteProgram(this.foamProgram),this.vao&&t.deleteVertexArray(this.vao),this.foamVao&&t.deleteVertexArray(this.foamVao),this.buffers.x&&t.deleteBuffer(this.buffers.x),this.buffers.t&&t.deleteBuffer(this.buffers.t),this.buffers.foam&&t.deleteBuffer(this.buffers.foam)}createProgram(t,e){let i=this.gl,s=i.createShader(i.VERTEX_SHADER);if(i.shaderSource(s,t),i.compileShader(s),!i.getShaderParameter(s,i.COMPILE_STATUS))return console.error("WaterSurface vertex shader:",i.getShaderInfoLog(s)),null;let a=i.createShader(i.FRAGMENT_SHADER);if(i.shaderSource(a,e),i.compileShader(a),!i.getShaderParameter(a,i.COMPILE_STATUS))return console.error("WaterSurface fragment shader:",i.getShaderInfoLog(a)),null;let n=i.createProgram();return i.attachShader(n,s),i.attachShader(n,a),i.linkProgram(n),i.getProgramParameter(n,i.LINK_STATUS)?(i.deleteShader(s),i.deleteShader(a),n):(console.error("WaterSurface program link:",i.getProgramInfoLog(n)),null)}};var Z=class{constructor(t,e={}){this.canvas=t,this.gl=null,this.rafId=null,this.startTime=0,this.lastFrameTime=0,this.frameCount=0,this.fps=60,this.fpsUpdateTime=0,this.lastProfileTimes=null,this.resizeTimeout=null,this.pendingResize=null,this.options={enableGradient:e.enableGradient!==!1,enableRays:e.enableRays!==!1,enableBubbles:e.enableBubbles!==!1,enablePlankton:e.enablePlankton!==!1,enableWaterSurface:e.enableWaterSurface!==!1,profiling:e.profiling||!1,planktonConfig:e.planktonConfig||{},bubblesConfig:e.bubblesConfig||{},raysConfig:e.raysConfig||{},dprCap:e.dprCap||1.5},this.baseDprCap=this.options.dprCap,this.qualityMultiplier=1,this.targetFPS=50,this.lowFpsFrames=0,this.handleResize=this.handleResize.bind(this),this.handleContextLost=this.handleContextLost.bind(this),this.handleContextRestored=this.handleContextRestored.bind(this),this.gradientLayer=null,this.raysLayer=null,this.bubblesLayer=null,this.planktonLayer=null,this.waterSurfaceLayer=null,this.rendererInfo=null}init(){let t=this.canvas.getContext("webgl2",{alpha:!1,antialias:!1,depth:!1,stencil:!1,premultipliedAlpha:!1,preserveDrawingBuffer:!1,powerPreference:"high-performance",desynchronized:!1});if(!t)throw new Error("WebGL2 not supported");return this.gl=t,t.clearColor(.02,.05,.1,1),this.onResize(this.canvas.width,this.canvas.height),this.initLayers(),window.addEventListener("resize",this.handleResize),this.canvas.addEventListener("webglcontextlost",this.handleContextLost,!1),this.canvas.addEventListener("webglcontextrestored",this.handleContextRestored,!1),this.gl.blendFunc(this.gl.SRC_ALPHA,this.gl.ONE_MINUS_SRC_ALPHA),document.body.classList.add("has-webgl"),this}getRendererInfo(){if(!this.gl)return null;if(this.rendererInfo)return this.rendererInfo;let t=this.gl.getExtension("WEBGL_debug_renderer_info"),e=t?t.UNMASKED_VENDOR_WEBGL:this.gl.VENDOR,i=t?t.UNMASKED_RENDERER_WEBGL:this.gl.RENDERER;return this.rendererInfo={vendor:String(this.gl.getParameter(e)||""),renderer:String(this.gl.getParameter(i)||"")},this.rendererInfo}isSoftwareRenderer(){let t=this.getRendererInfo();if(!t)return!1;let e=`${t.vendor} ${t.renderer}`.toLowerCase();return/swiftshader|llvmpipe|softpipe|software|microsoft basic render|mesa offscreen/.test(e)}initLayers(){let{width:t,height:e}=this.canvas;this.options.enableGradient&&(this.gradientLayer=new $(this.gl),this.gradientLayer.init(t,e),this.gradientLayer.enabled=!0),this.options.enableRays&&(this.raysLayer=new G(this.gl,this.options.raysConfig),this.raysLayer.init(t,e),this.raysLayer.enabled=!0),this.options.enableBubbles&&(this.bubblesLayer=new Q(this.gl,this.options.bubblesConfig),this.bubblesLayer.init(t,e),this.bubblesLayer.enabled=!0),this.options.enablePlankton&&(this.planktonLayer=new j(this.gl,this.options.planktonConfig),this.planktonLayer.init(t,e),this.planktonLayer.enabled=!0),this.options.enableWaterSurface&&(this.waterSurfaceLayer=new rt(this.gl),this.waterSurfaceLayer.init(t,e),this.waterSurfaceLayer.enabled=!0)}handleContextLost(t){t.preventDefault(),this.gl=null,this.rendererInfo=null,console.warn("WebGL context lost \u2014 rendering paused until restored"),typeof this.onContextLost=="function"&&this.onContextLost()}handleContextRestored(){let t=this.canvas.getContext("webgl2",{alpha:!1,antialias:!1,depth:!1,stencil:!1,premultipliedAlpha:!1,preserveDrawingBuffer:!1,powerPreference:"high-performance",desynchronized:!1});t&&(this.gl=t,this.rendererInfo=null,t.clearColor(.02,.05,.1,1),this.onResize(this.canvas.width,this.canvas.height),this.gradientLayer&&(this.gradientLayer.destroy(),this.gradientLayer=null),this.raysLayer&&(this.raysLayer.destroy(),this.raysLayer=null),this.bubblesLayer&&(this.bubblesLayer.destroy(),this.bubblesLayer=null),this.planktonLayer&&(this.planktonLayer.destroy(),this.planktonLayer=null),this.waterSurfaceLayer&&(this.waterSurfaceLayer.destroy(),this.waterSurfaceLayer=null),this.initLayers())}handleResize(){clearTimeout(this.resizeTimeout),this.pendingResize={dpr:Math.min(window.devicePixelRatio||1,this.options.dprCap),width:window.innerWidth,height:window.innerHeight},this.resizeTimeout=setTimeout(()=>{this.applyResize()},150)}applyResize(){if(!this.pendingResize)return;let{dpr:t,width:e,height:i}=this.pendingResize,s=Math.floor(e*t),a=Math.floor(i*t);this.onResize(s,a),this.canvas.style.width=e+"px",this.canvas.style.height=i+"px",this.pendingResize=null}setDprCap(t){let e=Math.max(.5,Math.min(this.baseDprCap,t));Math.abs(e-this.options.dprCap)<.01||(this.options.dprCap=e,this.pendingResize={dpr:Math.min(window.devicePixelRatio||1,this.options.dprCap),width:window.innerWidth,height:window.innerHeight},this.applyResize())}onResize(t,e){this.canvas.width=t,this.canvas.height=e,this.gl&&(this.gl.viewport(0,0,t,e),this.gradientLayer&&this.gradientLayer.onResize(t,e),this.raysLayer&&this.raysLayer.onResize(t,e),this.bubblesLayer&&this.bubblesLayer.onResize(t,e),this.planktonLayer&&this.planktonLayer.onResize(t,e),this.waterSurfaceLayer&&this.waterSurfaceLayer.onResize(t,e))}start(){this.rafId||(this.startTime=performance.now(),this.lastFrameTime=this.startTime,this.fpsUpdateTime=this.startTime,this.frameCount=0)}stop(){this.rafId&&(cancelAnimationFrame(this.rafId),this.rafId=null)}renderFrame(t,e){if(!this.gl||this.gl.isContextLost())return;this.lastFrameTime=t;let i=this.options.profiling||!1,s={};i&&(s.start=performance.now()),this.gl.clear(this.gl.COLOR_BUFFER_BIT),i&&(s.clear=performance.now()),this.gradientLayer&&this.gradientLayer.enabled&&this.gradientLayer.render(t,e),i&&(s.gradient=performance.now()),this.gl.enable(this.gl.BLEND);let a=(t-this.startTime)%36e5;this.raysLayer&&this.raysLayer.enabled&&this.raysLayer.render(a,e),i&&(s.rays=performance.now()),this.bubblesLayer&&this.bubblesLayer.enabled&&this.bubblesLayer.render(t,e),i&&(s.bubbles=performance.now()),this.planktonLayer&&this.planktonLayer.enabled&&this.planktonLayer.render(a,e),this.waterSurfaceLayer&&this.waterSurfaceLayer.enabled&&this.waterSurfaceLayer.render(a,e),i&&(s.plankton=performance.now(),s.total=s.plankton-s.start,this.lastProfileTimes={gradient:s.gradient-s.clear,rays:s.rays-s.gradient,bubbles:s.bubbles-s.rays,plankton:s.plankton-s.bubbles,total:s.total},(!this._lastProfileLog||t-this._lastProfileLog>2e3)&&(console.group("WebGL Performance Profile"),console.log(`Total Frame: ${s.total.toFixed(2)}ms`),console.log(`Gradient: ${(s.gradient-s.clear).toFixed(2)}ms`),console.log(`Light Rays: ${(s.rays-s.gradient).toFixed(2)}ms`),console.log(`Bubbles: ${(s.bubbles-s.rays).toFixed(2)}ms`),console.log(`Plankton: ${(s.plankton-s.bubbles).toFixed(2)}ms`),console.groupEnd(),this._lastProfileLog=t)),this.gl.disable(this.gl.BLEND),this.updateFPS(t,e)}updateFPS(t,e){this.frameCount++,t-this.fpsUpdateTime>=1e3&&(this.fps=this.frameCount,this.frameCount=0,this.fpsUpdateTime=t)}applyQualitySettings(){this.gradientLayer&&this.gradientLayer.setQuality(this.qualityMultiplier),this.raysLayer&&this.raysLayer.setQuality(this.qualityMultiplier),this.bubblesLayer&&this.bubblesLayer.setQuality(this.qualityMultiplier),this.planktonLayer&&this.planktonLayer.setQuality(this.qualityMultiplier),this.waterSurfaceLayer&&this.waterSurfaceLayer.setQuality(this.qualityMultiplier)}setLayerEnabled(t,e){switch(t){case"gradient":this.options.enableGradient=e,this.gradientLayer?typeof this.gradientLayer.toggle=="function"?this.gradientLayer.toggle(e):(this.gradientLayer.enabled=e,e&&!this.gradientLayer.program&&this.gradientLayer.init(this.canvas.width,this.canvas.height)):e&&this.gl&&(this.gradientLayer=new $(this.gl),this.gradientLayer.init(this.canvas.width,this.canvas.height),this.gradientLayer.enabled=!0);break;case"rays":this.options.enableRays=e,this.raysLayer?typeof this.raysLayer.toggle=="function"?this.raysLayer.toggle(e):(this.raysLayer.enabled=e,e&&!this.raysLayer.program&&this.raysLayer.init(this.canvas.width,this.canvas.height)):e&&this.gl&&(this.raysLayer=new G(this.gl,this.options.raysConfig),this.raysLayer.init(this.canvas.width,this.canvas.height),this.raysLayer.enabled=!0);break;case"bubbles":this.options.enableBubbles=e,this.bubblesLayer?typeof this.bubblesLayer.toggle=="function"?this.bubblesLayer.toggle(e):(this.bubblesLayer.enabled=e,e&&!this.bubblesLayer.program&&this.bubblesLayer.init(this.canvas.width,this.canvas.height)):e&&this.gl&&(this.bubblesLayer=new Q(this.gl,this.options.bubblesConfig),this.bubblesLayer.init(this.canvas.width,this.canvas.height),this.bubblesLayer.enabled=!0);break;case"plankton":this.options.enablePlankton=e,this.planktonLayer?typeof this.planktonLayer.toggle=="function"?this.planktonLayer.toggle(e):(this.planktonLayer.enabled=e,e&&!this.planktonLayer.program&&this.planktonLayer.init(this.canvas.width,this.canvas.height)):e&&this.gl&&(this.planktonLayer=new j(this.gl,this.options.planktonConfig),this.planktonLayer.init(this.canvas.width,this.canvas.height),this.planktonLayer.enabled=!0);break}}getFPS(){return this.fps}setQuality(t){this.qualityMultiplier=t,this.applyQualitySettings()}reduceBudget(t){let i=Math.max(.1,t)<=.6?Math.min(this.baseDprCap,1.25):this.baseDprCap;this.setDprCap(i),this.raysLayer&&this.raysLayer.reduceBudget(t),this.bubblesLayer&&this.bubblesLayer.reduceBudget(t),this.planktonLayer&&this.planktonLayer.reduceBudget(t),this.waterSurfaceLayer&&this.waterSurfaceLayer.reduceBudget(t)}destroy(){this.stop(),this.gradientLayer&&this.gradientLayer.destroy(),this.raysLayer&&this.raysLayer.destroy(),this.bubblesLayer&&this.bubblesLayer.destroy(),this.planktonLayer&&this.planktonLayer.destroy(),this.waterSurfaceLayer&&this.waterSurfaceLayer.destroy(),window.removeEventListener("resize",this.handleResize),this.canvas.removeEventListener("webglcontextlost",this.handleContextLost),this.canvas.removeEventListener("webglcontextrestored",this.handleContextRestored),this.gl=null,this.rendererInfo=null}};var Bt=[{swarmCount:3,particlesPerSwarm:8,fineCount:60,microCount:20,lightRayCount:1,bubbleSourceWidthBase:1400,schoolDensity:65e4,canvas2dFPS:24,dprCap:1},{swarmCount:6,particlesPerSwarm:16,fineCount:180,microCount:60,lightRayCount:2,bubbleSourceWidthBase:1e3,schoolDensity:45e4,canvas2dFPS:28,dprCap:1},{swarmCount:20,particlesPerSwarm:45,fineCount:900,microCount:300,lightRayCount:4,bubbleSourceWidthBase:550,schoolDensity:175e3,canvas2dFPS:40,dprCap:1.5},{swarmCount:30,particlesPerSwarm:50,fineCount:1500,microCount:500,lightRayCount:5,bubbleSourceWidthBase:400,schoolDensity:13e4,canvas2dFPS:45,dprCap:2}],Yt=["mobile-low","mobile-medium","desktop-light","desktop-full"],lt=null;function Ot(o,t){let e={...o};return t>=7e6?(e.swarmCount=Math.min(e.swarmCount,16),e.particlesPerSwarm=Math.min(e.particlesPerSwarm,32),e.fineCount=Math.min(e.fineCount,700),e.microCount=Math.min(e.microCount,180),e.lightRayCount=Math.min(e.lightRayCount,3),e.bubbleSourceWidthBase=Math.max(e.bubbleSourceWidthBase,800),e.schoolDensity=Math.max(e.schoolDensity,1e6),e.canvas2dFPS=Math.min(e.canvas2dFPS,30),e.dprCap=Math.min(e.dprCap,.75)):t>=4e6?(e.swarmCount=Math.min(e.swarmCount,20),e.particlesPerSwarm=Math.min(e.particlesPerSwarm,36),e.fineCount=Math.min(e.fineCount,900),e.microCount=Math.min(e.microCount,250),e.lightRayCount=Math.min(e.lightRayCount,4),e.bubbleSourceWidthBase=Math.max(e.bubbleSourceWidthBase,650),e.schoolDensity=Math.max(e.schoolDensity,8e5),e.canvas2dFPS=Math.min(e.canvas2dFPS,35),e.dprCap=Math.min(e.dprCap,.85)):t>=25e5&&(e.swarmCount=Math.min(e.swarmCount,24),e.particlesPerSwarm=Math.min(e.particlesPerSwarm,42),e.fineCount=Math.min(e.fineCount,1100),e.microCount=Math.min(e.microCount,320),e.lightRayCount=Math.min(e.lightRayCount,4),e.bubbleSourceWidthBase=Math.max(e.bubbleSourceWidthBase,520),e.schoolDensity=Math.max(e.schoolDensity,55e4),e.canvas2dFPS=Math.min(e.canvas2dFPS,40),e.dprCap=Math.min(e.dprCap,1)),e}function K(){if(lt)return lt;let o=window.innerWidth,t=window.innerHeight,e=o*t,i=navigator.hardwareConcurrency||4,s=window.devicePixelRatio||1,a=navigator.deviceMemory||4,n=navigator.connection?.effectiveType??"",h=navigator.connection?.saveData===!0,u=window.matchMedia?.("(prefers-reduced-motion: reduce)").matches===!0,d=o<700||navigator.maxTouchPoints>0&&Math.min(o,t)<700,r=n==="2g"||n==="slow-2g",c=d&&(i<=4||s>=2||a<=4),g=u||h||r||c||a<=2,f;return e<35e4||u||h||r||c||i<=2&&s>1.5?f=0:d||e<7e5||i<=2?f=1:e<15e5||i<=4?f=2:f=3,lt={tier:f,label:Yt[f],entityBudget:Ot(Bt[f],e),isMobile:d,isLowPower:g,prefersReducedMotion:u,saveData:h},lt}var N=document.getElementById("webgl-ocean-background"),J=window.blueOrcaRenderBootstrap={preferLiteCanvasEffects:!1,webglStatus:"unavailable"};window.webglOceanRenderer=null;if(N){let o=(r,c,g={})=>{let{preferLiteCanvasEffects:f=!1,webglStatus:m="fallback"}=g;if(N.style.display="none",document.body.classList.remove("has-webgl"),window.webglOceanRenderer=null,J.webglStatus=m,J.preferLiteCanvasEffects=J.preferLiteCanvasEffects||f,c){let p=c instanceof Error?c.message:String(c);console.warn(`[WebGL] ${r}: ${p}`)}else console.info(`[WebGL] ${r}`)},{tier:t,label:e,entityBudget:i,isMobile:s,isLowPower:a,prefersReducedMotion:n,saveData:h}=K(),u=t===0||s||a,d=n?"reduced-motion":h?"save-data":s?"mobile-lite":a?"low-power":"skipped-low-tier";if(u)o(`Skipping WebGL on ${e} device (${d}) \u2014 CSS fallback active`,null,{preferLiteCanvasEffects:!0,webglStatus:d});else{N.style.display="";let r=Math.min(window.devicePixelRatio||1,i.dprCap);N.width=Math.floor(window.innerWidth*r),N.height=Math.floor(window.innerHeight*r),N.style.width=window.innerWidth+"px",N.style.height=window.innerHeight+"px";let c=new Z(N,{enableGradient:!0,enableRays:!1,enableBubbles:!0,enablePlankton:!0,enableWaterSurface:!1,profiling:!1,dprCap:i.dprCap,raysConfig:{rayCount:i.lightRayCount},bubblesConfig:{sourceWidthBase:i.bubbleSourceWidthBase},planktonConfig:{swarmCount:i.swarmCount,particlesPerSwarm:i.particlesPerSwarm,fineCount:i.fineCount,microCount:i.microCount}});try{if(c.init(),c.isSoftwareRenderer())throw new Error("Software WebGL renderer detected");c.renderFrame(0,0),window.webglOceanRenderer=c,J.webglStatus="active",J.preferLiteCanvasEffects=!1}catch(g){let f=g instanceof Error?g.message:String(g);o("WebGL init failed, falling back to CSS background",g,{preferLiteCanvasEffects:/software webgl renderer/i.test(f),webglStatus:/software webgl renderer/i.test(f)?"software-renderer":"init-failed"})}}}var tt=class{constructor(){this.sinCache=new Float32Array(360),this.cosCache=new Float32Array(360);for(let t=0;t<360;t++){let e=t*Math.PI/180;this.sinCache[t]=Math.sin(e),this.cosCache[t]=Math.cos(e)}this.tempVec2={x:0,y:0}}sin(t){let e=Math.floor(t)%360;return this.sinCache[e<0?e+360:e]}cos(t){let e=Math.floor(t)%360;return this.cosCache[e<0?e+360:e]}sinRad(t){let e=Math.floor(t*180/Math.PI)%360;return this.sinCache[e<0?e+360:e]}cosRad(t){let e=Math.floor(t*180/Math.PI)%360;return this.cosCache[e<0?e+360:e]}distance(t,e,i,s){let a=i-t,n=s-e;return Math.sqrt(a*a+n*n)}distanceSquared(t,e,i,s){let a=i-t,n=s-e;return a*a+n*n}lerp(t,e,i){return t+(e-t)*i}clamp(t,e,i){return Math.max(e,Math.min(i,t))}map(t,e,i,s,a){return(t-e)*(a-s)/(i-e)+s}random(t,e){return t+Math.random()*(e-t)}randomInt(t,e){return Math.floor(this.random(t,e+1))}};var et=class{constructor(t={}){this.metrics={fps:60,frameTime:0,frameTimeHistory:new Array(60).fill(16.67),frameTimeIndex:0,frameTimeCount:0,lastFpsUpdate:0},this.showStats=t.showStats!==!1,this.qualitySettings={current:1,target:1,min:.3,max:1,targetFPS:t.targetFPS||45,adjustInterval:4e3},this.lastQualityAdjustment=0,this._lowFpsCount=0,this._highFpsCount=0,this.qualityChangeListeners=[]}toggleStats(){return this.showStats=!this.showStats,console.log("Performance stats:",this.showStats?"ON":"OFF"),this.showStats}update(t,e){if(this.metrics.frameTime=e,this.metrics.frameTimeHistory[this.metrics.frameTimeIndex]=e,this.metrics.frameTimeIndex=(this.metrics.frameTimeIndex+1)%60,this.metrics.frameTimeCount<60&&this.metrics.frameTimeCount++,t-this.metrics.lastFpsUpdate>500){let i=0;for(let a=0;a<this.metrics.frameTimeCount;a++)i+=this.metrics.frameTimeHistory[a];let s=i/this.metrics.frameTimeCount;this.metrics.fps=Math.round(1e3/s),this.metrics.lastFpsUpdate=t,t-this.lastQualityAdjustment>this.qualitySettings.adjustInterval&&(this.adjustQuality(),this.lastQualityAdjustment=t)}}adjustQuality(){let t=this.metrics.fps,e=this.qualitySettings.targetFPS,i=this.qualitySettings.current;t<e-5?(this._highFpsCount=0,this._lowFpsCount++,this._lowFpsCount>=2&&(this.qualitySettings.current=Math.max(this.qualitySettings.min,this.qualitySettings.current-.1))):t>e+15&&this.qualitySettings.current<this.qualitySettings.max?(this._lowFpsCount=0,this._highFpsCount++,this._highFpsCount>=3&&(this.qualitySettings.current=Math.min(this.qualitySettings.max,this.qualitySettings.current+.03))):(this._lowFpsCount=0,this._highFpsCount=0),i!==this.qualitySettings.current&&this.notifyQualityChange(this.qualitySettings.current)}onQualityChange(t){this.qualityChangeListeners.push(t)}notifyQualityChange(t){this.qualityChangeListeners.forEach(e=>{try{e(t)}catch(i){console.error("Error in quality change listener:",i)}})}getQuality(){return this.qualitySettings.current}getFPS(){return this.metrics.fps}};var ht=class{constructor(t={}){this.enabled=t.enabled!==!1,this.logInterval=t.logInterval||2e3,this.lastLogTime=0,this.currentFrame={},this.stats={frameCount:0,totalFrameTime:0,foodUpdate:{total:0,count:0,max:0},layers:new Map,performanceMonitor:{total:0,count:0,max:0},other:{total:0,count:0,max:0}},this.markers=[]}startFrame(){this.enabled&&(this.currentFrame.start=performance.now(),this.markers=[])}startSection(t){this.enabled&&this.markers.push({name:t,start:performance.now(),type:"start"})}endSection(t){if(!this.enabled)return;let e=performance.now();for(let i=this.markers.length-1;i>=0;i--)if(this.markers[i].name===t&&this.markers[i].type==="start"){let s=e-this.markers[i].start;this.markers[i].duration=s,this.markers[i].type="complete",this._updateStats(t,s);break}}endFrame(t){if(!this.enabled)return;let e=performance.now()-this.currentFrame.start;this.stats.frameCount++,this.stats.totalFrameTime+=e,t-this.lastLogTime>this.logInterval&&(this.logStats(),this.lastLogTime=t)}_updateStats(t,e){let i;if(t==="foodUpdate")i=this.stats.foodUpdate;else if(t==="performanceMonitor")i=this.stats.performanceMonitor;else if(t.startsWith("layer:")){let s=t.substring(6);this.stats.layers.has(s)||this.stats.layers.set(s,{total:0,count:0,max:0}),i=this.stats.layers.get(s)}else i=this.stats.other;i.total+=e,i.count++,e>i.max&&(i.max=e)}logStats(){if(this.stats.frameCount===0)return;let t=this.stats.totalFrameTime/this.stats.frameCount,e=1e3/t;if(console.group(`\u{1F50D} Performance Profile (${this.stats.frameCount} frames)`),console.log(`\u{1F4CA} Average Frame Time: ${t.toFixed(2)}ms (${e.toFixed(1)} FPS)`),this.stats.foodUpdate.count>0){let i=this.stats.foodUpdate.total/this.stats.foodUpdate.count,s=(i/t*100).toFixed(1);console.log(`\u{1F354} Food Update: ${i.toFixed(2)}ms avg, ${this.stats.foodUpdate.max.toFixed(2)}ms max (${s}%)`)}if(this.stats.layers.size>0&&(console.log("\u{1F4E6} Layers:"),Array.from(this.stats.layers.entries()).sort((s,a)=>a[1].total/a[1].count-s[1].total/s[1].count).forEach(([s,a])=>{let n=a.total/a.count,h=(n/t*100).toFixed(1);console.log(`  - ${s}: ${n.toFixed(2)}ms avg, ${a.max.toFixed(2)}ms max (${h}%)`)})),this.stats.performanceMonitor.count>0){let i=this.stats.performanceMonitor.total/this.stats.performanceMonitor.count,s=(i/t*100).toFixed(1);console.log(`\u{1F4C8} Perf Monitor: ${i.toFixed(2)}ms avg, ${this.stats.performanceMonitor.max.toFixed(2)}ms max (${s}%)`)}if(this.stats.other.count>0){let i=this.stats.other.total/this.stats.other.count,s=(i/t*100).toFixed(1);console.log(`\u2699\uFE0F Other: ${i.toFixed(2)}ms avg, ${this.stats.other.max.toFixed(2)}ms max (${s}%)`)}console.groupEnd(),this.resetStats()}resetStats(){this.stats.frameCount=0,this.stats.totalFrameTime=0,this.stats.foodUpdate={total:0,count:0,max:0},this.stats.layers.clear(),this.stats.performanceMonitor={total:0,count:0,max:0},this.stats.other={total:0,count:0,max:0}}setEnabled(t){this.enabled=t,t||this.resetStats()}get sections(){let t={};return this.stats.foodUpdate.count>0&&(t.foodUpdate={avg:this.stats.foodUpdate.total/this.stats.foodUpdate.count,max:this.stats.foodUpdate.max}),this.stats.layers.forEach((e,i)=>{t[`layer:${i}`]={avg:e.total/e.count,max:e.max}}),this.stats.performanceMonitor.count>0&&(t.performanceMonitor={avg:this.stats.performanceMonitor.total/this.stats.performanceMonitor.count,max:this.stats.performanceMonitor.max}),t}};var it=class o{static DEFAULT_CONFIG={count:3,size:5,fallSpeed:.08,spread:30,shrinkRate:.05,settledLifetime:0};constructor(t,e={}){this.mathUtils=t,this._particles=[],this._particlePool=[],this.config={...o.DEFAULT_CONFIG,...e},this.colorLUT=this._generateColorLUT(),this.renderableParticles=[],this.sparkleParticles=[],this.renderStrokes=!0,this.renderSparkles=!0,this.useSimpleGlimmer=!1,this.MAX_PARTICLES=100}_generateColorLUT(){let t={fill:[],stroke:[],sparkle:[]};for(let e=0;e<256;e++){let i=e/255,s=Math.floor(e/85)%3,a=255,n,h=0;s===0?n=Math.floor(100+i*155):s===1?n=Math.floor(140+i*115):n=Math.floor(180+i*75),t.fill[e]=`rgba(${a},${n},${h},1)`,t.stroke[e]=`rgba(255,230,100,${i})`}for(let e=0;e<256;e++)t.sparkle[e]=`rgba(255,255,255,${e/255})`;return t}getFromPool(){return this._particlePool.pop()||{x:0,y:0,vx:0,vy:0,size:0,initialSize:0,opacity:1,eaten:!1,age:0,lifetime:0,bottomAge:0,glimmerPhase:0,isTargeted:!1,glimmer:.5,currentSize:0}}returnToPool(t){this._particlePool.push(t)}spawn(t,e,i=1){if(this._particles.length>=this.MAX_PARTICLES)return;let s=this.config.count,a=Math.min(s,this.MAX_PARTICLES-this._particles.length),n=this.config.size,h=this.config.fallSpeed,u=this.config.spread;for(let d=0;d<a;d++){let r=this.getFromPool();r.x=t+(Math.random()-.5)*u,r.y=e+(Math.random()-.5)*u,r.vx=(Math.random()-.5)*.3,r.vy=Math.random()*h*1.5+h,r.size=n*.7+Math.random()*n*.6,r.initialSize=r.size,r.lifetime=r.size/this.config.shrinkRate*1e3,r.currentSize=r.initialSize,r.opacity=1,r.eaten=!1,r.age=0,r.bottomAge=0,r.glimmerPhase=Math.random()*Math.PI*2,r.isTargeted=!1,r.glimmer=.5,this._particles.push(r)}}resetTargetedFlags(){for(let t=0,e=this._particles.length;t<e;t++)this._particles[t].isTargeted=!1}update(t,e,i,s,a=1){if(this._particles.length===0)return;this._updateLODFlags(a);let h=Math.min(e,50);this.renderableParticles.length=0,this.sparkleParticles.length=0;let u=0;for(let d=0;d<this._particles.length;d++){let r=this._particles[d];if(r.eaten){this.returnToPool(r);continue}r.x+=r.vx*(h/16.67),r.y+=r.vy*(h/16.67),r.age+=h;let c=Math.min(1,r.age/r.lifetime);if(r.currentSize=r.initialSize*(1-c),c>=1||r.currentSize<.1){this.returnToPool(r);continue}let g=r.currentSize/r.initialSize;if(r.opacity=g<.2?g*5:1,r.y>=s-20){if(r.y=s-20,r.vy=0,r.vx*=.95,this.config.settledLifetime>0){if(r.bottomAge=(r.bottomAge||0)+h,r.bottomAge>=this.config.settledLifetime){this.returnToPool(r);continue}r.opacity*=1-r.bottomAge/this.config.settledLifetime}}else r.bottomAge=0;if(r.x>=-50&&r.x<=i+50&&r.y>=-50){r.glimmerPhase+=h*.005;let f=Math.floor(r.glimmerPhase%(Math.PI*2)/(Math.PI*2)*360)|0;r.glimmer=this.mathUtils.sin(f)*.5+.5,this.renderableParticles.push(r),this.renderSparkles&&r.glimmer>.7&&this.sparkleParticles.push(r)}this._particles[u++]=r}this._particles.length=u,this._renderBatched(t)}_updateLODFlags(t){t>=.8?(this.renderStrokes=!0,this.renderSparkles=!0,this.useSimpleGlimmer=!1):t>=.5?(this.renderStrokes=!0,this.renderSparkles=!1,this.useSimpleGlimmer=!1):(this.renderStrokes=!1,this.renderSparkles=!1,this.useSimpleGlimmer=!0)}_renderBatched(t){let e=this.renderableParticles.length;if(e!==0){for(let i=0;i<e;i++){let s=this.renderableParticles[i],a=Math.floor(s.glimmer*255)|0,n=s.currentSize;if(s.opacity>=.99)t.fillStyle=this.colorLUT.fill[a];else{let h=100+Math.floor(s.glimmer*155);t.fillStyle=`rgba(255,${h},0,${s.opacity})`}t.beginPath(),this._appendDiamond(t,s.x,s.y,n),t.fill()}if(this.renderStrokes&&e>0){t.lineWidth=1.5,t.strokeStyle=this.colorLUT.stroke[180],t.beginPath();for(let i=0;i<e;i++){let s=this.renderableParticles[i],a=s.currentSize;this._appendDiamond(t,s.x,s.y,a)}t.stroke()}if(this.renderSparkles&&this.sparkleParticles.length>0)for(let i=0;i<this.sparkleParticles.length;i++){let s=this.sparkleParticles[i],a=(s.glimmer-.7)*s.opacity,n=Math.floor(Math.max(0,Math.min(1,a))*255)|0;t.fillStyle=this.colorLUT.sparkle[n],t.fillRect(s.x-1,s.y-1,2,2)}}}_appendDiamond(t,e,i,s){t.moveTo(e,i-s),t.lineTo(e+s*.7,i),t.lineTo(e,i+s),t.lineTo(e-s*.7,i),t.closePath()}getParticles(){return this._particles}getCount(){return this._particles.length}updateConfig(t){Object.assign(this.config,t)}clear(){this._particles.forEach(t=>this.returnToPool(t)),this._particles.length=0}destroy(){this.clear(),this._particlePool=[],console.log("FoodLayer destroyed")}};function bt(o,t,e=performance.now()){return t.isDancing=!0,t.velocityX!==void 0&&(t.velocityX=0),t.velocityY!==void 0&&(t.velocityY=0),{phase:0,startTime:e,kissStartTime:null,bigHeart:null,progress:0,danceStep:0,danceSteps:null,stepStartTime:null,_approachMax:null,_stepMidX:0,_stepMidY:0}}function Ut(){return[{type:"kiss_peck",duration:2200},{type:"spin_flip",duration:2600},{type:"spiral_in",duration:1600}]}function Xt(o,t,e,i,s,a){let n=o.danceSteps;if(!n||o.danceStep>=n.length)return!0;let h=n[o.danceStep];o.stepStartTime||(o.stepStartTime=s,o._stepMidX=(t.x+e.x)/2,o._stepMidY=(t.y+(e.baseY!==void 0?e.baseY:e.y))/2,o._baseAngle=Math.atan2(t.y-o._stepMidY,t.x-o._stepMidX),o._blendFromFishX=t.x,o._blendFromFishY=t.y,o._blendFromPartnerX=e.x,o._blendFromPartnerY=e.baseY!==void 0?e.baseY:e.y);let u=s-o.stepStartTime,d=Math.min(u/h.duration,1),r=o._stepMidX,c=o._stepMidY,g=Math.max(28,(t.currentSize+e.size)*.38),m=Math.min(d/.18,1),p=h.type==="kiss_peck"?1:m*m*(3-2*m);Math.random()<.04&&a();let b,v,y,A;if(h.type==="kiss_peck"){let P=g*.85,l=d*3%1,S=Math.sin(l*Math.PI)*14;b=r-P+S,v=c,y=r+P-S,A=c,t.velocityX=0,t.velocityY=0,t.rotation=0,t.targetRotation=0,t.flipScale=1,t.targetFlipScale=1,delete e.flipX,e.direction=-1,S>11&&Math.random()<.22&&a(),Math.random()<.05&&a()}else if(h.type==="spin_flip"){let l=d*3*Math.PI*2,S=Math.sin(l)*(t.currentSize*.28);b=r,v=c+S,y=r,A=c+S,t.velocityX=0,t.velocityY=0,t.rotation=0,t.targetRotation=0,t.flipScale=Math.cos(l),t.targetFlipScale=t.flipScale,e.flipX=Math.cos(l),e.direction=e.flipX>=0?1:-1,Math.abs(Math.cos(l))<.12&&Math.random()<.45&&a()}else if(h.type==="spiral_in"){let P=d*d,l=g*(1-P),S=o._baseAngle+d*Math.PI*.5;b=r+Math.cos(S)*l,v=c+Math.sin(S)*l,y=r+Math.cos(S+Math.PI)*l,A=c+Math.sin(S+Math.PI)*l,t.velocityX=0,t.velocityY=0,t.rotation=0,t.targetRotation=0;let w=-Math.sin(S)>=0;t.flipScale=w?1:-1,t.targetFlipScale=t.flipScale,e.direction=w?-1:1,e.flipX=void 0,Math.random()<.04+P*.18&&a()}if(b!==void 0){let P=(S,w,T)=>S+(w-S)*T;t.x=P(o._blendFromFishX,b,p),t.y=P(o._blendFromFishY,v,p),e.x=P(o._blendFromPartnerX,y,p);let l=P(o._blendFromPartnerY,A,p);e.baseY!==void 0?e.baseY=l:e.y=l}return d>=1?(o.danceStep++,o.stepStartTime=null,o.danceStep>=n.length):!1}function yt(o,t,e,i,s,a,n,h,u){if(!e)return{...o,completed:!0};if(e.isDying)return e.isDancing&&(e.isDancing=!1,delete e.flipX),{...o,completed:!0};let d=e.baseY!==void 0?e.baseY:e.y;if(o.phase===0){let c=Math.max(28,(t.currentSize+e.size)*.38)*1.7,g=e.x-t.x,f=d-t.y,m=Math.sqrt(g*g+f*f);if(o._approachMax=o._approachMax||Math.max(m,300),o.progress=Math.min(.22,(1-m/o._approachMax)*.22),m>c){let b=g/m,v=f/m;t.velocityX=b*2.5,t.velocityY=v*2.5,t.x+=t.velocityX,t.y+=t.velocityY,e.x-=b*2.5*1.3,e.baseY!==void 0?e.baseY-=v*2.5*1.3:e.y-=v*2.5*1.3,e.age=(e.age||0)+i;let y=Math.atan2(f,g);t.targetFlipScale=Math.abs(y)>Math.PI/2?-1:1,t.targetRotation=t.targetFlipScale===1?y:Math.PI-y;let A=Math.atan2(-f,-g);e.direction=A>-Math.PI/2&&A<Math.PI/2?1:-1,n(i),Math.random()<.02&&h()}else{t.velocityX=0,t.velocityY=0,t.targetRotation=0,t.rotation=0;for(let p=0;p<6;p++)h();o.phase=1,o.danceStep=0,o.danceSteps=Ut(),o.stepStartTime=null,o.progress=.22}}else if(o.phase===1){let r=o.danceSteps?o.danceSteps.length:1;if(Xt(o,t,e,i,u,h))delete e.flipX,o.phase=2,o.kissStartTime=u,o.bigHeart=null,o.progress=.7;else{let g=o.danceStep,f=o.danceSteps[g].duration,m=o.stepStartTime?Math.min((u-o.stepStartTime)/f,1):0;o.progress=.22+(g+m)/r*.48}}else if(o.phase===2){let r=u-o.kissStartTime,c=2e3;if(o.progress=.7+Math.min(r/c,1)*.3,r<c){let g=(t.x+e.x)/2,f=(t.y+(e.baseY!==void 0?e.baseY:e.y))/2;if(o.bigHeart||(o.bigHeart={x:g,y:f,size:0,targetSize:Math.max(t.currentSize,e.size)*1.5,opacity:0}),r<500){let m=r/500;o.bigHeart.size=o.bigHeart.targetSize*m,o.bigHeart.opacity=m}else r<1500?(o.bigHeart.size=o.bigHeart.targetSize,o.bigHeart.opacity=1,o.bigHeart.x=g,o.bigHeart.y=f):o.bigHeart.opacity=1-(r-1500)/500;Math.random()<.06&&h()}else o.phase=3,o.progress=1}else o.phase===3&&(o.progress=1,o.completed=!0);return o}function St(o,t,e,i,s,a){t.isDancing=!1;let n=(o.x+t.x)/2,h=(o.y+(t.baseY!==void 0?t.baseY:t.y))/2,u=`solo_${Date.now()}_${Math.floor(Math.random()*1e5)}`;t.schoolId=u,t.isIndependent=!0,t.isBeingAttacked=!1,t.passive=!0,t.bornAt=performance.now(),t.speed=Math.max(.4,(t.speed||.6)*.8);let d=`family_${Date.now()}_${Math.floor(Math.random()*1e5)}`,r=t.direction;return a(e,i,n,h,{promoteNewCurious:!1,schoolId:d,direction:r}),o.velocityX=0,o.velocityY=0,{completed:!0,hasReproduced:!0}}function mt(o,t,e,i,s,a={},n){let h=2+Math.floor(Math.random()*3);if(!s)return 0;let u=s.fishImages&&s.fishImages[3],d=!!a.promoteNewCurious,r=a.schoolId,c=a.direction;for(let g=0;g<h;g++){let f=Math.random()*Math.PI*2,m=2.5+Math.random()*2,p={x:e,baseY:i,y:0,direction:typeof c<"u"?c:Math.random()>.5?1:-1,speed:.3+Math.random()*.3,baseSpeed:.3+Math.random()*.3,size:20,burstVX:Math.cos(f)*m,burstVY:Math.sin(f)*m,age:0,schoolWavePhase:Math.random()*Math.PI*2,schoolWaveSpeed:.001+Math.random()*5e-4,schoolWaveAmplitude:8+Math.random()*4,verticalPeriod:3e3+Math.random()*2e3,verticalAmplitude:3+Math.random()*3,depthTier:3,image:u,_imageIndex:3,isDying:!1,bornAt:performance.now()};r&&(p.schoolId=r),s?.sharks&&s.sharks.push(p)}if(d&&n){let g=Math.floor(Math.random()*Math.min(h,s.sharks.length)),f=s.sharks[g];if(f)return{promoteToNewFish:!0,x:f.x,y:f.baseY||f.y,size:n.size}}return h}function vt(o,t,e,i,s,a,n,h,u){let d=t;if(!e?.sharks?.includes(d))return{attackComplete:!0,shouldDie:!1};let c=d.baseY!==void 0?d.baseY:d.y,g=d.x,f={};d.isBeingAttacked||(f.isBeingAttacked=!0,f.frozenX=g,f.frozenY=c);let m=d.size>o.currentSize*1.2,p=d.size>o.currentSize&&!m,b=g-o.x,v=c-o.y,y=b*b+v*v,A=(o.currentSize+d.size)*.5;if(y<A*A)return m||p&&Math.random()>.4?(f.isBeingAttacked=!1,s&&s(),{attackComplete:!0,shouldDie:!0,targetMutations:f}):(n&&n((o.x+g)/2,(o.y+c)/2,Math.atan2(v,b)),f._hitFlashTime=u,d.isDying||(f.isDying=!0,e?.boneLoaded&&e.boneImage&&(f.image=e.boneImage),f.killedByCurious=!0,f.deathRotation=0,f.deathStartTime=u,f.isBeingAttacked=!1,i&&i(d,Math.min(o.targetSize*1.04,h)),a&&a()),{attackComplete:!0,shouldDie:!1,targetMutations:f});let P=13,l=Math.sqrt(y),S=b/l*P,w=v/l*P,T=Math.atan2(v,b),D,z;return T>Math.PI/2?(D=-1,z=Math.PI-T):T<-Math.PI/2?(D=-1,z=-Math.PI-T):(D=1,z=T),{attackComplete:!1,shouldDie:!1,velocityX:S,velocityY:w,targetFlipScale:D,targetRotation:z,targetMutations:f}}function Mt(o,t){let e=t.x-o.x,i=t.y-o.y,s=Math.sqrt(e*e+i*i),a=typeof t.tolerance=="number"?t.tolerance:6,n=typeof t.speed=="number"?t.speed:2;if(s<=a)return{isComplete:!0,velocityX:0,velocityY:0};let h=e/s*n,u=i/s*n,d=Math.atan2(i,e),r,c;return d>Math.PI/2?(r=-1,c=Math.PI-d):d<-Math.PI/2?(r=-1,c=-Math.PI-d):(r=1,c=d),{isComplete:!1,velocityX:h,velocityY:u,targetRotation:c,targetFlipScale:r}}function _t(o,t,e,i,s,a,n){let h=o.currentSize*n.MOUTH_DISTANCE,u=o.x+Math.cos(o.rotation)*h*o.flipScale,d=o.y+Math.sin(o.rotation)*h,r=o.currentSize*n.MOUTH_RADIUS,c=o.currentSize*n.FOV_ORIGIN_DISTANCE,g=o.x+Math.cos(o.rotation)*c*o.flipScale,f=o.y+Math.sin(o.rotation)*c,m=typeof window<"u"&&window.innerWidth?window.innerWidth*.2:800*.2,p=o.currentSize*1.5,v=Math.max(m,p)*a,y=Math.PI/2,A=o.flipScale>0?o.rotation:Math.PI-o.rotation,P=[],l=[],S=o.targetedFood,w=o.currentSize,T=Math.max(80,i*.1),D=C=>C.x<w||C.x>e-w||C.y<T||C.y>i-w,z=!0;if(o.targetedFood){let C=o.targetedFood;if(C.eaten)S=null;else{let U=C.x-g,Y=C.y-f,R=U*U+Y*Y,B=C.x-o.x,M=C.y-o.y,F=B*B+M*M,L=(o.currentSize*1.2)**2;F<L||D(C)?S=null:R<=v*v&&C.y<=i*.9?(z=!1,l.push({food:C,updates:{isTargeted:!0}})):S=null}}for(let C of t){if(C.eaten)continue;let U=C.x-u,Y=C.y-d;U*U+Y*Y<r*r&&(l.push({food:C,updates:{eaten:!0}}),P.push(C),o.targetedFood===C&&(S=null,z=!0))}if(z){let C=i*.9,U=null,Y=v*v;for(let R of t){if(R.eaten||R.y>C||D(R))continue;let B=R.x-g,M=R.y-f,F=B*B+M*M,L=R.x-o.x,I=R.y-o.y,O=L*L+I*I,_=(o.currentSize*n.MIN_CENTER_DISTANCE)**2;if(O<_||F>v*v)continue;let k=Math.atan2(M,B)-A;for(;k>Math.PI;)k-=Math.PI*2;for(;k<-Math.PI;)k+=Math.PI*2;Math.abs(k)<y/2&&F<Y&&(Y=F,U=R)}U&&(S=U,l.push({food:U,updates:{isTargeted:!0}}))}let E=S;return E&&!E.eaten&&l.push({food:E,updates:{isTargeted:!0}}),{targetFood:E,eatenFood:P,mutations:{targetedFood:S,foodUpdates:l}}}function wt(o,t,e,i,s,a,n,h,u,d,r){if(t===null||e===null)return{velocityX:o.velocityX*.95,velocityY:o.velocityY*.95,isStaring:!1};let c=t-o.x,g=e-o.y,f=Math.sqrt(c*c+g*g),m=Math.atan2(g,c),p,b;m>Math.PI/2?(p=-1,b=Math.PI-m):m<-Math.PI/2?(p=-1,b=-Math.PI-m):(p=1,b=m);let v=o.currentSize*r.MOUTH_DISTANCE,y=o.x+Math.cos(o.rotation)*v*o.flipScale,A=o.y+Math.sin(o.rotation)*v,P=i-y,l=s-A,S=Math.sqrt(P*P+l*l),w=Math.min(o.currentSize*r.FOLLOW_DISTANCE*u,150),T=o.isFleeing,D=o.fleeTimer||0,z=!1,E=o.velocityX,C=o.velocityY;if(!a&&f<o.currentSize*r.COLLISION_THRESHOLD&&!T&&(T=!0,D=0),T){D+=d;let U=o.rotation,Y=n*1.5;E=Math.cos(U)*Y*o.flipScale,C=Math.sin(U)*Y;let R=Math.atan2(g,c)+Math.PI;R>Math.PI/2?(p=-1,b=Math.PI-R):R<-Math.PI/2?(p=-1,b=-Math.PI-R):(p=1,b=R),(D>600||f>w*1.5)&&(T=!1)}else if(a){let Y=1.1-o.currentSize/h*.2,R=n*Y,B=c/f*R,M=g/f*R;E+=(B-E)*.22,C+=(M-C)*.22}else if(S>w){let Y=Math.min(f/500,1),B=1.1-o.currentSize/h*.2,M=n*(.4+Y*Y*.6)*B,F=c/f*M,L=g/f*M;E+=(F-E)*.22,C+=(L-C)*.22}else z=!0,E*=.9,C*=.9;return{velocityX:E,velocityY:C,targetRotation:b,targetFlipScale:p,isFleeing:T,isStaring:z,fleeTimer:D}}function Pt(o,t,e,i,s){if(s)return{x:o.x,y:o.y};let a=Math.max(i,Math.min(t-i,o.x)),n=o.y;return n<=e&&(n=Math.max(e*.1,Math.min(e,n))),{x:a,y:n}}function Ct(o,t,e,i){let s=o.targetRotation-o.rotation;for(;s>Math.PI;)s-=Math.PI*2;for(;s<-Math.PI;)s+=Math.PI*2;let n=1.2-o.currentSize/i*.3,h=o.rotation+s*e*n,u=o.targetFlipScale-o.flipScale,d=o.flipScale+u*.2,r=o.age+t,c=r/800%1;return{rotation:h,flipScale:d,age:r,swimPhase:c}}function Ft(o,t,e,i={},s){let a=!!i.immediate,n=!!i.hold,h=t-o.x,u=e-o.y,d=Math.sqrt(h*h+u*u);if(d===0)return null;let r=Math.atan2(u,h),c,g;r>Math.PI/2?(c=-1,g=Math.PI-r):r<-Math.PI/2?(c=-1,g=-Math.PI-r):(c=1,g=r);let f=typeof i.speed=="number"?i.speed:s||2;if(n){let m={x:Math.round(t),y:Math.round(e),speed:f,tolerance:typeof i.tolerance=="number"?i.tolerance:6},p=h/d*f,b=u/d*f;return{velocityX:p,velocityY:b,targetRotation:g,targetFlipScale:c,forcedTarget:m}}else if(a){let m=h/d*f,p=u/d*f;return{velocityX:m,velocityY:p,targetRotation:g,targetFlipScale:c}}else{let m=h/d*(f*.6),p=u/d*(f*.6),b=o.velocityX+(m-o.velocityX)*.12,v=o.velocityY+(p-o.velocityY)*.12;return{velocityX:b,velocityY:v,targetRotation:g,targetFlipScale:c}}}var Vt={FOLLOW_DISTANCE:.5,MOUTH_DISTANCE:.9,MOUTH_RADIUS:.3,FOV_ORIGIN_DISTANCE:.3,COLLISION_THRESHOLD:.5,NEAR_MOUSE_THRESHOLD:.8,MIN_CENTER_DISTANCE:1.2};function Lt(o,t,e,i,s,a,n,h){if(t&&t.hidden)return;let u=Math.sqrt(t.velocityX*t.velocityX+t.velocityY*t.velocityY),d=0,r=0;if(i.enableBob){let m=i.maxSpeed,p=Math.min(u/m,1),b=t.currentSize/30,v=8e-4/Math.sqrt(b),y=.5,A=.1,P=p<A?1:p>y?0:1-(p-A)/(y-A);d=P*Math.sin(t.age*v)*6*b,r=P*Math.sin(t.age*v*.7)*.05}o.save(),o.translate(t.x,t.y+d),o.scale(t.flipScale,1),o.rotate(t.rotation+r),o.globalAlpha=1;let c=t.currentSize,g=c*2,f=c*(e.height/e.width)*2;o.drawImage(e,-g/2,-f/2,g,f),o.restore(),i.showDebug&&Wt(o,t,i,s,a,n,h)}function Wt(o,t,e,i,s,a,n){let h=t.currentSize*.9;o.save();let u=t.x+Math.cos(t.rotation)*h*t.flipScale,d=t.y+Math.sin(t.rotation)*h,r=t.currentSize*.3;o.strokeStyle="rgba(255, 0, 0, 0.5)",o.lineWidth=2,o.beginPath(),o.arc(u,d,r,0,Math.PI*2),o.stroke();let c=Math.min(t.currentSize*Vt.FOLLOW_DISTANCE*e.followDistance,150);o.strokeStyle="rgba(255, 200, 0, 0.5)",o.lineWidth=2,o.beginPath(),o.arc(u,d,c,0,Math.PI*2),o.stroke();let f=100+t.currentSize;if(o.strokeStyle="rgba(0, 255, 255, 0.4)",o.lineWidth=3,o.beginPath(),o.ellipse(t.x,t.y,f*.87,f*.4,t.rotation,0,Math.PI*2),o.stroke(),i&&s){let C=(t.currentSize+s.size)*.5;o.strokeStyle="rgba(255, 0, 255, 0.6)",o.lineWidth=2,o.beginPath(),o.ellipse(t.x,t.y,C*.87,C*.4,t.rotation,0,Math.PI*2),o.stroke(),o.strokeStyle="rgba(255, 0, 255, 0.3)",o.lineWidth=2,o.setLineDash([5,5]),o.beginPath(),o.moveTo(t.x,t.y),o.lineTo(s.x,s.baseY||s.y),o.stroke(),o.setLineDash([])}o.strokeStyle="rgba(255, 128, 0, 0.3)",o.lineWidth=1,o.beginPath(),o.arc(t.x,t.y,t.currentSize*.5,0,Math.PI*2),o.stroke(),o.fillStyle="rgba(255, 255, 255, 0.9)",o.font="bold 14px Arial",o.textAlign="left",o.fillText(`${Math.round(t.currentSize)}px`,t.x+t.currentSize,t.y-t.currentSize-10);let m=t.currentSize*.3,p=t.x+Math.cos(t.rotation)*m*t.flipScale,b=t.y+Math.sin(t.rotation)*m,v=typeof window<"u"&&window.innerWidth?window.innerWidth*.2:800*.2,y=t.currentSize*1.5,A=Math.max(v,y),P=e&&e.fovMultiplier!==void 0?e.fovMultiplier:1,l=A*P,S=Math.PI/2,w=t.flipScale>0?t.rotation:Math.PI-t.rotation;o.strokeStyle="rgba(0, 255, 0, 0.3)",o.fillStyle="rgba(0, 255, 0, 0.1)",o.lineWidth=2,o.beginPath(),o.moveTo(p,b);let T=w-S/2,D=p+Math.cos(T)*l,z=b+Math.sin(T)*l;o.lineTo(D,z),o.arc(p,b,l,T,w+S/2),o.lineTo(p,b),o.fill(),o.stroke(),o.restore();let E=n*.9;o.fillStyle="rgba(255, 0, 0, 0.1)",o.fillRect(0,E,a,n-E),o.strokeStyle="rgba(255, 0, 0, 0.5)",o.lineWidth=2,o.beginPath(),o.moveTo(0,E),o.lineTo(a,E),o.stroke(),o.fillStyle="rgba(255, 255, 255, 0.9)",o.font="bold 14px Arial",o.textAlign="right",o.fillText("Dead zone (10vh)",a-10,E-5)}var ct=new Set,dt=!1;function At(o,t,e){ct.forEach(function(i){i(o,t,e)})}function xt(o){At(o.clientX,o.clientY,performance.now())}function Rt(o){!o.touches||o.touches.length===0||At(o.touches[0].clientX,o.touches[0].clientY,performance.now())}function Nt(){dt||typeof document>"u"||(document.addEventListener("mousemove",xt,{passive:!0}),document.addEventListener("touchmove",Rt,{passive:!0}),dt=!0)}function qt(){!dt||typeof document>"u"||(document.removeEventListener("mousemove",xt),document.removeEventListener("touchmove",Rt),dt=!1)}function ft(o){return typeof o!="function"?function(){}:(ct.add(o),Nt(),function(){Ht(o)})}function Ht(o){ct.delete(o),ct.size===0&&qt()}var It={MOUTH_DISTANCE:.9,MOUTH_RADIUS:.3,FOV_ORIGIN_DISTANCE:.3,FOLLOW_DISTANCE:.5,COLLISION_THRESHOLD:.5,NEAR_MOUSE_THRESHOLD:.8,MIN_CENTER_DISTANCE:1.2},Tt={default:{distanceFactor:.3,sizeFactor:.15,yOffset:-35,maxAge:1200,velocityRange:.15},heart:{distanceFactor:.45,sizeFactor:.1,yOffset:-25,maxAge:800,velocityRange:.2},lightning:{distanceFactor:.3,sizeFactor:.15,yOffset:-35,maxAge:1e3,velocityRange:.15},food:{distanceFactor:.3,sizeFactor:.15,yOffset:-35,maxAge:1e3,velocityRange:.15},star:{distanceFactor:.3,sizeFactor:.15,yOffset:-35,maxAge:1200,velocityRange:.15},bubble:{distanceFactor:.3,sizeFactor:.15,yOffset:-35,maxAge:1200,velocityRange:.15},zzz:{distanceFactor:.3,sizeFactor:.15,yOffset:-35,maxAge:1200,velocityRange:.1},question:{distanceFactor:.3,sizeFactor:.12,yOffset:-30,maxAge:1e3,velocityRange:.15},exclamation:{distanceFactor:.3,sizeFactor:.14,yOffset:-30,maxAge:900,velocityRange:.2}},H=class o{static DEFAULT_CONFIG={speed:5,maxSpeed:6,size:20,maxFishSize:150,followDistance:50,rotationSpeed:.12,heartSpawnRate:500,imageSrc:"assets/images/fish/curiousfish.webp",showDebug:!1,swimAwaySpeed:3,enableBob:!0,enableIcons:!0,enableRipples:!0,mobileLiteMode:!1,allowHighCostEffects:!0};constructor(t={}){this.enabled=!1,this.fish=null,this.mouseX=null,this.mouseY=null,this.hearts=[],this._iconPool=[],this._iconSpriteCache=new Map,this._qualityMultiplier=1,this._cachedFontSize=16,this.isStaring=!1,this.heartSpawnTimer=0,this.manager=null,this.lastMouseMoveTime=performance.now(),this.newFish=null,this.targetSchoolFish=null,this.isAttackingSchoolFish=!1,this.lastAttackTime=0,this.attackCooldown=2e3,this.fishImage=new Image,this.imageLoaded=!1,this.gameState="idle",this.danceState=null,this.dancePartner=null,this.config={...o.DEFAULT_CONFIG,...t},this.fishImage.onload=()=>{this.imageLoaded=!0,this._fishDepthCache=this._buildDepthCache(this.fishImage)},this.fishImage.onerror=()=>{console.error("Failed to load curious fish image:",this.config.imageSrc),this.imageLoaded=!1},this.fishImage.src=this.config.imageSrc,this.allFish=[],this.boneImage=new Image,this.boneLoaded=!1,this.boneImage.onload=()=>{this.boneLoaded=!0},this.boneImage.onerror=()=>{console.warn("Failed to load fishbone image at assets/images/fish/fishbone.webp")},this.boneImage.src="assets/images/fish/fishbone.webp",this.skeletons=[],this._fishDepthCache=null,this._unsubscribePointerMove=null,this.handlePointerMove=this.handlePointerMove.bind(this)}setQuality(t){this._qualityMultiplier=t}init(t,e,i){this.width=t,this.height=e,this.manager=i,this._cachedFontSize=parseFloat(getComputedStyle(document.documentElement).fontSize)||16,this.spawnFish(),typeof window<"u"&&(window.curiousFishLayer=this,window.setCuriousTarget=(s,a,n)=>{try{this.setTargetPoint(s,a,n||{})}catch(h){console.error(h)}}),this._unsubscribePointerMove=ft(this.handlePointerMove)}handlePointerMove(t,e,i){this.mouseX=t,this.mouseY=e,this.lastMouseMoveTime=i}onResize(t,e){this.width=t,this.height=e,this._cachedFontSize=parseFloat(getComputedStyle(document.documentElement).fontSize)||16}render(t,e,i,s,a){if(!this.enabled||!this.fish)return;if(this.fish.isDying){if(!this.fish.skeletonSpawned){this.fish.skeletonSpawned=!0,this.skeletons.push({x:this.fish.x,y:this.fish.y,vx:(this.fish.velocityX||0)/16,vy:(this.fish.velocityY||0)/16,flipScale:this.fish.flipScale,size:this.fish.currentSize,startTime:Date.now(),lastUpdate:Date.now()});let f=this.manager&&this.manager.getLayer("fish");f&&f._spawnBloodBurst&&f._spawnBloodBurst(this.fish.x,this.fish.y,this.fish.currentSize,null,e),this.config.enableRipples&&this.manager&&this.manager._ripples&&this.manager._ripples.push({x:this.fish.x,y:this.fish.y,startTime:performance.now(),maxR:90+this.fish.currentSize*.9,duration:1400,color:"210,30,30"})}this.drawSkeletons(t,a);return}if(this.skeletons.length>0&&this.drawSkeletons(t,a),!this.imageLoaded)return;if(this.danceState){if(this.updateDance(i,s,a),this.fish.age+=i,this.fish.swimPhase=this.fish.age/500%1,this.drawFish(t),this.dancePartner&&this.dancePartner._drawOnTop&&!this.dancePartner.isDying){let f=this.manager&&this.manager.getLayer("fish");if(f){let m=this.dancePartner,p=Math.sin(m.age*m.schoolWaveSpeed+m.schoolWavePhase)*m.schoolWaveAmplitude,b=m.age/m.verticalPeriod%1,v=Math.sin(b*Math.PI*2)*m.verticalAmplitude;f.drawShark(t,m.x,m.baseY+p+v,m.size,m.direction,b,m.image,0,0,m)}}if(this.config.enableIcons&&this.danceState&&this.danceState.phase===2&&this.danceState.bigHeart){let f=this.config.allowHighCostEffects&&this._qualityMultiplier>=.6;t.save(),t.globalAlpha=this.danceState.bigHeart.opacity,t.fillStyle="#ff69b4",t.font=`${this.danceState.bigHeart.size}px Arial`,t.textAlign="center",t.textBaseline="middle",f&&(t.shadowColor="#ff69b4",t.shadowBlur=30),t.fillText("\u2764\uFE0F",this.danceState.bigHeart.x,this.danceState.bigHeart.y),t.restore()}this.updateHearts(i),this.drawHearts(t);return}let h=Date.now()-this.lastMouseMoveTime;if(this._forcedTarget&&!this.fish.isDying){let f=Mt(this.fish,this._forcedTarget);if(f.isComplete)delete this._forcedTarget,this.fish.velocityX=0,this.fish.velocityY=0;else{this.fish.velocityX=f.velocityX,this.fish.velocityY=f.velocityY,this.fish.targetFlipScale=f.targetFlipScale,this.fish.targetRotation=f.targetRotation,this.updateRotationAndAnimation(i),this.fish.x+=this.fish.velocityX,this.fish.y+=this.fish.velocityY,this.drawFish(t),this.updateHearts(i),this.drawHearts(t);return}}if(this.isAttackingSchoolFish&&this.targetSchoolFish){let f=this.manager&&this.manager.getLayer("fish"),m=vt(this.fish,this.targetSchoolFish,f,(p,b)=>{this.fish.targetSize=b},()=>{this.fish.isDying=!0},()=>this.spawnHeart(),(p,b,v)=>{f&&f._spawnBloodBurst&&f._spawnBloodBurst(p,b,(this.fish.currentSize+(this.targetSchoolFish?.size||30))*.5,v)},this.config.maxFishSize,e);if(m.targetMutations&&this.targetSchoolFish&&Object.assign(this.targetSchoolFish,m.targetMutations),m.attackComplete)this.isAttackingSchoolFish=!1,this.targetSchoolFish=null;else if(m.shouldDie)this.isAttackingSchoolFish=!1,this.targetSchoolFish=null;else if(m.velocityX!==void 0){this.fish.velocityX=m.velocityX,this.fish.velocityY=m.velocityY,this.fish.targetFlipScale=m.targetFlipScale,this.fish.targetRotation=m.targetRotation,this.fish.x+=this.fish.velocityX,this.fish.y+=this.fish.velocityY,this.updateRotationAndAnimation(i),this.fish.glowColor="rgba(255,50,50,0.6)",this.drawFish(t),this.updateHearts(i),this.drawHearts(t);return}}let u=this.mouseX,d=this.mouseY+10,r=!1;if(this.manager&&this.manager.foodLayer&&this.manager.foodLayer.getParticles().length>0){let f=_t(this.fish,this.manager.foodLayer.getParticles(),s,a,this.config.followDistance,this.config&&this.config.fovMultiplier!==void 0?this.config.fovMultiplier:1,It);this.fish.targetedFood=f.mutations.targetedFood;for(let{food:p,updates:b}of f.mutations.foodUpdates)Object.assign(p,b);for(let p of f.eatenFood)this.fish.targetSize=Math.min(this.fish.targetSize*1.015,this.config.maxFishSize),this.spawnHeart();let m=f.targetFood;m&&!m.eaten&&(u=m.x,d=m.y,r=!0)}let c=wt(this.fish,u,d,this.mouseX,this.mouseY,r,this.config.maxSpeed,this.config.maxFishSize,this.config.followDistance,i,It);this.fish.velocityX=c.velocityX,this.fish.velocityY=c.velocityY,c.targetRotation!==void 0&&(this.fish.targetRotation=c.targetRotation),c.targetFlipScale!==void 0&&(this.fish.targetFlipScale=c.targetFlipScale),c.isFleeing!==void 0&&(this.fish.isFleeing=c.isFleeing),c.fleeTimer!==void 0&&(this.fish.fleeTimer=c.fleeTimer),this.isStaring=c.isStaring||!1,this.updateRotationAndAnimation(i),this.fish.x+=this.fish.velocityX,this.fish.y+=this.fish.velocityY;let g=Pt(this.fish,s,a,this.fish.currentSize,!1);if(this.fish.x=g.x,this.fish.y=g.y,this.fish.currentSize!==this.fish.targetSize){let f=this.fish.targetSize-this.fish.currentSize;this.fish.currentSize+=f*.025,Math.abs(f)<.1&&(this.fish.currentSize=this.fish.targetSize)}this.fish.age+=i,this.fish.swimPhase=this.fish.age/800%1,this.fish.glowColor="rgba(100,200,255,0.4)",this.isAttackingSchoolFish||this.drawFish(t),this.updateHearts(i),this.drawHearts(t),this.drawTargetingCrosshair(t)}updateRotationAndAnimation(t){let e=Ct(this.fish,t,this.config.rotationSpeed,this.config.maxFishSize);this.fish.rotation=e.rotation,this.fish.flipScale=e.flipScale,this.fish.age=e.age,this.fish.swimPhase=e.swimPhase}setTargetPoint(t,e,i={}){if(!this.fish)return;let s=Ft(this.fish,t,e,i,this.config.maxSpeed);s&&(this.fish.velocityX=s.velocityX,this.fish.velocityY=s.velocityY,this.fish.targetRotation=s.targetRotation,this.fish.targetFlipScale=s.targetFlipScale,s.forcedTarget&&(this._forcedTarget=s.forcedTarget,this.isAttackingSchoolFish=!1,this.fish.targetedFood=null),this.enabled||(this.enabled=!0))}spawnIcon(t){if(!this.fish||!this.config.enableIcons)return;let e=this.config.mobileLiteMode?.85:.5;if(this._qualityMultiplier<e&&t!=="heart")return;let i=Tt[t]||Tt.default,s=this.fish.currentSize*i.distanceFactor,a=this.fish.x+Math.cos(this.fish.rotation)*s*this.fish.flipScale,n=this.fish.y+Math.sin(this.fish.rotation)*s+i.yOffset,h=this.fish.currentSize*i.sizeFactor,u=this._iconPool.pop()||{};u.x=a,u.y=n,u.velocityX=(Math.random()-.5)*i.velocityRange,u.velocityY=-.35-Math.random()*.2,u.age=0,u.maxAge=i.maxAge,u.size=h+Math.random()*h*.4,u.type=t,this.hearts.push(u)}spawnHeart(){this.spawnIcon("heart")}spawnLightning(){this.spawnIcon("lightning")}spawnFoodIcon(){this.spawnIcon("food")}spawnStar(){this.spawnIcon("star")}spawnBubble(){this.spawnIcon("bubble")}spawnZzz(){this.spawnIcon("zzz")}spawnQuestionMark(){this.spawnIcon("question")}spawnExclamationMark(){this.spawnIcon("exclamation")}updateHearts(t){let e=0;for(let i=0;i<this.hearts.length;i++){let s=this.hearts[i];s.age+=t,s.x+=s.velocityX,s.y+=s.velocityY,s.age<s.maxAge?this.hearts[e++]=s:this._iconPool.push(s)}this.hearts.length=e}drawTargetingCrosshair(t){if(!this.fish||!(this.manager&&this.manager.canvas)||this.mouseX===null||this.mouseY===null)return;let i=this.mouseX,s=this.mouseY,a=this.manager&&this.manager.getLayer("fish");if(!a||!a.sharks)return;let n=null;for(let g of a.sharks){if(g.isDying)continue;let f=g.baseY||g.y,m=i-g.x,p=s-f;if(m*m+p*p<g.size*g.size){n=g;break}}if(!n)return;let u=n.image?.src?.includes("curiousfish")?"#ff69b4":"#ff0000";t.save(),t.strokeStyle=u,t.lineWidth=2,t.globalAlpha=.8;let d=1.5*(this._cachedFontSize||16),r=d*.3,c=d*.5;t.beginPath(),t.arc(i,s,c,0,Math.PI*2),t.stroke(),t.beginPath(),t.moveTo(i-c-5,s),t.lineTo(i-r,s),t.moveTo(i+r,s),t.lineTo(i+c+5,s),t.moveTo(i,s-c-5),t.lineTo(i,s-r),t.moveTo(i,s+r),t.lineTo(i,s+c+5),t.stroke(),t.fillStyle=u,t.beginPath(),t.arc(i,s,2,0,Math.PI*2),t.fill(),t.restore()}_getIconSprite(t,e){let i=Math.max(8,Math.round(e/2)*2),s=`${t}:${i}`,a=this._iconSpriteCache.get(s);if(a)return a;let n=Math.max(24,Math.ceil(i*2.8)),h=new OffscreenCanvas(n,n),u=h.getContext("2d");return u?(this._drawIconSprite(u,t,i,n*.5,n*.5),this._iconSpriteCache.set(s,h),h):null}_drawIconSprite(t,e,i,s,a){if(e==="bubble"){t.fillStyle="rgba(100, 200, 255, 0.6)",t.strokeStyle="rgba(150, 220, 255, 0.8)",t.lineWidth=2,t.beginPath(),t.arc(s,a,i*.5,0,Math.PI*2),t.fill(),t.stroke();return}if(t.textAlign="center",t.textBaseline="middle",e==="star"){t.fillStyle="#ffdd00",t.font=`${i}px Arial`,t.fillText("\u2B50",s,a);return}if(e==="zzz"){t.fillStyle="#cccccc",t.font=`${i}px Arial`,t.fillText("Z",s,a);return}if(e==="lightning"){t.fillStyle="#ffff00",t.strokeStyle="#ffffff",t.lineWidth=1,t.font=`bold ${i}px Arial`,t.strokeText("\u26A1",s,a),t.fillText("\u26A1",s,a);return}if(e==="food"){t.fillStyle="#ff6b6b",t.font=`${i}px Arial`,t.fillText("\u{1F34E}",s,a);return}if(e==="question"){t.fillStyle="#ffaa00",t.font=`bold ${i}px Arial`,t.fillText("?",s,a);return}if(e==="exclamation"){t.fillStyle="#ff0000",t.font=`bold ${i}px Arial`,t.fillText("!",s,a);return}t.fillStyle="#ff69b4",t.font=`${i}px Arial`,t.fillText("\u2764\uFE0F",s,a)}drawHearts(t){if(!(!this.config.enableIcons||this.hearts.length===0)){t.save();for(let e of this.hearts){let s=1-e.age/e.maxAge;t.globalAlpha=s;let a=this._getIconSprite(e.type,e.size);a?t.drawImage(a,e.x-a.width*.5,e.y-a.height*.5):this._drawIconSprite(t,e.type,e.size,e.x,e.y)}t.restore()}}drawFish(t){if(!this.imageLoaded||this.fishImage.naturalWidth===0)return;let e=this._fishDepthCache?this._fishDepthCache[3]:this.fishImage;Lt(t,this.fish,e,this.config,this.isAttackingSchoolFish,this.targetSchoolFish,this.width,this.height)}startDance(t){this.danceState=bt(this.fish,t),this.dancePartner=t}updateDance(t,e,i){if(!this.danceState||!this.dancePartner)return;let s=yt(this.danceState,this.fish,this.dancePartner,t,e,i,a=>this.updateRotationAndAnimation(a),()=>this.spawnHeart(),performance.now());if(this.danceState=s,this.dancePartner&&!s.completed){let a=s.phase===1&&s.danceStep>=1||s.phase>=2,n=this.dancePartner.size<this.fish.currentSize;this.dancePartner._drawOnTop=a&&n}if(s.completed){let a=this.manager&&this.manager.getLayer("fish");a&&this.dancePartner&&!this.dancePartner.isDying&&(St(this.fish,this.dancePartner,e,i,a,(n,h,u,d,r,c)=>mt(n,h,u,d,a,r,c)),this.fish.velocityX=0,this.fish.velocityY=0,delete this.dancePartner._drawOnTop,this.danceState=null,this.dancePartner=null)}}spawnBabyFish(t,e,i,s,a={}){let n=this.manager&&this.manager.getLayer("fish");if(n)return mt(t,e,i,s,n,a,this.config)}spawnFish(){let t=this.width||(typeof window<"u"?window.innerWidth:800),e=this.height||(typeof window<"u"?window.innerHeight:600),i=Math.round(-Math.max(40,this.config.size+20)),s=Math.round(e/2);this.fish={x:i,y:s,velocityX:1.5,velocityY:0,rotation:0,targetRotation:0,flipScale:1,targetFlipScale:1,age:0,swimPhase:0,isFleeing:!1,fleeTimer:0,currentSize:this.config.size,targetSize:this.config.size,targetedFood:null,hidden:!1,skeletonSpawned:!1},this.isAttackingSchoolFish=!1,this.targetSchoolFish=null,this.gameState="playing",delete this._forcedTarget}_buildDepthCache(t){let e=[{sat:30,bri:100},{sat:55,bri:100},{sat:78,bri:100},null],i=t.naturalWidth||t.width,s=t.naturalHeight||t.height;return!i||!s?e.map(()=>t):e.map(a=>{if(!a)return t;let n=new OffscreenCanvas(i,s),h=n.getContext("2d");return h.filter=`saturate(${a.sat}%) brightness(${a.bri}%)`,h.drawImage(t,0,0),n})}drawSkeletons(t,e){let n=Date.now(),h=0,u=!1;for(let d=0;d<this.skeletons.length;d++){let r=this.skeletons[d],c=n-r.startTime;if(c>3800)continue;let g=n-(r.lastUpdate||n);r.lastUpdate=n,r.vy+=2e-4*g,r.vx*=1-.003*(g/16),r.x+=r.vx*g,r.y+=r.vy*g;let f=c<3e3?1:1-(c-3e3)/800;if(this.boneLoaded&&this.boneImage){t.save(),t.globalAlpha=f,t.translate(r.x,r.y),t.scale(r.flipScale,1);let m=r.size*2,p=m*(this.boneImage.height/this.boneImage.width);t.drawImage(this.boneImage,-m/2,-p/2,m,p),t.restore()}u=!0,this.skeletons[h++]=r}this.skeletons.length=h,!u&&this.fish&&this.fish.isDying&&(this.skeletons=[],this.spawnFish())}destroy(){this._unsubscribePointerMove?.(),this._unsubscribePointerMove=null,this.fish=null,this.hearts=[],this._iconSpriteCache.clear(),this.allFish=[],this.skeletons=[],this.dancePartner=null,console.log("CuriousFishLayer destroyed")}};var ut=class{constructor(t={}){this.canvas=null,this.ctx=null,this.isContextAvailable=!1,this.layers=new Map,this.animationId=null,this.isRunning=!1,this.lastTime=0,this.frameCounter=0,this.mathUtils=new tt,this.performanceMonitor=new et({showStats:t.showStats!==!1,targetFPS:t.targetFPS||45}),this.performanceProfiler=new ht({enabled:t.profilePerformance||!1,logInterval:2e3}),this.foodLayer=new it(this.mathUtils,t.foodConfig),this.config={zIndex:t.zIndex||0,devicePixelRatio:window.devicePixelRatio||1,resolutionScale:t.resolutionScale||1,debug:t.debug||!1,errorHandling:t.errorHandling!==!1,...t},this.width=0,this.height=0,this._ripples=[],this.resizeTimeout=null,this.handleResize=this.handleResize.bind(this),this.handleClick=this.handleClick.bind(this),this.handleGlobalClick=this.handleGlobalClick.bind(this),this.handleTouch=this.handleTouch.bind(this),this.performanceMonitor.onQualityChange(e=>{this.applyQualityToLayers(e)}),this.init()}init(){this.canvas=document.createElement("canvas"),this.canvas.id="canvas-ocean-foreground",this.canvas.style.cssText=`
+        `;
+      this.foamProgram = this.createProgram(vertSrc, fragSrc);
+      if (this.foamProgram) {
+        const gl = this.gl;
+        const p = this.foamProgram;
+        this.foamLocs = {
+          resolution: gl.getUniformLocation(p, "u_resolution"),
+          time: gl.getUniformLocation(p, "u_time"),
+          normX: gl.getAttribLocation(p, "a_normX"),
+          yOffset: gl.getAttribLocation(p, "a_yOffset"),
+          size: gl.getAttribLocation(p, "a_size"),
+          opacity: gl.getAttribLocation(p, "a_opacity")
+        };
+      }
+    }
+    // ─── Foam particle simulation (JS-side) ──────────────────────────────────
+    initFoamParticles() {
+      const count = this.config.foamCount;
+      this._foam = [];
+      for (let i = 0; i < count; i++) {
+        const p = this._newFoamParticle();
+        p.age = Math.random() * p.maxAge;
+        p.yOffset = p.riseSpeed * (p.age / 1e3);
+        this._foam.push(p);
+      }
+      this._foamBuf = new Float32Array(count * 4);
+    }
+    _newFoamParticle() {
+      return {
+        x: Math.random(),
+        // normalized 0..1
+        size: 2 + Math.random() * 4,
+        // px (2–6px) — jemné
+        age: 0,
+        maxAge: 1200 + Math.random() * 1600,
+        // ms
+        driftX: (Math.random() - 0.5) * 1e-5,
+        // velmi jemný horizontální drift
+        riseSpeed: 6 + Math.random() * 12,
+        // px/s — stoupání nahoru
+        yOffset: 0
+        // px nad hladinou
+      };
+    }
+    /** Wave y-position in pixels at given normalized x and time — must match vertex shader. */
+    _waveYpx(normX, t) {
+      const xPx = normX * this.width;
+      return SURFACE_Y + 3 * Math.sin(xPx * 0.012 + t * 45e-5) + 1.5 * Math.sin(xPx * 0.027 + t * 73e-5) + 0.9 * Math.sin(xPx * 0.051 + t * 11e-4) + 0.5 * Math.sin(xPx * 0.089 + t * 161e-5) + 0.3 * Math.sin(xPx * 0.143 + t * 94e-5);
+    }
+    createFoamBuffers() {
+      const gl = this.gl;
+      const count = this._foam.length;
+      this.buffers.foam = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
+      gl.bufferData(gl.ARRAY_BUFFER, this._foamBuf, gl.DYNAMIC_DRAW);
+      if (this.foamLocs) {
+        this.foamVao = gl.createVertexArray();
+        gl.bindVertexArray(this.foamVao);
+        const stride = 4 * 4;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
+        gl.enableVertexAttribArray(this.foamLocs.normX);
+        gl.vertexAttribPointer(this.foamLocs.normX, 1, gl.FLOAT, false, stride, 0);
+        gl.enableVertexAttribArray(this.foamLocs.yOffset);
+        gl.vertexAttribPointer(this.foamLocs.yOffset, 1, gl.FLOAT, false, stride, 4);
+        gl.enableVertexAttribArray(this.foamLocs.size);
+        gl.vertexAttribPointer(this.foamLocs.size, 1, gl.FLOAT, false, stride, 8);
+        gl.enableVertexAttribArray(this.foamLocs.opacity);
+        gl.vertexAttribPointer(this.foamLocs.opacity, 1, gl.FLOAT, false, stride, 12);
+        gl.bindVertexArray(null);
+      }
+    }
+    /** Update foam positions in JS, fill _foamBuf, return effective particle count. */
+    updateFoam(elapsed, deltaTime) {
+      const effectiveCount = Math.floor(
+        this._foam.length * Math.min(this.qualityMultiplier, this._budgetFactor)
+      );
+      for (let i = 0; i < effectiveCount; i++) {
+        const p = this._foam[i];
+        p.age += deltaTime;
+        if (p.age >= p.maxAge) {
+          const fresh = this._newFoamParticle();
+          this._foam[i] = fresh;
+          this._writeFoamVertex(i, fresh, elapsed, 0);
+          continue;
+        }
+        p.x = (p.x + p.driftX * deltaTime + 1) % 1;
+        p.yOffset += p.riseSpeed * deltaTime / 1e3;
+        this._writeFoamVertex(i, p, elapsed, p.age);
+      }
+      return effectiveCount;
+    }
+    _writeFoamVertex(i, p, _elapsed, age) {
+      const t = age / p.maxAge;
+      let opacity;
+      if (t < 0.12) opacity = t / 0.12;
+      else opacity = 1 - (t - 0.12) / 0.88;
+      opacity *= 0.55 * this.qualityMultiplier;
+      const j = i * 4;
+      this._foamBuf[j] = p.x;
+      this._foamBuf[j + 1] = Math.max(p.yOffset, 8);
+      this._foamBuf[j + 2] = p.size;
+      this._foamBuf[j + 3] = opacity;
+    }
+    // ─── Render ──────────────────────────────────────────────────────────────
+    render(elapsed, deltaTime) {
+      const gl = this.gl;
+      this._budgetFactor += (this._targetBudgetFactor - this._budgetFactor) * 0.06;
+      if (this.program && this.vao) {
+        gl.useProgram(this.program);
+        gl.uniform1f(this.locs.time, elapsed);
+        gl.bindVertexArray(this.vao);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.buffers.vertexCount);
+      }
+      if (this.foamProgram && this.foamVao) {
+        const count = this.updateFoam(elapsed, deltaTime);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.buffers.foam);
+        gl.bufferSubData(gl.ARRAY_BUFFER, 0, this._foamBuf, 0, count * 4);
+        gl.useProgram(this.foamProgram);
+        gl.uniform1f(this.foamLocs.time, elapsed);
+        gl.bindVertexArray(this.foamVao);
+        gl.drawArrays(gl.POINTS, 0, count);
+      }
+    }
+    // ─── Lifecycle ───────────────────────────────────────────────────────────
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+    }
+    reduceBudget(factor) {
+      this._targetBudgetFactor = Math.max(0.1, factor);
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      if (this.program) {
+        this.gl.useProgram(this.program);
+        this.gl.uniform2f(this.locs.resolution, width, height);
+      }
+      if (this.foamProgram) {
+        this.gl.useProgram(this.foamProgram);
+        this.gl.uniform2f(this.foamLocs.resolution, width, height);
+      }
+    }
+    toggle(enabled) {
+      this.enabled = !!enabled;
+      if (this.enabled && !this.program && this.width && this.height) {
+        this.init(this.width, this.height);
+      }
+    }
+    destroy() {
+      const gl = this.gl;
+      if (this.program) gl.deleteProgram(this.program);
+      if (this.foamProgram) gl.deleteProgram(this.foamProgram);
+      if (this.vao) gl.deleteVertexArray(this.vao);
+      if (this.foamVao) gl.deleteVertexArray(this.foamVao);
+      if (this.buffers.x) gl.deleteBuffer(this.buffers.x);
+      if (this.buffers.t) gl.deleteBuffer(this.buffers.t);
+      if (this.buffers.foam) gl.deleteBuffer(this.buffers.foam);
+    }
+    // ─── Shader compilation ──────────────────────────────────────────────────
+    createProgram(vertexSource, fragmentSource) {
+      const gl = this.gl;
+      const vertShader = gl.createShader(gl.VERTEX_SHADER);
+      gl.shaderSource(vertShader, vertexSource);
+      gl.compileShader(vertShader);
+      if (!gl.getShaderParameter(vertShader, gl.COMPILE_STATUS)) {
+        console.error("WaterSurface vertex shader:", gl.getShaderInfoLog(vertShader));
+        return null;
+      }
+      const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+      gl.shaderSource(fragShader, fragmentSource);
+      gl.compileShader(fragShader);
+      if (!gl.getShaderParameter(fragShader, gl.COMPILE_STATUS)) {
+        console.error("WaterSurface fragment shader:", gl.getShaderInfoLog(fragShader));
+        return null;
+      }
+      const program = gl.createProgram();
+      gl.attachShader(program, vertShader);
+      gl.attachShader(program, fragShader);
+      gl.linkProgram(program);
+      if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+        console.error("WaterSurface program link:", gl.getProgramInfoLog(program));
+        return null;
+      }
+      gl.deleteShader(vertShader);
+      gl.deleteShader(fragShader);
+      return program;
+    }
+  };
+
+  // assets/webgl/WebGLOceanRenderer.js
+  var WebGLOceanRenderer = class {
+    constructor(canvas2, options = {}) {
+      this.canvas = canvas2;
+      this.gl = null;
+      this.rafId = null;
+      this.startTime = 0;
+      this.lastFrameTime = 0;
+      this.frameCount = 0;
+      this.fps = 60;
+      this.fpsUpdateTime = 0;
+      this.lastProfileTimes = null;
+      this.resizeTimeout = null;
+      this.pendingResize = null;
+      this.options = {
+        enableGradient: options.enableGradient !== false,
+        enableRays: options.enableRays !== false,
+        enableBubbles: options.enableBubbles !== false,
+        enablePlankton: options.enablePlankton !== false,
+        enableWaterSurface: options.enableWaterSurface !== false,
+        profiling: options.profiling || false,
+        // Per-layer config overrides (entity counts, etc.)
+        planktonConfig: options.planktonConfig || {},
+        bubblesConfig: options.bubblesConfig || {},
+        raysConfig: options.raysConfig || {},
+        // DPR cap — set by DeviceProfile to prevent memory waste on hi-DPI mobile
+        dprCap: options.dprCap || 1.5
+      };
+      this.baseDprCap = this.options.dprCap;
+      this.qualityMultiplier = 1;
+      this.targetFPS = 50;
+      this.lowFpsFrames = 0;
+      this.handleResize = this.handleResize.bind(this);
+      this.handleContextLost = this.handleContextLost.bind(this);
+      this.handleContextRestored = this.handleContextRestored.bind(this);
+      this.gradientLayer = null;
+      this.raysLayer = null;
+      this.bubblesLayer = null;
+      this.planktonLayer = null;
+      this.waterSurfaceLayer = null;
+      this.rendererInfo = null;
+    }
+    init() {
+      const gl = this.canvas.getContext("webgl2", {
+        alpha: false,
+        antialias: false,
+        depth: false,
+        stencil: false,
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: false,
+        powerPreference: "high-performance",
+        desynchronized: false
+      });
+      if (!gl) {
+        throw new Error("WebGL2 not supported");
+      }
+      this.gl = gl;
+      gl.clearColor(0.02, 0.05, 0.1, 1);
+      this.onResize(this.canvas.width, this.canvas.height);
+      this.initLayers();
+      window.addEventListener("resize", this.handleResize);
+      this.canvas.addEventListener("webglcontextlost", this.handleContextLost, false);
+      this.canvas.addEventListener("webglcontextrestored", this.handleContextRestored, false);
+      this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
+      document.body.classList.add("has-webgl");
+      return this;
+    }
+    getRendererInfo() {
+      if (!this.gl) return null;
+      if (this.rendererInfo) return this.rendererInfo;
+      const ext = this.gl.getExtension("WEBGL_debug_renderer_info");
+      const vendorParam = ext ? ext.UNMASKED_VENDOR_WEBGL : this.gl.VENDOR;
+      const rendererParam = ext ? ext.UNMASKED_RENDERER_WEBGL : this.gl.RENDERER;
+      this.rendererInfo = {
+        vendor: String(this.gl.getParameter(vendorParam) || ""),
+        renderer: String(this.gl.getParameter(rendererParam) || "")
+      };
+      return this.rendererInfo;
+    }
+    isSoftwareRenderer() {
+      const info = this.getRendererInfo();
+      if (!info) return false;
+      const label = `${info.vendor} ${info.renderer}`.toLowerCase();
+      return /swiftshader|llvmpipe|softpipe|software|microsoft basic render|mesa offscreen/.test(label);
+    }
+    initLayers() {
+      const { width, height } = this.canvas;
+      if (this.options.enableGradient) {
+        this.gradientLayer = new WaterGradientLayer(this.gl);
+        this.gradientLayer.init(width, height);
+        this.gradientLayer.enabled = true;
+      }
+      if (this.options.enableRays) {
+        this.raysLayer = new LightRaysLayer(this.gl, this.options.raysConfig);
+        this.raysLayer.init(width, height);
+        this.raysLayer.enabled = true;
+      }
+      if (this.options.enableBubbles) {
+        this.bubblesLayer = new BubblesLayer(this.gl, this.options.bubblesConfig);
+        this.bubblesLayer.init(width, height);
+        this.bubblesLayer.enabled = true;
+      }
+      if (this.options.enablePlankton) {
+        this.planktonLayer = new PlanktonLayer(this.gl, this.options.planktonConfig);
+        this.planktonLayer.init(width, height);
+        this.planktonLayer.enabled = true;
+      }
+      if (this.options.enableWaterSurface) {
+        this.waterSurfaceLayer = new WaterSurfaceLayer(this.gl);
+        this.waterSurfaceLayer.init(width, height);
+        this.waterSurfaceLayer.enabled = true;
+      }
+    }
+    handleContextLost(e) {
+      e.preventDefault();
+      this.gl = null;
+      this.rendererInfo = null;
+      console.warn("WebGL context lost \u2014 rendering paused until restored");
+      if (typeof this.onContextLost === "function") this.onContextLost();
+    }
+    handleContextRestored() {
+      const gl = this.canvas.getContext("webgl2", {
+        alpha: false,
+        antialias: false,
+        depth: false,
+        stencil: false,
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: false,
+        powerPreference: "high-performance",
+        desynchronized: false
+      });
+      if (!gl) return;
+      this.gl = gl;
+      this.rendererInfo = null;
+      gl.clearColor(0.02, 0.05, 0.1, 1);
+      this.onResize(this.canvas.width, this.canvas.height);
+      if (this.gradientLayer) {
+        this.gradientLayer.destroy();
+        this.gradientLayer = null;
+      }
+      if (this.raysLayer) {
+        this.raysLayer.destroy();
+        this.raysLayer = null;
+      }
+      if (this.bubblesLayer) {
+        this.bubblesLayer.destroy();
+        this.bubblesLayer = null;
+      }
+      if (this.planktonLayer) {
+        this.planktonLayer.destroy();
+        this.planktonLayer = null;
+      }
+      if (this.waterSurfaceLayer) {
+        this.waterSurfaceLayer.destroy();
+        this.waterSurfaceLayer = null;
+      }
+      this.initLayers();
+    }
+    handleResize() {
+      clearTimeout(this.resizeTimeout);
+      this.pendingResize = {
+        dpr: Math.min(window.devicePixelRatio || 1, this.options.dprCap),
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+      this.resizeTimeout = setTimeout(() => {
+        this.applyResize();
+      }, 150);
+    }
+    applyResize() {
+      if (!this.pendingResize) return;
+      const { dpr, width, height } = this.pendingResize;
+      const canvasWidth = Math.floor(width * dpr);
+      const canvasHeight = Math.floor(height * dpr);
+      this.onResize(canvasWidth, canvasHeight);
+      this.canvas.style.width = width + "px";
+      this.canvas.style.height = height + "px";
+      this.pendingResize = null;
+    }
+    setDprCap(dprCap) {
+      const nextCap = Math.max(0.5, Math.min(this.baseDprCap, dprCap));
+      if (Math.abs(nextCap - this.options.dprCap) < 0.01) return;
+      this.options.dprCap = nextCap;
+      this.pendingResize = {
+        dpr: Math.min(window.devicePixelRatio || 1, this.options.dprCap),
+        width: window.innerWidth,
+        height: window.innerHeight
+      };
+      this.applyResize();
+    }
+    onResize(width, height) {
+      this.canvas.width = width;
+      this.canvas.height = height;
+      if (this.gl) {
+        this.gl.viewport(0, 0, width, height);
+        if (this.gradientLayer) this.gradientLayer.onResize(width, height);
+        if (this.raysLayer) this.raysLayer.onResize(width, height);
+        if (this.bubblesLayer) this.bubblesLayer.onResize(width, height);
+        if (this.planktonLayer) this.planktonLayer.onResize(width, height);
+        if (this.waterSurfaceLayer) this.waterSurfaceLayer.onResize(width, height);
+      }
+    }
+    start() {
+      if (this.rafId) return;
+      this.startTime = performance.now();
+      this.lastFrameTime = this.startTime;
+      this.fpsUpdateTime = this.startTime;
+      this.frameCount = 0;
+    }
+    stop() {
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+    }
+    renderFrame(currentTime, deltaTime) {
+      if (!this.gl || this.gl.isContextLost()) return;
+      this.lastFrameTime = currentTime;
+      const profiling = this.options.profiling || false;
+      const times = {};
+      if (profiling) times.start = performance.now();
+      this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+      if (profiling) times.clear = performance.now();
+      if (this.gradientLayer && this.gradientLayer.enabled) {
+        this.gradientLayer.render(currentTime, deltaTime);
+      }
+      if (profiling) times.gradient = performance.now();
+      this.gl.enable(this.gl.BLEND);
+      const elapsed = (currentTime - this.startTime) % 36e5;
+      if (this.raysLayer && this.raysLayer.enabled) {
+        this.raysLayer.render(elapsed, deltaTime);
+      }
+      if (profiling) times.rays = performance.now();
+      if (this.bubblesLayer && this.bubblesLayer.enabled) {
+        this.bubblesLayer.render(currentTime, deltaTime);
+      }
+      if (profiling) times.bubbles = performance.now();
+      if (this.planktonLayer && this.planktonLayer.enabled) {
+        this.planktonLayer.render(elapsed, deltaTime);
+      }
+      if (this.waterSurfaceLayer && this.waterSurfaceLayer.enabled) {
+        this.waterSurfaceLayer.render(elapsed, deltaTime);
+      }
+      if (profiling) {
+        times.plankton = performance.now();
+        times.total = times.plankton - times.start;
+        this.lastProfileTimes = {
+          gradient: times.gradient - times.clear,
+          rays: times.rays - times.gradient,
+          bubbles: times.bubbles - times.rays,
+          plankton: times.plankton - times.bubbles,
+          total: times.total
+        };
+        if (!this._lastProfileLog || currentTime - this._lastProfileLog > 2e3) {
+          console.group("WebGL Performance Profile");
+          console.log(`Total Frame: ${times.total.toFixed(2)}ms`);
+          console.log(`Gradient: ${(times.gradient - times.clear).toFixed(2)}ms`);
+          console.log(`Light Rays: ${(times.rays - times.gradient).toFixed(2)}ms`);
+          console.log(`Bubbles: ${(times.bubbles - times.rays).toFixed(2)}ms`);
+          console.log(`Plankton: ${(times.plankton - times.bubbles).toFixed(2)}ms`);
+          console.groupEnd();
+          this._lastProfileLog = currentTime;
+        }
+      }
+      this.gl.disable(this.gl.BLEND);
+      this.updateFPS(currentTime, deltaTime);
+    }
+    updateFPS(currentTime, deltaTime) {
+      this.frameCount++;
+      if (currentTime - this.fpsUpdateTime >= 1e3) {
+        this.fps = this.frameCount;
+        this.frameCount = 0;
+        this.fpsUpdateTime = currentTime;
+      }
+    }
+    applyQualitySettings() {
+      if (this.gradientLayer) {
+        this.gradientLayer.setQuality(this.qualityMultiplier);
+      }
+      if (this.raysLayer) {
+        this.raysLayer.setQuality(this.qualityMultiplier);
+      }
+      if (this.bubblesLayer) {
+        this.bubblesLayer.setQuality(this.qualityMultiplier);
+      }
+      if (this.planktonLayer) {
+        this.planktonLayer.setQuality(this.qualityMultiplier);
+      }
+      if (this.waterSurfaceLayer) {
+        this.waterSurfaceLayer.setQuality(this.qualityMultiplier);
+      }
+    }
+    setLayerEnabled(name, enabled) {
+      switch (name) {
+        case "gradient":
+          this.options.enableGradient = enabled;
+          if (this.gradientLayer) {
+            if (typeof this.gradientLayer.toggle === "function") {
+              this.gradientLayer.toggle(enabled);
+            } else {
+              this.gradientLayer.enabled = enabled;
+              if (enabled && !this.gradientLayer.program) this.gradientLayer.init(this.canvas.width, this.canvas.height);
+            }
+          } else if (enabled && this.gl) {
+            this.gradientLayer = new WaterGradientLayer(this.gl);
+            this.gradientLayer.init(this.canvas.width, this.canvas.height);
+            this.gradientLayer.enabled = true;
+          }
+          break;
+        case "rays":
+          this.options.enableRays = enabled;
+          if (this.raysLayer) {
+            if (typeof this.raysLayer.toggle === "function") {
+              this.raysLayer.toggle(enabled);
+            } else {
+              this.raysLayer.enabled = enabled;
+              if (enabled && !this.raysLayer.program) this.raysLayer.init(this.canvas.width, this.canvas.height);
+            }
+          } else if (enabled && this.gl) {
+            this.raysLayer = new LightRaysLayer(this.gl, this.options.raysConfig);
+            this.raysLayer.init(this.canvas.width, this.canvas.height);
+            this.raysLayer.enabled = true;
+          }
+          break;
+        case "bubbles":
+          this.options.enableBubbles = enabled;
+          if (this.bubblesLayer) {
+            if (typeof this.bubblesLayer.toggle === "function") {
+              this.bubblesLayer.toggle(enabled);
+            } else {
+              this.bubblesLayer.enabled = enabled;
+              if (enabled && !this.bubblesLayer.program) this.bubblesLayer.init(this.canvas.width, this.canvas.height);
+            }
+          } else if (enabled && this.gl) {
+            this.bubblesLayer = new BubblesLayer(this.gl, this.options.bubblesConfig);
+            this.bubblesLayer.init(this.canvas.width, this.canvas.height);
+            this.bubblesLayer.enabled = true;
+          }
+          break;
+        case "plankton":
+          this.options.enablePlankton = enabled;
+          if (this.planktonLayer) {
+            if (typeof this.planktonLayer.toggle === "function") {
+              this.planktonLayer.toggle(enabled);
+            } else {
+              this.planktonLayer.enabled = enabled;
+              if (enabled && !this.planktonLayer.program) this.planktonLayer.init(this.canvas.width, this.canvas.height);
+            }
+          } else if (enabled && this.gl) {
+            this.planktonLayer = new PlanktonLayer(this.gl, this.options.planktonConfig);
+            this.planktonLayer.init(this.canvas.width, this.canvas.height);
+            this.planktonLayer.enabled = true;
+          }
+          break;
+      }
+    }
+    getFPS() {
+      return this.fps;
+    }
+    /**
+     * Apply a quality multiplier to all particle layers.
+     * Called by MasterRenderer to synchronise WebGL quality with the Canvas 2D
+     * PerformanceMonitor so both subsystems respond to the same FPS signal.
+     * @param {number} quality - 0.3–1.0
+     */
+    setQuality(quality) {
+      this.qualityMultiplier = quality;
+      this.applyQualitySettings();
+    }
+    /**
+     * Reduce particle and ray budgets proportionally.
+     * Separate from setQuality — this cuts geometry counts (not just opacity/rate).
+     * Called by MasterRenderer when stepping to WEBGL_LITE (level 1).
+     * @param {number} factor - 0.0–1.0  (0.5 = half budget)
+     */
+    reduceBudget(factor) {
+      const budgetFactor = Math.max(0.1, factor);
+      const nextDprCap = budgetFactor <= 0.6 ? Math.min(this.baseDprCap, 1.25) : this.baseDprCap;
+      this.setDprCap(nextDprCap);
+      if (this.raysLayer) this.raysLayer.reduceBudget(factor);
+      if (this.bubblesLayer) this.bubblesLayer.reduceBudget(factor);
+      if (this.planktonLayer) this.planktonLayer.reduceBudget(factor);
+      if (this.waterSurfaceLayer) this.waterSurfaceLayer.reduceBudget(factor);
+    }
+    destroy() {
+      this.stop();
+      if (this.gradientLayer) this.gradientLayer.destroy();
+      if (this.raysLayer) this.raysLayer.destroy();
+      if (this.bubblesLayer) this.bubblesLayer.destroy();
+      if (this.planktonLayer) this.planktonLayer.destroy();
+      if (this.waterSurfaceLayer) this.waterSurfaceLayer.destroy();
+      window.removeEventListener("resize", this.handleResize);
+      this.canvas.removeEventListener("webglcontextlost", this.handleContextLost);
+      this.canvas.removeEventListener("webglcontextrestored", this.handleContextRestored);
+      this.gl = null;
+      this.rendererInfo = null;
+    }
+  };
+
+  // assets/canvas/utils/DeviceProfile.js
+  var BUDGETS = [
+    // Tier 0 — mobile-low
+    {
+      swarmCount: 3,
+      particlesPerSwarm: 8,
+      fineCount: 60,
+      microCount: 20,
+      lightRayCount: 1,
+      bubbleSourceWidthBase: 1400,
+      schoolDensity: 65e4,
+      canvas2dFPS: 24,
+      dprCap: 1
+    },
+    // Tier 1 — mobile-medium
+    {
+      swarmCount: 6,
+      particlesPerSwarm: 16,
+      fineCount: 180,
+      microCount: 60,
+      lightRayCount: 2,
+      bubbleSourceWidthBase: 1e3,
+      schoolDensity: 45e4,
+      canvas2dFPS: 28,
+      dprCap: 1
+    },
+    // Tier 2 — desktop-light
+    {
+      swarmCount: 20,
+      particlesPerSwarm: 45,
+      fineCount: 900,
+      microCount: 300,
+      lightRayCount: 4,
+      bubbleSourceWidthBase: 550,
+      schoolDensity: 175e3,
+      canvas2dFPS: 40,
+      dprCap: 1.5
+    },
+    // Tier 3 — desktop-full
+    {
+      swarmCount: 30,
+      particlesPerSwarm: 50,
+      fineCount: 1500,
+      microCount: 500,
+      lightRayCount: 5,
+      bubbleSourceWidthBase: 400,
+      schoolDensity: 13e4,
+      canvas2dFPS: 45,
+      dprCap: 2
+    }
+  ];
+  var TIER_LABELS = ["mobile-low", "mobile-medium", "desktop-light", "desktop-full"];
+  var _cached = null;
+  function getViewportScaledBudget(baseBudget, area) {
+    const scaledBudget = { ...baseBudget };
+    if (area >= 7e6) {
+      scaledBudget.swarmCount = Math.min(scaledBudget.swarmCount, 16);
+      scaledBudget.particlesPerSwarm = Math.min(scaledBudget.particlesPerSwarm, 32);
+      scaledBudget.fineCount = Math.min(scaledBudget.fineCount, 700);
+      scaledBudget.microCount = Math.min(scaledBudget.microCount, 180);
+      scaledBudget.lightRayCount = Math.min(scaledBudget.lightRayCount, 3);
+      scaledBudget.bubbleSourceWidthBase = Math.max(scaledBudget.bubbleSourceWidthBase, 800);
+      scaledBudget.schoolDensity = Math.max(scaledBudget.schoolDensity, 1e6);
+      scaledBudget.canvas2dFPS = Math.min(scaledBudget.canvas2dFPS, 30);
+      scaledBudget.dprCap = Math.min(scaledBudget.dprCap, 0.75);
+    } else if (area >= 4e6) {
+      scaledBudget.swarmCount = Math.min(scaledBudget.swarmCount, 20);
+      scaledBudget.particlesPerSwarm = Math.min(scaledBudget.particlesPerSwarm, 36);
+      scaledBudget.fineCount = Math.min(scaledBudget.fineCount, 900);
+      scaledBudget.microCount = Math.min(scaledBudget.microCount, 250);
+      scaledBudget.lightRayCount = Math.min(scaledBudget.lightRayCount, 4);
+      scaledBudget.bubbleSourceWidthBase = Math.max(scaledBudget.bubbleSourceWidthBase, 650);
+      scaledBudget.schoolDensity = Math.max(scaledBudget.schoolDensity, 8e5);
+      scaledBudget.canvas2dFPS = Math.min(scaledBudget.canvas2dFPS, 35);
+      scaledBudget.dprCap = Math.min(scaledBudget.dprCap, 0.85);
+    } else if (area >= 25e5) {
+      scaledBudget.swarmCount = Math.min(scaledBudget.swarmCount, 24);
+      scaledBudget.particlesPerSwarm = Math.min(scaledBudget.particlesPerSwarm, 42);
+      scaledBudget.fineCount = Math.min(scaledBudget.fineCount, 1100);
+      scaledBudget.microCount = Math.min(scaledBudget.microCount, 320);
+      scaledBudget.lightRayCount = Math.min(scaledBudget.lightRayCount, 4);
+      scaledBudget.bubbleSourceWidthBase = Math.max(scaledBudget.bubbleSourceWidthBase, 520);
+      scaledBudget.schoolDensity = Math.max(scaledBudget.schoolDensity, 55e4);
+      scaledBudget.canvas2dFPS = Math.min(scaledBudget.canvas2dFPS, 40);
+      scaledBudget.dprCap = Math.min(scaledBudget.dprCap, 1);
+    }
+    return scaledBudget;
+  }
+  function getDeviceProfile() {
+    if (_cached) return _cached;
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const area = vw * vh;
+    const cores = navigator.hardwareConcurrency || 4;
+    const dpr = window.devicePixelRatio || 1;
+    const memory = navigator.deviceMemory || 4;
+    const connType = navigator.connection?.effectiveType ?? "";
+    const saveData = navigator.connection?.saveData === true;
+    const prefersReducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
+    const isMobile = vw < 700 || navigator.maxTouchPoints > 0 && Math.min(vw, vh) < 700;
+    const slowConnection = connType === "2g" || connType === "slow-2g";
+    const constrainedPhone = isMobile && (cores <= 4 || dpr >= 2 || memory <= 4);
+    const isLowPower = prefersReducedMotion || saveData || slowConnection || constrainedPhone || memory <= 2;
+    let tier;
+    if (area < 35e4 || prefersReducedMotion || saveData || slowConnection || constrainedPhone || cores <= 2 && dpr > 1.5) {
+      tier = 0;
+    } else if (isMobile || area < 7e5 || cores <= 2) {
+      tier = 1;
+    } else if (area < 15e5 || cores <= 4) {
+      tier = 2;
+    } else {
+      tier = 3;
+    }
+    _cached = {
+      tier,
+      label: TIER_LABELS[tier],
+      entityBudget: getViewportScaledBudget(BUDGETS[tier], area),
+      isMobile,
+      isLowPower,
+      prefersReducedMotion,
+      saveData
+    };
+    return _cached;
+  }
+
+  // assets/webgl/init-prod.js
+  var canvas = document.getElementById("webgl-ocean-background");
+  var bootstrapState = window.blueOrcaRenderBootstrap = {
+    preferLiteCanvasEffects: false,
+    webglStatus: "unavailable"
+  };
+  window.webglOceanRenderer = null;
+  if (canvas) {
+    const enableCssFallback = (message, error, options = {}) => {
+      const { preferLiteCanvasEffects = false, webglStatus = "fallback" } = options;
+      canvas.style.display = "none";
+      document.body.classList.remove("has-webgl");
+      window.webglOceanRenderer = null;
+      bootstrapState.webglStatus = webglStatus;
+      bootstrapState.preferLiteCanvasEffects = bootstrapState.preferLiteCanvasEffects || preferLiteCanvasEffects;
+      if (error) {
+        const reason = error instanceof Error ? error.message : String(error);
+        console.warn(`[WebGL] ${message}: ${reason}`);
+      } else {
+        console.info(`[WebGL] ${message}`);
+      }
+    };
+    const {
+      tier,
+      label,
+      entityBudget: budget,
+      isMobile,
+      isLowPower,
+      prefersReducedMotion,
+      saveData
+    } = getDeviceProfile();
+    const skipWebGL = tier === 0 || isMobile || isLowPower;
+    const skipReason = prefersReducedMotion ? "reduced-motion" : saveData ? "save-data" : isMobile ? "mobile-lite" : isLowPower ? "low-power" : "skipped-low-tier";
+    if (skipWebGL) {
+      enableCssFallback(`Skipping WebGL on ${label} device (${skipReason}) \u2014 CSS fallback active`, null, {
+        preferLiteCanvasEffects: true,
+        webglStatus: skipReason
+      });
+    } else {
+      canvas.style.display = "";
+      const dpr = Math.min(window.devicePixelRatio || 1, budget.dprCap);
+      canvas.width = Math.floor(window.innerWidth * dpr);
+      canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
+      const renderer = new WebGLOceanRenderer(canvas, {
+        enableGradient: true,
+        enableRays: false,
+        enableBubbles: true,
+        enablePlankton: true,
+        enableWaterSurface: false,
+        profiling: false,
+        dprCap: budget.dprCap,
+        raysConfig: {
+          rayCount: budget.lightRayCount
+        },
+        bubblesConfig: {
+          sourceWidthBase: budget.bubbleSourceWidthBase
+        },
+        planktonConfig: {
+          swarmCount: budget.swarmCount,
+          particlesPerSwarm: budget.particlesPerSwarm,
+          fineCount: budget.fineCount,
+          microCount: budget.microCount
+        }
+      });
+      try {
+        renderer.init();
+        if (renderer.isSoftwareRenderer()) {
+          throw new Error("Software WebGL renderer detected");
+        }
+        renderer.renderFrame(0, 0);
+        window.webglOceanRenderer = renderer;
+        bootstrapState.webglStatus = "active";
+        bootstrapState.preferLiteCanvasEffects = false;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        enableCssFallback("WebGL init failed, falling back to CSS background", error, {
+          preferLiteCanvasEffects: /software webgl renderer/i.test(message),
+          webglStatus: /software webgl renderer/i.test(message) ? "software-renderer" : "init-failed"
+        });
+      }
+    }
+  }
+
+  // assets/canvas/utils/MathUtils.js
+  var MathUtils = class {
+    constructor() {
+      this.sinCache = new Float32Array(360);
+      this.cosCache = new Float32Array(360);
+      for (let i = 0; i < 360; i++) {
+        const rad = i * Math.PI / 180;
+        this.sinCache[i] = Math.sin(rad);
+        this.cosCache[i] = Math.cos(rad);
+      }
+      this.tempVec2 = { x: 0, y: 0 };
+    }
+    /**
+     * Get cached sine value for degree (0-359)
+     * @param {number} degree - Angle in degrees
+     * @returns {number} Sine value
+     */
+    sin(degree) {
+      const index = Math.floor(degree) % 360;
+      return this.sinCache[index < 0 ? index + 360 : index];
+    }
+    /**
+     * Get cached cosine value for degree (0-359)
+     * @param {number} degree - Angle in degrees
+     * @returns {number} Cosine value
+     */
+    cos(degree) {
+      const index = Math.floor(degree) % 360;
+      return this.cosCache[index < 0 ? index + 360 : index];
+    }
+    /**
+     * Get cached sine value from radians
+     * @param {number} rad - Angle in radians
+     * @returns {number} Sine value
+     */
+    sinRad(rad) {
+      const degree = Math.floor(rad * 180 / Math.PI) % 360;
+      return this.sinCache[degree < 0 ? degree + 360 : degree];
+    }
+    /**
+     * Get cached cosine value from radians
+     * @param {number} rad - Angle in radians
+     * @returns {number} Cosine value
+     */
+    cosRad(rad) {
+      const degree = Math.floor(rad * 180 / Math.PI) % 360;
+      return this.cosCache[degree < 0 ? degree + 360 : degree];
+    }
+    /**
+     * Calculate distance between two points
+     * @param {number} x1 - First point X
+     * @param {number} y1 - First point Y
+     * @param {number} x2 - Second point X
+     * @param {number} y2 - Second point Y
+     * @returns {number} Distance
+     */
+    distance(x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+    /**
+     * Calculate squared distance (faster, no sqrt)
+     * @param {number} x1 - First point X
+     * @param {number} y1 - First point Y
+     * @param {number} x2 - Second point X
+     * @param {number} y2 - Second point Y
+     * @returns {number} Squared distance
+     */
+    distanceSquared(x1, y1, x2, y2) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      return dx * dx + dy * dy;
+    }
+    /**
+     * Linear interpolation
+     * @param {number} a - Start value
+     * @param {number} b - End value
+     * @param {number} t - Interpolation factor (0-1)
+     * @returns {number} Interpolated value
+     */
+    lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+    /**
+     * Clamp value between min and max
+     * @param {number} value - Value to clamp
+     * @param {number} min - Minimum value
+     * @param {number} max - Maximum value
+     * @returns {number} Clamped value
+     */
+    clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+    /**
+     * Map value from one range to another
+     * @param {number} value - Input value
+     * @param {number} inMin - Input range minimum
+     * @param {number} inMax - Input range maximum
+     * @param {number} outMin - Output range minimum
+     * @param {number} outMax - Output range maximum
+     * @returns {number} Mapped value
+     */
+    map(value, inMin, inMax, outMin, outMax) {
+      return (value - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
+    }
+    /**
+     * Generate random number in range
+     * @param {number} min - Minimum value
+     * @param {number} max - Maximum value
+     * @returns {number} Random value
+     */
+    random(min, max) {
+      return min + Math.random() * (max - min);
+    }
+    /**
+     * Generate random integer in range
+     * @param {number} min - Minimum value (inclusive)
+     * @param {number} max - Maximum value (inclusive)
+     * @returns {number} Random integer
+     */
+    randomInt(min, max) {
+      return Math.floor(this.random(min, max + 1));
+    }
+  };
+
+  // assets/canvas/utils/PerformanceMonitor.js
+  var PerformanceMonitor = class {
+    constructor(options = {}) {
+      this.metrics = {
+        fps: 60,
+        frameTime: 0,
+        frameTimeHistory: new Array(60).fill(16.67),
+        // Pre-allocate circular buffer
+        frameTimeIndex: 0,
+        // Current write index
+        frameTimeCount: 0,
+        // Number of frames recorded (max 60)
+        lastFpsUpdate: 0
+      };
+      this.showStats = options.showStats !== false;
+      this.qualitySettings = {
+        current: 1,
+        target: 1,
+        min: 0.3,
+        max: 1,
+        targetFPS: options.targetFPS || 45,
+        // Longer interval prevents rapid quality oscillation on borderline hardware.
+        // Combined with the consecutive-tick requirement below, effective hysteresis
+        // is 2×4000 = 8 s before stepping down and 3×4000 = 12 s before recovering.
+        adjustInterval: 4e3
+      };
+      this.lastQualityAdjustment = 0;
+      this._lowFpsCount = 0;
+      this._highFpsCount = 0;
+      this.qualityChangeListeners = [];
+    }
+    /**
+     * Toggle performance stats display
+     */
+    toggleStats() {
+      this.showStats = !this.showStats;
+      console.log("Performance stats:", this.showStats ? "ON" : "OFF");
+      return this.showStats;
+    }
+    /**
+     * Update performance metrics
+     * @param {number} currentTime - Current timestamp
+     * @param {number} deltaTime - Time since last frame
+     */
+    update(currentTime, deltaTime) {
+      this.metrics.frameTime = deltaTime;
+      this.metrics.frameTimeHistory[this.metrics.frameTimeIndex] = deltaTime;
+      this.metrics.frameTimeIndex = (this.metrics.frameTimeIndex + 1) % 60;
+      if (this.metrics.frameTimeCount < 60) {
+        this.metrics.frameTimeCount++;
+      }
+      if (currentTime - this.metrics.lastFpsUpdate > 500) {
+        let sum = 0;
+        for (let i = 0; i < this.metrics.frameTimeCount; i++) {
+          sum += this.metrics.frameTimeHistory[i];
+        }
+        const avgFrameTime = sum / this.metrics.frameTimeCount;
+        this.metrics.fps = Math.round(1e3 / avgFrameTime);
+        this.metrics.lastFpsUpdate = currentTime;
+        if (currentTime - this.lastQualityAdjustment > this.qualitySettings.adjustInterval) {
+          this.adjustQuality();
+          this.lastQualityAdjustment = currentTime;
+        }
+      }
+    }
+    /**
+     * Adjust quality based on current FPS
+     * @private
+     */
+    adjustQuality() {
+      const fps = this.metrics.fps;
+      const target = this.qualitySettings.targetFPS;
+      const oldQuality = this.qualitySettings.current;
+      if (fps < target - 5) {
+        this._highFpsCount = 0;
+        this._lowFpsCount++;
+        if (this._lowFpsCount >= 2) {
+          this.qualitySettings.current = Math.max(
+            this.qualitySettings.min,
+            this.qualitySettings.current - 0.1
+          );
+        }
+      } else if (fps > target + 15 && this.qualitySettings.current < this.qualitySettings.max) {
+        this._lowFpsCount = 0;
+        this._highFpsCount++;
+        if (this._highFpsCount >= 3) {
+          this.qualitySettings.current = Math.min(
+            this.qualitySettings.max,
+            this.qualitySettings.current + 0.03
+          );
+        }
+      } else {
+        this._lowFpsCount = 0;
+        this._highFpsCount = 0;
+      }
+      if (oldQuality !== this.qualitySettings.current) {
+        this.notifyQualityChange(this.qualitySettings.current);
+      }
+    }
+    /**
+     * Register listener for quality changes
+     * @param {Function} callback - Callback function receiving new quality value
+     */
+    onQualityChange(callback) {
+      this.qualityChangeListeners.push(callback);
+    }
+    /**
+     * Notify all listeners about quality change
+     * @private
+     * @param {number} newQuality - New quality value
+     */
+    notifyQualityChange(newQuality) {
+      this.qualityChangeListeners.forEach((listener) => {
+        try {
+          listener(newQuality);
+        } catch (error) {
+          console.error("Error in quality change listener:", error);
+        }
+      });
+    }
+    /**
+     * Get current quality multiplier
+     * @returns {number} Quality value (0.3 to 1.0)
+     */
+    getQuality() {
+      return this.qualitySettings.current;
+    }
+    /**
+     * Get current FPS
+     * @returns {number} Frames per second
+     */
+    getFPS() {
+      return this.metrics.fps;
+    }
+  };
+
+  // assets/canvas/utils/PerformanceProfiler.js
+  var PerformanceProfiler = class {
+    constructor(options = {}) {
+      this.enabled = options.enabled !== false;
+      this.logInterval = options.logInterval || 2e3;
+      this.lastLogTime = 0;
+      this.currentFrame = {};
+      this.stats = {
+        frameCount: 0,
+        totalFrameTime: 0,
+        foodUpdate: { total: 0, count: 0, max: 0 },
+        layers: /* @__PURE__ */ new Map(),
+        // name -> { total, count, max }
+        performanceMonitor: { total: 0, count: 0, max: 0 },
+        other: { total: 0, count: 0, max: 0 }
+      };
+      this.markers = [];
+    }
+    /**
+     * Začít měřit frame
+     */
+    startFrame() {
+      if (!this.enabled) return;
+      this.currentFrame.start = performance.now();
+      this.markers = [];
+    }
+    /**
+     * Začít měřit section
+     * @param {string} name - Název sekce
+     */
+    startSection(name) {
+      if (!this.enabled) return;
+      this.markers.push({
+        name,
+        start: performance.now(),
+        type: "start"
+      });
+    }
+    /**
+     * Ukončit měření section
+     * @param {string} name - Název sekce
+     */
+    endSection(name) {
+      if (!this.enabled) return;
+      const end = performance.now();
+      for (let i = this.markers.length - 1; i >= 0; i--) {
+        if (this.markers[i].name === name && this.markers[i].type === "start") {
+          const duration = end - this.markers[i].start;
+          this.markers[i].duration = duration;
+          this.markers[i].type = "complete";
+          this._updateStats(name, duration);
+          break;
+        }
+      }
+    }
+    /**
+     * Ukončit frame a spočítat celkový čas
+     */
+    endFrame(currentTime) {
+      if (!this.enabled) return;
+      const frameTime = performance.now() - this.currentFrame.start;
+      this.stats.frameCount++;
+      this.stats.totalFrameTime += frameTime;
+      if (currentTime - this.lastLogTime > this.logInterval) {
+        this.logStats();
+        this.lastLogTime = currentTime;
+      }
+    }
+    /**
+     * Update statistiky pro danou sekci
+     * @private
+     */
+    _updateStats(name, duration) {
+      let stat;
+      if (name === "foodUpdate") {
+        stat = this.stats.foodUpdate;
+      } else if (name === "performanceMonitor") {
+        stat = this.stats.performanceMonitor;
+      } else if (name.startsWith("layer:")) {
+        const layerName = name.substring(6);
+        if (!this.stats.layers.has(layerName)) {
+          this.stats.layers.set(layerName, { total: 0, count: 0, max: 0 });
+        }
+        stat = this.stats.layers.get(layerName);
+      } else {
+        stat = this.stats.other;
+      }
+      stat.total += duration;
+      stat.count++;
+      if (duration > stat.max) {
+        stat.max = duration;
+      }
+    }
+    /**
+     * Logovat statistiky do konzole
+     */
+    logStats() {
+      if (this.stats.frameCount === 0) return;
+      const avgFrameTime = this.stats.totalFrameTime / this.stats.frameCount;
+      const fps = 1e3 / avgFrameTime;
+      console.group(`\u{1F50D} Performance Profile (${this.stats.frameCount} frames)`);
+      console.log(`\u{1F4CA} Average Frame Time: ${avgFrameTime.toFixed(2)}ms (${fps.toFixed(1)} FPS)`);
+      if (this.stats.foodUpdate.count > 0) {
+        const avg = this.stats.foodUpdate.total / this.stats.foodUpdate.count;
+        const pct = (avg / avgFrameTime * 100).toFixed(1);
+        console.log(`\u{1F354} Food Update: ${avg.toFixed(2)}ms avg, ${this.stats.foodUpdate.max.toFixed(2)}ms max (${pct}%)`);
+      }
+      if (this.stats.layers.size > 0) {
+        console.log("\u{1F4E6} Layers:");
+        const sortedLayers = Array.from(this.stats.layers.entries()).sort((a, b) => b[1].total / b[1].count - a[1].total / a[1].count);
+        sortedLayers.forEach(([name, stat]) => {
+          const avg = stat.total / stat.count;
+          const pct = (avg / avgFrameTime * 100).toFixed(1);
+          console.log(`  - ${name}: ${avg.toFixed(2)}ms avg, ${stat.max.toFixed(2)}ms max (${pct}%)`);
+        });
+      }
+      if (this.stats.performanceMonitor.count > 0) {
+        const avg = this.stats.performanceMonitor.total / this.stats.performanceMonitor.count;
+        const pct = (avg / avgFrameTime * 100).toFixed(1);
+        console.log(`\u{1F4C8} Perf Monitor: ${avg.toFixed(2)}ms avg, ${this.stats.performanceMonitor.max.toFixed(2)}ms max (${pct}%)`);
+      }
+      if (this.stats.other.count > 0) {
+        const avg = this.stats.other.total / this.stats.other.count;
+        const pct = (avg / avgFrameTime * 100).toFixed(1);
+        console.log(`\u2699\uFE0F Other: ${avg.toFixed(2)}ms avg, ${this.stats.other.max.toFixed(2)}ms max (${pct}%)`);
+      }
+      console.groupEnd();
+      this.resetStats();
+    }
+    /**
+     * Reset statistiky
+     */
+    resetStats() {
+      this.stats.frameCount = 0;
+      this.stats.totalFrameTime = 0;
+      this.stats.foodUpdate = { total: 0, count: 0, max: 0 };
+      this.stats.layers.clear();
+      this.stats.performanceMonitor = { total: 0, count: 0, max: 0 };
+      this.stats.other = { total: 0, count: 0, max: 0 };
+    }
+    /**
+     * Enable/disable profiling
+     */
+    setEnabled(enabled) {
+      this.enabled = enabled;
+      if (!enabled) {
+        this.resetStats();
+      }
+    }
+    /**
+     * Get sections data in format compatible with MasterRenderer
+     * @returns {Object} Sections with avg/max timing
+     */
+    get sections() {
+      const result = {};
+      if (this.stats.foodUpdate.count > 0) {
+        result.foodUpdate = {
+          avg: this.stats.foodUpdate.total / this.stats.foodUpdate.count,
+          max: this.stats.foodUpdate.max
+        };
+      }
+      this.stats.layers.forEach((stat, name) => {
+        result[`layer:${name}`] = {
+          avg: stat.total / stat.count,
+          max: stat.max
+        };
+      });
+      if (this.stats.performanceMonitor.count > 0) {
+        result.performanceMonitor = {
+          avg: this.stats.performanceMonitor.total / this.stats.performanceMonitor.count,
+          max: this.stats.performanceMonitor.max
+        };
+      }
+      return result;
+    }
+  };
+
+  // assets/canvas/layers/FoodLayer.js
+  var FoodLayer = class _FoodLayer {
+    // Single source of truth for food particle configuration
+    static DEFAULT_CONFIG = {
+      count: 3,
+      size: 5,
+      fallSpeed: 0.08,
+      spread: 30,
+      shrinkRate: 0.05,
+      // pixels per second (5px takes ~100 seconds to vanish)
+      settledLifetime: 0
+      // ms; 0 keeps legacy bottom dwell behavior
+    };
+    constructor(mathUtils, configRef = {}) {
+      this.mathUtils = mathUtils;
+      this._particles = [];
+      this._particlePool = [];
+      this.config = {
+        ..._FoodLayer.DEFAULT_CONFIG,
+        ...configRef
+        // Override with provided config
+      };
+      this.colorLUT = this._generateColorLUT();
+      this.renderableParticles = [];
+      this.sparkleParticles = [];
+      this.renderStrokes = true;
+      this.renderSparkles = true;
+      this.useSimpleGlimmer = false;
+      this.MAX_PARTICLES = 100;
+    }
+    /**
+     * Generate color lookup tables to eliminate per-frame rgba() string creation
+     * @private
+     * @returns {Object} Color lookup tables
+     */
+    _generateColorLUT() {
+      const lut = {
+        fill: [],
+        // Fill colors by glimmer intensity
+        stroke: [],
+        // Stroke colors by glimmer intensity
+        sparkle: []
+        // Sparkle colors by opacity
+      };
+      for (let i = 0; i < 256; i++) {
+        const glimmer = i / 255;
+        const hueVariation = Math.floor(i / 85) % 3;
+        let r = 255, g, b = 0;
+        if (hueVariation === 0) {
+          g = Math.floor(100 + glimmer * 155);
+        } else if (hueVariation === 1) {
+          g = Math.floor(140 + glimmer * 115);
+        } else {
+          g = Math.floor(180 + glimmer * 75);
+        }
+        lut.fill[i] = `rgba(${r},${g},${b},1)`;
+        lut.stroke[i] = `rgba(255,230,100,${glimmer})`;
+      }
+      for (let i = 0; i < 256; i++) {
+        lut.sparkle[i] = `rgba(255,255,255,${i / 255})`;
+      }
+      return lut;
+    }
+    /**
+     * Get particle from pool or create new one
+     * @private
+     * @returns {Object} Particle object
+     */
+    getFromPool() {
+      return this._particlePool.pop() || {
+        x: 0,
+        y: 0,
+        vx: 0,
+        vy: 0,
+        size: 0,
+        initialSize: 0,
+        opacity: 1,
+        eaten: false,
+        age: 0,
+        lifetime: 0,
+        bottomAge: 0,
+        glimmerPhase: 0,
+        isTargeted: false,
+        glimmer: 0.5,
+        currentSize: 0
+      };
+    }
+    /**
+     * Return particle to pool
+     * @private
+     * @param {Object} particle - Particle to return
+     */
+    returnToPool(particle) {
+      this._particlePool.push(particle);
+    }
+    /**
+     * Spawn food particles at position
+     * @param {number} x - X coordinate
+     * @param {number} y - Y coordinate
+     * @param {number} qualityMultiplier - Quality setting (0.3-1.0) - NOT used for count anymore
+     */
+    spawn(x, y, qualityMultiplier = 1) {
+      if (this._particles.length >= this.MAX_PARTICLES) {
+        return;
+      }
+      const particleCount = this.config.count;
+      const actualCount = Math.min(particleCount, this.MAX_PARTICLES - this._particles.length);
+      const baseSize = this.config.size;
+      const fallSpeed = this.config.fallSpeed;
+      const spread = this.config.spread;
+      for (let i = 0; i < actualCount; i++) {
+        const particle = this.getFromPool();
+        particle.x = x + (Math.random() - 0.5) * spread;
+        particle.y = y + (Math.random() - 0.5) * spread;
+        particle.vx = (Math.random() - 0.5) * 0.3;
+        particle.vy = Math.random() * fallSpeed * 1.5 + fallSpeed;
+        particle.size = baseSize * 0.7 + Math.random() * baseSize * 0.6;
+        particle.initialSize = particle.size;
+        particle.lifetime = particle.size / this.config.shrinkRate * 1e3;
+        particle.currentSize = particle.initialSize;
+        particle.opacity = 1;
+        particle.eaten = false;
+        particle.age = 0;
+        particle.bottomAge = 0;
+        particle.glimmerPhase = Math.random() * Math.PI * 2;
+        particle.isTargeted = false;
+        particle.glimmer = 0.5;
+        this._particles.push(particle);
+      }
+    }
+    /**
+     * Reset all targeted flags
+     */
+    resetTargetedFlags() {
+      for (let i = 0, len = this._particles.length; i < len; i++) {
+        this._particles[i].isTargeted = false;
+      }
+    }
+    /**
+     * Update and render food particles with batched rendering
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     * @param {number} deltaTime - Time since last frame
+     * @param {number} width - Canvas width
+     * @param {number} height - Canvas height
+     * @param {number} qualityMultiplier - Quality setting (0.3-1.0)
+     */
+    update(ctx, deltaTime, width, height, qualityMultiplier = 1) {
+      const len = this._particles.length;
+      if (len === 0) return;
+      this._updateLODFlags(qualityMultiplier);
+      const dt = Math.min(deltaTime, 50);
+      this.renderableParticles.length = 0;
+      this.sparkleParticles.length = 0;
+      let writeIndex = 0;
+      for (let readIndex = 0; readIndex < this._particles.length; readIndex++) {
+        const food = this._particles[readIndex];
+        if (food.eaten) {
+          this.returnToPool(food);
+          continue;
+        }
+        food.x += food.vx * (dt / 16.67);
+        food.y += food.vy * (dt / 16.67);
+        food.age += dt;
+        const normalizedLife = Math.min(1, food.age / food.lifetime);
+        food.currentSize = food.initialSize * (1 - normalizedLife);
+        if (normalizedLife >= 1 || food.currentSize < 0.1) {
+          this.returnToPool(food);
+          continue;
+        }
+        const sizeRatio = food.currentSize / food.initialSize;
+        food.opacity = sizeRatio < 0.2 ? sizeRatio * 5 : 1;
+        if (food.y >= height - 20) {
+          food.y = height - 20;
+          food.vy = 0;
+          food.vx *= 0.95;
+          if (this.config.settledLifetime > 0) {
+            food.bottomAge = (food.bottomAge || 0) + dt;
+            if (food.bottomAge >= this.config.settledLifetime) {
+              this.returnToPool(food);
+              continue;
+            }
+            food.opacity *= 1 - food.bottomAge / this.config.settledLifetime;
+          }
+        } else {
+          food.bottomAge = 0;
+        }
+        if (food.x >= -50 && food.x <= width + 50 && food.y >= -50) {
+          food.glimmerPhase += dt * 5e-3;
+          const glimmerIndex = Math.floor(food.glimmerPhase % (Math.PI * 2) / (Math.PI * 2) * 360) | 0;
+          food.glimmer = this.mathUtils.sin(glimmerIndex) * 0.5 + 0.5;
+          this.renderableParticles.push(food);
+          if (this.renderSparkles && food.glimmer > 0.7) {
+            this.sparkleParticles.push(food);
+          }
+        }
+        this._particles[writeIndex++] = food;
+      }
+      this._particles.length = writeIndex;
+      this._renderBatched(ctx);
+    }
+    /**
+     * Update LOD flags based on quality multiplier
+     * @private
+     * @param {number} quality - Quality multiplier (0.3-1.0)
+     */
+    _updateLODFlags(quality) {
+      if (quality >= 0.8) {
+        this.renderStrokes = true;
+        this.renderSparkles = true;
+        this.useSimpleGlimmer = false;
+      } else if (quality >= 0.5) {
+        this.renderStrokes = true;
+        this.renderSparkles = false;
+        this.useSimpleGlimmer = false;
+      } else {
+        this.renderStrokes = false;
+        this.renderSparkles = false;
+        this.useSimpleGlimmer = true;
+      }
+    }
+    /**
+     * Render particles (optimized for small counts < 50)
+     * @private
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     */
+    _renderBatched(ctx) {
+      const count = this.renderableParticles.length;
+      if (count === 0) return;
+      for (let i = 0; i < count; i++) {
+        const food = this.renderableParticles[i];
+        const glimmerIdx = Math.floor(food.glimmer * 255) | 0;
+        const size = food.currentSize;
+        if (food.opacity >= 0.99) {
+          ctx.fillStyle = this.colorLUT.fill[glimmerIdx];
+        } else {
+          const g = 100 + Math.floor(food.glimmer * 155);
+          ctx.fillStyle = `rgba(255,${g},0,${food.opacity})`;
+        }
+        ctx.beginPath();
+        this._appendDiamond(ctx, food.x, food.y, size);
+        ctx.fill();
+      }
+      if (this.renderStrokes && count > 0) {
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = this.colorLUT.stroke[180];
+        ctx.beginPath();
+        for (let i = 0; i < count; i++) {
+          const food = this.renderableParticles[i];
+          const size = food.currentSize;
+          this._appendDiamond(ctx, food.x, food.y, size);
+        }
+        ctx.stroke();
+      }
+      if (this.renderSparkles && this.sparkleParticles.length > 0) {
+        for (let i = 0; i < this.sparkleParticles.length; i++) {
+          const food = this.sparkleParticles[i];
+          const sparkleOpacity = (food.glimmer - 0.7) * food.opacity;
+          const opacityIdx = Math.floor(Math.max(0, Math.min(1, sparkleOpacity)) * 255) | 0;
+          ctx.fillStyle = this.colorLUT.sparkle[opacityIdx];
+          ctx.fillRect(food.x - 1, food.y - 1, 2, 2);
+        }
+      }
+    }
+    /**
+     * Append diamond shape to current path (for batch rendering)
+     * @private
+     * @param {CanvasRenderingContext2D} ctx - Canvas context
+     * @param {number} x - Center X
+     * @param {number} y - Center Y
+     * @param {number} size - Diamond size
+     */
+    _appendDiamond(ctx, x, y, size) {
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x + size * 0.7, y);
+      ctx.lineTo(x, y + size);
+      ctx.lineTo(x - size * 0.7, y);
+      ctx.closePath();
+    }
+    /**
+     * Get all particles for AI layer access
+     * Layers may read positions and set eaten/isTargeted flags
+     * @returns {Array} Array of food particles
+     */
+    getParticles() {
+      return this._particles;
+    }
+    /**
+     * Get number of active particles
+     * @returns {number} Particle count
+     */
+    getCount() {
+      return this._particles.length;
+    }
+    /**
+     * Update configuration at runtime (e.g., from ice-switcher UI)
+     * @param {Object} newConfig - Partial config to merge with current
+     */
+    updateConfig(newConfig) {
+      Object.assign(this.config, newConfig);
+    }
+    /**
+     * Clear all particles
+     */
+    clear() {
+      this._particles.forEach((p) => this.returnToPool(p));
+      this._particles.length = 0;
+    }
+    /**
+     * Cleanup resources
+     */
+    destroy() {
+      this.clear();
+      this._particlePool = [];
+      console.log("FoodLayer destroyed");
+    }
+  };
+
+  // assets/canvas/curious-fish/scenarios/MatingScenario.js
+  function initiateMatingDance(fish, partner, currentTime = performance.now()) {
+    partner.isDancing = true;
+    if (partner.velocityX !== void 0) partner.velocityX = 0;
+    if (partner.velocityY !== void 0) partner.velocityY = 0;
+    return {
+      phase: 0,
+      // 0=approach 1=choreography 2=kiss 3=complete
+      startTime: currentTime,
+      kissStartTime: null,
+      bigHeart: null,
+      progress: 0,
+      danceStep: 0,
+      danceSteps: null,
+      // built when phase 0 ends
+      stepStartTime: null,
+      _approachMax: null,
+      _stepMidX: 0,
+      _stepMidY: 0
+    };
+  }
+  function _buildDanceSteps() {
+    return [
+      { type: "kiss_peck", duration: 2200 },
+      // nose-to-nose quick pecks — hearts burst on contact
+      { type: "spin_flip", duration: 2600 },
+      // overlapping barrel-rolls
+      { type: "spiral_in", duration: 1600 }
+      // spiral inward until collision
+    ];
+  }
+  function _stepDanceChoreography(danceState, fish, partner, deltaTime, currentTime, spawnHeart) {
+    const steps = danceState.danceSteps;
+    if (!steps || danceState.danceStep >= steps.length) return true;
+    const step = steps[danceState.danceStep];
+    if (!danceState.stepStartTime) {
+      danceState.stepStartTime = currentTime;
+      danceState._stepMidX = (fish.x + partner.x) / 2;
+      danceState._stepMidY = (fish.y + (partner.baseY !== void 0 ? partner.baseY : partner.y)) / 2;
+      danceState._baseAngle = Math.atan2(
+        fish.y - danceState._stepMidY,
+        fish.x - danceState._stepMidX
+      );
+      danceState._blendFromFishX = fish.x;
+      danceState._blendFromFishY = fish.y;
+      danceState._blendFromPartnerX = partner.x;
+      danceState._blendFromPartnerY = partner.baseY !== void 0 ? partner.baseY : partner.y;
+    }
+    const elapsed = currentTime - danceState.stepStartTime;
+    const tRaw = Math.min(elapsed / step.duration, 1);
+    const midX = danceState._stepMidX;
+    const midY = danceState._stepMidY;
+    const baseR = Math.max(28, (fish.currentSize + partner.size) * 0.38);
+    const BLEND_DUR = 0.18;
+    const bRaw = Math.min(tRaw / BLEND_DUR, 1);
+    const blendFactor = step.type === "kiss_peck" ? 1 : bRaw * bRaw * (3 - 2 * bRaw);
+    if (Math.random() < 0.04) spawnHeart();
+    let tFishX, tFishY, tPartnerX, tPartnerY;
+    if (step.type === "kiss_peck") {
+      const r = baseR * 0.85;
+      const peckProgress = tRaw * 3 % 1;
+      const peckLean = Math.sin(peckProgress * Math.PI) * 14;
+      tFishX = midX - r + peckLean;
+      tFishY = midY;
+      tPartnerX = midX + r - peckLean;
+      tPartnerY = midY;
+      fish.velocityX = 0;
+      fish.velocityY = 0;
+      fish.rotation = 0;
+      fish.targetRotation = 0;
+      fish.flipScale = 1;
+      fish.targetFlipScale = 1;
+      delete partner.flipX;
+      partner.direction = -1;
+      if (peckLean > 11 && Math.random() < 0.22) spawnHeart();
+      if (Math.random() < 0.05) spawnHeart();
+    } else if (step.type === "spin_flip") {
+      const N = 3;
+      const flipAngle = tRaw * N * Math.PI * 2;
+      const yBounce = Math.sin(flipAngle) * (fish.currentSize * 0.28);
+      tFishX = midX;
+      tFishY = midY + yBounce;
+      tPartnerX = midX;
+      tPartnerY = midY + yBounce;
+      fish.velocityX = 0;
+      fish.velocityY = 0;
+      fish.rotation = 0;
+      fish.targetRotation = 0;
+      fish.flipScale = Math.cos(flipAngle);
+      fish.targetFlipScale = fish.flipScale;
+      partner.flipX = Math.cos(flipAngle);
+      partner.direction = partner.flipX >= 0 ? 1 : -1;
+      if (Math.abs(Math.cos(flipAngle)) < 0.12 && Math.random() < 0.45) spawnHeart();
+    } else if (step.type === "spiral_in") {
+      const ease = tRaw * tRaw;
+      const spiralR = baseR * (1 - ease);
+      const angle = danceState._baseAngle + tRaw * Math.PI * 0.5;
+      tFishX = midX + Math.cos(angle) * spiralR;
+      tFishY = midY + Math.sin(angle) * spiralR;
+      tPartnerX = midX + Math.cos(angle + Math.PI) * spiralR;
+      tPartnerY = midY + Math.sin(angle + Math.PI) * spiralR;
+      fish.velocityX = 0;
+      fish.velocityY = 0;
+      fish.rotation = 0;
+      fish.targetRotation = 0;
+      const goRight = -Math.sin(angle) >= 0;
+      fish.flipScale = goRight ? 1 : -1;
+      fish.targetFlipScale = fish.flipScale;
+      partner.direction = goRight ? -1 : 1;
+      partner.flipX = void 0;
+      if (Math.random() < 0.04 + ease * 0.18) spawnHeart();
+    }
+    if (tFishX !== void 0) {
+      const lp = (a, b, f) => a + (b - a) * f;
+      fish.x = lp(danceState._blendFromFishX, tFishX, blendFactor);
+      fish.y = lp(danceState._blendFromFishY, tFishY, blendFactor);
+      partner.x = lp(danceState._blendFromPartnerX, tPartnerX, blendFactor);
+      const pY = lp(danceState._blendFromPartnerY, tPartnerY, blendFactor);
+      if (partner.baseY !== void 0) partner.baseY = pY;
+      else partner.y = pY;
+    }
+    if (tRaw >= 1) {
+      danceState.danceStep++;
+      danceState.stepStartTime = null;
+      return danceState.danceStep >= steps.length;
+    }
+    return false;
+  }
+  function updateMatingDance(danceState, fish, partner, deltaTime, width, height, updateRotationAndAnimation2, spawnHeart, currentTime) {
+    if (!partner) return { ...danceState, completed: true };
+    if (partner.isDying) {
+      if (partner.isDancing) {
+        partner.isDancing = false;
+        delete partner.flipX;
+      }
+      return { ...danceState, completed: true };
+    }
+    const partnerY = partner.baseY !== void 0 ? partner.baseY : partner.y;
+    if (danceState.phase === 0) {
+      const baseR = Math.max(28, (fish.currentSize + partner.size) * 0.38);
+      const targetDistance = baseR * 1.7;
+      const dx = partner.x - fish.x;
+      const dy = partnerY - fish.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      danceState._approachMax = danceState._approachMax || Math.max(dist, 300);
+      danceState.progress = Math.min(0.22, (1 - dist / danceState._approachMax) * 0.22);
+      if (dist > targetDistance) {
+        const speed = 2.5;
+        const nx = dx / dist;
+        const ny = dy / dist;
+        fish.velocityX = nx * speed;
+        fish.velocityY = ny * speed;
+        fish.x += fish.velocityX;
+        fish.y += fish.velocityY;
+        partner.x -= nx * speed * 1.3;
+        if (partner.baseY !== void 0) partner.baseY -= ny * speed * 1.3;
+        else partner.y -= ny * speed * 1.3;
+        partner.age = (partner.age || 0) + deltaTime;
+        const angleToPartner = Math.atan2(dy, dx);
+        fish.targetFlipScale = Math.abs(angleToPartner) > Math.PI / 2 ? -1 : 1;
+        fish.targetRotation = fish.targetFlipScale === 1 ? angleToPartner : Math.PI - angleToPartner;
+        const angleToUs = Math.atan2(-dy, -dx);
+        partner.direction = angleToUs > -Math.PI / 2 && angleToUs < Math.PI / 2 ? 1 : -1;
+        updateRotationAndAnimation2(deltaTime);
+        if (Math.random() < 0.02) spawnHeart();
+      } else {
+        fish.velocityX = 0;
+        fish.velocityY = 0;
+        fish.targetRotation = 0;
+        fish.rotation = 0;
+        for (let i = 0; i < 6; i++) spawnHeart();
+        danceState.phase = 1;
+        danceState.danceStep = 0;
+        danceState.danceSteps = _buildDanceSteps();
+        danceState.stepStartTime = null;
+        danceState.progress = 0.22;
+      }
+    } else if (danceState.phase === 1) {
+      const totalSteps = danceState.danceSteps ? danceState.danceSteps.length : 1;
+      const done = _stepDanceChoreography(danceState, fish, partner, deltaTime, currentTime, spawnHeart);
+      if (done) {
+        delete partner.flipX;
+        danceState.phase = 2;
+        danceState.kissStartTime = currentTime;
+        danceState.bigHeart = null;
+        danceState.progress = 0.7;
+      } else {
+        const step = danceState.danceStep;
+        const stepDur = danceState.danceSteps[step].duration;
+        const stepT = danceState.stepStartTime ? Math.min((currentTime - danceState.stepStartTime) / stepDur, 1) : 0;
+        danceState.progress = 0.22 + (step + stepT) / totalSteps * 0.48;
+      }
+    } else if (danceState.phase === 2) {
+      const kissTime = currentTime - danceState.kissStartTime;
+      const kissDuration = 2e3;
+      danceState.progress = 0.7 + Math.min(kissTime / kissDuration, 1) * 0.3;
+      if (kissTime < kissDuration) {
+        const midX = (fish.x + partner.x) / 2;
+        const midY = (fish.y + (partner.baseY !== void 0 ? partner.baseY : partner.y)) / 2;
+        if (!danceState.bigHeart) {
+          danceState.bigHeart = {
+            x: midX,
+            y: midY,
+            size: 0,
+            targetSize: Math.max(fish.currentSize, partner.size) * 1.5,
+            opacity: 0
+          };
+        }
+        if (kissTime < 500) {
+          const p = kissTime / 500;
+          danceState.bigHeart.size = danceState.bigHeart.targetSize * p;
+          danceState.bigHeart.opacity = p;
+        } else if (kissTime < 1500) {
+          danceState.bigHeart.size = danceState.bigHeart.targetSize;
+          danceState.bigHeart.opacity = 1;
+          danceState.bigHeart.x = midX;
+          danceState.bigHeart.y = midY;
+        } else {
+          danceState.bigHeart.opacity = 1 - (kissTime - 1500) / 500;
+        }
+        if (Math.random() < 0.06) spawnHeart();
+      } else {
+        danceState.phase = 3;
+        danceState.progress = 1;
+      }
+    } else if (danceState.phase === 3) {
+      danceState.progress = 1;
+      danceState.completed = true;
+    }
+    return danceState;
+  }
+  function completeMatingDance(fish, partner, width, height, fishLayer, spawnBabyFish2) {
+    partner.isDancing = false;
+    const spawnX = (fish.x + partner.x) / 2;
+    const spawnY = (fish.y + (partner.baseY !== void 0 ? partner.baseY : partner.y)) / 2;
+    const soloSchoolId = `solo_${Date.now()}_${Math.floor(Math.random() * 1e5)}`;
+    partner.schoolId = soloSchoolId;
+    partner.isIndependent = true;
+    partner.isBeingAttacked = false;
+    partner.passive = true;
+    partner.bornAt = performance.now();
+    partner.speed = Math.max(0.4, (partner.speed || 0.6) * 0.8);
+    const babySchoolId = `family_${Date.now()}_${Math.floor(Math.random() * 1e5)}`;
+    const babyDirection = partner.direction;
+    spawnBabyFish2(width, height, spawnX, spawnY, { promoteNewCurious: false, schoolId: babySchoolId, direction: babyDirection });
+    fish.velocityX = 0;
+    fish.velocityY = 0;
+    return {
+      completed: true,
+      hasReproduced: true
+    };
+  }
+  function spawnBabyFish(width, height, spawnX, spawnY, fishLayer, options = {}, config) {
+    const babyCount = 2 + Math.floor(Math.random() * 3);
+    if (!fishLayer) return 0;
+    const curiousFishImage = fishLayer.fishImages && fishLayer.fishImages[3];
+    const promoteNewCurious = !!options.promoteNewCurious;
+    const providedSchoolId = options.schoolId;
+    const providedDirection = options.direction;
+    for (let i = 0; i < babyCount; i++) {
+      const burstAngle = Math.random() * Math.PI * 2;
+      const burstSpeed = 2.5 + Math.random() * 2;
+      const baby = {
+        x: spawnX,
+        baseY: spawnY,
+        y: 0,
+        direction: typeof providedDirection !== "undefined" ? providedDirection : Math.random() > 0.5 ? 1 : -1,
+        speed: 0.3 + Math.random() * 0.3,
+        baseSpeed: 0.3 + Math.random() * 0.3,
+        size: 20,
+        burstVX: Math.cos(burstAngle) * burstSpeed,
+        burstVY: Math.sin(burstAngle) * burstSpeed,
+        age: 0,
+        schoolWavePhase: Math.random() * Math.PI * 2,
+        schoolWaveSpeed: 1e-3 + Math.random() * 5e-4,
+        schoolWaveAmplitude: 8 + Math.random() * 4,
+        verticalPeriod: 3e3 + Math.random() * 2e3,
+        verticalAmplitude: 3 + Math.random() * 3,
+        depthTier: 3,
+        image: curiousFishImage,
+        _imageIndex: 3,
+        // fishImages[3] = curiousfish.webp — O(1) lookup in drawShark
+        isDying: false,
+        bornAt: performance.now()
+        // for FishLayer lifespan culling
+      };
+      if (providedSchoolId) baby.schoolId = providedSchoolId;
+      if (fishLayer?.sharks) {
+        fishLayer.sharks.push(baby);
+      }
+    }
+    if (promoteNewCurious && config) {
+      const index = Math.floor(Math.random() * Math.min(babyCount, fishLayer.sharks.length));
+      const promoted = fishLayer.sharks[index];
+      if (promoted) {
+        return {
+          promoteToNewFish: true,
+          x: promoted.x,
+          y: promoted.baseY || promoted.y,
+          size: config.size
+        };
+      }
+    }
+    return babyCount;
+  }
+
+  // assets/canvas/curious-fish/behaviors/AttackBehavior.js
+  function updateSchoolFishAttack(fish, targetSchoolFish, fishLayer, onVictory, onDefeat, spawnHeart, onBlood, maxFishSize, currentTime) {
+    const target = targetSchoolFish;
+    const targetStillExists = fishLayer?.sharks?.includes(target);
+    if (!targetStillExists) {
+      return { attackComplete: true, shouldDie: false };
+    }
+    const targetY = target.baseY !== void 0 ? target.baseY : target.y;
+    const targetX = target.x;
+    const targetMutations = {};
+    if (!target.isBeingAttacked) {
+      targetMutations.isBeingAttacked = true;
+      targetMutations.frozenX = targetX;
+      targetMutations.frozenY = targetY;
+    }
+    const targetIsBigger = target.size > fish.currentSize * 1.2;
+    const targetIsSlightlyBigger = target.size > fish.currentSize && !targetIsBigger;
+    const dx = targetX - fish.x;
+    const dy = targetY - fish.y;
+    const distSq = dx * dx + dy * dy;
+    const collisionDistance = (fish.currentSize + target.size) * 0.5;
+    if (distSq < collisionDistance * collisionDistance) {
+      const fishLoses = targetIsBigger || targetIsSlightlyBigger && Math.random() > 0.4;
+      if (fishLoses) {
+        targetMutations.isBeingAttacked = false;
+        if (onDefeat) onDefeat();
+        return { attackComplete: true, shouldDie: true, targetMutations };
+      }
+      if (onBlood) onBlood((fish.x + targetX) / 2, (fish.y + targetY) / 2, Math.atan2(dy, dx));
+      targetMutations._hitFlashTime = currentTime;
+      if (!target.isDying) {
+        targetMutations.isDying = true;
+        if (fishLayer?.boneLoaded && fishLayer.boneImage) targetMutations.image = fishLayer.boneImage;
+        targetMutations.killedByCurious = true;
+        targetMutations.deathRotation = 0;
+        targetMutations.deathStartTime = currentTime;
+        targetMutations.isBeingAttacked = false;
+        if (onVictory) onVictory(target, Math.min(fish.targetSize * 1.04, maxFishSize));
+        if (spawnHeart) spawnHeart();
+      }
+      return { attackComplete: true, shouldDie: false, targetMutations };
+    }
+    const attackSpeed = 13;
+    const distance = Math.sqrt(distSq);
+    const velocityX = dx / distance * attackSpeed;
+    const velocityY = dy / distance * attackSpeed;
+    const angleToTarget = Math.atan2(dy, dx);
+    let targetFlipScale, targetRotation;
+    if (angleToTarget > Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = Math.PI - angleToTarget;
+    } else if (angleToTarget < -Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = -Math.PI - angleToTarget;
+    } else {
+      targetFlipScale = 1;
+      targetRotation = angleToTarget;
+    }
+    return { attackComplete: false, shouldDie: false, velocityX, velocityY, targetFlipScale, targetRotation, targetMutations };
+  }
+
+  // assets/canvas/curious-fish/behaviors/MovementBehavior.js
+  function updateForcedTarget(fish, forcedTarget) {
+    const dx = forcedTarget.x - fish.x;
+    const dy = forcedTarget.y - fish.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    const tol = typeof forcedTarget.tolerance === "number" ? forcedTarget.tolerance : 6;
+    const speed = typeof forcedTarget.speed === "number" ? forcedTarget.speed : 2;
+    if (dist <= tol) {
+      return {
+        isComplete: true,
+        velocityX: 0,
+        velocityY: 0
+      };
+    }
+    const velocityX = dx / dist * speed;
+    const velocityY = dy / dist * speed;
+    const angle = Math.atan2(dy, dx);
+    let targetFlipScale, targetRotation;
+    if (angle > Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = Math.PI - angle;
+    } else if (angle < -Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = -Math.PI - angle;
+    } else {
+      targetFlipScale = 1;
+      targetRotation = angle;
+    }
+    return {
+      isComplete: false,
+      velocityX,
+      velocityY,
+      targetRotation,
+      targetFlipScale
+    };
+  }
+  function findFoodTarget(fish, foodParticles, width, height, followDistance, fovMultiplier, FISH_SIZE_FACTORS3) {
+    const mouthDistance = fish.currentSize * FISH_SIZE_FACTORS3.MOUTH_DISTANCE;
+    const mouthX = fish.x + Math.cos(fish.rotation) * mouthDistance * fish.flipScale;
+    const mouthY = fish.y + Math.sin(fish.rotation) * mouthDistance;
+    const mouthRadius = fish.currentSize * FISH_SIZE_FACTORS3.MOUTH_RADIUS;
+    const fovOriginDistance = fish.currentSize * FISH_SIZE_FACTORS3.FOV_ORIGIN_DISTANCE;
+    const fovOriginX = fish.x + Math.cos(fish.rotation) * fovOriginDistance * fish.flipScale;
+    const fovOriginY = fish.y + Math.sin(fish.rotation) * fovOriginDistance;
+    const viewportBase = typeof window !== "undefined" && window.innerWidth ? window.innerWidth * 0.2 : 800 * 0.2;
+    const minBySize = fish.currentSize * 1.5;
+    const fovBase = Math.max(viewportBase, minBySize);
+    const fovDistance = fovBase * fovMultiplier;
+    const fovAngle = Math.PI / 2;
+    const fishDirection = fish.flipScale > 0 ? fish.rotation : Math.PI - fish.rotation;
+    const eatenFood = [];
+    const foodUpdates = [];
+    let newTargetedFood = fish.targetedFood;
+    const edgeMargin = fish.currentSize;
+    const topBoundary = Math.max(80, height * 0.1);
+    const inEdgeZone = (food) => food.x < edgeMargin || food.x > width - edgeMargin || food.y < topBoundary || food.y > height - edgeMargin;
+    let shouldFindNewFood = true;
+    if (fish.targetedFood) {
+      const targeted = fish.targetedFood;
+      if (!targeted.eaten) {
+        const tdx = targeted.x - fovOriginX;
+        const tdy = targeted.y - fovOriginY;
+        const tdistSquared = tdx * tdx + tdy * tdy;
+        const centerDx = targeted.x - fish.x;
+        const centerDy = targeted.y - fish.y;
+        const centerDistSquared = centerDx * centerDx + centerDy * centerDy;
+        const minCenterDistanceSquared = (fish.currentSize * 1.2) ** 2;
+        if (centerDistSquared < minCenterDistanceSquared || inEdgeZone(targeted)) {
+          newTargetedFood = null;
+        } else if (tdistSquared <= fovDistance * fovDistance && targeted.y <= height * 0.9) {
+          shouldFindNewFood = false;
+          foodUpdates.push({ food: targeted, updates: { isTargeted: true } });
+        } else {
+          newTargetedFood = null;
+        }
+      } else {
+        newTargetedFood = null;
+      }
+    }
+    for (const food of foodParticles) {
+      if (food.eaten) continue;
+      const mouthDx = food.x - mouthX;
+      const mouthDy = food.y - mouthY;
+      const mouthDistSquared = mouthDx * mouthDx + mouthDy * mouthDy;
+      if (mouthDistSquared < mouthRadius * mouthRadius) {
+        foodUpdates.push({ food, updates: { eaten: true } });
+        eatenFood.push(food);
+        if (fish.targetedFood === food) {
+          newTargetedFood = null;
+          shouldFindNewFood = true;
+        }
+      }
+    }
+    if (shouldFindNewFood) {
+      const bottomThreshold = height * 0.9;
+      let nearestFood = null;
+      let nearestDistanceSquared = fovDistance * fovDistance;
+      for (const food of foodParticles) {
+        if (food.eaten || food.y > bottomThreshold || inEdgeZone(food)) continue;
+        const foodDeltaX = food.x - fovOriginX;
+        const foodDeltaY = food.y - fovOriginY;
+        const foodDistanceSquared = foodDeltaX * foodDeltaX + foodDeltaY * foodDeltaY;
+        const centerDx = food.x - fish.x;
+        const centerDy = food.y - fish.y;
+        const centerDistSquared = centerDx * centerDx + centerDy * centerDy;
+        const minCenterDistanceSquared = (fish.currentSize * FISH_SIZE_FACTORS3.MIN_CENTER_DISTANCE) ** 2;
+        if (centerDistSquared < minCenterDistanceSquared || foodDistanceSquared > fovDistance * fovDistance) continue;
+        const angleToFood = Math.atan2(foodDeltaY, foodDeltaX);
+        let angleDiff = angleToFood - fishDirection;
+        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        const isInCone = Math.abs(angleDiff) < fovAngle / 2;
+        if (isInCone && foodDistanceSquared < nearestDistanceSquared) {
+          nearestDistanceSquared = foodDistanceSquared;
+          nearestFood = food;
+        }
+      }
+      if (nearestFood) {
+        newTargetedFood = nearestFood;
+        foodUpdates.push({ food: nearestFood, updates: { isTargeted: true } });
+      }
+    }
+    const foodToChase = newTargetedFood;
+    if (foodToChase && !foodToChase.eaten) {
+      foodUpdates.push({ food: foodToChase, updates: { isTargeted: true } });
+    }
+    return {
+      targetFood: foodToChase,
+      eatenFood,
+      mutations: {
+        targetedFood: newTargetedFood,
+        foodUpdates
+      }
+    };
+  }
+  function calculateMovement(fish, targetX, targetY, mouseX, mouseY, targetIsFood, maxSpeed, maxFishSize, followDistance, deltaTime, FISH_SIZE_FACTORS3) {
+    if (targetX === null || targetY === null) {
+      return {
+        velocityX: fish.velocityX * 0.95,
+        velocityY: fish.velocityY * 0.95,
+        isStaring: false
+      };
+    }
+    const dx = targetX - fish.x;
+    const dy = targetY - fish.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    let angleToMouse = Math.atan2(dy, dx);
+    let targetFlipScale, targetRotation;
+    if (angleToMouse > Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = Math.PI - angleToMouse;
+    } else if (angleToMouse < -Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = -Math.PI - angleToMouse;
+    } else {
+      targetFlipScale = 1;
+      targetRotation = angleToMouse;
+    }
+    const mouthDistance = fish.currentSize * FISH_SIZE_FACTORS3.MOUTH_DISTANCE;
+    const mouthX = fish.x + Math.cos(fish.rotation) * mouthDistance * fish.flipScale;
+    const mouthY = fish.y + Math.sin(fish.rotation) * mouthDistance;
+    const mouthToCursorDx = mouseX - mouthX;
+    const mouthToCursorDy = mouseY - mouthY;
+    const mouthDistance_cursor = Math.sqrt(mouthToCursorDx * mouthToCursorDx + mouthToCursorDy * mouthToCursorDy);
+    const effectiveFollowDistance = Math.min(
+      fish.currentSize * FISH_SIZE_FACTORS3.FOLLOW_DISTANCE * followDistance,
+      150
+    );
+    let isFleeing = fish.isFleeing;
+    let fleeTimer = fish.fleeTimer || 0;
+    let isStaring = false;
+    let velocityX = fish.velocityX;
+    let velocityY = fish.velocityY;
+    if (!targetIsFood && distance < fish.currentSize * FISH_SIZE_FACTORS3.COLLISION_THRESHOLD && !isFleeing) {
+      isFleeing = true;
+      fleeTimer = 0;
+    }
+    if (isFleeing) {
+      fleeTimer += deltaTime;
+      const swimDirection = fish.rotation;
+      const fleeSpeed = maxSpeed * 1.5;
+      velocityX = Math.cos(swimDirection) * fleeSpeed * fish.flipScale;
+      velocityY = Math.sin(swimDirection) * fleeSpeed;
+      let angleAwayFromCursor = Math.atan2(dy, dx) + Math.PI;
+      if (angleAwayFromCursor > Math.PI / 2) {
+        targetFlipScale = -1;
+        targetRotation = Math.PI - angleAwayFromCursor;
+      } else if (angleAwayFromCursor < -Math.PI / 2) {
+        targetFlipScale = -1;
+        targetRotation = -Math.PI - angleAwayFromCursor;
+      } else {
+        targetFlipScale = 1;
+        targetRotation = angleAwayFromCursor;
+      }
+      if (fleeTimer > 600 || distance > effectiveFollowDistance * 1.5) {
+        isFleeing = false;
+      }
+    } else if (targetIsFood) {
+      const sizeRatio = fish.currentSize / maxFishSize;
+      const speedMultiplier = 1.1 - sizeRatio * 0.2;
+      const adjustedSpeed = maxSpeed * speedMultiplier;
+      const targetVelX = dx / distance * adjustedSpeed;
+      const targetVelY = dy / distance * adjustedSpeed;
+      velocityX += (targetVelX - velocityX) * 0.22;
+      velocityY += (targetVelY - velocityY) * 0.22;
+    } else if (mouthDistance_cursor > effectiveFollowDistance) {
+      const maxDistance = 500;
+      const distanceRatio = Math.min(distance / maxDistance, 1);
+      const sizeRatio = fish.currentSize / maxFishSize;
+      const sizeSpeedMultiplier = 1.1 - sizeRatio * 0.2;
+      const dynamicSpeed = maxSpeed * (0.4 + distanceRatio * distanceRatio * 0.6) * sizeSpeedMultiplier;
+      const targetVelX = dx / distance * dynamicSpeed;
+      const targetVelY = dy / distance * dynamicSpeed;
+      velocityX += (targetVelX - velocityX) * 0.22;
+      velocityY += (targetVelY - velocityY) * 0.22;
+    } else {
+      isStaring = true;
+      velocityX *= 0.9;
+      velocityY *= 0.9;
+    }
+    return {
+      velocityX,
+      velocityY,
+      targetRotation,
+      targetFlipScale,
+      isFleeing,
+      isStaring,
+      fleeTimer
+    };
+  }
+  function clampPosition(fish, width, height, size, isSwimmingAway) {
+    if (isSwimmingAway) {
+      return { x: fish.x, y: fish.y };
+    }
+    let x = Math.max(size, Math.min(width - size, fish.x));
+    let y = fish.y;
+    if (y <= height) {
+      y = Math.max(height * 0.1, Math.min(height, y));
+    }
+    return { x, y };
+  }
+  function updateRotationAndAnimation(fish, deltaTime, rotationSpeed, maxFishSize) {
+    let rotationDiff = fish.targetRotation - fish.rotation;
+    while (rotationDiff > Math.PI) rotationDiff -= Math.PI * 2;
+    while (rotationDiff < -Math.PI) rotationDiff += Math.PI * 2;
+    const sizeRatio = fish.currentSize / maxFishSize;
+    const rotationMultiplier = 1.2 - sizeRatio * 0.3;
+    const rotation = fish.rotation + rotationDiff * rotationSpeed * rotationMultiplier;
+    const flipDiff = fish.targetFlipScale - fish.flipScale;
+    const flipScale = fish.flipScale + flipDiff * 0.2;
+    const age = fish.age + deltaTime;
+    const swimPhase = age / 800 % 1;
+    return {
+      rotation,
+      flipScale,
+      age,
+      swimPhase
+    };
+  }
+  function setTargetPoint(fish, x, y, opts = {}, maxSpeed) {
+    const immediate = !!opts.immediate;
+    const hold = !!opts.hold;
+    const dx = x - fish.x;
+    const dy = y - fish.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist === 0) {
+      return null;
+    }
+    const angle = Math.atan2(dy, dx);
+    let targetFlipScale, targetRotation;
+    if (angle > Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = Math.PI - angle;
+    } else if (angle < -Math.PI / 2) {
+      targetFlipScale = -1;
+      targetRotation = -Math.PI - angle;
+    } else {
+      targetFlipScale = 1;
+      targetRotation = angle;
+    }
+    const baseSpeed = typeof opts.speed === "number" ? opts.speed : maxSpeed || 2;
+    if (hold) {
+      const forcedTarget = {
+        x: Math.round(x),
+        y: Math.round(y),
+        speed: baseSpeed,
+        tolerance: typeof opts.tolerance === "number" ? opts.tolerance : 6
+      };
+      const velocityX = dx / dist * baseSpeed;
+      const velocityY = dy / dist * baseSpeed;
+      return {
+        velocityX,
+        velocityY,
+        targetRotation,
+        targetFlipScale,
+        forcedTarget
+      };
+    } else if (immediate) {
+      const velocityX = dx / dist * baseSpeed;
+      const velocityY = dy / dist * baseSpeed;
+      return {
+        velocityX,
+        velocityY,
+        targetRotation,
+        targetFlipScale
+      };
+    } else {
+      const targetVelX = dx / dist * (baseSpeed * 0.6);
+      const targetVelY = dy / dist * (baseSpeed * 0.6);
+      const velocityX = fish.velocityX + (targetVelX - fish.velocityX) * 0.12;
+      const velocityY = fish.velocityY + (targetVelY - fish.velocityY) * 0.12;
+      return {
+        velocityX,
+        velocityY,
+        targetRotation,
+        targetFlipScale
+      };
+    }
+  }
+
+  // assets/canvas/curious-fish/render/CuriousFishRenderer.js
+  var FISH_SIZE_FACTORS = {
+    FOLLOW_DISTANCE: 0.5,
+    MOUTH_DISTANCE: 0.9,
+    MOUTH_RADIUS: 0.3,
+    FOV_ORIGIN_DISTANCE: 0.3,
+    COLLISION_THRESHOLD: 0.5,
+    NEAR_MOUSE_THRESHOLD: 0.8,
+    MIN_CENTER_DISTANCE: 1.2
+  };
+  function drawFish(ctx, fish, fishImage, config, isAttackingSchoolFish, targetSchoolFish, width, height) {
+    if (fish && fish.hidden) return;
+    const currentSpeed = Math.sqrt(fish.velocityX * fish.velocityX + fish.velocityY * fish.velocityY);
+    let verticalBob = 0;
+    let rotationBob = 0;
+    if (config.enableBob) {
+      const maxSpeed = config.maxSpeed;
+      const speedRatio = Math.min(currentSpeed / maxSpeed, 1);
+      const sizeScale = fish.currentSize / 30;
+      const bobFrequency = 8e-4 / Math.sqrt(sizeScale);
+      const fadeThreshold = 0.5;
+      const fadeStart = 0.1;
+      const fadeAmount = speedRatio < fadeStart ? 1 : speedRatio > fadeThreshold ? 0 : 1 - (speedRatio - fadeStart) / (fadeThreshold - fadeStart);
+      verticalBob = fadeAmount * Math.sin(fish.age * bobFrequency) * 6 * sizeScale;
+      rotationBob = fadeAmount * Math.sin(fish.age * bobFrequency * 0.7) * 0.05;
+    }
+    ctx.save();
+    ctx.translate(fish.x, fish.y + verticalBob);
+    ctx.scale(fish.flipScale, 1);
+    ctx.rotate(fish.rotation + rotationBob);
+    ctx.globalAlpha = 1;
+    const size = fish.currentSize;
+    const imgWidth = size * 2;
+    const imgHeight = size * (fishImage.height / fishImage.width) * 2;
+    ctx.drawImage(fishImage, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
+    ctx.restore();
+    if (config.showDebug) {
+      drawFishDebug(ctx, fish, config, isAttackingSchoolFish, targetSchoolFish, width, height);
+    }
+  }
+  function drawFishDebug(ctx, fish, config, isAttackingSchoolFish, targetSchoolFish, width, height) {
+    const mouthDistance = fish.currentSize * 0.9;
+    ctx.save();
+    const mouthX = fish.x + Math.cos(fish.rotation) * mouthDistance * fish.flipScale;
+    const mouthY = fish.y + Math.sin(fish.rotation) * mouthDistance;
+    const mouthRadius = fish.currentSize * 0.3;
+    ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(mouthX, mouthY, mouthRadius, 0, Math.PI * 2);
+    ctx.stroke();
+    const effectiveFollowDistance = Math.min(
+      fish.currentSize * FISH_SIZE_FACTORS.FOLLOW_DISTANCE * config.followDistance,
+      150
+    );
+    ctx.strokeStyle = "rgba(255, 200, 0, 0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(mouthX, mouthY, effectiveFollowDistance, 0, Math.PI * 2);
+    ctx.stroke();
+    const cfSize = fish.currentSize;
+    const avoidRadius = 100 + cfSize;
+    ctx.strokeStyle = "rgba(0, 255, 255, 0.4)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.ellipse(fish.x, fish.y, avoidRadius * 0.87, avoidRadius * 0.4, fish.rotation, 0, Math.PI * 2);
+    ctx.stroke();
+    if (isAttackingSchoolFish && targetSchoolFish) {
+      const collisionDistance = (fish.currentSize + targetSchoolFish.size) * 0.5;
+      ctx.strokeStyle = "rgba(255, 0, 255, 0.6)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(fish.x, fish.y, collisionDistance * 0.87, collisionDistance * 0.4, fish.rotation, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255, 0, 255, 0.3)";
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.moveTo(fish.x, fish.y);
+      ctx.lineTo(targetSchoolFish.x, targetSchoolFish.baseY || targetSchoolFish.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    ctx.strokeStyle = "rgba(255, 128, 0, 0.3)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(fish.x, fish.y, fish.currentSize * 0.5, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "left";
+    ctx.fillText(`${Math.round(fish.currentSize)}px`, fish.x + fish.currentSize, fish.y - fish.currentSize - 10);
+    const fovOriginDistance = fish.currentSize * 0.3;
+    const fovOriginX = fish.x + Math.cos(fish.rotation) * fovOriginDistance * fish.flipScale;
+    const fovOriginY = fish.y + Math.sin(fish.rotation) * fovOriginDistance;
+    const viewportBaseDraw = typeof window !== "undefined" && window.innerWidth ? window.innerWidth * 0.2 : 800 * 0.2;
+    const minBySizeDraw = fish.currentSize * 1.5;
+    const fovBaseDraw = Math.max(viewportBaseDraw, minBySizeDraw);
+    const fovMultiplierDraw = config && config.fovMultiplier !== void 0 ? config.fovMultiplier : 1;
+    const fovDistance = fovBaseDraw * fovMultiplierDraw;
+    const fovAngle = Math.PI / 2;
+    const fishDirection = fish.flipScale > 0 ? fish.rotation : Math.PI - fish.rotation;
+    ctx.strokeStyle = "rgba(0, 255, 0, 0.3)";
+    ctx.fillStyle = "rgba(0, 255, 0, 0.1)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(fovOriginX, fovOriginY);
+    const leftAngle = fishDirection - fovAngle / 2;
+    const leftX = fovOriginX + Math.cos(leftAngle) * fovDistance;
+    const leftY = fovOriginY + Math.sin(leftAngle) * fovDistance;
+    ctx.lineTo(leftX, leftY);
+    ctx.arc(fovOriginX, fovOriginY, fovDistance, leftAngle, fishDirection + fovAngle / 2);
+    ctx.lineTo(fovOriginX, fovOriginY);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+    const bottomThreshold = height * 0.9;
+    ctx.fillStyle = "rgba(255, 0, 0, 0.1)";
+    ctx.fillRect(0, bottomThreshold, width, height - bottomThreshold);
+    ctx.strokeStyle = "rgba(255, 0, 0, 0.5)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(0, bottomThreshold);
+    ctx.lineTo(width, bottomThreshold);
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+    ctx.font = "bold 14px Arial";
+    ctx.textAlign = "right";
+    ctx.fillText("Dead zone (10vh)", width - 10, bottomThreshold - 5);
+  }
+
+  // assets/canvas/utils/PointerTracker.js
+  var subscribers = /* @__PURE__ */ new Set();
+  var listenersAttached = false;
+  function notifySubscribers(x, y, timestamp) {
+    subscribers.forEach(function(subscriber) {
+      subscriber(x, y, timestamp);
+    });
+  }
+  function handleMouseMove(e) {
+    notifySubscribers(e.clientX, e.clientY, performance.now());
+  }
+  function handleTouchMove(e) {
+    if (!e.touches || e.touches.length === 0) return;
+    notifySubscribers(e.touches[0].clientX, e.touches[0].clientY, performance.now());
+  }
+  function attachListeners() {
+    if (listenersAttached || typeof document === "undefined") return;
+    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    document.addEventListener("touchmove", handleTouchMove, { passive: true });
+    listenersAttached = true;
+  }
+  function detachListeners() {
+    if (!listenersAttached || typeof document === "undefined") return;
+    document.removeEventListener("mousemove", handleMouseMove);
+    document.removeEventListener("touchmove", handleTouchMove);
+    listenersAttached = false;
+  }
+  function subscribePointerMove(handler) {
+    if (typeof handler !== "function") return function() {
+    };
+    subscribers.add(handler);
+    attachListeners();
+    return function() {
+      unsubscribePointerMove(handler);
+    };
+  }
+  function unsubscribePointerMove(handler) {
+    subscribers.delete(handler);
+    if (subscribers.size === 0) {
+      detachListeners();
+    }
+  }
+
+  // assets/canvas/layers/CuriousFishLayer.js
+  var FISH_SIZE_FACTORS2 = {
+    // Detection and interaction ranges
+    MOUTH_DISTANCE: 0.9,
+    // Distance from center to mouth (90% of size)
+    MOUTH_RADIUS: 0.3,
+    // Radius of mouth area (30% of size)
+    FOV_ORIGIN_DISTANCE: 0.3,
+    // Field of view origin offset
+    FOLLOW_DISTANCE: 0.5,
+    // Base follow distance multiplier
+    // Attack and collision thresholds
+    COLLISION_THRESHOLD: 0.5,
+    // Distance to consider collision (50% of size)
+    NEAR_MOUSE_THRESHOLD: 0.8,
+    // Distance to consider near mouse cursor
+    // Minimum distance thresholds
+    MIN_CENTER_DISTANCE: 1.2
+    // Minimum distance factor from center to food
+  };
+  var ICON_SPAWN_CONFIG = {
+    default: { distanceFactor: 0.3, sizeFactor: 0.15, yOffset: -35, maxAge: 1200, velocityRange: 0.15 },
+    heart: { distanceFactor: 0.45, sizeFactor: 0.1, yOffset: -25, maxAge: 800, velocityRange: 0.2 },
+    lightning: { distanceFactor: 0.3, sizeFactor: 0.15, yOffset: -35, maxAge: 1e3, velocityRange: 0.15 },
+    food: { distanceFactor: 0.3, sizeFactor: 0.15, yOffset: -35, maxAge: 1e3, velocityRange: 0.15 },
+    star: { distanceFactor: 0.3, sizeFactor: 0.15, yOffset: -35, maxAge: 1200, velocityRange: 0.15 },
+    bubble: { distanceFactor: 0.3, sizeFactor: 0.15, yOffset: -35, maxAge: 1200, velocityRange: 0.15 },
+    zzz: { distanceFactor: 0.3, sizeFactor: 0.15, yOffset: -35, maxAge: 1200, velocityRange: 0.1 },
+    question: { distanceFactor: 0.3, sizeFactor: 0.12, yOffset: -30, maxAge: 1e3, velocityRange: 0.15 },
+    exclamation: { distanceFactor: 0.3, sizeFactor: 0.14, yOffset: -30, maxAge: 900, velocityRange: 0.2 }
+  };
+  var CuriousFishLayer = class _CuriousFishLayer {
+    // Single source of truth for curious fish configuration
+    static DEFAULT_CONFIG = {
+      speed: 5,
+      maxSpeed: 6,
+      size: 20,
+      maxFishSize: 150,
+      followDistance: 50,
+      rotationSpeed: 0.12,
+      heartSpawnRate: 500,
+      imageSrc: "assets/images/fish/curiousfish.webp",
+      showDebug: false,
+      swimAwaySpeed: 3,
+      enableBob: true,
+      enableIcons: true,
+      enableRipples: true,
+      mobileLiteMode: false,
+      allowHighCostEffects: true
+    };
+    /**
+     * Create a CuriousFishLayer
+     * @param {Object} options - Configuration options
+     * @param {number} [options.speed=5.0] - Fish movement speed
+     * @param {number} [options.size=30] - Initial fish size
+     * @param {number} [options.maxFishSize=150] - Maximum fish size
+     */
+    constructor(options = {}) {
+      this.enabled = false;
+      this.fish = null;
+      this.mouseX = null;
+      this.mouseY = null;
+      this.hearts = [];
+      this._iconPool = [];
+      this._iconSpriteCache = /* @__PURE__ */ new Map();
+      this._qualityMultiplier = 1;
+      this._cachedFontSize = 16;
+      this.isStaring = false;
+      this.heartSpawnTimer = 0;
+      this.manager = null;
+      this.lastMouseMoveTime = performance.now();
+      this.newFish = null;
+      this.targetSchoolFish = null;
+      this.isAttackingSchoolFish = false;
+      this.lastAttackTime = 0;
+      this.attackCooldown = 2e3;
+      this.fishImage = new Image();
+      this.imageLoaded = false;
+      this.gameState = "idle";
+      this.danceState = null;
+      this.dancePartner = null;
+      this.config = {
+        ..._CuriousFishLayer.DEFAULT_CONFIG,
+        ...options
+      };
+      this.fishImage.onload = () => {
+        this.imageLoaded = true;
+        this._fishDepthCache = this._buildDepthCache(this.fishImage);
+      };
+      this.fishImage.onerror = () => {
+        console.error("Failed to load curious fish image:", this.config.imageSrc);
+        this.imageLoaded = false;
+      };
+      this.fishImage.src = this.config.imageSrc;
+      this.allFish = [];
+      this.boneImage = new Image();
+      this.boneLoaded = false;
+      this.boneImage.onload = () => {
+        this.boneLoaded = true;
+      };
+      this.boneImage.onerror = () => {
+        console.warn("Failed to load fishbone image at assets/images/fish/fishbone.webp");
+      };
+      this.boneImage.src = "assets/images/fish/fishbone.webp";
+      this.skeletons = [];
+      this._fishDepthCache = null;
+      this._unsubscribePointerMove = null;
+      this.handlePointerMove = this.handlePointerMove.bind(this);
+    }
+    /**
+     * Apply a quality multiplier — called by CanvasManager.applyQualityToLayers.
+     * Below 0.5 decorative icons (zzz, stars, etc.) are suppressed to reduce GC pressure.
+     * @param {number} quality - 0.3–1.0
+     */
+    setQuality(quality) {
+      this._qualityMultiplier = quality;
+    }
+    init(width, height, canvasManager) {
+      this.width = width;
+      this.height = height;
+      this.manager = canvasManager;
+      this._cachedFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+      this.spawnFish();
+      if (typeof window !== "undefined") {
+        window.curiousFishLayer = this;
+        window.setCuriousTarget = (x, y, opts) => {
+          try {
+            this.setTargetPoint(x, y, opts || {});
+          } catch (e) {
+            console.error(e);
+          }
+        };
+      }
+      this._unsubscribePointerMove = subscribePointerMove(this.handlePointerMove);
+    }
+    handlePointerMove(x, y, timestamp) {
+      this.mouseX = x;
+      this.mouseY = y;
+      this.lastMouseMoveTime = timestamp;
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      this._cachedFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    }
+    render(ctx, currentTime, deltaTime, width, height) {
+      if (!this.enabled || !this.fish) return;
+      if (this.fish.isDying) {
+        if (!this.fish.skeletonSpawned) {
+          this.fish.skeletonSpawned = true;
+          this.skeletons.push({
+            x: this.fish.x,
+            y: this.fish.y,
+            vx: (this.fish.velocityX || 0) / 16,
+            // px/ms
+            vy: (this.fish.velocityY || 0) / 16,
+            flipScale: this.fish.flipScale,
+            size: this.fish.currentSize,
+            startTime: Date.now(),
+            lastUpdate: Date.now()
+          });
+          const fishLayer = this.manager && this.manager.getLayer("fish");
+          if (fishLayer && fishLayer._spawnBloodBurst) {
+            fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null, currentTime);
+          }
+          if (this.config.enableRipples && this.manager && this.manager._ripples) {
+            this.manager._ripples.push({
+              x: this.fish.x,
+              y: this.fish.y,
+              startTime: performance.now(),
+              maxR: 90 + this.fish.currentSize * 0.9,
+              duration: 1400,
+              color: "210,30,30"
+            });
+          }
+        }
+        this.drawSkeletons(ctx, height);
+        return;
+      }
+      if (this.skeletons.length > 0) {
+        this.drawSkeletons(ctx, height);
+      }
+      if (!this.imageLoaded) return;
+      if (this.danceState) {
+        this.updateDance(deltaTime, width, height);
+        this.fish.age += deltaTime;
+        this.fish.swimPhase = this.fish.age / 500 % 1;
+        this.drawFish(ctx);
+        if (this.dancePartner && this.dancePartner._drawOnTop && !this.dancePartner.isDying) {
+          const fishLayer = this.manager && this.manager.getLayer("fish");
+          if (fishLayer) {
+            const p = this.dancePartner;
+            const swOff = Math.sin(p.age * p.schoolWaveSpeed + p.schoolWavePhase) * p.schoolWaveAmplitude;
+            const vPhase = p.age / p.verticalPeriod % 1;
+            const vOff = Math.sin(vPhase * Math.PI * 2) * p.verticalAmplitude;
+            fishLayer.drawShark(ctx, p.x, p.baseY + swOff + vOff, p.size, p.direction, vPhase, p.image, 0, 0, p);
+          }
+        }
+        if (this.config.enableIcons && this.danceState && this.danceState.phase === 2 && this.danceState.bigHeart) {
+          const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
+          ctx.save();
+          ctx.globalAlpha = this.danceState.bigHeart.opacity;
+          ctx.fillStyle = "#ff69b4";
+          ctx.font = `${this.danceState.bigHeart.size}px Arial`;
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          if (useHighCostEffects) {
+            ctx.shadowColor = "#ff69b4";
+            ctx.shadowBlur = 30;
+          }
+          ctx.fillText("\u2764\uFE0F", this.danceState.bigHeart.x, this.danceState.bigHeart.y);
+          ctx.restore();
+        }
+        this.updateHearts(deltaTime);
+        this.drawHearts(ctx);
+        return;
+      }
+      const currentTimestamp = Date.now();
+      let timeSinceMouseMove = currentTimestamp - this.lastMouseMoveTime;
+      if (this._forcedTarget && !this.fish.isDying) {
+        const forcedResult = updateForcedTarget(this.fish, this._forcedTarget);
+        if (forcedResult.isComplete) {
+          delete this._forcedTarget;
+          this.fish.velocityX = 0;
+          this.fish.velocityY = 0;
+        } else {
+          this.fish.velocityX = forcedResult.velocityX;
+          this.fish.velocityY = forcedResult.velocityY;
+          this.fish.targetFlipScale = forcedResult.targetFlipScale;
+          this.fish.targetRotation = forcedResult.targetRotation;
+          this.updateRotationAndAnimation(deltaTime);
+          this.fish.x += this.fish.velocityX;
+          this.fish.y += this.fish.velocityY;
+          this.drawFish(ctx);
+          this.updateHearts(deltaTime);
+          this.drawHearts(ctx);
+          return;
+        }
+      }
+      if (this.isAttackingSchoolFish && this.targetSchoolFish) {
+        const fishLayer = this.manager && this.manager.getLayer("fish");
+        const attackResult = updateSchoolFishAttack(
+          this.fish,
+          this.targetSchoolFish,
+          fishLayer,
+          (target, newTargetSize) => {
+            this.fish.targetSize = newTargetSize;
+          },
+          () => {
+            this.fish.isDying = true;
+          },
+          () => this.spawnHeart(),
+          (bx, by, angle) => {
+            if (fishLayer && fishLayer._spawnBloodBurst) {
+              fishLayer._spawnBloodBurst(bx, by, (this.fish.currentSize + (this.targetSchoolFish?.size || 30)) * 0.5, angle);
+            }
+          },
+          this.config.maxFishSize,
+          currentTime
+        );
+        if (attackResult.targetMutations && this.targetSchoolFish) {
+          Object.assign(this.targetSchoolFish, attackResult.targetMutations);
+        }
+        if (attackResult.attackComplete) {
+          this.isAttackingSchoolFish = false;
+          this.targetSchoolFish = null;
+        } else if (attackResult.shouldDie) {
+          this.isAttackingSchoolFish = false;
+          this.targetSchoolFish = null;
+        } else if (attackResult.velocityX !== void 0) {
+          this.fish.velocityX = attackResult.velocityX;
+          this.fish.velocityY = attackResult.velocityY;
+          this.fish.targetFlipScale = attackResult.targetFlipScale;
+          this.fish.targetRotation = attackResult.targetRotation;
+          this.fish.x += this.fish.velocityX;
+          this.fish.y += this.fish.velocityY;
+          this.updateRotationAndAnimation(deltaTime);
+          this.fish.glowColor = "rgba(255,50,50,0.6)";
+          this.drawFish(ctx);
+          this.updateHearts(deltaTime);
+          this.drawHearts(ctx);
+          return;
+        }
+      }
+      let targetX = this.mouseX;
+      let targetY = this.mouseY + 10;
+      let targetIsFood = false;
+      if (this.manager && this.manager.foodLayer && this.manager.foodLayer.getParticles().length > 0) {
+        const foodResult = findFoodTarget(
+          this.fish,
+          this.manager.foodLayer.getParticles(),
+          width,
+          height,
+          this.config.followDistance,
+          this.config && this.config.fovMultiplier !== void 0 ? this.config.fovMultiplier : 1,
+          FISH_SIZE_FACTORS2
+        );
+        this.fish.targetedFood = foodResult.mutations.targetedFood;
+        for (const { food, updates } of foodResult.mutations.foodUpdates) {
+          Object.assign(food, updates);
+        }
+        for (const eatenFood of foodResult.eatenFood) {
+          this.fish.targetSize = Math.min(this.fish.targetSize * 1.015, this.config.maxFishSize);
+          this.spawnHeart();
+        }
+        const foodToChase = foodResult.targetFood;
+        if (foodToChase && !foodToChase.eaten) {
+          targetX = foodToChase.x;
+          targetY = foodToChase.y;
+          targetIsFood = true;
+        }
+      }
+      const movementResult = calculateMovement(
+        this.fish,
+        targetX,
+        targetY,
+        this.mouseX,
+        this.mouseY,
+        targetIsFood,
+        this.config.maxSpeed,
+        this.config.maxFishSize,
+        this.config.followDistance,
+        deltaTime,
+        FISH_SIZE_FACTORS2
+      );
+      this.fish.velocityX = movementResult.velocityX;
+      this.fish.velocityY = movementResult.velocityY;
+      if (movementResult.targetRotation !== void 0) {
+        this.fish.targetRotation = movementResult.targetRotation;
+      }
+      if (movementResult.targetFlipScale !== void 0) {
+        this.fish.targetFlipScale = movementResult.targetFlipScale;
+      }
+      if (movementResult.isFleeing !== void 0) {
+        this.fish.isFleeing = movementResult.isFleeing;
+      }
+      if (movementResult.fleeTimer !== void 0) {
+        this.fish.fleeTimer = movementResult.fleeTimer;
+      }
+      this.isStaring = movementResult.isStaring || false;
+      this.updateRotationAndAnimation(deltaTime);
+      this.fish.x += this.fish.velocityX;
+      this.fish.y += this.fish.velocityY;
+      const clampedPos = clampPosition(
+        this.fish,
+        width,
+        height,
+        this.fish.currentSize,
+        // use actual grown size, not initial config.size
+        false
+      );
+      this.fish.x = clampedPos.x;
+      this.fish.y = clampedPos.y;
+      if (this.fish.currentSize !== this.fish.targetSize) {
+        const sizeDiff = this.fish.targetSize - this.fish.currentSize;
+        this.fish.currentSize += sizeDiff * 0.025;
+        if (Math.abs(sizeDiff) < 0.1) {
+          this.fish.currentSize = this.fish.targetSize;
+        }
+      }
+      this.fish.age += deltaTime;
+      this.fish.swimPhase = this.fish.age / 800 % 1;
+      this.fish.glowColor = "rgba(100,200,255,0.4)";
+      if (!this.isAttackingSchoolFish) {
+        this.drawFish(ctx);
+      }
+      this.updateHearts(deltaTime);
+      this.drawHearts(ctx);
+      this.drawTargetingCrosshair(ctx);
+    }
+    updateRotationAndAnimation(deltaTime) {
+      const result = updateRotationAndAnimation(
+        this.fish,
+        deltaTime,
+        this.config.rotationSpeed,
+        this.config.maxFishSize
+      );
+      this.fish.rotation = result.rotation;
+      this.fish.flipScale = result.flipScale;
+      this.fish.age = result.age;
+      this.fish.swimPhase = result.swimPhase;
+    }
+    /**
+     * Set a movement/target point for the curious fish.
+     * Called by spawnFish and external managers. opts.immediate -> apply direct velocity.
+     */
+    setTargetPoint(x, y, opts = {}) {
+      if (!this.fish) return;
+      const result = setTargetPoint(
+        this.fish,
+        x,
+        y,
+        opts,
+        this.config.maxSpeed
+      );
+      if (!result) return;
+      this.fish.velocityX = result.velocityX;
+      this.fish.velocityY = result.velocityY;
+      this.fish.targetRotation = result.targetRotation;
+      this.fish.targetFlipScale = result.targetFlipScale;
+      if (result.forcedTarget) {
+        this._forcedTarget = result.forcedTarget;
+        this.isAttackingSchoolFish = false;
+        this.fish.targetedFood = null;
+      }
+      if (!this.enabled) {
+        this.enabled = true;
+      }
+    }
+    /**
+     * Spawn an icon/symbol near the fish
+     * @param {string} type - Icon type (heart, lightning, food, star, bubble, zzz, question, exclamation)
+     */
+    spawnIcon(type) {
+      if (!this.fish) return;
+      if (!this.config.enableIcons) return;
+      const qualityCutoff = this.config.mobileLiteMode ? 0.85 : 0.5;
+      if (this._qualityMultiplier < qualityCutoff && type !== "heart") return;
+      const config = ICON_SPAWN_CONFIG[type] || ICON_SPAWN_CONFIG.default;
+      const distance = this.fish.currentSize * config.distanceFactor;
+      const iconX = this.fish.x + Math.cos(this.fish.rotation) * distance * this.fish.flipScale;
+      const iconY = this.fish.y + Math.sin(this.fish.rotation) * distance + config.yOffset;
+      const baseSize = this.fish.currentSize * config.sizeFactor;
+      const icon = this._iconPool.pop() || {};
+      icon.x = iconX;
+      icon.y = iconY;
+      icon.velocityX = (Math.random() - 0.5) * config.velocityRange;
+      icon.velocityY = -0.35 - Math.random() * 0.2;
+      icon.age = 0;
+      icon.maxAge = config.maxAge;
+      icon.size = baseSize + Math.random() * baseSize * 0.4;
+      icon.type = type;
+      this.hearts.push(icon);
+    }
+    // Legacy spawn functions - deprecated in favor of consolidated spawnIcon()
+    /**
+     * @deprecated Use spawnIcon('heart') instead
+     */
+    spawnHeart() {
+      this.spawnIcon("heart");
+    }
+    /**
+     * @deprecated Use spawnIcon('lightning') instead
+     */
+    spawnLightning() {
+      this.spawnIcon("lightning");
+    }
+    /**
+     * @deprecated Use spawnIcon('food') instead
+     */
+    spawnFoodIcon() {
+      this.spawnIcon("food");
+    }
+    /**
+     * @deprecated Use spawnIcon('star') instead
+     */
+    spawnStar() {
+      this.spawnIcon("star");
+    }
+    /**
+     * @deprecated Use spawnIcon('bubble') instead
+     */
+    spawnBubble() {
+      this.spawnIcon("bubble");
+    }
+    /**
+     * @deprecated Use spawnIcon('zzz') instead
+     */
+    spawnZzz() {
+      this.spawnIcon("zzz");
+    }
+    /**
+     * @deprecated Use spawnIcon('question') instead
+     */
+    spawnQuestionMark() {
+      this.spawnIcon("question");
+    }
+    /**
+     * @deprecated Use spawnIcon('exclamation') instead
+     */
+    spawnExclamationMark() {
+      this.spawnIcon("exclamation");
+    }
+    updateHearts(deltaTime) {
+      let w = 0;
+      for (let i = 0; i < this.hearts.length; i++) {
+        const heart = this.hearts[i];
+        heart.age += deltaTime;
+        heart.x += heart.velocityX;
+        heart.y += heart.velocityY;
+        if (heart.age < heart.maxAge) {
+          this.hearts[w++] = heart;
+        } else {
+          this._iconPool.push(heart);
+        }
+      }
+      this.hearts.length = w;
+    }
+    drawTargetingCrosshair(ctx) {
+      if (!this.fish) return;
+      const canvas2 = this.manager && this.manager.canvas;
+      if (!canvas2 || this.mouseX === null || this.mouseY === null) return;
+      const mouseX = this.mouseX;
+      const mouseY = this.mouseY;
+      const fishLayer = this.manager && this.manager.getLayer("fish");
+      if (!fishLayer || !fishLayer.sharks) return;
+      let hoveredFish = null;
+      for (const shark of fishLayer.sharks) {
+        if (shark.isDying) continue;
+        const sharkY = shark.baseY || shark.y;
+        const dx = mouseX - shark.x;
+        const dy = mouseY - sharkY;
+        if (dx * dx + dy * dy < shark.size * shark.size) {
+          hoveredFish = shark;
+          break;
+        }
+      }
+      if (!hoveredFish) return;
+      const isSameSpecies = hoveredFish.image?.src?.includes("curiousfish");
+      const cursorColor = isSameSpecies ? "#ff69b4" : "#ff0000";
+      ctx.save();
+      ctx.strokeStyle = cursorColor;
+      ctx.lineWidth = 2;
+      ctx.globalAlpha = 0.8;
+      const diameter = 1.5 * (this._cachedFontSize || 16);
+      const innerRadius = diameter * 0.3;
+      const outerRadius = diameter * 0.5;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, outerRadius, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(mouseX - outerRadius - 5, mouseY);
+      ctx.lineTo(mouseX - innerRadius, mouseY);
+      ctx.moveTo(mouseX + innerRadius, mouseY);
+      ctx.lineTo(mouseX + outerRadius + 5, mouseY);
+      ctx.moveTo(mouseX, mouseY - outerRadius - 5);
+      ctx.lineTo(mouseX, mouseY - innerRadius);
+      ctx.moveTo(mouseX, mouseY + innerRadius);
+      ctx.lineTo(mouseX, mouseY + outerRadius + 5);
+      ctx.stroke();
+      ctx.fillStyle = cursorColor;
+      ctx.beginPath();
+      ctx.arc(mouseX, mouseY, 2, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+    _getIconSprite(type, size) {
+      const spriteSize = Math.max(8, Math.round(size / 2) * 2);
+      const key = `${type}:${spriteSize}`;
+      const cached = this._iconSpriteCache.get(key);
+      if (cached) return cached;
+      const dimension = Math.max(24, Math.ceil(spriteSize * 2.8));
+      const sprite = new OffscreenCanvas(dimension, dimension);
+      const spriteCtx = sprite.getContext("2d");
+      if (!spriteCtx) return null;
+      this._drawIconSprite(spriteCtx, type, spriteSize, dimension * 0.5, dimension * 0.5);
+      this._iconSpriteCache.set(key, sprite);
+      return sprite;
+    }
+    _drawIconSprite(ctx, type, size, x, y) {
+      if (type === "bubble") {
+        ctx.fillStyle = "rgba(100, 200, 255, 0.6)";
+        ctx.strokeStyle = "rgba(150, 220, 255, 0.8)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(x, y, size * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        return;
+      }
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      if (type === "star") {
+        ctx.fillStyle = "#ffdd00";
+        ctx.font = `${size}px Arial`;
+        ctx.fillText("\u2B50", x, y);
+        return;
+      }
+      if (type === "zzz") {
+        ctx.fillStyle = "#cccccc";
+        ctx.font = `${size}px Arial`;
+        ctx.fillText("Z", x, y);
+        return;
+      }
+      if (type === "lightning") {
+        ctx.fillStyle = "#ffff00";
+        ctx.strokeStyle = "#ffffff";
+        ctx.lineWidth = 1;
+        ctx.font = `bold ${size}px Arial`;
+        ctx.strokeText("\u26A1", x, y);
+        ctx.fillText("\u26A1", x, y);
+        return;
+      }
+      if (type === "food") {
+        ctx.fillStyle = "#ff6b6b";
+        ctx.font = `${size}px Arial`;
+        ctx.fillText("\u{1F34E}", x, y);
+        return;
+      }
+      if (type === "question") {
+        ctx.fillStyle = "#ffaa00";
+        ctx.font = `bold ${size}px Arial`;
+        ctx.fillText("?", x, y);
+        return;
+      }
+      if (type === "exclamation") {
+        ctx.fillStyle = "#ff0000";
+        ctx.font = `bold ${size}px Arial`;
+        ctx.fillText("!", x, y);
+        return;
+      }
+      ctx.fillStyle = "#ff69b4";
+      ctx.font = `${size}px Arial`;
+      ctx.fillText("\u2764\uFE0F", x, y);
+    }
+    drawHearts(ctx) {
+      if (!this.config.enableIcons || this.hearts.length === 0) return;
+      ctx.save();
+      for (const heart of this.hearts) {
+        const ageRatio = heart.age / heart.maxAge;
+        const opacity = 1 - ageRatio;
+        ctx.globalAlpha = opacity;
+        const sprite = this._getIconSprite(heart.type, heart.size);
+        if (sprite) {
+          ctx.drawImage(sprite, heart.x - sprite.width * 0.5, heart.y - sprite.height * 0.5);
+        } else {
+          this._drawIconSprite(ctx, heart.type, heart.size, heart.x, heart.y);
+        }
+      }
+      ctx.restore();
+    }
+    drawFish(ctx) {
+      if (!this.imageLoaded || this.fishImage.naturalWidth === 0) return;
+      const depthImage = this._fishDepthCache ? this._fishDepthCache[3] : this.fishImage;
+      drawFish(
+        ctx,
+        this.fish,
+        depthImage,
+        this.config,
+        this.isAttackingSchoolFish,
+        this.targetSchoolFish,
+        this.width,
+        this.height
+      );
+    }
+    startDance(partner) {
+      this.danceState = initiateMatingDance(this.fish, partner);
+      this.dancePartner = partner;
+    }
+    updateDance(deltaTime, width, height) {
+      if (!this.danceState || !this.dancePartner) return;
+      const result = updateMatingDance(
+        this.danceState,
+        this.fish,
+        this.dancePartner,
+        deltaTime,
+        width,
+        height,
+        (dt) => this.updateRotationAndAnimation(dt),
+        () => this.spawnHeart(),
+        performance.now()
+      );
+      this.danceState = result;
+      if (this.dancePartner && !result.completed) {
+        const isAfterFaceNuzzle = result.phase === 1 && result.danceStep >= 1 || result.phase >= 2;
+        const partnerSmaller = this.dancePartner.size < this.fish.currentSize;
+        this.dancePartner._drawOnTop = isAfterFaceNuzzle && partnerSmaller;
+      }
+      if (result.completed) {
+        const fishLayer = this.manager && this.manager.getLayer("fish");
+        if (fishLayer && this.dancePartner && !this.dancePartner.isDying) {
+          completeMatingDance(
+            this.fish,
+            this.dancePartner,
+            width,
+            height,
+            fishLayer,
+            (w, h, x, y, options, cfg) => spawnBabyFish(w, h, x, y, fishLayer, options, cfg)
+          );
+          this.fish.velocityX = 0;
+          this.fish.velocityY = 0;
+          delete this.dancePartner._drawOnTop;
+          this.danceState = null;
+          this.dancePartner = null;
+        }
+      }
+    }
+    spawnBabyFish(width, height, spawnX, spawnY, options = {}) {
+      const fishLayer = this.manager && this.manager.getLayer("fish");
+      if (!fishLayer) return;
+      return spawnBabyFish(
+        width,
+        height,
+        spawnX,
+        spawnY,
+        fishLayer,
+        options,
+        this.config
+      );
+    }
+    /**
+     * Spawn the curious fish at bottom-center with initial upward velocity.
+     * No parameters — uses this.width/this.height (or window) and last mouse pos.
+     * Fish will "soft" swim toward last mouse position (if available) via setTargetPoint.
+     */
+    spawnFish() {
+      const width = this.width || (typeof window !== "undefined" ? window.innerWidth : 800);
+      const height = this.height || (typeof window !== "undefined" ? window.innerHeight : 600);
+      const spawnX = Math.round(-Math.max(40, this.config.size + 20));
+      const spawnY = Math.round(height / 2);
+      this.fish = {
+        x: spawnX,
+        y: spawnY,
+        velocityX: 1.5,
+        // initial swim-right
+        velocityY: 0,
+        rotation: 0,
+        targetRotation: 0,
+        flipScale: 1,
+        targetFlipScale: 1,
+        age: 0,
+        swimPhase: 0,
+        isFleeing: false,
+        fleeTimer: 0,
+        currentSize: this.config.size,
+        targetSize: this.config.size,
+        targetedFood: null,
+        hidden: false,
+        skeletonSpawned: false
+      };
+      this.isAttackingSchoolFish = false;
+      this.targetSchoolFish = null;
+      this.gameState = "playing";
+      delete this._forcedTarget;
+    }
+    /**
+     * Pre-render 4 depth-tinted variants of a source image into OffscreenCanvases.
+     * Mirrors FishLayer._buildDepthCache — shared logic kept in sync manually.
+     */
+    _buildDepthCache(sourceImage) {
+      const TIERS = [
+        { sat: 30, bri: 100 },
+        { sat: 55, bri: 100 },
+        { sat: 78, bri: 100 },
+        null
+        // tier 3: original
+      ];
+      const w = sourceImage.naturalWidth || sourceImage.width;
+      const h = sourceImage.naturalHeight || sourceImage.height;
+      if (!w || !h) return TIERS.map(() => sourceImage);
+      return TIERS.map((tier) => {
+        if (!tier) return sourceImage;
+        const oc = new OffscreenCanvas(w, h);
+        const octx = oc.getContext("2d");
+        octx.filter = `saturate(${tier.sat}%) brightness(${tier.bri}%)`;
+        octx.drawImage(sourceImage, 0, 0);
+        return oc;
+      });
+    }
+    drawSkeletons(ctx, height) {
+      const FALL_DURATION = 3e3;
+      const FADE_DURATION = 800;
+      const GRAVITY = 2e-4;
+      const now = Date.now();
+      let writeIdx = 0;
+      let anyActive = false;
+      for (let i = 0; i < this.skeletons.length; i++) {
+        const sk = this.skeletons[i];
+        const elapsed = now - sk.startTime;
+        if (elapsed > FALL_DURATION + FADE_DURATION) continue;
+        const dtSk = now - (sk.lastUpdate || now);
+        sk.lastUpdate = now;
+        sk.vy += GRAVITY * dtSk;
+        sk.vx *= 1 - 3e-3 * (dtSk / 16);
+        sk.x += sk.vx * dtSk;
+        sk.y += sk.vy * dtSk;
+        const alpha = elapsed < FALL_DURATION ? 1 : 1 - (elapsed - FALL_DURATION) / FADE_DURATION;
+        if (this.boneLoaded && this.boneImage) {
+          ctx.save();
+          ctx.globalAlpha = alpha;
+          ctx.translate(sk.x, sk.y);
+          ctx.scale(sk.flipScale, 1);
+          const w = sk.size * 2;
+          const h = w * (this.boneImage.height / this.boneImage.width);
+          ctx.drawImage(this.boneImage, -w / 2, -h / 2, w, h);
+          ctx.restore();
+        }
+        anyActive = true;
+        this.skeletons[writeIdx++] = sk;
+      }
+      this.skeletons.length = writeIdx;
+      if (!anyActive && this.fish && this.fish.isDying) {
+        this.skeletons = [];
+        this.spawnFish();
+      }
+    }
+    /**
+     * Cleanup resources and event listeners
+     */
+    destroy() {
+      this._unsubscribePointerMove?.();
+      this._unsubscribePointerMove = null;
+      this.fish = null;
+      this.hearts = [];
+      this._iconSpriteCache.clear();
+      this.allFish = [];
+      this.skeletons = [];
+      this.dancePartner = null;
+      console.log("CuriousFishLayer destroyed");
+    }
+  };
+
+  // assets/canvas/core/CanvasManager.js
+  var CanvasManager = class {
+    constructor(options = {}) {
+      this.canvas = null;
+      this.ctx = null;
+      this.isContextAvailable = false;
+      this.layers = /* @__PURE__ */ new Map();
+      this.animationId = null;
+      this.isRunning = false;
+      this.lastTime = 0;
+      this.frameCounter = 0;
+      this.mathUtils = new MathUtils();
+      this.performanceMonitor = new PerformanceMonitor({
+        showStats: options.showStats !== false,
+        targetFPS: options.targetFPS || 45
+      });
+      this.performanceProfiler = new PerformanceProfiler({
+        enabled: options.profilePerformance || false,
+        logInterval: 2e3
+      });
+      this.foodLayer = new FoodLayer(this.mathUtils, options.foodConfig);
+      this.config = {
+        zIndex: options.zIndex || 0,
+        devicePixelRatio: window.devicePixelRatio || 1,
+        resolutionScale: options.resolutionScale || 1,
+        debug: options.debug || false,
+        errorHandling: options.errorHandling !== false,
+        // Error handling enabled by default
+        ...options
+      };
+      this.width = 0;
+      this.height = 0;
+      this._ripples = [];
+      this.resizeTimeout = null;
+      this.handleResize = this.handleResize.bind(this);
+      this.handleClick = this.handleClick.bind(this);
+      this.handleGlobalClick = this.handleGlobalClick.bind(this);
+      this.handleTouch = this.handleTouch.bind(this);
+      this.performanceMonitor.onQualityChange((quality) => {
+        this.applyQualityToLayers(quality);
+      });
+      this.init();
+    }
+    /**
+     * Initialize canvas and event listeners
+     */
+    init() {
+      this.canvas = document.createElement("canvas");
+      this.canvas.id = "canvas-ocean-foreground";
+      this.canvas.style.cssText = `
             position: fixed;
             top: 0;
             left: 0;
@@ -417,7 +4738,354 @@
             height: 100vh;
             pointer-events: auto;
             z-index: ${this.config.zIndex};
-        `,this.config.debug&&(console.log("Canvas element created with z-index:",this.config.zIndex),console.log("Canvas pointer-events:",this.canvas.style.pointerEvents)),this.ctx=this.canvas.getContext("2d",{alpha:!0,desynchronized:!0}),this.isContextAvailable=!!this.ctx;let t=document.getElementById("webgl-ocean-background");if(t&&t.parentNode?(t.parentNode.insertBefore(this.canvas,t.nextSibling),this.config.debug&&console.log("Canvas element inserted after webgl-ocean-background")):(document.body.insertBefore(this.canvas,document.body.firstChild),this.config.debug&&console.log("Canvas element appended to DOM (no webgl anchor found)")),!this.ctx){this.canvas.style.display="none",console.warn("[Canvas] 2D context unavailable \u2014 CSS-only fallback active");return}this.updateCanvasSize(),window.addEventListener("resize",this.handleResize),this.canvas.addEventListener("click",this.handleClick),document.addEventListener("click",this.handleGlobalClick),document.addEventListener("touchend",this.handleTouch,{passive:!0}),this.config.debug&&(console.log("Canvas element in DOM:",document.getElementById("canvas-ocean-foreground")),console.log("Canvas dimensions:",this.canvas.width,"x",this.canvas.height))}updateCanvasSize(){if(!this.canvas||!this.ctx)return;let t=this.canvas.getBoundingClientRect(),{tier:e,entityBudget:i}=K(),s=Math.min(window.devicePixelRatio||this.config.devicePixelRatio||1,i.dprCap),a=Math.max(.5,Math.min(1,this.config.resolutionScale||1)),n=Math.max(.5,s*a),h=Math.max(1,Math.round(t.width*n)),u=Math.max(1,Math.round(t.height*n));this.canvas.width=h,this.canvas.height=u;try{this.ctx.setTransform(n,0,0,n,0,0)}catch{this.ctx.scale(n,n)}this.ctx.imageSmoothingEnabled=e>=2,this.width=t.width,this.height=t.height,this.config.debug&&console.log("updateCanvasSize",{rectWidth:t.width,rectHeight:t.height,deviceW:h,deviceH:u,dpr:n,resolutionScale:a})}handleResize(){clearTimeout(this.resizeTimeout),this.resizeTimeout=setTimeout(()=>{this.updateCanvasSize(),this.layers.forEach(t=>{t.onResize&&t.onResize(this.width,this.height)})},100)}handleClick(t){let e=this.canvas.getBoundingClientRect(),i=t.clientX-e.left,s=t.clientY-e.top;t.stopPropagation();let a=Math.max(80,s),n=performance.now(),h=this.getLayer("fish"),u=null;if(h&&h.sharks)for(let c=0,g=h.sharks.length;c<g;c++){let f=h.sharks[c];if(f.isDying)continue;let m=i-f.x,p=s-(f.baseY||f.y);if(m*m+p*p<f.size*f.size){u=f;break}}let d=!!u;if(!d){let c=this.performanceMonitor.getQuality();this.foodLayer.spawn(i,a,c)}d||this._ripples.push({x:i,y:a,startTime:n,maxR:80,duration:900});let r=this.getLayer("curiousFish");if(r||(r=new H(this.config.curiousFishConfig||{}),this.addLayer("curiousFish",r)),r.enabled||(r.fish||r.spawnFish(),r.gameState="playing",r.setTargetPoint(i,a,{immediate:!0,speed:r.config.maxSpeed})),u){u.image?.src?.includes("curiousfish")?r.startDance(u):n-r.lastAttackTime>=r.attackCooldown&&(r.targetSchoolFish=u,r.isAttackingSchoolFish=!0,r.lastAttackTime=n);return}}handleGlobalClick(t){!t.target.closest("#pattern-switcher")&&t.target!==this.canvas&&this.handleClick(t)}handleTouch(t){if(t.changedTouches.length===0||t.touches.length>1)return;let e=t.changedTouches[0];this.handleClick({clientX:e.clientX,clientY:e.clientY,stopPropagation:()=>{}})}addLayer(t,e){return this.layers.set(t,e),e.init&&e.init(this.width,this.height,this),this}removeLayer(t){let e=this.layers.get(t);return e&&e.destroy&&e.destroy(),this.layers.delete(t),this}getLayer(t){return this.layers.get(t)}applyQualityToLayers(t){this.layers.forEach(e=>{e.setQuality&&e.setQuality(t)})}renderFrame(t,e){if(this.performanceProfiler.startFrame(),this.performanceProfiler.startSection("performanceMonitor"),this.performanceMonitor.update(t,e),this.performanceProfiler.endSection("performanceMonitor"),!this.ctx||!this.width||!this.height)return;this.ctx.clearRect(0,0,this.width,this.height),this.foodLayer.resetTargetedFlags(),this.performanceProfiler.startSection("foodUpdate");let i=this.performanceMonitor.getQuality();if(this.foodLayer.update(this.ctx,e,this.width,this.height,i),this.performanceProfiler.endSection("foodUpdate"),this.config.errorHandling?this.layers.forEach(s=>{if(s.enabled!==!1){let a=s.constructor?.name||"unknown";this.performanceProfiler.startSection(`layer:${a}`),this.ctx.save();try{s.render(this.ctx,t,e,this.width,this.height)}catch(n){console.error("Error rendering layer:",a,n)}this.ctx.restore(),this.performanceProfiler.endSection(`layer:${a}`)}}):this.layers.forEach(s=>{if(s.enabled!==!1){let a=s.constructor?.name||"unknown";this.performanceProfiler.startSection(`layer:${a}`),this.ctx.save(),s.render(this.ctx,t,e,this.width,this.height),this.ctx.restore(),this.performanceProfiler.endSection(`layer:${a}`)}}),this._ripples.length>0){let s=performance.now(),a=0;this.ctx.save();for(let n=0;n<this._ripples.length;n++){let h=this._ripples[n],u=(s-h.startTime)/h.duration;if(u>=1)continue;let d=h.maxR*u,r=(1-u)*(1-u)*.8;this.ctx.beginPath(),this.ctx.arc(h.x,h.y,d,0,Math.PI*2),this.ctx.strokeStyle=`rgba(${h.color||"160,220,255"},${r.toFixed(3)})`,this.ctx.lineWidth=2.5,this.ctx.stroke(),this._ripples[a++]=h}this._ripples.length=a,this.ctx.restore()}this.frameCounter++,this.performanceProfiler.endFrame(t)}canRender(){return!!(this.canvas&&this.ctx&&this.isContextAvailable)}start(){if(!this.canRender())return!1;if(!this.isRunning)return this.isRunning=!0,this.lastTime=performance.now(),!0}stop(){this.isRunning&&(this.isRunning=!1)}togglePerformanceStats(){return this.performanceMonitor.toggleStats()}getFoodParticles(){return this.foodLayer.getParticles()}destroy(){this.stop(),window.removeEventListener("resize",this.handleResize),this.canvas.removeEventListener("click",this.handleClick),document.removeEventListener("click",this.handleGlobalClick),document.removeEventListener("touchend",this.handleTouch),this.layers.forEach(t=>{t.destroy&&t.destroy()}),this.layers.clear(),this.foodLayer.clear(),this.canvas&&this.canvas.parentNode&&this.canvas.parentNode.removeChild(this.canvas)}};var st=class{constructor(){this.visible=!1,this.collapsed=!1,this.element=null,this.lastKnownValues={},this.createPanel()}createPanel(){let t=document.getElementById("debug-panel");t&&t.remove(),this.element=document.createElement("div"),this.element.id="debug-panel",this.element.innerHTML=`
+        `;
+      if (this.config.debug) {
+        console.log("Canvas element created with z-index:", this.config.zIndex);
+        console.log("Canvas pointer-events:", this.canvas.style.pointerEvents);
+      }
+      this.ctx = this.canvas.getContext("2d", {
+        alpha: true,
+        desynchronized: true
+        // Hint for better performance
+      });
+      this.isContextAvailable = Boolean(this.ctx);
+      const webglAnchor = document.getElementById("webgl-ocean-background");
+      if (webglAnchor && webglAnchor.parentNode) {
+        webglAnchor.parentNode.insertBefore(this.canvas, webglAnchor.nextSibling);
+        if (this.config.debug) console.log("Canvas element inserted after webgl-ocean-background");
+      } else {
+        document.body.insertBefore(this.canvas, document.body.firstChild);
+        if (this.config.debug) console.log("Canvas element appended to DOM (no webgl anchor found)");
+      }
+      if (!this.ctx) {
+        this.canvas.style.display = "none";
+        console.warn("[Canvas] 2D context unavailable \u2014 CSS-only fallback active");
+        return;
+      }
+      this.updateCanvasSize();
+      window.addEventListener("resize", this.handleResize);
+      this.canvas.addEventListener("click", this.handleClick);
+      document.addEventListener("click", this.handleGlobalClick);
+      document.addEventListener("touchend", this.handleTouch, { passive: true });
+      if (this.config.debug) {
+        console.log("Canvas element in DOM:", document.getElementById("canvas-ocean-foreground"));
+        console.log("Canvas dimensions:", this.canvas.width, "x", this.canvas.height);
+      }
+    }
+    /**
+     * Update canvas size for viewport and device pixel ratio
+     */
+    updateCanvasSize() {
+      if (!this.canvas || !this.ctx) return;
+      const rect = this.canvas.getBoundingClientRect();
+      const { tier, entityBudget } = getDeviceProfile();
+      const baseDpr = Math.min(
+        window.devicePixelRatio || this.config.devicePixelRatio || 1,
+        entityBudget.dprCap
+      );
+      const resolutionScale = Math.max(0.5, Math.min(1, this.config.resolutionScale || 1));
+      const dpr = Math.max(0.5, baseDpr * resolutionScale);
+      const deviceW = Math.max(1, Math.round(rect.width * dpr));
+      const deviceH = Math.max(1, Math.round(rect.height * dpr));
+      this.canvas.width = deviceW;
+      this.canvas.height = deviceH;
+      try {
+        this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      } catch (e) {
+        this.ctx.scale(dpr, dpr);
+      }
+      this.ctx.imageSmoothingEnabled = tier >= 2;
+      this.width = rect.width;
+      this.height = rect.height;
+      if (this.config.debug) {
+        console.log("updateCanvasSize", {
+          rectWidth: rect.width,
+          rectHeight: rect.height,
+          deviceW,
+          deviceH,
+          dpr,
+          resolutionScale
+        });
+      }
+    }
+    /**
+     * Handle window resize with debouncing
+     */
+    handleResize() {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => {
+        this.updateCanvasSize();
+        this.layers.forEach((layer) => {
+          if (layer.onResize) {
+            layer.onResize(this.width, this.height);
+          }
+        });
+      }, 100);
+    }
+    /**
+     * Handle canvas click event
+     * @param {MouseEvent} e - Click event
+     */
+    handleClick(e) {
+      const rect = this.canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      e.stopPropagation();
+      const spawnY = Math.max(SURFACE_Y + 10, y);
+      const now = performance.now();
+      const fishLayer = this.getLayer("fish");
+      let clickedShark = null;
+      if (fishLayer && fishLayer.sharks) {
+        for (let i = 0, len = fishLayer.sharks.length; i < len; i++) {
+          const shark = fishLayer.sharks[i];
+          if (shark.isDying) continue;
+          const dx = x - shark.x;
+          const dy = y - (shark.baseY || shark.y);
+          if (dx * dx + dy * dy < shark.size * shark.size) {
+            clickedShark = shark;
+            break;
+          }
+        }
+      }
+      const clickedFish = Boolean(clickedShark);
+      if (!clickedFish) {
+        const quality = this.performanceMonitor.getQuality();
+        this.foodLayer.spawn(x, spawnY, quality);
+      }
+      if (!clickedFish) {
+        this._ripples.push({ x, y: spawnY, startTime: now, maxR: 80, duration: 900 });
+      }
+      let curiousFishLayer = this.getLayer("curiousFish");
+      if (!curiousFishLayer) {
+        curiousFishLayer = new CuriousFishLayer(this.config.curiousFishConfig || {});
+        this.addLayer("curiousFish", curiousFishLayer);
+      }
+      if (!curiousFishLayer.enabled) {
+        if (!curiousFishLayer.fish) {
+          curiousFishLayer.spawnFish();
+        }
+        curiousFishLayer.gameState = "playing";
+        curiousFishLayer.setTargetPoint(x, spawnY, { immediate: true, speed: curiousFishLayer.config.maxSpeed });
+      }
+      if (clickedShark) {
+        const isSameSpecies = clickedShark.image?.src?.includes("curiousfish");
+        if (isSameSpecies) {
+          curiousFishLayer.startDance(clickedShark);
+        } else {
+          const timeSinceLastAttack = now - curiousFishLayer.lastAttackTime;
+          if (timeSinceLastAttack >= curiousFishLayer.attackCooldown) {
+            curiousFishLayer.targetSchoolFish = clickedShark;
+            curiousFishLayer.isAttackingSchoolFish = true;
+            curiousFishLayer.lastAttackTime = now;
+          }
+        }
+        return;
+      }
+    }
+    /**
+     * Handle global click event (fallback)
+     * @param {MouseEvent} e - Click event
+     */
+    handleGlobalClick(e) {
+      if (!e.target.closest("#pattern-switcher") && e.target !== this.canvas) {
+        this.handleClick(e);
+      }
+    }
+    /**
+     * Handle touch tap — spawn food at the touch point.
+     * Uses changedTouches so it fires on finger-lift (tap end), not drag.
+     * @param {TouchEvent} e
+     */
+    handleTouch(e) {
+      if (e.changedTouches.length === 0) return;
+      if (e.touches.length > 1) return;
+      const touch = e.changedTouches[0];
+      this.handleClick({ clientX: touch.clientX, clientY: touch.clientY, stopPropagation: () => {
+      } });
+    }
+    /**
+     * Add a rendering layer
+     * @param {string} name - Layer identifier
+     * @param {Object} layer - Layer instance with render() method
+     * @returns {CanvasManager} This instance for chaining
+     */
+    addLayer(name, layer) {
+      this.layers.set(name, layer);
+      if (layer.init) {
+        layer.init(this.width, this.height, this);
+      }
+      return this;
+    }
+    /**
+     * Remove a rendering layer
+     * @param {string} name - Layer identifier
+     * @returns {CanvasManager} This instance for chaining
+     */
+    removeLayer(name) {
+      const layer = this.layers.get(name);
+      if (layer && layer.destroy) {
+        layer.destroy();
+      }
+      this.layers.delete(name);
+      return this;
+    }
+    /**
+     * Get a specific layer
+     * @param {string} name - Layer identifier
+     * @returns {Object|undefined} Layer instance
+     */
+    getLayer(name) {
+      return this.layers.get(name);
+    }
+    /**
+     * Apply quality setting to all layers
+     * @private
+     * @param {number} quality - Quality value (0.3-1.0)
+     */
+    applyQualityToLayers(quality) {
+      this.layers.forEach((layer) => {
+        if (layer.setQuality) {
+          layer.setQuality(quality);
+        }
+      });
+    }
+    /**
+     * Render frame (called by MasterRenderer)
+     * @param {number} currentTime - Current timestamp
+     * @param {number} deltaTime - Time since last frame
+     * @param {number} currentTime - Current timestamp
+     * @param {number} deltaTime - Time since last frame
+     */
+    renderFrame(currentTime, deltaTime) {
+      this.performanceProfiler.startFrame();
+      this.performanceProfiler.startSection("performanceMonitor");
+      this.performanceMonitor.update(currentTime, deltaTime);
+      this.performanceProfiler.endSection("performanceMonitor");
+      if (!this.ctx || !this.width || !this.height) return;
+      this.ctx.clearRect(0, 0, this.width, this.height);
+      this.foodLayer.resetTargetedFlags();
+      this.performanceProfiler.startSection("foodUpdate");
+      const quality = this.performanceMonitor.getQuality();
+      this.foodLayer.update(this.ctx, deltaTime, this.width, this.height, quality);
+      this.performanceProfiler.endSection("foodUpdate");
+      if (this.config.errorHandling) {
+        this.layers.forEach((layer) => {
+          if (layer.enabled !== false) {
+            const layerName = layer.constructor?.name || "unknown";
+            this.performanceProfiler.startSection(`layer:${layerName}`);
+            this.ctx.save();
+            try {
+              layer.render(this.ctx, currentTime, deltaTime, this.width, this.height);
+            } catch (error) {
+              console.error("Error rendering layer:", layerName, error);
+            }
+            this.ctx.restore();
+            this.performanceProfiler.endSection(`layer:${layerName}`);
+          }
+        });
+      } else {
+        this.layers.forEach((layer) => {
+          if (layer.enabled !== false) {
+            const layerName = layer.constructor?.name || "unknown";
+            this.performanceProfiler.startSection(`layer:${layerName}`);
+            this.ctx.save();
+            layer.render(this.ctx, currentTime, deltaTime, this.width, this.height);
+            this.ctx.restore();
+            this.performanceProfiler.endSection(`layer:${layerName}`);
+          }
+        });
+      }
+      if (this._ripples.length > 0) {
+        const now = performance.now();
+        let writeIdx = 0;
+        this.ctx.save();
+        for (let i = 0; i < this._ripples.length; i++) {
+          const rip = this._ripples[i];
+          const t = (now - rip.startTime) / rip.duration;
+          if (t >= 1) continue;
+          const r = rip.maxR * t;
+          const alpha = (1 - t) * (1 - t) * 0.8;
+          this.ctx.beginPath();
+          this.ctx.arc(rip.x, rip.y, r, 0, Math.PI * 2);
+          this.ctx.strokeStyle = `rgba(${rip.color || "160,220,255"},${alpha.toFixed(3)})`;
+          this.ctx.lineWidth = 2.5;
+          this.ctx.stroke();
+          this._ripples[writeIdx++] = rip;
+        }
+        this._ripples.length = writeIdx;
+        this.ctx.restore();
+      }
+      this.frameCounter++;
+      this.performanceProfiler.endFrame(currentTime);
+    }
+    canRender() {
+      return Boolean(this.canvas && this.ctx && this.isContextAvailable);
+    }
+    /**
+     * Start rendering loop
+     */
+    start() {
+      if (!this.canRender()) return false;
+      if (this.isRunning) return;
+      this.isRunning = true;
+      this.lastTime = performance.now();
+      return true;
+    }
+    /**
+     * Stop rendering loop
+     */
+    stop() {
+      if (!this.isRunning) return;
+      this.isRunning = false;
+    }
+    /**
+     * Toggle performance stats display
+     */
+    togglePerformanceStats() {
+      return this.performanceMonitor.toggleStats();
+    }
+    /**
+     * Get food particles for layers that need them
+     * @returns {Array} Array of food particles
+     */
+    getFoodParticles() {
+      return this.foodLayer.getParticles();
+    }
+    /**
+     * Clean up resources
+     */
+    destroy() {
+      this.stop();
+      window.removeEventListener("resize", this.handleResize);
+      this.canvas.removeEventListener("click", this.handleClick);
+      document.removeEventListener("click", this.handleGlobalClick);
+      document.removeEventListener("touchend", this.handleTouch);
+      this.layers.forEach((layer) => {
+        if (layer.destroy) layer.destroy();
+      });
+      this.layers.clear();
+      this.foodLayer.clear();
+      if (this.canvas && this.canvas.parentNode) {
+        this.canvas.parentNode.removeChild(this.canvas);
+      }
+    }
+  };
+
+  // assets/canvas/utils/DebugPanel.js
+  var DebugPanel = class {
+    constructor() {
+      this.visible = false;
+      this.collapsed = false;
+      this.element = null;
+      this.lastKnownValues = {};
+      this.createPanel();
+    }
+    createPanel() {
+      const existing = document.getElementById("debug-panel");
+      if (existing) existing.remove();
+      this.element = document.createElement("div");
+      this.element.id = "debug-panel";
+      this.element.innerHTML = `
             <div class="debug-header" id="debug-header">
                 <span class="debug-title">\u26A1 PERFORMANCE</span>
                 <span class="debug-toggle" id="debug-toggle">\u2212</span>
@@ -504,7 +5172,49 @@
                     </div>
                 </div>
             </div>
-        `,this.addStyles(),document.body.appendChild(this.element),this.visible||(this.element.style.display="none"),this.els={fps:document.getElementById("debug-fps"),fpsMax:document.getElementById("debug-fps-max"),renderTime:document.getElementById("debug-render-time"),totalTime:document.getElementById("debug-total-time"),idleTime:document.getElementById("debug-idle-time"),quality:document.getElementById("debug-quality"),resolution:document.getElementById("debug-resolution"),content:document.getElementById("debug-content"),toggle:document.getElementById("debug-toggle")},this._layerTimeEls={fish:document.getElementById("debug-fish-time"),curious:document.getElementById("debug-curious-time"),hud:document.getElementById("debug-hud-time"),food:document.getElementById("debug-food-time"),rays:document.getElementById("debug-rays-time"),bubbles:document.getElementById("debug-bubbles-time"),plankton:document.getElementById("debug-plankton-time"),gradient:document.getElementById("debug-gradient-time")},this._countEls={"fish-count":document.getElementById("debug-fish-count"),"food-count":document.getElementById("debug-food-count"),"bubbles-count":document.getElementById("debug-bubbles-count"),"plankton-count":document.getElementById("debug-plankton-count")};let e=document.getElementById("debug-header");this.els.toggle&&e&&(e.style.cursor="pointer",e.addEventListener("click",()=>this.toggle()))}addStyles(){let t="debug-panel-styles";if(document.getElementById(t))return;let e=document.createElement("style");e.id=t,e.textContent=`
+        `;
+      this.addStyles();
+      document.body.appendChild(this.element);
+      if (!this.visible) this.element.style.display = "none";
+      this.els = {
+        fps: document.getElementById("debug-fps"),
+        fpsMax: document.getElementById("debug-fps-max"),
+        renderTime: document.getElementById("debug-render-time"),
+        totalTime: document.getElementById("debug-total-time"),
+        idleTime: document.getElementById("debug-idle-time"),
+        quality: document.getElementById("debug-quality"),
+        resolution: document.getElementById("debug-resolution"),
+        content: document.getElementById("debug-content"),
+        toggle: document.getElementById("debug-toggle")
+      };
+      this._layerTimeEls = {
+        fish: document.getElementById("debug-fish-time"),
+        curious: document.getElementById("debug-curious-time"),
+        hud: document.getElementById("debug-hud-time"),
+        food: document.getElementById("debug-food-time"),
+        rays: document.getElementById("debug-rays-time"),
+        bubbles: document.getElementById("debug-bubbles-time"),
+        plankton: document.getElementById("debug-plankton-time"),
+        gradient: document.getElementById("debug-gradient-time")
+      };
+      this._countEls = {
+        "fish-count": document.getElementById("debug-fish-count"),
+        "food-count": document.getElementById("debug-food-count"),
+        "bubbles-count": document.getElementById("debug-bubbles-count"),
+        "plankton-count": document.getElementById("debug-plankton-count")
+      };
+      const header = document.getElementById("debug-header");
+      if (this.els.toggle && header) {
+        header.style.cursor = "pointer";
+        header.addEventListener("click", () => this.toggle());
+      }
+    }
+    addStyles() {
+      const styleId = "debug-panel-styles";
+      if (document.getElementById(styleId)) return;
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent = `
             #debug-panel {
                 position: fixed;
                 top: 20px;
@@ -645,4 +5355,2285 @@
                 font-size: 9px;
                 min-width: 35px;
             }
-        `,document.head.appendChild(e)}toggle(){this.collapsed=!this.collapsed,this.els.content&&this.els.toggle&&(this.els.content.classList.toggle("collapsed",this.collapsed),this.els.toggle.textContent=this.collapsed?"+":"\u2212")}update(t){this.visible&&(this.els.fps&&t.fps!==void 0&&(this.els.fps.textContent=t.fps,this.els.fps.className="debug-value",t.fps<40?this.els.fps.classList.add("error"):t.fps<55&&this.els.fps.classList.add("warning")),this.els.fpsMax&&t.theoreticalFPS!==void 0&&(this.els.fpsMax.textContent=t.theoreticalFPS),this.els.renderTime&&t.renderTime!==void 0&&(this.els.renderTime.textContent=t.renderTime.toFixed(2)),this.els.totalTime&&t.totalFrameTime!==void 0&&(this.els.totalTime.textContent=t.totalFrameTime.toFixed(2)),this.els.idleTime&&t.idleTime!==void 0&&(this.els.idleTime.textContent=t.idleTime.toFixed(2)),this.updateLayerTime("fish",t.layers?.FishLayer),this.updateLayerTime("curious",t.layers?.CuriousFishLayer),this.updateLayerTime("hud",t.layers?.HudLayer),this.updateLayerTime("food",t.food),this.updateLayerTime("rays",t.webgl?.rays),this.updateLayerTime("bubbles",t.webgl?.bubbles),this.updateLayerTime("plankton",t.webgl?.plankton),this.updateLayerTime("gradient",t.webgl?.gradient),this.updateCount("fish-count",t.counts?.fish),this.updateCount("food-count",t.counts?.food),this.updateCount("bubbles-count",t.counts?.bubbles),this.updateCount("plankton-count",t.counts?.plankton),this.els.quality&&t.quality!==void 0&&(this.els.quality.textContent=Math.round(t.quality*100)),this.els.resolution&&t.resolution&&(this.els.resolution.textContent=t.resolution))}updateLayerTime(t,e){let i=this._layerTimeEls[t];if(!i)return;let s=0;if(typeof e=="number"?s=e:e&&e.time!==void 0?s=e.time:e&&e.avg!==void 0&&(s=e.avg),s>0)this.lastKnownValues[t]=s,i.textContent=`${s.toFixed(2)}ms`,i.className="debug-time",s>2?i.classList.add("very-slow"):s>1&&i.classList.add("slow");else if(this.lastKnownValues[t]!==void 0){let a=this.lastKnownValues[t];i.textContent=`${a.toFixed(2)}ms`,i.className="debug-time",a>2?i.classList.add("very-slow"):a>1&&i.classList.add("slow")}else i.textContent="-",i.className="debug-time"}updateCount(t,e){let i=this._countEls[t];i&&(e!=null?(this.lastKnownValues[`count-${t}`]=e,i.textContent=`(${e})`):this.lastKnownValues[`count-${t}`]!==void 0?i.textContent=`(${this.lastKnownValues[`count-${t}`]})`:i.textContent="(-)")}show(){this.visible=!0,this.element&&(this.element.style.display="block")}hide(){this.visible=!1,this.element&&(this.element.style.display="none")}destroy(){this.element&&(this.element.remove(),this.element=null);let t=document.getElementById("debug-panel-styles");t&&t.remove()}};var at=class o{static MAX_FISH=80;static MAX_PASSIVE_LIFESPAN=3e5;static MAX_BLOOD_PARTICLES=160;static MAX_BLOOD_PARTICLES_PER_BURST=36;static MIN_BLOOD_PARTICLES_PER_BURST=12;static DEFAULT_CONFIG={schoolCount:null,schoolDensity:6e5,maxSchoolSize:10,size:1.2,avoidRadius:100,verticalMarginTop:100,verticalMarginBottom:100,showDebug:!1};constructor(t={}){this.enabled=!0,this.sharks=[],this.bloodParticles=[],this._sharkPool=[],this._bloodPool=[],this._schoolCentroidsCache=new Map,this._foodLookup={activeFoods:[],rows:new Map,grid:null,cellSize:0,usedBuckets:[]},this._schoolMembershipDirty=!0,this.mouseX=null,this.mouseY=null,this.manager=null,this.fishImages=[];let e=["assets/images/fish/shark.webp","assets/images/fish/fish2.webp","assets/images/fish/fish1.webp","assets/images/fish/curiousfish.webp"];this.imagesLoaded=0,this.imagesFailed=0,this._imageDepthCache=[],e.forEach((i,s)=>{let a=new Image;a.src=i,a.onload=()=>{this.imagesLoaded++,this._imageDepthCache[s]=this._buildDepthCache(a),this.imagesLoaded,e.length},a.onerror=()=>{console.error(`Failed to load fish image: ${i}`),this.imagesFailed++,a._failed=!0},this.fishImages.push(a)}),this.boneImage=new Image,this.boneLoaded=!1,this.boneImage.onload=()=>{this.boneLoaded=!0},this.boneImage.onerror=()=>{console.warn("Failed to load fishbone image")},this.boneImage.src="assets/images/fish/fishbone.webp",this.config={...o.DEFAULT_CONFIG,...t},this._schoolsSpawned=0,this._unsubscribePointerMove=null,this.handlePointerMove=this.handlePointerMove.bind(this)}handlePointerMove(t,e){this.mouseX=t,this.mouseY=e}init(t,e,i){this.width=t,this.height=e,this.sharks=[],this._schoolsSpawned=0,this._nextSchoolId=0,this._qualityMultiplier=1,this._schoolCentroidsCache.clear(),this._schoolMembershipDirty=!0,this._recalcSchoolCount(t,e),this.manager=i||window.blueOrcaCanvas,this._unsubscribePointerMove=ft(this.handlePointerMove)}setQuality(t){this._qualityMultiplier=t}destroy(){this._unsubscribePointerMove?.(),this._unsubscribePointerMove=null,this.sharks=[],this._schoolsSpawned=0,this._schoolCentroidsCache.clear(),this._schoolMembershipDirty=!0,console.log("FishLayer destroyed")}onResize(t,e){this.width=t,this.height=e,this._recalcSchoolCount(t,e)}_recalcSchoolCount(t,e){if(this.config.schoolCount!==null)return;let i=t*e,s=this.config.schoolDensity||6e5,a=Math.max(1,Math.min(8,Math.round(i/s)));this._autoSchoolCount=a}_ensureSchoolMembershipCache(){if(this._schoolMembershipDirty){for(let[,t]of this._schoolCentroidsCache)t.members.length=0;for(let t of this.sharks){if(t.isDying||typeof t.schoolId>"u")continue;let e=this._schoolCentroidsCache.get(t.schoolId);e||(e={x:0,y:0,speed:0,count:0,members:[]},this._schoolCentroidsCache.set(t.schoolId,e)),e.members.push(t)}for(let[t,e]of this._schoolCentroidsCache)e.members.length===0&&this._schoolCentroidsCache.delete(t);this._schoolMembershipDirty=!1}}_updateSchoolCentroids(t){this._ensureSchoolMembershipCache();for(let[e,i]of this._schoolCentroidsCache){let s=0,a=0,n=0,h=0,u=0,d=0;for(let r=0;r<i.members.length;r++){let c=i.members[r];if(!c||c.isDying||c.schoolId!==e){this._schoolMembershipDirty=!0;continue}i.members[u++]=c;let g=c.x;s===0?d=g:Math.abs(g-d)>t*.5&&(g+=g<d?t:-t),a+=g,n+=c.baseY,h+=c.speed,s++}if(i.members.length=u,s===0){this._schoolCentroidsCache.delete(e);continue}i.count=s,i.x=(a/s%t+t)%t,i.y=n/s,i.speed=h/s}return this._schoolCentroidsCache}_buildFoodLookup(t){let e=this._foodLookup,i=e.activeFoods;i.length=0;let s=e.usedBuckets;for(let h=0;h<s.length;h++)s[h].length=0;s.length=0;for(let h=0;h<t.length;h++){let u=t[h];u.eaten||i.push(u)}if(i.length<=12)return e.grid=null,e.cellSize=0,e;let a=160,n=e.rows;for(let h=0;h<i.length;h++){let u=i[h],d=Math.floor(u.x/a),r=Math.floor(u.y/a),c=n.get(r);c||(c=new Map,n.set(r,c));let g=c.get(d);g||(g=[],c.set(d,g)),g.length===0&&s.push(g),g.push(u)}return e.grid=n,e.cellSize=a,e}_findNearestFood(t,e,i,s,a){let n=null,h=a*a,u=g=>{let f=g.x-e,m=g.y-i,p=f*f+m*m;(s>0&&f>-40||s<0&&f<40)&&p<h&&(h=p,n=g)};if(!t.grid){for(let g=0;g<t.activeFoods.length;g++)u(t.activeFoods[g]);return{nearestFood:n,nearestDistSq:h}}let d=Math.ceil(a/t.cellSize),r=Math.floor(e/t.cellSize),c=Math.floor(i/t.cellSize);for(let g=c-d;g<=c+d;g++){let f=t.grid.get(g);if(f)for(let m=r-d;m<=r+d;m++){let p=f.get(m);if(p)for(let b=0;b<p.length;b++)u(p[b])}}return{nearestFood:n,nearestDistSq:h}}render(t,e,i,s,a){if(!this.enabled)return;this._frameCounter||(this._frameCounter=0),this._frameCounter++;let n=this.config.schoolCount!==null?this.config.schoolCount:this._autoSchoolCount||this._recalcSchoolCount(s,a)||this._autoSchoolCount;for(n=Math.max(1,Math.round(n*(this._qualityMultiplier||1)));this._schoolsSpawned<n;)this.spawnSchool(s,a,n),this._schoolsSpawned++,this._nextSchoolId++;if(this._schoolsSpawned>n&&(this._schoolsSpawned=n),this.sharks.length>o.MAX_FISH){let P=0;for(let l=0;l<this.sharks.length&&this.sharks.length-P>o.MAX_FISH;l++){let S=this.sharks[l];S.passive&&S.isIndependent&&!S.isDying&&(!S.bornAt||e-S.bornAt>1e4)&&(S.isDying=!0,P++)}}let h=this.manager&&this.manager.getLayer?this.manager.getLayer("curiousFish"):null,u=h&&h.enabled?h.fish:null,d=u?u.currentSize||h.config.size:0,r=!!(u&&!h.isAttackingSchoolFish),c=h&&h.targetSchoolFish,g=this.manager&&this.manager.getLayer?this.manager.getLayer("das"):null,f=g&&g.fish?g._getLurePos(g.fish):null,m=!!(this.config.showDebug&&u),p=this.manager?.foodLayer?.getParticles?.()||[],b=null;p.length>0&&(this._foodSkipFrame=!this._foodSkipFrame,(!this._foodSkipFrame||this._foodLookup.activeFoods.length===0)&&this._buildFoodLookup(p),b=this._foodLookup);let v=!!(b&&b.activeFoods.length>0),y=this._updateSchoolCentroids(s);this.config.showDebug&&(t.strokeStyle="rgba(255, 100, 0, 0.5)",t.lineWidth=2,t.setLineDash([10,5]),t.beginPath(),t.moveTo(0,this.config.verticalMarginTop),t.lineTo(s,this.config.verticalMarginTop),t.stroke(),t.beginPath(),t.moveTo(0,a-this.config.verticalMarginBottom),t.lineTo(s,a-this.config.verticalMarginBottom),t.stroke(),t.setLineDash([]));let A=0;for(let P=0;P<this.sharks.length;P++){let l=this.sharks[P];if(l.isDying){if(l.boneY===void 0){let x=Math.sin(l.age*l.schoolWaveSpeed+l.schoolWavePhase)*l.schoolWaveAmplitude,k=l.age/l.verticalPeriod%1,X=Math.sin(k*Math.PI*2)*l.verticalAmplitude;l.boneX=l.x,l.boneY=l.baseY+x+X,l.boneVX=l.direction*l.speed/16,l.boneVY=l.schoolWaveAmplitude*l.schoolWaveSpeed*Math.cos(l.age*l.schoolWaveSpeed+l.schoolWavePhase)+l.verticalAmplitude*(2*Math.PI/l.verticalPeriod)*Math.cos(k*Math.PI*2);let V=.18,W=Math.sqrt(l.boneVX**2+l.boneVY**2);if(W>V){let q=V/W;l.boneVX*=q,l.boneVY*=q}l.boneStartTime=e,this._spawnBloodCloud(l.boneX,l.boneY,l.size,e),this.manager&&this.manager._ripples&&this.manager._ripples.push({x:l.boneX,y:l.boneY,startTime:e,maxR:55+l.size*.8,duration:700,color:"200,60,60"})}let M=3e3,F=800,L=e-l.boneStartTime;if(L>M+F)continue;let I=typeof i=="number"?i:16,O=12e-5;l.boneVY+=O*I,l.boneVX*=1-.003*(I/16),l.boneX+=l.boneVX*I,l.boneY+=l.boneVY*I;let _=L<M?1:1-(L-M)/F;if(this.boneLoaded&&this.boneImage){t.save(),t.globalAlpha=_;try{let x=l.size*1.33,k=x*(this.boneImage.height/this.boneImage.width)||l.size;t.translate(l.boneX,l.boneY),l.direction<0&&t.scale(-1,1),t.drawImage(this.boneImage,-x/2,-k/2,x,k)}catch{}t.restore()}else t.save(),t.globalAlpha=_,t.fillStyle="rgba(220,220,220,0.95)",t.beginPath(),t.ellipse(l.boneX,l.boneY,l.size,l.size*.4,0,0,Math.PI*2),t.fill(),t.restore();this.sharks[A++]=l;continue}if(l.passive&&l.isIndependent&&l.bornAt!==void 0&&e-l.bornAt>o.MAX_PASSIVE_LIFESPAN&&(l.isDying=!0),l.isDancing){l.age=(l.age||0)+i;let M=Math.sin(l.age*l.schoolWaveSpeed+l.schoolWavePhase)*l.schoolWaveAmplitude,F=l.age/l.verticalPeriod%1,L=Math.sin(F*Math.PI*2)*l.verticalAmplitude,I=l.baseY+M+L;!l._drawOnTop&&l!==c&&this.drawShark(t,l.x,I,l.size,l.direction,F,l.image,0,0,l),this.sharks[A++]=l;continue}let S=y.get(l.schoolId),w=S?.members||null,T=l.x;l.x+=l.direction*l.speed,l.burstVX!==void 0&&(l.x+=l.burstVX,l.baseY+=l.burstVY,l.burstVX*=.92,l.burstVY*=.92,Math.abs(l.burstVX)<.05&&Math.abs(l.burstVY)<.05&&(delete l.burstVX,delete l.burstVY)),l.age+=i;let D=Math.sin(l.age*l.schoolWaveSpeed+l.schoolWavePhase)*l.schoolWaveAmplitude,z=l.age/l.verticalPeriod%1,E=Math.sin(z*Math.PI*2)*l.verticalAmplitude,C=l.baseY+D+E;{let M=this.config.verticalMarginTop+l.size,F=a-this.config.verticalMarginBottom-l.size;l.baseY<M?l.baseY+=(M-l.baseY)*.05:l.baseY>F&&(l.baseY+=(F-l.baseY)*.05)}if(r&&!l.isBeingAttacked){let M=l.x-u.x,F=C-u.y,L=M*M+F*F,I=this.config.avoidRadius+d,O=I*I;if(L<O&&L>0){let _=Math.sqrt(L),x=(1-_/I)*2.5;l.x+=M/_*x,l.baseY+=F/_*x*.5}}if(this.mouseX!==null&&this.mouseY!==null){let M=l.x-this.mouseX,F=C-this.mouseY,L=M*M+F*F,I=175;if(L<I*I&&L>0){let O=Math.sqrt(L),_=(1-O/I)*1.4,x=Math.min(_,l.speed*.9);l.x+=M/O*x,l.baseY+=F/O*x*.45}}let Y=Math.max(.5,l.size/40);if(!l.isIndependent){let M=40*(1+(Y-1)*1.5),F=M*M;if(S&&S.count>1){let x=S.x-l.x;Math.abs(x)>s*.5&&(x+=x>0?-s:s);let k=S.y-l.baseY,X=x*x+k*k;if(X>400){let V=Math.sqrt(X),W=Math.min((V-20)/180,1),q=W*W*.1,Dt=x*l.direction>=0?1:.2;l.x+=x*q*Dt,l.baseY+=k*q*.15}}l.baseSpeed!==void 0&&(l.speed+=(l.baseSpeed-l.speed)*.02);let L=0,I=0,O=0;for(let x of w||this.sharks){if(x===l||x.isDying)continue;if(O++>=5)break;let k=l.x-x.x,X=l.baseY-x.baseY,V=k*k+X*X;if(V<F&&V>0){let W=Math.sqrt(V);L+=k/W,I+=X/W}}let _=.18*Math.max(1,Y*1.2);l.x+=L*_,l.baseY+=I*.04}if(v){let M=l.fishType===1||l.fishType===2||l.fishType===3,F=M?380:220,L=null,I=F*F,O=l.targetFood;if(O&&!O.eaten){let _=O.x-l.x,x=O.y-C,k=_*_+x*x;(l.direction>0&&_>-40||l.direction<0&&_<40)&&k<I&&(L=O,I=k)}if(!L){let _=this._findNearestFood(b,l.x,C,l.direction,F);L=_.nearestFood,I=_.nearestDistSq}if(l.targetFood=L,L){let _=L.x-l.x,x=L.y-C,k=Math.sqrt(I),X=M?.75:.3;k>0&&(l.baseY+=x/k*X);let V=M?140:80,W=M?.07:.03,q=M?2.8:2;k<V?l.speed=Math.min(l.baseSpeed*q,l.speed+W):l.speed=Math.max(l.baseSpeed,l.speed-.02),I<196&&(L.eaten=!0,l.targetFood=null,l.size=Math.min(80,l.size+.5),l.speed=l.baseSpeed)}else l.targetFood=null,l.speed=Math.max(l.baseSpeed,l.speed-.02)}else l.targetFood=null;if(f){let M=f.x-l.x,F=f.y-C,L=M*M+F*F;if((l.direction>0&&M>-40||l.direction<0&&M<40)&&L<48400){let _=Math.sqrt(L);_>0&&(l.baseY+=F/_*.3),_<80&&(l.speed=Math.min(l.baseSpeed*2,l.speed+.03))}}let R=l.x-T,B=.12;if(Math.abs(R)<B&&(l.x+=l.direction*B),l.direction>0&&l.x>s+l.size*2){l.x=-l.size*2;let M=this.config.verticalMarginTop,F=a-this.config.verticalMarginBottom,L=S?S.y:l.baseY;l.baseY=Math.max(M,Math.min(F,L+(Math.random()-.5)*30))}else if(l.direction<0&&l.x<-l.size*2){l.x=s+l.size*2;let M=this.config.verticalMarginTop,F=a-this.config.verticalMarginBottom,L=S?S.y:l.baseY;l.baseY=Math.max(M,Math.min(F,L+(Math.random()-.5)*30))}l!==c&&(this.drawShark(t,l.x,C,l.size,l.direction,z,l.image,0,0,l),m&&(t.strokeStyle=l.isBeingAttacked?"rgba(255, 0, 0, 0.5)":"rgba(0, 255, 0, 0.3)",t.lineWidth=1,t.beginPath(),t.ellipse(l.x,C,l.size*1,l.size*.4,0,0,Math.PI*2),t.stroke())),this.sharks[A++]=l}A<this.sharks.length&&(this._schoolMembershipDirty=!0);for(let P=A;P<this.sharks.length;P++)this._sharkPool.push(this.sharks[P]);if(this.sharks.length=A,this.bloodParticles.length>0){let P=e,l=0;t.save();for(let S=0;S<this.bloodParticles.length;S++){let w=this.bloodParticles[S],T=P-w.birth;if(T>=w.life)continue;w.x+=w.vx,w.y+=w.vy,w.vx*=.97,w.vy*=.97;let D=T/w.life,z=D<.05?D/.05:D<.6?1:1-(D-.6)/.4;t.globalAlpha=w.alpha*z,t.fillStyle=w.color,t.beginPath(),t.arc(w.x,w.y,w.radius,0,Math.PI*2),t.fill(),this.bloodParticles[l++]=w}for(let S=l;S<this.bloodParticles.length;S++)this._bloodPool.push(this.bloodParticles[S]);this.bloodParticles.length=l,t.globalAlpha=1,t.restore()}if(c&&!c.isDying){let P=Math.sin(c.age*c.schoolWaveSpeed+c.schoolWavePhase)*c.schoolWaveAmplitude,l=c.age/c.verticalPeriod%1,S=Math.sin(l*Math.PI*2)*c.verticalAmplitude,w=c.baseY+P+S;this.drawShark(t,c.x,w,c.size,c.direction,l,c.image,0,0,c),this.config.showDebug&&(t.strokeStyle=c.isBeingAttacked?"rgba(255, 0, 0, 0.7)":"rgba(255, 255, 0, 0.5)",t.lineWidth=2,t.beginPath(),t.ellipse(c.x,w,c.size*1,c.size*.4,0,0,Math.PI*2),t.stroke())}}drawShark(t,e,i,s,a,n,h,u=0,d=0,r=null){if(this.imagesLoaded+this.imagesFailed<this.fishImages.length){let w=a<0?-1:1;t.setTransform(w,0,0,1,e,i),t.fillStyle="rgba(100, 150, 200, 0.5)",t.beginPath(),t.ellipse(0,0,s,s*.4,0,0,Math.PI*2),t.fill(),t.setTransform(1,0,0,1,0,0);return}if(!h||h._failed)return;let c=r&&r.flipX!==void 0?r.flipX:a<0?-1:1,g;if(u>0)g=u;else{let w=r?r.age:n*2e3;g=Math.sin(w/2500*Math.PI*2)*.007+Math.sin(w/4100*Math.PI*2+1.3)*.004}let f=Math.cos(g),m=Math.sin(g);t.setTransform(c*f,m,-c*m,f,e,i),t.globalAlpha=1;let p=r&&r._imageIndex!==void 0?r._imageIndex:this.fishImages.indexOf(h),b=r&&r.depthTier!==void 0?r.depthTier:this.height>0?Math.max(0,Math.min(3,Math.floor(i/this.height*4))):3,v=p>=0&&this._imageDepthCache[p]?this._imageDepthCache[p][b]:h,y=!1;if(d>0){let w=Math.round(d*100),T=Math.round(100-d*70);t.filter=`grayscale(${w}%) brightness(${T}%)`,y=!0}let A=r?._hitFlashTime?Date.now()-r._hitFlashTime:1/0,P=A<220,l=s*2,S=s*(h.height/h.width)*2;t.drawImage(v,-l/2,-S/2,l,S),P&&(t.globalCompositeOperation="source-atop",t.globalAlpha=.55*(1-A/220),t.fillStyle="#ff1500",t.fillRect(-l/2,-S/2,l,S),t.globalCompositeOperation="source-over",t.globalAlpha=1),y&&(t.filter="none"),t.setTransform(1,0,0,1,0,0)}spawnSchool(t,e,i=8){let s=Math.random()>.5?1:-1,a=this._schoolsSpawned%6,n=a===0?0:a===1?1:a===2?2:a===3?3:a===4?1:0,h,u,d;n===0?(u=this.fishImages[0],h=50+Math.random()*70,d=[1,1]):n===1?(u=this.fishImages[1],h=10+Math.random()*20,d=[4,8]):n===2?(u=this.fishImages[2],h=10+Math.random()*6,d=[7,12]):(u=this.fishImages[3],h=30+Math.random()*30,d=[2,4]);let r=.5+Math.random(),c=Math.max(n===2?12:n===0?50:30,h*r*this.config.size),g=c>70?3:c>50?2:c>35?1:0,f=Math.min(1,Math.max(0,(c-30)/90)),m=n===2?2:1,p=(.35+f*1.15+(Math.random()-.5)*.3)*m,b=.7+Math.random()*.6,v=Math.min(this.config.maxSchoolSize,Math.max(1,Math.floor((d[0]+Math.random()*(d[1]-d[0]))*b))),y=this.config.verticalMarginTop,A=e-this.config.verticalMarginBottom,P=A-y,l=Math.max(i,4),S=this._schoolsSpawned%l,w=P/l,T=y+w*(S+.5),D=(g-1.5)/1.5,z=T-D*w*.3+(Math.random()-.5)*w*.55;if(z=Math.max(y+20,Math.min(A-20,z)),n===2){let R=this.manager&&this.manager.getLayer("das");if(R&&R.fish){let B=R.fish.y,M=90;if(Math.abs(z-B)<M){let F=B-z>0?-M*1.5:M*1.5;z=Math.max(y+20,Math.min(A-20,z+F))}}}let E=s>0?-c*2:t+c*2,C=Math.random()*Math.PI*2,U=8e-4+Math.random()*6e-4,Y=8+Math.random()*10;for(let R=0;R<v;R++){let B=Math.max(n===2?12:n===0?50:30,c*(.4+Math.random()*.3)),M=2.5+B/c,F=1.5+B/c*.5,L=(Math.random()-.5)*B*M,I=(Math.random()-.5)*B*F,O=p*(.9+Math.random()*.2),_=this._sharkPool.pop()||{};_.x=E+L,_.baseY=z+I,_.size=B,_.speed=O,_.baseSpeed=O,_.schoolId=this._nextSchoolId,_.fishType=n,_.depthTier=g,_.direction=s,_.verticalAmplitude=2+Math.random()*4,_.verticalPeriod=5e3+Math.random()*5e3,_.age=Math.random()*1e3,_.image=u,_._imageIndex=n,_.schoolWavePhase=C,_.schoolWaveSpeed=U,_.schoolWaveAmplitude=Y,_.tailPeriod=280+Math.random()*220,_.isDying=void 0,_.boneY=void 0,_.boneStartTime=void 0,_.isDancing=void 0,_._hitFlashTime=void 0,_.passive=void 0,_.isIndependent=void 0,this.sharks.push(_)}this._schoolMembershipDirty=!0}spawnIntroSchool(t,e,i){let a=this.fishImages[1],n=Math.min(this.config.maxSchoolSize,35+Math.floor(Math.random()*20)),h=16,u=1.4,d=i??e*.6,r=-1,c=Math.random()*Math.PI*2,g=9e-4,f=12;for(let m=0;m<n;m++){let p=h*(.7+Math.random()*.6),b=(Math.random()-.5)*p*7,v=(Math.random()-.5)*p*3,y=this._sharkPool.pop()||{};y.x=-p*3+b,y.baseY=d+v,y.size=p,y.speed=u*(.9+Math.random()*.2),y.baseSpeed=u,y.schoolId=r,y.fishType=1,y.depthTier=1,y.direction=1,y.verticalAmplitude=3+Math.random()*3,y.verticalPeriod=4e3+Math.random()*3e3,y.age=Math.random()*500,y.image=a,y._imageIndex=1,y.schoolWavePhase=c,y.schoolWaveSpeed=g,y.schoolWaveAmplitude=f,y.tailPeriod=260+Math.random()*180,y.isDying=void 0,y.boneY=void 0,y.boneStartTime=void 0,y.isDancing=void 0,y._hitFlashTime=void 0,y.passive=void 0,y.isIndependent=void 0,this.sharks.push(y)}this._schoolMembershipDirty=!0}_spawnBloodBurst(t,e,i,s=null,a=0){let n=["#8b0000","#a80000","#c01010","#6a0000","#b02000","#cc0000"],h=a,u=this._qualityMultiplier||1,d=Math.max(48,Math.round(o.MAX_BLOOD_PARTICLES*u)),r=Math.max(0,d-this.bloodParticles.length);if(r===0)return;let c=Math.min(Math.max(o.MIN_BLOOD_PARTICLES_PER_BURST,Math.floor(i*.5)),Math.max(o.MIN_BLOOD_PARTICLES_PER_BURST,Math.round(o.MAX_BLOOD_PARTICLES_PER_BURST*u))),g=Math.min(c,r);for(let f=0;f<g;f++){let m=s!==null?s+(Math.random()-.5)*Math.PI*1.6:Math.random()*Math.PI*2,p=.15+Math.random()*.55,b=i*(.04+Math.random()*.1),v=3500+Math.random()*1500,y=this._bloodPool.pop()||{};y.x=t+(Math.random()-.5)*i*.3,y.y=e+(Math.random()-.5)*i*.2,y.vx=Math.cos(m)*p,y.vy=Math.sin(m)*p*.6,y.radius=b,y.color=n[Math.floor(Math.random()*n.length)],y.alpha=.45+Math.random()*.4,y.birth=h,y.life=v,this.bloodParticles.push(y)}}_spawnBloodCloud(t,e,i,s=0){this._spawnBloodBurst(t,e,i,null,s)}_buildDepthCache(t){let e=[{sat:92,bri:82},{sat:96,bri:89},{sat:99,bri:95},null],i=t.naturalWidth||t.width,s=t.naturalHeight||t.height;return!i||!s?e.map(()=>t):e.map(a=>{if(!a)return t;let n=new OffscreenCanvas(i,s),h=n.getContext("2d");return h.filter=`saturate(${a.sat}%) brightness(${a.bri}%)`,h.drawImage(t,0,0),n})}};var ot=class o{static DEFAULT_CONFIG={size:100,speed:.5,turnRate:.005,lureRadius:30,allowHighCostEffects:!0};constructor(t={}){this.enabled=!0,this.manager=null,this.config={...o.DEFAULT_CONFIG,...t},this.fish=null,this._qualityMultiplier=1,this._image=new Image,this._imageLoaded=!1,this._depthCache=null,this._effectCache=null,this._glitch={cooldown:1e3+Math.random()*2e3,effect:null,timer:0,speedMul:1,data:{}},this._intro=!0,this._image.onload=()=>{this._imageLoaded=!0,this._depthCache=this._buildDepthCache(this._image),this._effectCache=this._buildEffectCache(this._depthCache)},this._image.onerror=()=>{console.warn("[DasFishLayer] Failed to load das.png")},this._image.src="assets/images/fish/das.webp"}init(t,e,i){this.width=t,this.height=e,this.manager=i}onResize(t,e){this.width=t,this.height=e}setQuality(t){this._qualityMultiplier=t}destroy(){this.fish=null}_spawn(){let t=this._intro?!1:Math.random()<.5,e=this.height*.6;if(this.fish={x:t?-this.config.size:this.width+this.config.size,y:this._intro?e:this.height*(.5+Math.random()*.3),vx:(t?1:-1)*this.config.speed,size:this.config.size,age:0},this._intro){let i=this.manager&&this.manager.getLayer("fish");i&&typeof i.spawnIntroSchool=="function"&&i.spawnIntroSchool(this.width,this.height,e)}}_update(t){let e=this.fish,i=typeof t=="number"?t:16,s=this.config.speed*(i/16);e.age+=i,this._updateGlitch(i),this._intro&&e.age>5e3&&(this._intro=!1);let a=s*this._glitch.speedMul;e.x+=e.vx>0?a:-a,e.y+=Math.sin(e.age*4e-4)*.18*(i/16);let n=e.size;e.y=Math.max(n,Math.min(this.height-n,e.y)),e.vx>0&&e.x>this.width+e.size*2?(e.x=-e.size,e.y=this.height*(.5+Math.random()*.3)):e.vx<0&&e.x<-e.size*2&&(e.x=this.width+e.size,e.y=this.height*(.5+Math.random()*.3))}_getLurePos(t){let e=t.vx>=0?1:-1;return{x:t.x+e*(t.size*.76-10),y:t.y-t.size*.02,r:this.config.lureRadius}}_checkKills(){let t=this._getLurePos(this.fish),e=performance.now(),i=500,s=this.manager&&this.manager.getLayer("fish");if(s&&s.sharks)for(let n of s.sharks){if(n.isDying)continue;let h=t.x-n.x,u=t.y-(n.baseY||n.y||0),d=t.r+n.size*.5;if(h*h+u*u<d*d){if(n._dasCooldownUntil&&e<n._dasCooldownUntil)continue;Math.random()<.7?n._dasCooldownUntil=e+i:n.isDying=!0}}let a=this.manager&&this.manager.getLayer("curiousFish");if(a&&a.fish&&!a.fish.isDying){let n=a.fish,h=n.currentSize||a.config?.size||20,u=t.x-n.x,d=t.y-n.y,r=t.r+h*.5;u*u+d*d<r*r&&(n._dasCooldownUntil&&e<n._dasCooldownUntil||(Math.random()<.7?n._dasCooldownUntil=e+i:n.isDying=!0))}}_updateGlitch(t){let e=this._glitch;e.effect?(e.timer-=t,e.effect==="freeze"&&(e.data.elapsed=(e.data.elapsed||0)+t),(e.effect==="tear"||e.effect==="tearV")&&(e.data.offsetRefresh=(e.data.offsetRefresh||0)-t,e.data.offsetRefresh<=0&&this._refreshGlitchSlices(e)),e.timer<=0&&(e.effect=null,e.speedMul=1,e.data={},e.cooldown=1e3+Math.random()*2e3)):(e.cooldown-=t,e.cooldown<=0&&this._triggerGlitch())}_triggerGlitch(){let t=this._glitch,e=["freeze","freeze","freeze","tear","tear","tearV","tearV","ghost","ghost2"];switch(t.effect=e[Math.floor(Math.random()*e.length)],t.data={},t.effect){case"freeze":t.timer=700+Math.random()*500,t.speedMul=.05,t.data.total=t.timer;break;case"tear":t.timer=100+Math.random()*250,t.speedMul=1,this._refreshGlitchSlices(t);break;case"tearV":t.timer=100+Math.random()*250,t.speedMul=1,this._refreshGlitchSlices(t);break;case"ghost":t.timer=150+Math.random()*280,t.speedMul=.4;break;case"ghost2":t.timer=150+Math.random()*280,t.speedMul=.4;break}}_refreshGlitchSlices(t){if(t.data.offsetRefresh=48+Math.random()*24,t.effect==="tear"){t.data.horizontalOffsets=Array.from({length:3},(e,i)=>(i%2===0?1:-1)*(3+Math.floor(Math.random()*10)));return}t.effect==="tearV"&&(t.data.verticalOffsets=Array.from({length:5},(e,i)=>(i%2===0?1:-1)*(3+Math.floor(Math.random()*10))))}render(t,e,i,s,a){if(!this.enabled||(this.width=s,this.height=a,!this.fish&&s>0&&a>0&&this._spawn(),!this.fish))return;this._update(i),this._glitch.effect!=="freeze"&&this._checkKills();let n=this.fish;if(!this._imageLoaded){t.save(),t.fillStyle="rgba(200,80,0,0.6)",t.beginPath(),t.arc(n.x,n.y,n.size*.5,0,Math.PI*2),t.fill(),t.restore();return}let h=this._glitch,u=this.config.allowHighCostEffects&&this._qualityMultiplier>=.6,d=a>0?Math.min(3,Math.max(0,Math.floor(n.y/a*4))):3,r=this._depthCache&&this._depthCache[d]||this._image,c=this._effectCache&&this._effectCache[d],g=n.size*2,f=g*(this._image.height/this._image.width);switch(t.save(),t.translate(n.x,n.y),n.vx<0&&t.scale(-1,1),h.effect){case"freeze":{let p=h.data.elapsed||0,b=h.data.total||700,v;p<400?v=100-p/400*100:p>b-400?v=(p-(b-400))/400*100:v=0;let y=u&&this._pickFreezeVariant(c,v)||r;t.drawImage(y,-g/2,-f/2,g,f);break}case"ghost":t.globalAlpha=.35,t.drawImage(u&&c?.ghost||r,-g/2+9,-f/2-5,g,f),t.globalAlpha=1,t.drawImage(r,-g/2,-f/2,g,f);break;case"ghost2":t.globalAlpha=.35,t.drawImage(u&&c?.ghost2||r,-g/2-7,-f/2+8,g,f),t.globalAlpha=1,t.drawImage(r,-g/2,-f/2,g,f);break;case"tear":{let m=f/3,p=h.data.horizontalOffsets||[6,-6,6];for(let b=0;b<3;b++){let v=p[b]??0;t.save(),t.beginPath(),t.rect(-g/2+v-1,-f/2+b*m,g+2,m),t.clip(),t.drawImage(r,-g/2+v,-f/2,g,f),t.restore()}break}case"tearV":{let m=g/5,p=h.data.verticalOffsets||[6,-6,6,-6,6];for(let b=0;b<5;b++){let v=p[b]??0;t.save(),t.beginPath(),t.rect(-g/2+b*m,-f/2+v-1,m,f+2),t.clip(),t.drawImage(r,-g/2,-f/2+v,g,f),t.restore()}break}default:t.drawImage(r,-g/2,-f/2,g,f)}if(h.effect==="freeze"){t.save(),t.translate(0,f*.05);let m=e%1200/1200*Math.PI*2;for(let p=0;p<8;p++){let b=m+p/8*Math.PI*2;t.globalAlpha=.2+p/8*.75,t.fillStyle="#ffffff",t.beginPath(),t.arc(Math.cos(b)*9,Math.sin(b)*9,2.5,0,Math.PI*2),t.fill()}t.restore()}if(t.restore(),this.showDebug){let m=this._getLurePos(n);t.save(),t.strokeStyle="rgba(255,0,0,0.85)",t.lineWidth=2,t.beginPath(),t.arc(m.x,m.y,m.r,0,Math.PI*2),t.stroke(),t.fillStyle="rgba(255,0,0,0.25)",t.fill(),t.restore()}}_buildDepthCache(t){let e=[{sat:30,bri:100},{sat:55,bri:100},{sat:78,bri:100},null],i=t.naturalWidth||t.width,s=t.naturalHeight||t.height;return!i||!s?e.map(()=>t):e.map(a=>{if(!a)return t;let n=new OffscreenCanvas(i,s),h=n.getContext("2d");return h.filter=`saturate(${a.sat}%) brightness(${a.bri}%)`,h.drawImage(t,0,0),n})}_buildEffectCache(t){if(!t)return null;let e=[0,25,50,75,100];return t.map(i=>({freeze:e.reduce((s,a)=>(s[a]=a>=100?i:this._createFilteredVariant(i,`saturate(${a}%)`),s),{}),ghost:this._createFilteredVariant(i,"hue-rotate(120deg) saturate(300%)"),ghost2:this._createFilteredVariant(i,"hue-rotate(255deg) saturate(300%)")}))}_createFilteredVariant(t,e){let i=t.naturalWidth||t.width,s=t.naturalHeight||t.height;if(!i||!s)return t;let a=new OffscreenCanvas(i,s),n=a.getContext("2d");return n?(n.filter=e,n.drawImage(t,0,0),a):t}_pickFreezeVariant(t,e){let i=t&&t.freeze;if(!i)return null;let s=[0,25,50,75,100],a=Math.max(0,Math.min(100,e)),n=s[0];for(let h=1;h<s.length;h++)Math.abs(s[h]-a)<Math.abs(n-a)&&(n=s[h]);return i[n]||null}};var nt=class o{static MAX_JELLYFISH=12;static DEFAULT_CONFIG={schoolCount:null,schoolDensity:600,minSchools:1,maxSchools:10,sizeMin:15,sizeMax:30,speedMin:.09,speedMax:.2,riseMin:.156,riseMax:.346,pulsePerMin:.0018,pulsePerMax:.0032,pulseAmpMin:12,pulseAmpMax:28,allowHighCostEffects:!0};constructor(t={}){this.enabled=!0,this.jellyfish=[],this.particles=[],this._schoolsSpawned=0,this.manager=null,this._qualityMultiplier=1,this.imageAspectRatio=1.4,this._tintedVariants=null,this.config={...o.DEFAULT_CONFIG,...t},this.image=new Image,this.imageLoaded=!1,this.tintedImage=null,this.image.onload=()=>{this.imageLoaded=!0,this.imageAspectRatio=this.image.naturalHeight/this.image.naturalWidth||1.4,this._buildTintedImage()},this.image.onerror=()=>{console.warn("JellyfishLayer: failed to load medusa.webp")},this.image.src="assets/images/fish/medusa.webp"}init(t,e,i){this.width=t,this.height=e,this.manager=i,this._recalcSchoolCount(t,e)}destroy(){this.jellyfish=[],this.particles=[],this._schoolsSpawned=0,this._tintedVariants=null}setQuality(t){this._qualityMultiplier=t}onResize(t,e){this.width=t,this.height=e,this._recalcSchoolCount(t,e)}_recalcSchoolCount(t,e){if(this.config.schoolCount!==null)return;let i=this.config.schoolDensity;this._autoSchoolCount=Math.max(this.config.minSchools,Math.min(this.config.maxSchools,Math.round(t/i)))}render(t,e,i,s,a){if(!this.enabled)return;let n=this.config.schoolCount!==null?this.config.schoolCount:this._autoSchoolCount||2;for(;this._schoolsSpawned<n;)this._spawnSchool(s,a,this._schoolsSpawned),this._schoolsSpawned++;this.jellyfish.length>o.MAX_JELLYFISH&&(this.jellyfish.length=o.MAX_JELLYFISH);let h=0;for(let u=0;u<this.jellyfish.length;u++){let d=this.jellyfish[u];d.age+=i,d.x+=d.speed*(i/16),d.baseY-=d.riseSpeed*(i/16);let r=d.age*d.pulseFreq,g=-((Math.sin(r-Math.PI*.5)+1)*.5)*d.pulseAmplitude,f=d.baseY+g,m=70+d.size*2;if(d.baseY<=m&&(d.baseY=m,d.riseSpeed>0&&(d.riseSpeed=-d.origRiseSpeed*.7)),d.riseSpeed<0&&d.baseY>=a*.5&&(d.riseSpeed=d.origRiseSpeed),d.x>s+d.size*2.5&&this._resetBelowBottom(d,s,a),this.particles.length<50&&Math.random()<.002*i){let p=this.imageLoaded&&this.image.height/this.image.width||1.4;this.particles.push({x:d.x+(Math.random()-.5)*d.size*1.1,y:f+d.size*(.6+Math.random()*.9*p),vx:(Math.random()-.5)*.012,vy:-(.018+Math.random()*.025),age:0,maxAge:700+Math.random()*900,size:.7+Math.random()*1.6,baseAlpha:.35+Math.random()*.45})}this._draw(t,d,f),this.jellyfish[h++]=d}if(this.jellyfish.length=h,this.particles.length>0){t.save(),t.fillStyle="rgba(180, 240, 255, 1.0)";let u=0;for(let d=0;d<this.particles.length;d++){let r=this.particles[d];if(r.age+=i,r.age>=r.maxAge)continue;r.x+=r.vx*(i/16),r.y+=r.vy*(i/16);let c=r.age/r.maxAge,g=c<.12?c/.12:1-(c-.12)/.88;t.globalAlpha=r.baseAlpha*g,t.beginPath(),t.arc(r.x,r.y,r.size,0,Math.PI*2),t.fill(),this.particles[u++]=r}this.particles.length=u,t.globalAlpha=1,t.restore()}}_buildTintedImage(){if(!this.config.allowHighCostEffects)return;let t=new OffscreenCanvas(this.image.naturalWidth,this.image.naturalHeight),e=t.getContext("2d");if(!e)return;e.filter="sepia(1) saturate(3) hue-rotate(170deg)",e.drawImage(this.image,0,0),this.tintedImage=t;let i=[1.1,1.18,1.26,1.35];this._tintedVariants=i.map(s=>{let a=new OffscreenCanvas(this.image.naturalWidth,this.image.naturalHeight),n=a.getContext("2d");return n?(n.filter=`brightness(${s})`,n.drawImage(t,0,0),a):t})}_draw(t,e,i){let s=e.age*e.pulseFreq,a=(Math.sin(s-Math.PI*.5)+1)*.5,n=Math.max(0,Math.sin(s)),h=this.imageAspectRatio,u=e.size*2,d=u*h,r=this.config.allowHighCostEffects&&this._qualityMultiplier>=.6,c=1-n*.09,g=1+n*.18;if(t.setTransform(c,0,0,g,e.x,i),t.globalAlpha=e.alpha*(.85+a*.15),this.tintedImage){let f=r&&this._tintedVariants?.length?this._tintedVariants[Math.min(this._tintedVariants.length-1,Math.floor(a*this._tintedVariants.length))]:this.tintedImage;t.drawImage(f,-u/2,-d/2,u,d)}else this.imageLoaded?(r&&(t.filter=`sepia(1) saturate(3) hue-rotate(170deg) brightness(${1.1+a*.25})`),t.drawImage(this.image,-u/2,-d/2,u,d),r&&(t.filter="none")):(t.fillStyle=`rgba(100, 215, 255, ${.5+a*.2})`,t.beginPath(),t.arc(0,0,e.size,0,Math.PI*2),t.fill());r&&!this.tintedImage&&(t.filter="none"),t.globalAlpha=1,t.setTransform(1,0,0,1,0,0)}_spawnSchool(t,e,i){let s=this.config,a=1,n=s.sizeMin+Math.random()*(s.sizeMax-s.sizeMin),h=s.speedMin+Math.random()*(s.speedMax-s.speedMin),u=s.riseMin+Math.random()*(s.riseMax-s.riseMin),d=s.pulsePerMin+Math.random()*(s.pulsePerMax-s.pulsePerMin),r=s.pulseAmpMin+Math.random()*(s.pulseAmpMax-s.pulseAmpMin),c=i/Math.max(1,this._autoSchoolCount-1||.5)*t*(.85+Math.random()*.15)+(Math.random()-.5)*t*.12,g=e+n+Math.random()*(e*.15);for(let f=0;f<a;f++){let m=-(f*(n*1.8+Math.random()*20)),p=Math.random()*n*1.5,b=n*(.75+Math.random()*.5),v=Math.random()*Math.PI*2/d;this.jellyfish.push({x:c+(Math.random()-.5)*n*2,baseY:g+p,size:b,speed:h*(.88+Math.random()*.24),riseSpeed:u*(.88+Math.random()*.24),origRiseSpeed:u*(.88+Math.random()*.24),pulseFreq:d*(.9+Math.random()*.2),pulseAmplitude:r*(.8+Math.random()*.4),age:v,alpha:.55+Math.random()*.3})}}_resetBelowBottom(t,e,i){t.x=Math.random()*e,t.baseY=i+t.size+Math.random()*(i*.15)}};function zt(o={}){return new ut(o)}var gt=class{constructor(t={}){this.webglRenderer=null,this.canvasManager=null,this.rafId=null,this.lastTime=0,this.isRunning=!1,this.fpsUpdateTime=0,this.frameCount=0,this.currentFPS=60,this.maxDisplayFPS=0,this.theoreticalFPS=0,this.lastRenderTime=0,this.fpsLogTime=0,this.debug=t.debug||!1,this.mobileLiteMode=t.mobileLiteMode===!0,this.baseCanvas2dFPS=t.canvas2dFPS||45,this.canvas2dInterval=1e3/this.baseCanvas2dFPS,this.lastCanvas2dTime=0,this.tier=0,this.lowFpsSince=null,this.LOW_FPS_THRESHOLD=28,this.LOW_FPS_THRESHOLD_CANVAS=22,this.LOW_FPS_THRESHOLD_FINAL=15,this.LOW_FPS_DURATION=this.mobileLiteMode?7e3:15e3,this._warmupDuration=12e3,this._warmupUntil=0,this._hiddenSince=0,this.RECOVERY_HIDDEN_MIN=6e4,this._rampFactor=1,this._rampTarget=1,this._rampStep=.15,this._rampInterval=8e3,this._lastRampTime=0,this._rampComplete=!0,this.debugPanel=null,this._pausedByVisibility=!1,this._visibilityListenerAdded=!1,this._onVisibilityChange=null,this.render=this.render.bind(this)}hasWebGLRenderer(){return!!(this.webglRenderer&&this.webglRenderer.canvas&&this.webglRenderer.gl)}hasCanvasRenderer(){return this.canvasManager?typeof this.canvasManager.canRender=="function"?this.canvasManager.canRender():!!this.canvasManager.ctx:!1}getCurrentLowFpsThreshold(){return this.tier<=1?this.LOW_FPS_THRESHOLD:this.tier===2?this.LOW_FPS_THRESHOLD_CANVAS:this.LOW_FPS_THRESHOLD_FINAL}syncCanvasThrottle(){let t=this.baseCanvas2dFPS;this.tier>=4?t=0:this.tier>=3?t=Math.min(t,this.mobileLiteMode?24:30):this.mobileLiteMode&&(t=Math.min(t,28)),this.canvas2dInterval=t>0?1e3/t:Number.POSITIVE_INFINITY}registerWebGLRenderer(t){!t||!t.canvas||(this.webglRenderer=t,t.rafId&&(cancelAnimationFrame(t.rafId),t.rafId=null),t.onContextLost=()=>{this.tier<2&&(console.warn("[MasterRenderer] WebGL context lost \u2014 jumping to level 2"),this.lowFpsSince=null,this._disableWebGL())})}registerCanvasManager(t){this.canvasManager=t,t.animationId&&(cancelAnimationFrame(t.animationId),t.animationId=null)}start(){if(this.isRunning)return;let t=this.hasWebGLRenderer(),e=this.hasCanvasRenderer();if(!t&&!e){this.tier=4,document.body.classList.remove("has-webgl"),console.warn("[MasterRenderer] No usable render backends available \u2014 CSS-only fallback active");return}!t&&this.tier===0&&(this.tier=1),this.syncCanvasThrottle(),this._rampFactor=1,this._rampComplete=!0,this._lastRampTime=0,this.isRunning=!0,this.lastTime=performance.now(),this.fpsUpdateTime=this.lastTime,this.frameCount=0,this._warmupUntil=this.lastTime+this._warmupDuration,this.debug&&(this.debugPanel=new st),this.rafId=requestAnimationFrame(this.render),this._visibilityListenerAdded||(this._onVisibilityChange=()=>{document.hidden?(this._hiddenSince=performance.now(),this.isRunning&&(this._pausedByVisibility=!0,this.stop())):this._pausedByVisibility&&(this._pausedByVisibility=!1,performance.now()-(this._hiddenSince||0)>=this.RECOVERY_HIDDEN_MIN&&this.tier>=3&&this._stepUp(),this.lastTime=performance.now(),this.lastCanvas2dTime=this.lastTime,this.start())},document.addEventListener("visibilitychange",this._onVisibilityChange),this._visibilityListenerAdded=!0)}stop(){this.isRunning&&(this.isRunning=!1,this.rafId&&(cancelAnimationFrame(this.rafId),this.rafId=null),this.debugPanel?.destroy(),this.debugPanel=null)}destroy(){this.stop(),this._onVisibilityChange&&(document.removeEventListener("visibilitychange",this._onVisibilityChange),this._onVisibilityChange=null,this._visibilityListenerAdded=!1)}render(t){if(!this.isRunning)return;let e=t-this.lastTime,i=Math.min(e,100);this.lastTime=t;let s=performance.now();if(this.hasWebGLRenderer()&&this.webglRenderer.renderFrame(t,i),this.hasCanvasRenderer()&&t-this.lastCanvas2dTime>=this.canvas2dInterval){let n=t-this.lastCanvas2dTime;this.lastCanvas2dTime=t,this.canvasManager.renderFrame(t,n)}let a=performance.now();this.lastRenderTime=a-s,this.lastRenderTime>0&&(this.theoreticalFPS=Math.round(1e3/this.lastRenderTime)),i>0&&(this.maxDisplayFPS=Math.round(1e3/i)),this.updateFPSDisplay(t,i),this.isRunning&&(this.rafId=requestAnimationFrame(this.render))}updateFPSDisplay(t,e){if(this.frameCount++,t-this.fpsUpdateTime>=500){if(this.currentFPS=Math.round(this.frameCount*1e3/(t-this.fpsUpdateTime)),this.frameCount=0,this.fpsUpdateTime=t,t>=this._warmupUntil&&this.tier<4){let u=this.getCurrentLowFpsThreshold();this.currentFPS<u?this.lowFpsSince===null?this.lowFpsSince=t:t-this.lowFpsSince>=this.LOW_FPS_DURATION&&(this._stepDown(),this.lowFpsSince=null):this.lowFpsSince=null}else this.lowFpsSince!==null&&(this.lowFpsSince=null);t-this.fpsLogTime>=5e3&&(this.debug&&console.log(`FPS: ${this.currentFPS}`),this.fpsLogTime=t);let s=this.lastRenderTime>0?Math.round(1e3/this.lastRenderTime):0,a=e>0?Math.round(1e3/e):0;this.theoreticalFPS=s,this.maxDisplayFPS=a;let n=e-this.lastRenderTime,h={fps:this.currentFPS,theoreticalFPS:s,maxDisplayFPS:a,renderTime:this.lastRenderTime,totalFrameTime:e,idleTime:n,layers:{},webgl:{},counts:{},quality:1,resolution:""};if(this.canvasManager){let u=this.canvasManager.performanceProfiler;u&&u.sections&&(h.layers={FishLayer:u.sections["layer:FishLayer"],CuriousFishLayer:u.sections["layer:CuriousFishLayer"],HudLayer:u.sections["layer:HudLayer"]},u.sections.foodUpdate&&(h.food={time:u.sections.foodUpdate.avg}));let d=this.canvasManager.getLayer("fish");d&&d.sharks&&(h.counts.fish=d.sharks.length);let r=this.canvasManager.foodLayer;r&&r.getParticles&&(h.counts.food=r.getParticles().length);let c=this.canvasManager.performanceMonitor;c&&(h.quality=c.qualityMultiplier||1),h.resolution=`${this.canvasManager.canvas.width}\xD7${this.canvasManager.canvas.height}`}if(this.webglRenderer){if(this.webglRenderer.lastProfileTimes){let u=this.webglRenderer.lastProfileTimes;h.webgl={gradient:u.gradient?{time:u.gradient}:null,rays:u.rays?{time:u.rays}:null,bubbles:u.bubbles?{time:u.bubbles}:null,plankton:u.plankton?{time:u.plankton}:null}}this.webglRenderer.bubblesLayer&&this.webglRenderer.bubblesLayer.particleCount&&(h.counts.bubbles=this.webglRenderer.bubblesLayer.particleCount),this.webglRenderer.planktonLayer&&this.webglRenderer.planktonLayer.particleCount&&(h.counts.plankton=this.webglRenderer.planktonLayer.particleCount)}this.debugPanel&&this.debugPanel.update(h)}}_stepDown(){this._rampComplete=!0;let t=this.tier+1;t>4||(t===1?(this.webglRenderer&&this.webglRenderer.reduceBudget(.5),this.tier=1,this.syncCanvasThrottle(),console.warn("[MasterRenderer] Level 1 (WEBGL_LITE): particle budget halved")):t===2?this._disableWebGL():t===3?(this._reduceCanvasQuality(.4),this.tier=3,this.syncCanvasThrottle(),console.warn("[MasterRenderer] Level 3 (CANVAS_REDUCED): quality forced to 0.4")):t===4&&(this._stopCanvas(),this.tier=4,this.syncCanvasThrottle(),console.warn("[MasterRenderer] Level 4 (GRADIENT_ONLY): all animations stopped")))}_stepUp(){this.tier===4&&(this._resumeCanvas(),this.tier=3,this.syncCanvasThrottle(),console.log("[MasterRenderer] Recovery: Level 3 (canvas resumed after background)"))}_disableWebGL(){if(this.webglRenderer&&(this.webglRenderer.canvas.style.display="none",this.webglRenderer=null),window.webglOceanRenderer=null,document.body.classList.remove("has-webgl"),!this.hasCanvasRenderer()){this.tier=4,this.syncCanvasThrottle(),console.warn("[MasterRenderer] Level 4 (GRADIENT_ONLY): no usable canvas backend after WebGL loss"),this.stop();return}this.tier=2,this.syncCanvasThrottle(),console.warn("[MasterRenderer] Level 2 (CANVAS_GRADIENT): WebGL off \u2014 CSS gradient active")}_reduceCanvasQuality(t){if(this.canvasManager&&this.canvasManager.performanceMonitor){let e=this.canvasManager.performanceMonitor,i=Math.max(e.qualitySettings?.min??.3,t);e.qualitySettings.current=i,e.notifyQualityChange(i)}}_stopCanvas(){this.canvasManager&&(this.canvasManager.ctx&&this.canvasManager.ctx.clearRect(0,0,this.canvasManager.width,this.canvasManager.height),this.canvasManager.canvas&&(this.canvasManager.canvas.style.display="none"))}_resumeCanvas(){this.canvasManager&&this.canvasManager.canvas&&(this.canvasManager.canvas.style.display="")}disableWebGL(){this._disableWebGL()}reduceCanvasQuality(){let t=this.canvasManager?.performanceMonitor?.qualitySettings?.current??1;this._reduceCanvasQuality(Math.max(.3,t-.2))}_applyRampBudget(t){this.webglRenderer&&this.webglRenderer.reduceBudget(t),this._reduceCanvasQuality(t)}getFPS(){return this.currentFPS}};function $t(){return typeof window>"u"?!1:new URLSearchParams(window.location.search).get("debug-render")==="1"}function Gt(){let t=document.createElement("canvas").getContext("2d");if(!t)return!1;let e="brightness(1.05)";return t.filter="none",t.filter=e,t.filter===e}function Qt(o,t){let e=window.innerWidth*window.innerHeight,i=window.blueOrcaRenderBootstrap?.webglStatus,s=window.blueOrcaRenderBootstrap?.preferLiteCanvasEffects===!0,a=i!=="active",n=t.isMobile||t.isLowPower||t.tier<=1,h={canvas2dFPS:o.canvas2dFPS,schoolDensity:o.schoolDensity,jellyfishSchoolDensity:600,resolutionScale:1,mobileLiteMode:n,enableBob:!n,enableIcons:!n,enableRipples:!n,allowHighCostEffects:!n&&!s&&o.canvas2dFPS>=40&&Gt()};return n&&(h.canvas2dFPS=Math.min(o.canvas2dFPS,t.tier===0?24:28),h.schoolDensity=Math.max(o.schoolDensity,t.tier===0?75e4:55e4),h.jellyfishSchoolDensity=t.tier===0?1200:950,h.resolutionScale=.9),a&&(h.allowHighCostEffects=!1,e>=4e6?(h.canvas2dFPS=Math.min(o.canvas2dFPS,30),h.schoolDensity=Math.max(o.schoolDensity,12e5),h.jellyfishSchoolDensity=1400,h.resolutionScale=.67):e>=25e5?(h.canvas2dFPS=Math.min(o.canvas2dFPS,35),h.schoolDensity=Math.max(o.schoolDensity,9e5),h.jellyfishSchoolDensity=1e3,h.resolutionScale=.8):e>=15e5&&(h.canvas2dFPS=Math.min(o.canvas2dFPS,40),h.schoolDensity=Math.max(o.schoolDensity,65e4),h.jellyfishSchoolDensity=850,h.resolutionScale=.9)),h}function jt(o){if(typeof window>"u")return;let t=()=>{if(o.getLayer("curiousFish"))return;let e=new H(o.config.curiousFishConfig||{});o.addLayer("curiousFish",e),e.enabled=!1,e.gameState="idle"};typeof window.requestIdleCallback=="function"?window.requestIdleCallback(t,{timeout:1500}):window.setTimeout(t,200)}function kt(){let o=$t(),t=K(),{entityBudget:e}=t,i=Qt(e,t),s=i.allowHighCostEffects,a=zt({zIndex:0,showStats:o,targetFPS:i.canvas2dFPS,debug:o,errorHandling:!1,profilePerformance:!1,resolutionScale:i.resolutionScale,skipDefaultLayers:!0,foodConfig:{settledLifetime:i.mobileLiteMode?1400:0},fishConfig:{schoolDensity:i.schoolDensity},curiousFishConfig:{allowHighCostEffects:s,mobileLiteMode:i.mobileLiteMode,enableBob:i.enableBob,enableIcons:i.enableIcons,enableRipples:i.enableRipples}}),n=new at(a.config.fishConfig||{});a.addLayer("fish",n);let h=new ot({allowHighCostEffects:s});a.addLayer("das",h);let u=new nt({allowHighCostEffects:s,schoolDensity:i.jellyfishSchoolDensity});a.addLayer("jellyfish",u);let d=new gt({canvas2dFPS:i.canvas2dFPS,mobileLiteMode:i.mobileLiteMode,debug:o});return window.webglOceanRenderer&&d.registerWebGLRenderer(window.webglOceanRenderer),a.start(),d.registerCanvasManager(a),a.performanceMonitor.onQualityChange(r=>{window.webglOceanRenderer?.setQuality(r)}),jt(a),d.start(),window.blueOrcaCanvas=a,window.blueOrcaMasterRenderer=d,a}typeof window<"u"&&!window.blueOrcaCanvas&&(document.readyState==="loading"?document.addEventListener("DOMContentLoaded",()=>{kt()}):kt());})();
+        `;
+      document.head.appendChild(style);
+    }
+    toggle() {
+      this.collapsed = !this.collapsed;
+      if (this.els.content && this.els.toggle) {
+        this.els.content.classList.toggle("collapsed", this.collapsed);
+        this.els.toggle.textContent = this.collapsed ? "+" : "\u2212";
+      }
+    }
+    update(stats) {
+      if (!this.visible) return;
+      if (this.els.fps && stats.fps !== void 0) {
+        this.els.fps.textContent = stats.fps;
+        this.els.fps.className = "debug-value";
+        if (stats.fps < 40) this.els.fps.classList.add("error");
+        else if (stats.fps < 55) this.els.fps.classList.add("warning");
+      }
+      if (this.els.fpsMax && stats.theoreticalFPS !== void 0) {
+        this.els.fpsMax.textContent = stats.theoreticalFPS;
+      }
+      if (this.els.renderTime && stats.renderTime !== void 0) {
+        this.els.renderTime.textContent = stats.renderTime.toFixed(2);
+      }
+      if (this.els.totalTime && stats.totalFrameTime !== void 0) {
+        this.els.totalTime.textContent = stats.totalFrameTime.toFixed(2);
+      }
+      if (this.els.idleTime && stats.idleTime !== void 0) {
+        this.els.idleTime.textContent = stats.idleTime.toFixed(2);
+      }
+      this.updateLayerTime("fish", stats.layers?.FishLayer);
+      this.updateLayerTime("curious", stats.layers?.CuriousFishLayer);
+      this.updateLayerTime("hud", stats.layers?.HudLayer);
+      this.updateLayerTime("food", stats.food);
+      this.updateLayerTime("rays", stats.webgl?.rays);
+      this.updateLayerTime("bubbles", stats.webgl?.bubbles);
+      this.updateLayerTime("plankton", stats.webgl?.plankton);
+      this.updateLayerTime("gradient", stats.webgl?.gradient);
+      this.updateCount("fish-count", stats.counts?.fish);
+      this.updateCount("food-count", stats.counts?.food);
+      this.updateCount("bubbles-count", stats.counts?.bubbles);
+      this.updateCount("plankton-count", stats.counts?.plankton);
+      if (this.els.quality && stats.quality !== void 0) {
+        this.els.quality.textContent = Math.round(stats.quality * 100);
+      }
+      if (this.els.resolution && stats.resolution) {
+        this.els.resolution.textContent = stats.resolution;
+      }
+    }
+    updateLayerTime(id, value) {
+      const el = this._layerTimeEls[id];
+      if (!el) return;
+      let time = 0;
+      if (typeof value === "number") {
+        time = value;
+      } else if (value && value.time !== void 0) {
+        time = value.time;
+      } else if (value && value.avg !== void 0) {
+        time = value.avg;
+      }
+      if (time > 0) {
+        this.lastKnownValues[id] = time;
+        el.textContent = `${time.toFixed(2)}ms`;
+        el.className = "debug-time";
+        if (time > 2) el.classList.add("very-slow");
+        else if (time > 1) el.classList.add("slow");
+      } else if (this.lastKnownValues[id] !== void 0) {
+        const cachedTime = this.lastKnownValues[id];
+        el.textContent = `${cachedTime.toFixed(2)}ms`;
+        el.className = "debug-time";
+        if (cachedTime > 2) el.classList.add("very-slow");
+        else if (cachedTime > 1) el.classList.add("slow");
+      } else {
+        el.textContent = "-";
+        el.className = "debug-time";
+      }
+    }
+    updateCount(id, value) {
+      const el = this._countEls[id];
+      if (!el) return;
+      if (value !== void 0 && value !== null) {
+        this.lastKnownValues[`count-${id}`] = value;
+        el.textContent = `(${value})`;
+      } else if (this.lastKnownValues[`count-${id}`] !== void 0) {
+        el.textContent = `(${this.lastKnownValues[`count-${id}`]})`;
+      } else {
+        el.textContent = "(-)";
+      }
+    }
+    show() {
+      this.visible = true;
+      if (this.element) this.element.style.display = "block";
+    }
+    hide() {
+      this.visible = false;
+      if (this.element) this.element.style.display = "none";
+    }
+    destroy() {
+      if (this.element) {
+        this.element.remove();
+        this.element = null;
+      }
+      const styles = document.getElementById("debug-panel-styles");
+      if (styles) styles.remove();
+    }
+  };
+
+  // assets/canvas/utils/GlowCache.js
+  var REF_SIZE = 80;
+  var BLUR_RATIO = 0.6;
+  var TOTAL_RADIUS = REF_SIZE * (1 + BLUR_RATIO);
+  var FISH_FRAC = REF_SIZE / TOTAL_RADIUS;
+
+  // assets/canvas/layers/FishLayer.js
+  var FishLayer = class _FishLayer {
+    static MAX_FISH = 80;
+    // Hard cap on total fish in the array
+    static MAX_PASSIVE_LIFESPAN = 3e5;
+    // ms — passive/independent fish live max 5 min
+    static MAX_BLOOD_PARTICLES = 160;
+    static MAX_BLOOD_PARTICLES_PER_BURST = 36;
+    static MIN_BLOOD_PARTICLES_PER_BURST = 12;
+    // Single source of truth for fish layer configuration
+    static DEFAULT_CONFIG = {
+      schoolCount: null,
+      // null = auto-scale by viewport (1 school per 600 000 px²)
+      schoolDensity: 6e5,
+      // px² per school when schoolCount is null
+      maxSchoolSize: 10,
+      // hard cap on fish per school
+      size: 1.2,
+      // Size multiplier (0.5-2x)
+      avoidRadius: 100,
+      // Radius to avoid mouse cursor
+      verticalMarginTop: 100,
+      // Minimum distance from top edge (px)
+      verticalMarginBottom: 100,
+      // Minimum distance from bottom edge (px)
+      showDebug: false
+      // Debug visualization
+    };
+    constructor(options = {}) {
+      this.enabled = true;
+      this.sharks = [];
+      this.bloodParticles = [];
+      this._sharkPool = [];
+      this._bloodPool = [];
+      this._schoolCentroidsCache = /* @__PURE__ */ new Map();
+      this._foodLookup = {
+        activeFoods: [],
+        rows: /* @__PURE__ */ new Map(),
+        grid: null,
+        cellSize: 0,
+        usedBuckets: []
+      };
+      this._schoolMembershipDirty = true;
+      this.mouseX = null;
+      this.mouseY = null;
+      this.manager = null;
+      this.fishImages = [];
+      const imagePaths = [
+        "assets/images/fish/shark.webp",
+        "assets/images/fish/fish2.webp",
+        "assets/images/fish/fish1.webp",
+        "assets/images/fish/curiousfish.webp"
+      ];
+      this.imagesLoaded = 0;
+      this.imagesFailed = 0;
+      this._imageDepthCache = [];
+      imagePaths.forEach((path, index) => {
+        const img = new Image();
+        img.src = path;
+        img.onload = () => {
+          this.imagesLoaded++;
+          this._imageDepthCache[index] = this._buildDepthCache(img);
+          if (this.imagesLoaded === imagePaths.length) {
+          }
+        };
+        img.onerror = () => {
+          console.error(`Failed to load fish image: ${path}`);
+          this.imagesFailed++;
+          img._failed = true;
+        };
+        this.fishImages.push(img);
+      });
+      this.boneImage = new Image();
+      this.boneLoaded = false;
+      this.boneImage.onload = () => {
+        this.boneLoaded = true;
+      };
+      this.boneImage.onerror = () => {
+        console.warn("Failed to load fishbone image");
+      };
+      this.boneImage.src = "assets/images/fish/fishbone.webp";
+      this.config = {
+        ..._FishLayer.DEFAULT_CONFIG,
+        ...options
+      };
+      this._schoolsSpawned = 0;
+      this._unsubscribePointerMove = null;
+      this.handlePointerMove = this.handlePointerMove.bind(this);
+    }
+    handlePointerMove(x, y) {
+      this.mouseX = x;
+      this.mouseY = y;
+    }
+    init(width, height, canvasManager) {
+      this.width = width;
+      this.height = height;
+      this.sharks = [];
+      this._schoolsSpawned = 0;
+      this._nextSchoolId = 0;
+      this._qualityMultiplier = 1;
+      this._schoolCentroidsCache.clear();
+      this._schoolMembershipDirty = true;
+      this._recalcSchoolCount(width, height);
+      this.manager = canvasManager || window.blueOrcaCanvas;
+      this._unsubscribePointerMove = subscribePointerMove(this.handlePointerMove);
+    }
+    /**
+     * Apply a quality multiplier \u2014 called by CanvasManager.applyQualityToLayers.
+     * Below 0.6 the effective school count is halved to reduce CPU load.
+     * @param {number} quality - 0.3\u20131.0
+     */
+    setQuality(quality) {
+      this._qualityMultiplier = quality;
+    }
+    /**
+     * Cleanup resources and event listeners
+     */
+    destroy() {
+      this._unsubscribePointerMove?.();
+      this._unsubscribePointerMove = null;
+      this.sharks = [];
+      this._schoolsSpawned = 0;
+      this._schoolCentroidsCache.clear();
+      this._schoolMembershipDirty = true;
+      console.log("FishLayer destroyed");
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      this._recalcSchoolCount(width, height);
+    }
+    /** Compute auto school count from viewport area unless manually overridden */
+    _recalcSchoolCount(width, height) {
+      if (this.config.schoolCount !== null) return;
+      const area = width * height;
+      const density = this.config.schoolDensity || 6e5;
+      const count = Math.max(1, Math.min(8, Math.round(area / density)));
+      this._autoSchoolCount = count;
+    }
+    _ensureSchoolMembershipCache() {
+      if (!this._schoolMembershipDirty) return;
+      for (const [, centroid] of this._schoolCentroidsCache) {
+        centroid.members.length = 0;
+      }
+      for (const shark of this.sharks) {
+        if (shark.isDying || typeof shark.schoolId === "undefined") continue;
+        let centroid = this._schoolCentroidsCache.get(shark.schoolId);
+        if (!centroid) {
+          centroid = {
+            x: 0,
+            y: 0,
+            speed: 0,
+            count: 0,
+            members: []
+          };
+          this._schoolCentroidsCache.set(shark.schoolId, centroid);
+        }
+        centroid.members.push(shark);
+      }
+      for (const [schoolId, centroid] of this._schoolCentroidsCache) {
+        if (centroid.members.length === 0) {
+          this._schoolCentroidsCache.delete(schoolId);
+        }
+      }
+      this._schoolMembershipDirty = false;
+    }
+    _updateSchoolCentroids(width) {
+      this._ensureSchoolMembershipCache();
+      for (const [schoolId, centroid] of this._schoolCentroidsCache) {
+        let count = 0;
+        let sumX = 0;
+        let sumY = 0;
+        let sumSpeed = 0;
+        let writeIndex = 0;
+        let referenceX = 0;
+        for (let i = 0; i < centroid.members.length; i++) {
+          const fish = centroid.members[i];
+          if (!fish || fish.isDying || fish.schoolId !== schoolId) {
+            this._schoolMembershipDirty = true;
+            continue;
+          }
+          centroid.members[writeIndex++] = fish;
+          let fx = fish.x;
+          if (count === 0) {
+            referenceX = fx;
+          } else if (Math.abs(fx - referenceX) > width * 0.5) {
+            fx += fx < referenceX ? width : -width;
+          }
+          sumX += fx;
+          sumY += fish.baseY;
+          sumSpeed += fish.speed;
+          count++;
+        }
+        centroid.members.length = writeIndex;
+        if (count === 0) {
+          this._schoolCentroidsCache.delete(schoolId);
+          continue;
+        }
+        centroid.count = count;
+        centroid.x = (sumX / count % width + width) % width;
+        centroid.y = sumY / count;
+        centroid.speed = sumSpeed / count;
+      }
+      return this._schoolCentroidsCache;
+    }
+    _buildFoodLookup(foodParticles) {
+      const lookup = this._foodLookup;
+      const activeFoods = lookup.activeFoods;
+      activeFoods.length = 0;
+      const usedBuckets = lookup.usedBuckets;
+      for (let i = 0; i < usedBuckets.length; i++) {
+        usedBuckets[i].length = 0;
+      }
+      usedBuckets.length = 0;
+      for (let i = 0; i < foodParticles.length; i++) {
+        const food = foodParticles[i];
+        if (!food.eaten) activeFoods.push(food);
+      }
+      if (activeFoods.length <= 12) {
+        lookup.grid = null;
+        lookup.cellSize = 0;
+        return lookup;
+      }
+      const cellSize = 160;
+      const rows = lookup.rows;
+      for (let i = 0; i < activeFoods.length; i++) {
+        const food = activeFoods[i];
+        const cellX = Math.floor(food.x / cellSize);
+        const cellY = Math.floor(food.y / cellSize);
+        let row = rows.get(cellY);
+        if (!row) {
+          row = /* @__PURE__ */ new Map();
+          rows.set(cellY, row);
+        }
+        let bucket = row.get(cellX);
+        if (!bucket) {
+          bucket = [];
+          row.set(cellX, bucket);
+        }
+        if (bucket.length === 0) {
+          usedBuckets.push(bucket);
+        }
+        bucket.push(food);
+      }
+      lookup.grid = rows;
+      lookup.cellSize = cellSize;
+      return lookup;
+    }
+    _findNearestFood(foodLookup, x, y, direction, detectR) {
+      let nearestFood = null;
+      let nearestDistSq = detectR * detectR;
+      const testFood = (food) => {
+        const fdx = food.x - x;
+        const fdy = food.y - y;
+        const fdistSq = fdx * fdx + fdy * fdy;
+        const isAhead = direction > 0 && fdx > -40 || direction < 0 && fdx < 40;
+        if (isAhead && fdistSq < nearestDistSq) {
+          nearestDistSq = fdistSq;
+          nearestFood = food;
+        }
+      };
+      if (!foodLookup.grid) {
+        for (let i = 0; i < foodLookup.activeFoods.length; i++) {
+          testFood(foodLookup.activeFoods[i]);
+        }
+        return { nearestFood, nearestDistSq };
+      }
+      const cellRadius = Math.ceil(detectR / foodLookup.cellSize);
+      const centerCellX = Math.floor(x / foodLookup.cellSize);
+      const centerCellY = Math.floor(y / foodLookup.cellSize);
+      for (let cellY = centerCellY - cellRadius; cellY <= centerCellY + cellRadius; cellY++) {
+        const row = foodLookup.grid.get(cellY);
+        if (!row) continue;
+        for (let cellX = centerCellX - cellRadius; cellX <= centerCellX + cellRadius; cellX++) {
+          const bucket = row.get(cellX);
+          if (!bucket) continue;
+          for (let i = 0; i < bucket.length; i++) {
+            testFood(bucket[i]);
+          }
+        }
+      }
+      return { nearestFood, nearestDistSq };
+    }
+    render(ctx, currentTime, deltaTime, width, height) {
+      if (!this.enabled) return;
+      if (!this._frameCounter) this._frameCounter = 0;
+      this._frameCounter++;
+      let effectiveSchoolCount = this.config.schoolCount !== null ? this.config.schoolCount : this._autoSchoolCount || this._recalcSchoolCount(width, height) || this._autoSchoolCount;
+      effectiveSchoolCount = Math.max(1, Math.round(effectiveSchoolCount * (this._qualityMultiplier || 1)));
+      while (this._schoolsSpawned < effectiveSchoolCount) {
+        this.spawnSchool(width, height, effectiveSchoolCount);
+        this._schoolsSpawned++;
+        this._nextSchoolId++;
+      }
+      if (this._schoolsSpawned > effectiveSchoolCount) {
+        this._schoolsSpawned = effectiveSchoolCount;
+      }
+      if (this.sharks.length > _FishLayer.MAX_FISH) {
+        let culled = 0;
+        for (let i = 0; i < this.sharks.length && this.sharks.length - culled > _FishLayer.MAX_FISH; i++) {
+          const s = this.sharks[i];
+          if (s.passive && s.isIndependent && !s.isDying && (!s.bornAt || currentTime - s.bornAt > 1e4)) {
+            s.isDying = true;
+            culled++;
+          }
+        }
+      }
+      const curiousFishLayer = this.manager && this.manager.getLayer ? this.manager.getLayer("curiousFish") : null;
+      const curiousFish = curiousFishLayer && curiousFishLayer.enabled ? curiousFishLayer.fish : null;
+      const curiousFishSize = curiousFish ? curiousFish.currentSize || curiousFishLayer.config.size : 0;
+      const canAvoidCuriousFish = !!(curiousFish && !curiousFishLayer.isAttackingSchoolFish);
+      const targetedFish = curiousFishLayer && curiousFishLayer.targetSchoolFish;
+      const dasLayer = this.manager && this.manager.getLayer ? this.manager.getLayer("das") : null;
+      const dasLure = dasLayer && dasLayer.fish ? dasLayer._getLurePos(dasLayer.fish) : null;
+      const showCuriousFishDebug = !!(this.config.showDebug && curiousFish);
+      const foodParticles = this.manager?.foodLayer?.getParticles?.() || [];
+      let foodLookup = null;
+      if (foodParticles.length > 0) {
+        this._foodSkipFrame = !this._foodSkipFrame;
+        if (!this._foodSkipFrame || this._foodLookup.activeFoods.length === 0) {
+          this._buildFoodLookup(foodParticles);
+        }
+        foodLookup = this._foodLookup;
+      }
+      const hasFoodParticles = !!(foodLookup && foodLookup.activeFoods.length > 0);
+      const schoolCentroids = this._updateSchoolCentroids(width);
+      if (this.config.showDebug) {
+        ctx.strokeStyle = "rgba(255, 100, 0, 0.5)";
+        ctx.lineWidth = 2;
+        ctx.setLineDash([10, 5]);
+        ctx.beginPath();
+        ctx.moveTo(0, this.config.verticalMarginTop);
+        ctx.lineTo(width, this.config.verticalMarginTop);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0, height - this.config.verticalMarginBottom);
+        ctx.lineTo(width, height - this.config.verticalMarginBottom);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+      let writeIndex = 0;
+      for (let readIndex = 0; readIndex < this.sharks.length; readIndex++) {
+        const shark = this.sharks[readIndex];
+        if (shark.isDying) {
+          if (shark.boneY === void 0) {
+            const swOff = Math.sin(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase) * shark.schoolWaveAmplitude;
+            const vPhase = shark.age / shark.verticalPeriod % 1;
+            const vOff = Math.sin(vPhase * Math.PI * 2) * shark.verticalAmplitude;
+            shark.boneX = shark.x;
+            shark.boneY = shark.baseY + swOff + vOff;
+            shark.boneVX = shark.direction * shark.speed / 16;
+            shark.boneVY = shark.schoolWaveAmplitude * shark.schoolWaveSpeed * Math.cos(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase) + shark.verticalAmplitude * (2 * Math.PI / shark.verticalPeriod) * Math.cos(vPhase * Math.PI * 2);
+            const MAX_BONE_V = 0.18;
+            const boneSpd = Math.sqrt(shark.boneVX ** 2 + shark.boneVY ** 2);
+            if (boneSpd > MAX_BONE_V) {
+              const scale = MAX_BONE_V / boneSpd;
+              shark.boneVX *= scale;
+              shark.boneVY *= scale;
+            }
+            shark.boneStartTime = currentTime;
+            this._spawnBloodCloud(shark.boneX, shark.boneY, shark.size, currentTime);
+            if (this.manager && this.manager._ripples) {
+              this.manager._ripples.push({
+                x: shark.boneX,
+                y: shark.boneY,
+                startTime: currentTime,
+                maxR: 55 + shark.size * 0.8,
+                duration: 700,
+                color: "200,60,60"
+              });
+            }
+          }
+          const FALL_DURATION = 3e3;
+          const FADE_DURATION = 800;
+          const elapsed = currentTime - shark.boneStartTime;
+          if (elapsed > FALL_DURATION + FADE_DURATION) continue;
+          const dt2 = typeof deltaTime === "number" ? deltaTime : 16;
+          const GRAVITY = 12e-5;
+          shark.boneVY += GRAVITY * dt2;
+          shark.boneVX *= 1 - 3e-3 * (dt2 / 16);
+          shark.boneX += shark.boneVX * dt2;
+          shark.boneY += shark.boneVY * dt2;
+          const alpha = elapsed < FALL_DURATION ? 1 : 1 - (elapsed - FALL_DURATION) / FADE_DURATION;
+          if (this.boneLoaded && this.boneImage) {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            try {
+              const boneW = shark.size * 1.33;
+              const boneH = boneW * (this.boneImage.height / this.boneImage.width) || shark.size;
+              ctx.translate(shark.boneX, shark.boneY);
+              if (shark.direction < 0) ctx.scale(-1, 1);
+              ctx.drawImage(this.boneImage, -boneW / 2, -boneH / 2, boneW, boneH);
+            } catch (e) {
+            }
+            ctx.restore();
+          } else {
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = "rgba(220,220,220,0.95)";
+            ctx.beginPath();
+            ctx.ellipse(shark.boneX, shark.boneY, shark.size, shark.size * 0.4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+          this.sharks[writeIndex++] = shark;
+          continue;
+        }
+        if (shark.passive && shark.isIndependent && shark.bornAt !== void 0 && currentTime - shark.bornAt > _FishLayer.MAX_PASSIVE_LIFESPAN) {
+          shark.isDying = true;
+        }
+        if (shark.isDancing) {
+          shark.age = (shark.age || 0) + deltaTime;
+          const schoolWaveOffset2 = Math.sin(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase) * shark.schoolWaveAmplitude;
+          const verticalPhase2 = shark.age / shark.verticalPeriod % 1;
+          const verticalOffset2 = Math.sin(verticalPhase2 * Math.PI * 2) * shark.verticalAmplitude;
+          const currentY2 = shark.baseY + schoolWaveOffset2 + verticalOffset2;
+          if (!shark._drawOnTop && shark !== targetedFish) {
+            this.drawShark(ctx, shark.x, currentY2, shark.size, shark.direction, verticalPhase2, shark.image, 0, 0, shark);
+          }
+          this.sharks[writeIndex++] = shark;
+          continue;
+        }
+        const centroid = schoolCentroids.get(shark.schoolId);
+        const schoolMembers = centroid?.members || null;
+        const prevX = shark.x;
+        shark.x += shark.direction * shark.speed;
+        if (shark.burstVX !== void 0) {
+          shark.x += shark.burstVX;
+          shark.baseY += shark.burstVY;
+          shark.burstVX *= 0.92;
+          shark.burstVY *= 0.92;
+          if (Math.abs(shark.burstVX) < 0.05 && Math.abs(shark.burstVY) < 0.05) {
+            delete shark.burstVX;
+            delete shark.burstVY;
+          }
+        }
+        shark.age += deltaTime;
+        const schoolWaveOffset = Math.sin(shark.age * shark.schoolWaveSpeed + shark.schoolWavePhase) * shark.schoolWaveAmplitude;
+        const verticalPhase = shark.age / shark.verticalPeriod % 1;
+        const verticalOffset = Math.sin(verticalPhase * Math.PI * 2) * shark.verticalAmplitude;
+        const currentY = shark.baseY + schoolWaveOffset + verticalOffset;
+        {
+          const safeTop = this.config.verticalMarginTop + shark.size;
+          const safeBot = height - this.config.verticalMarginBottom - shark.size;
+          if (shark.baseY < safeTop) shark.baseY += (safeTop - shark.baseY) * 0.05;
+          else if (shark.baseY > safeBot) shark.baseY += (safeBot - shark.baseY) * 0.05;
+        }
+        if (canAvoidCuriousFish && !shark.isBeingAttacked) {
+          const dx = shark.x - curiousFish.x;
+          const dy = currentY - curiousFish.y;
+          const distanceSquared = dx * dx + dy * dy;
+          const avoidRadius = this.config.avoidRadius + curiousFishSize;
+          const avoidRadiusSquared = avoidRadius * avoidRadius;
+          if (distanceSquared < avoidRadiusSquared && distanceSquared > 0) {
+            const distance = Math.sqrt(distanceSquared);
+            const avoidStrength = (1 - distance / avoidRadius) * 2.5;
+            shark.x += dx / distance * avoidStrength;
+            shark.baseY += dy / distance * avoidStrength * 0.5;
+          }
+        }
+        if (this.mouseX !== null && this.mouseY !== null) {
+          const mdx = shark.x - this.mouseX;
+          const mdy = currentY - this.mouseY;
+          const mDistSq = mdx * mdx + mdy * mdy;
+          const MOUSE_AVOID_R = 175;
+          if (mDistSq < MOUSE_AVOID_R * MOUSE_AVOID_R && mDistSq > 0) {
+            const mDist = Math.sqrt(mDistSq);
+            const rawStrength = (1 - mDist / MOUSE_AVOID_R) * 1.4;
+            const strength = Math.min(rawStrength, shark.speed * 0.9);
+            shark.x += mdx / mDist * strength;
+            shark.baseY += mdy / mDist * strength * 0.45;
+          }
+        }
+        const sizeNorm = 40;
+        const sizeFactor = Math.max(0.5, shark.size / sizeNorm);
+        if (!shark.isIndependent) {
+          const baseSeparationRadius = 40 * (1 + (sizeFactor - 1) * 1.5);
+          const baseSeparationRadiusSq = baseSeparationRadius * baseSeparationRadius;
+          if (centroid && centroid.count > 1) {
+            let cdx = centroid.x - shark.x;
+            if (Math.abs(cdx) > width * 0.5) cdx += cdx > 0 ? -width : width;
+            const cdy = centroid.y - shark.baseY;
+            const cdistSq = cdx * cdx + cdy * cdy;
+            if (cdistSq > 20 * 20) {
+              const cdist = Math.sqrt(cdistSq);
+              const pullT = Math.min((cdist - 20) / 180, 1);
+              const pullStrength = pullT * pullT * 0.1;
+              const xPullMul = cdx * shark.direction >= 0 ? 1 : 0.2;
+              shark.x += cdx * pullStrength * xPullMul;
+              shark.baseY += cdy * pullStrength * 0.15;
+            }
+          }
+          if (shark.baseSpeed !== void 0) {
+            shark.speed += (shark.baseSpeed - shark.speed) * 0.02;
+          }
+          let separationX = 0;
+          let separationY = 0;
+          let sepChecks = 0;
+          for (const other of schoolMembers || this.sharks) {
+            if (other === shark || other.isDying) continue;
+            if (sepChecks++ >= 5) break;
+            const odx = shark.x - other.x;
+            const ody = shark.baseY - other.baseY;
+            const odistSq = odx * odx + ody * ody;
+            if (odistSq < baseSeparationRadiusSq && odistSq > 0) {
+              const odist = Math.sqrt(odistSq);
+              separationX += odx / odist;
+              separationY += ody / odist;
+            }
+          }
+          const separationStrength = 0.18 * Math.max(1, sizeFactor * 1.2);
+          shark.x += separationX * separationStrength;
+          shark.baseY += separationY * 0.04;
+        }
+        if (hasFoodParticles) {
+          const isHungry = shark.fishType === 1 || shark.fishType === 2 || shark.fishType === 3;
+          const detectR = isHungry ? 380 : 220;
+          let nearestFood = null;
+          let nearestDistSq = detectR * detectR;
+          const cachedFood = shark.targetFood;
+          if (cachedFood && !cachedFood.eaten) {
+            const cachedDx = cachedFood.x - shark.x;
+            const cachedDy = cachedFood.y - currentY;
+            const cachedDistSq = cachedDx * cachedDx + cachedDy * cachedDy;
+            const cachedAhead = shark.direction > 0 && cachedDx > -40 || shark.direction < 0 && cachedDx < 40;
+            if (cachedAhead && cachedDistSq < nearestDistSq) {
+              nearestFood = cachedFood;
+              nearestDistSq = cachedDistSq;
+            }
+          }
+          if (!nearestFood) {
+            const nearest = this._findNearestFood(foodLookup, shark.x, currentY, shark.direction, detectR);
+            nearestFood = nearest.nearestFood;
+            nearestDistSq = nearest.nearestDistSq;
+          }
+          shark.targetFood = nearestFood;
+          if (nearestFood) {
+            const fdx = nearestFood.x - shark.x;
+            const fdy = nearestFood.y - currentY;
+            const fdist = Math.sqrt(nearestDistSq);
+            const yPull = isHungry ? 0.75 : 0.3;
+            if (fdist > 0) {
+              shark.baseY += fdy / fdist * yPull;
+            }
+            const burstRange = isHungry ? 140 : 80;
+            const burstAccel = isHungry ? 0.07 : 0.03;
+            const burstMaxMul = isHungry ? 2.8 : 2;
+            if (fdist < burstRange) {
+              shark.speed = Math.min(shark.baseSpeed * burstMaxMul, shark.speed + burstAccel);
+            } else {
+              shark.speed = Math.max(shark.baseSpeed, shark.speed - 0.02);
+            }
+            if (nearestDistSq < 14 * 14) {
+              nearestFood.eaten = true;
+              shark.targetFood = null;
+              shark.size = Math.min(80, shark.size + 0.5);
+              shark.speed = shark.baseSpeed;
+            }
+          } else {
+            shark.targetFood = null;
+            shark.speed = Math.max(shark.baseSpeed, shark.speed - 0.02);
+          }
+        } else {
+          shark.targetFood = null;
+        }
+        if (dasLure) {
+          const ldx = dasLure.x - shark.x;
+          const ldy = dasLure.y - currentY;
+          const ldistSq = ldx * ldx + ldy * ldy;
+          const LURE_RANGE = 220 * 220;
+          const isAhead = shark.direction > 0 && ldx > -40 || shark.direction < 0 && ldx < 40;
+          if (isAhead && ldistSq < LURE_RANGE) {
+            const ldist = Math.sqrt(ldistSq);
+            if (ldist > 0) {
+              shark.baseY += ldy / ldist * 0.3;
+            }
+            if (ldist < 80) {
+              shark.speed = Math.min(shark.baseSpeed * 2, shark.speed + 0.03);
+            }
+          }
+        }
+        const netMove = shark.x - prevX;
+        const minMovement = 0.12;
+        if (Math.abs(netMove) < minMovement) {
+          shark.x += shark.direction * minMovement;
+        }
+        if (shark.direction > 0 && shark.x > width + shark.size * 2) {
+          shark.x = -shark.size * 2;
+          const safeZoneTop = this.config.verticalMarginTop;
+          const safeZoneBottom = height - this.config.verticalMarginBottom;
+          const targetY = centroid ? centroid.y : shark.baseY;
+          shark.baseY = Math.max(safeZoneTop, Math.min(
+            safeZoneBottom,
+            targetY + (Math.random() - 0.5) * 30
+          ));
+        } else if (shark.direction < 0 && shark.x < -shark.size * 2) {
+          shark.x = width + shark.size * 2;
+          const safeZoneTop = this.config.verticalMarginTop;
+          const safeZoneBottom = height - this.config.verticalMarginBottom;
+          const targetY = centroid ? centroid.y : shark.baseY;
+          shark.baseY = Math.max(safeZoneTop, Math.min(
+            safeZoneBottom,
+            targetY + (Math.random() - 0.5) * 30
+          ));
+        }
+        if (shark !== targetedFish) {
+          this.drawShark(ctx, shark.x, currentY, shark.size, shark.direction, verticalPhase, shark.image, 0, 0, shark);
+          if (showCuriousFishDebug) {
+            ctx.strokeStyle = shark.isBeingAttacked ? "rgba(255, 0, 0, 0.5)" : "rgba(0, 255, 0, 0.3)";
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.ellipse(shark.x, currentY, shark.size * 1, shark.size * 0.4, 0, 0, Math.PI * 2);
+            ctx.stroke();
+          }
+        }
+        this.sharks[writeIndex++] = shark;
+      }
+      if (writeIndex < this.sharks.length) {
+        this._schoolMembershipDirty = true;
+      }
+      for (let i = writeIndex; i < this.sharks.length; i++) {
+        this._sharkPool.push(this.sharks[i]);
+      }
+      this.sharks.length = writeIndex;
+      if (this.bloodParticles.length > 0) {
+        const now = currentTime;
+        let bpWrite = 0;
+        ctx.save();
+        for (let i = 0; i < this.bloodParticles.length; i++) {
+          const p = this.bloodParticles[i];
+          const age = now - p.birth;
+          if (age >= p.life) continue;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vx *= 0.97;
+          p.vy *= 0.97;
+          const t = age / p.life;
+          const fadeAlpha = t < 0.05 ? t / 0.05 : t < 0.6 ? 1 : 1 - (t - 0.6) / 0.4;
+          ctx.globalAlpha = p.alpha * fadeAlpha;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fill();
+          this.bloodParticles[bpWrite++] = p;
+        }
+        for (let i = bpWrite; i < this.bloodParticles.length; i++) {
+          this._bloodPool.push(this.bloodParticles[i]);
+        }
+        this.bloodParticles.length = bpWrite;
+        ctx.globalAlpha = 1;
+        ctx.restore();
+      }
+      if (targetedFish && !targetedFish.isDying) {
+        const schoolWaveOffset = Math.sin(targetedFish.age * targetedFish.schoolWaveSpeed + targetedFish.schoolWavePhase) * targetedFish.schoolWaveAmplitude;
+        const verticalPhase = targetedFish.age / targetedFish.verticalPeriod % 1;
+        const verticalOffset = Math.sin(verticalPhase * Math.PI * 2) * targetedFish.verticalAmplitude;
+        const currentY = targetedFish.baseY + schoolWaveOffset + verticalOffset;
+        this.drawShark(ctx, targetedFish.x, currentY, targetedFish.size, targetedFish.direction, verticalPhase, targetedFish.image, 0, 0, targetedFish);
+        if (this.config.showDebug) {
+          ctx.strokeStyle = targetedFish.isBeingAttacked ? "rgba(255, 0, 0, 0.7)" : "rgba(255, 255, 0, 0.5)";
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.ellipse(targetedFish.x, currentY, targetedFish.size * 1, targetedFish.size * 0.4, 0, 0, Math.PI * 2);
+          ctx.stroke();
+        }
+      }
+    }
+    drawShark(ctx, x, y, size, direction, swimPhase, sharkImage, deathRotation = 0, fadeProgress = 0, fishData = null) {
+      if (this.imagesLoaded + this.imagesFailed < this.fishImages.length) {
+        const psx = direction < 0 ? -1 : 1;
+        ctx.setTransform(psx, 0, 0, 1, x, y);
+        ctx.fillStyle = "rgba(100, 150, 200, 0.5)";
+        ctx.beginPath();
+        ctx.ellipse(0, 0, size, size * 0.4, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
+        return;
+      }
+      if (!sharkImage || sharkImage._failed) return;
+      const sx = fishData && fishData.flipX !== void 0 ? fishData.flipX : direction < 0 ? -1 : 1;
+      let angle;
+      if (deathRotation > 0) {
+        angle = deathRotation;
+      } else {
+        const t = fishData ? fishData.age : swimPhase * 2e3;
+        angle = Math.sin(t / 2500 * Math.PI * 2) * 7e-3 + Math.sin(t / 4100 * Math.PI * 2 + 1.3) * 4e-3;
+      }
+      const cos = Math.cos(angle);
+      const sin = Math.sin(angle);
+      ctx.setTransform(sx * cos, sin, -sx * sin, cos, x, y);
+      ctx.globalAlpha = 1;
+      const imgIndex = fishData && fishData._imageIndex !== void 0 ? fishData._imageIndex : this.fishImages.indexOf(sharkImage);
+      const tier = fishData && fishData.depthTier !== void 0 ? fishData.depthTier : this.height > 0 ? Math.max(0, Math.min(3, Math.floor(y / this.height * 4))) : 3;
+      const drawSrc = imgIndex >= 0 && this._imageDepthCache[imgIndex] ? this._imageDepthCache[imgIndex][tier] : sharkImage;
+      let usedFilter = false;
+      if (fadeProgress > 0) {
+        const grayscale = Math.round(fadeProgress * 100);
+        const brightness = Math.round(100 - fadeProgress * 70);
+        ctx.filter = `grayscale(${grayscale}%) brightness(${brightness}%)`;
+        usedFilter = true;
+      }
+      const hitAge = fishData?._hitFlashTime ? Date.now() - fishData._hitFlashTime : Infinity;
+      const isHitFlash = hitAge < 220;
+      const imgWidth = size * 2;
+      const imgHeight = size * (sharkImage.height / sharkImage.width) * 2;
+      ctx.drawImage(drawSrc, -imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
+      if (isHitFlash) {
+        ctx.globalCompositeOperation = "source-atop";
+        ctx.globalAlpha = 0.55 * (1 - hitAge / 220);
+        ctx.fillStyle = "#ff1500";
+        ctx.fillRect(-imgWidth / 2, -imgHeight / 2, imgWidth, imgHeight);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.globalAlpha = 1;
+      }
+      if (usedFilter) ctx.filter = "none";
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    spawnSchool(width, height, totalSchools = 8) {
+      const direction = Math.random() > 0.5 ? 1 : -1;
+      const archetype = this._schoolsSpawned % 6;
+      const fishType = archetype === 0 ? 0 : archetype === 1 ? 1 : archetype === 2 ? 2 : archetype === 3 ? 3 : archetype === 4 ? 1 : 0;
+      let baseSize, schoolImage, fishCountBase;
+      if (fishType === 0) {
+        schoolImage = this.fishImages[0];
+        baseSize = 50 + Math.random() * 70;
+        fishCountBase = [1, 1];
+      } else if (fishType === 1) {
+        schoolImage = this.fishImages[1];
+        baseSize = 10 + Math.random() * 20;
+        fishCountBase = [4, 8];
+      } else if (fishType === 2) {
+        schoolImage = this.fishImages[2];
+        baseSize = 10 + Math.random() * 6;
+        fishCountBase = [7, 12];
+      } else {
+        schoolImage = this.fishImages[3];
+        baseSize = 30 + Math.random() * 30;
+        fishCountBase = [2, 4];
+      }
+      const sizeVariation = 0.5 + Math.random();
+      const schoolSize = Math.max(fishType === 2 ? 12 : fishType === 0 ? 50 : 30, baseSize * sizeVariation * this.config.size);
+      const depthTier = schoolSize > 70 ? 3 : schoolSize > 50 ? 2 : schoolSize > 35 ? 1 : 0;
+      const speedT = Math.min(1, Math.max(0, (schoolSize - 30) / 90));
+      const speedMult = fishType === 2 ? 2 : 1;
+      const schoolSpeed = (0.35 + speedT * 1.15 + (Math.random() - 0.5) * 0.3) * speedMult;
+      const countVariation = 0.7 + Math.random() * 0.6;
+      const fishCount = Math.min(this.config.maxSchoolSize, Math.max(1, Math.floor(
+        (fishCountBase[0] + Math.random() * (fishCountBase[1] - fishCountBase[0])) * countVariation
+      )));
+      const safeZoneTop = this.config.verticalMarginTop;
+      const safeZoneBottom = height - this.config.verticalMarginBottom;
+      const safeZoneHeight = safeZoneBottom - safeZoneTop;
+      const slotCount = Math.max(totalSchools, 4);
+      const slotIndex = this._schoolsSpawned % slotCount;
+      const slotHeight = safeZoneHeight / slotCount;
+      const slotCentreY = safeZoneTop + slotHeight * (slotIndex + 0.5);
+      const tierBias = (depthTier - 1.5) / 1.5;
+      let schoolY = slotCentreY - tierBias * slotHeight * 0.3 + (Math.random() - 0.5) * slotHeight * 0.55;
+      schoolY = Math.max(safeZoneTop + 20, Math.min(safeZoneBottom - 20, schoolY));
+      if (fishType === 2) {
+        const dasLayer = this.manager && this.manager.getLayer("das");
+        if (dasLayer && dasLayer.fish) {
+          const dasY = dasLayer.fish.y;
+          const avoidBand = 90;
+          if (Math.abs(schoolY - dasY) < avoidBand) {
+            const shift = dasY - schoolY > 0 ? -avoidBand * 1.5 : avoidBand * 1.5;
+            schoolY = Math.max(safeZoneTop + 20, Math.min(safeZoneBottom - 20, schoolY + shift));
+          }
+        }
+      }
+      const schoolCenterX = direction > 0 ? -schoolSize * 2 : width + schoolSize * 2;
+      const schoolWavePhase = Math.random() * Math.PI * 2;
+      const schoolWaveSpeed = 8e-4 + Math.random() * 6e-4;
+      const schoolWaveAmplitude = 8 + Math.random() * 10;
+      for (let i = 0; i < fishCount; i++) {
+        const individualSize = Math.max(fishType === 2 ? 12 : fishType === 0 ? 50 : 30, schoolSize * (0.4 + Math.random() * 0.3));
+        const spreadFactorX = 2.5 + individualSize / schoolSize;
+        const spreadFactorY = 1.5 + individualSize / schoolSize * 0.5;
+        const offsetX = (Math.random() - 0.5) * individualSize * spreadFactorX;
+        const offsetY = (Math.random() - 0.5) * individualSize * spreadFactorY;
+        const fishSpeed = schoolSpeed * (0.9 + Math.random() * 0.2);
+        const shark = this._sharkPool.pop() || {};
+        shark.x = schoolCenterX + offsetX;
+        shark.baseY = schoolY + offsetY;
+        shark.size = individualSize;
+        shark.speed = fishSpeed;
+        shark.baseSpeed = fishSpeed;
+        shark.schoolId = this._nextSchoolId;
+        shark.fishType = fishType;
+        shark.depthTier = depthTier;
+        shark.direction = direction;
+        shark.verticalAmplitude = 2 + Math.random() * 4;
+        shark.verticalPeriod = 5e3 + Math.random() * 5e3;
+        shark.age = Math.random() * 1e3;
+        shark.image = schoolImage;
+        shark._imageIndex = fishType;
+        shark.schoolWavePhase = schoolWavePhase;
+        shark.schoolWaveSpeed = schoolWaveSpeed;
+        shark.schoolWaveAmplitude = schoolWaveAmplitude;
+        shark.tailPeriod = 280 + Math.random() * 220;
+        shark.isDying = void 0;
+        shark.boneY = void 0;
+        shark.boneStartTime = void 0;
+        shark.isDancing = void 0;
+        shark._hitFlashTime = void 0;
+        shark.passive = void 0;
+        shark.isIndependent = void 0;
+        this.sharks.push(shark);
+      }
+      this._schoolMembershipDirty = true;
+    }
+    /**
+     * Spawn a large school from the right side heading left — used for the intro cinematic.
+     * @param {number} width
+     * @param {number} height
+     * @param {number} targetY  - vertical centre for the school (default: canvas mid)
+     */
+    spawnIntroSchool(width, height, targetY) {
+      const direction = 1;
+      const schoolImage = this.fishImages[1];
+      const fishCount = Math.min(this.config.maxSchoolSize, 35 + Math.floor(Math.random() * 20));
+      const baseSize = 16;
+      const schoolSpeed = 1.4;
+      const centreY = targetY ?? height * 0.6;
+      const schoolId = -1;
+      const schoolWavePhase = Math.random() * Math.PI * 2;
+      const schoolWaveSpeed = 9e-4;
+      const schoolWaveAmplitude = 12;
+      for (let i = 0; i < fishCount; i++) {
+        const sz = baseSize * (0.7 + Math.random() * 0.6);
+        const ox = (Math.random() - 0.5) * sz * 7;
+        const oy = (Math.random() - 0.5) * sz * 3;
+        const fish = this._sharkPool.pop() || {};
+        fish.x = -sz * 3 + ox;
+        fish.baseY = centreY + oy;
+        fish.size = sz;
+        fish.speed = schoolSpeed * (0.9 + Math.random() * 0.2);
+        fish.baseSpeed = schoolSpeed;
+        fish.schoolId = schoolId;
+        fish.fishType = 1;
+        fish.depthTier = 1;
+        fish.direction = direction;
+        fish.verticalAmplitude = 3 + Math.random() * 3;
+        fish.verticalPeriod = 4e3 + Math.random() * 3e3;
+        fish.age = Math.random() * 500;
+        fish.image = schoolImage;
+        fish._imageIndex = 1;
+        fish.schoolWavePhase = schoolWavePhase;
+        fish.schoolWaveSpeed = schoolWaveSpeed;
+        fish.schoolWaveAmplitude = schoolWaveAmplitude;
+        fish.tailPeriod = 260 + Math.random() * 180;
+        fish.isDying = void 0;
+        fish.boneY = void 0;
+        fish.boneStartTime = void 0;
+        fish.isDancing = void 0;
+        fish._hitFlashTime = void 0;
+        fish.passive = void 0;
+        fish.isIndependent = void 0;
+        this.sharks.push(fish);
+      }
+      this._schoolMembershipDirty = true;
+    }
+    /**
+     * Spawn a blood cloud of soft round particles that gently expand and fade.
+     * @param {number} x
+     * @param {number} y
+     * @param {number} size           - fish size, scales count and radius
+     * @param {number|null} impactAngle - directional bias (null = full circle)
+     */
+    _spawnBloodBurst(x, y, size, impactAngle = null, spawnTime = 0) {
+      const PALETTE = ["#8b0000", "#a80000", "#c01010", "#6a0000", "#b02000", "#cc0000"];
+      const now = spawnTime;
+      const quality = this._qualityMultiplier || 1;
+      const maxConcurrent = Math.max(48, Math.round(_FishLayer.MAX_BLOOD_PARTICLES * quality));
+      const availableSlots = Math.max(0, maxConcurrent - this.bloodParticles.length);
+      if (availableSlots === 0) return;
+      const desiredCount = Math.min(
+        Math.max(_FishLayer.MIN_BLOOD_PARTICLES_PER_BURST, Math.floor(size * 0.5)),
+        Math.max(_FishLayer.MIN_BLOOD_PARTICLES_PER_BURST, Math.round(_FishLayer.MAX_BLOOD_PARTICLES_PER_BURST * quality))
+      );
+      const count = Math.min(desiredCount, availableSlots);
+      for (let i = 0; i < count; i++) {
+        const angle = impactAngle !== null ? impactAngle + (Math.random() - 0.5) * Math.PI * 1.6 : Math.random() * Math.PI * 2;
+        const speed = 0.15 + Math.random() * 0.55;
+        const r = size * (0.04 + Math.random() * 0.1);
+        const life = 3500 + Math.random() * 1500;
+        const bp = this._bloodPool.pop() || {};
+        bp.x = x + (Math.random() - 0.5) * size * 0.3;
+        bp.y = y + (Math.random() - 0.5) * size * 0.2;
+        bp.vx = Math.cos(angle) * speed;
+        bp.vy = Math.sin(angle) * speed * 0.6;
+        bp.radius = r;
+        bp.color = PALETTE[Math.floor(Math.random() * PALETTE.length)];
+        bp.alpha = 0.45 + Math.random() * 0.4;
+        bp.birth = now;
+        bp.life = life;
+        this.bloodParticles.push(bp);
+      }
+    }
+    /** Alias used by the dying-fish path (purely radial, no impact angle). */
+    _spawnBloodCloud(x, y, size, spawnTime = 0) {
+      this._spawnBloodBurst(x, y, size, null, spawnTime);
+    }
+    /**
+     * Pre-render 4 depth-tinted variants of a source image into OffscreenCanvases.
+     * Tier 0 = deepest (desaturated+dark), Tier 3 = surface (original).
+     * Cost: called once per image on load, ~1 ms.
+     */
+    _buildDepthCache(sourceImage) {
+      const TIERS = [
+        { sat: 92, bri: 82 },
+        // tier 0: deep — full colour, just darker
+        { sat: 96, bri: 89 },
+        // tier 1
+        { sat: 99, bri: 95 },
+        // tier 2
+        null
+        // tier 3: original, no processing
+      ];
+      const w = sourceImage.naturalWidth || sourceImage.width;
+      const h = sourceImage.naturalHeight || sourceImage.height;
+      if (!w || !h) return TIERS.map(() => sourceImage);
+      return TIERS.map((tier) => {
+        if (!tier) return sourceImage;
+        const oc = new OffscreenCanvas(w, h);
+        const octx = oc.getContext("2d");
+        octx.filter = `saturate(${tier.sat}%) brightness(${tier.bri}%)`;
+        octx.drawImage(sourceImage, 0, 0);
+        return oc;
+      });
+    }
+  };
+
+  // assets/canvas/layers/DasFishLayer.js
+  var DasFishLayer = class _DasFishLayer {
+    static DEFAULT_CONFIG = {
+      size: 100,
+      // half-width used for edge margin
+      speed: 0.5,
+      // px per frame at 60 fps
+      turnRate: 5e-3,
+      // max radians turned per frame — very slow
+      lureRadius: 30,
+      // kill radius around the lure orb
+      allowHighCostEffects: true
+    };
+    constructor(options = {}) {
+      this.enabled = true;
+      this.manager = null;
+      this.config = { ..._DasFishLayer.DEFAULT_CONFIG, ...options };
+      this.fish = null;
+      this._qualityMultiplier = 1;
+      this._image = new Image();
+      this._imageLoaded = false;
+      this._depthCache = null;
+      this._effectCache = null;
+      this._glitch = {
+        cooldown: 1e3 + Math.random() * 2e3,
+        effect: null,
+        // 'freeze'|'tear'|'ghost'
+        timer: 0,
+        speedMul: 1,
+        data: {}
+      };
+      this._intro = true;
+      this._image.onload = () => {
+        this._imageLoaded = true;
+        this._depthCache = this._buildDepthCache(this._image);
+        this._effectCache = this._buildEffectCache(this._depthCache);
+      };
+      this._image.onerror = () => {
+        console.warn("[DasFishLayer] Failed to load das.png");
+      };
+      this._image.src = "assets/images/fish/das.webp";
+    }
+    init(width, height, canvasManager) {
+      this.width = width;
+      this.height = height;
+      this.manager = canvasManager;
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+    }
+    setQuality(quality) {
+      this._qualityMultiplier = quality;
+    }
+    destroy() {
+      this.fish = null;
+    }
+    // ─── Spawn ───────────────────────────────────────────────────────────────
+    _spawn() {
+      const goRight = this._intro ? false : Math.random() < 0.5;
+      const midY = this.height * 0.6;
+      this.fish = {
+        x: goRight ? -this.config.size : this.width + this.config.size,
+        y: this._intro ? midY : this.height * (0.5 + Math.random() * 0.3),
+        vx: (goRight ? 1 : -1) * this.config.speed,
+        size: this.config.size,
+        age: 0
+      };
+      if (this._intro) {
+        const fishLayer = this.manager && this.manager.getLayer("fish");
+        if (fishLayer && typeof fishLayer.spawnIntroSchool === "function") {
+          fishLayer.spawnIntroSchool(this.width, this.height, midY);
+        }
+      }
+    }
+    // ─── Update ──────────────────────────────────────────────────────────────
+    _update(deltaTime) {
+      const f = this.fish;
+      const dt = typeof deltaTime === "number" ? deltaTime : 16;
+      const spd = this.config.speed * (dt / 16);
+      f.age += dt;
+      this._updateGlitch(dt);
+      if (this._intro && f.age > 5e3) {
+        this._intro = false;
+      }
+      const effectiveSpd = spd * this._glitch.speedMul;
+      f.x += f.vx > 0 ? effectiveSpd : -effectiveSpd;
+      f.y += Math.sin(f.age * 4e-4) * 0.18 * (dt / 16);
+      const margin = f.size;
+      f.y = Math.max(margin, Math.min(this.height - margin, f.y));
+      if (f.vx > 0 && f.x > this.width + f.size * 2) {
+        f.x = -f.size;
+        f.y = this.height * (0.5 + Math.random() * 0.3);
+      } else if (f.vx < 0 && f.x < -f.size * 2) {
+        f.x = this.width + f.size;
+        f.y = this.height * (0.5 + Math.random() * 0.3);
+      }
+    }
+    // ─── Lure world position ─────────────────────────────────────────────────
+    // The lure hangs in front of the fish and slightly above.
+    // Forward offset along travel direction + fixed world-up offset.
+    _getLurePos(f) {
+      const dir = f.vx >= 0 ? 1 : -1;
+      return {
+        x: f.x + dir * (f.size * 0.76 - 10),
+        y: f.y - f.size * 0.02,
+        r: this.config.lureRadius
+      };
+    }
+    // ─── Kill checks ─────────────────────────────────────────────────────────
+    _checkKills() {
+      const lure = this._getLurePos(this.fish);
+      const now = performance.now();
+      const SURVIVE_COOLDOWN = 500;
+      const fishLayer = this.manager && this.manager.getLayer("fish");
+      if (fishLayer && fishLayer.sharks) {
+        for (const shark of fishLayer.sharks) {
+          if (shark.isDying) continue;
+          const dx = lure.x - shark.x;
+          const dy = lure.y - (shark.baseY || shark.y || 0);
+          const threshold = lure.r + shark.size * 0.5;
+          if (dx * dx + dy * dy < threshold * threshold) {
+            if (shark._dasCooldownUntil && now < shark._dasCooldownUntil) continue;
+            if (Math.random() < 0.7) {
+              shark._dasCooldownUntil = now + SURVIVE_COOLDOWN;
+            } else {
+              shark.isDying = true;
+            }
+          }
+        }
+      }
+      const curiousLayer = this.manager && this.manager.getLayer("curiousFish");
+      if (curiousLayer && curiousLayer.fish && !curiousLayer.fish.isDying) {
+        const cf = curiousLayer.fish;
+        const cfSize = cf.currentSize || curiousLayer.config?.size || 20;
+        const dx = lure.x - cf.x;
+        const dy = lure.y - cf.y;
+        const threshold = lure.r + cfSize * 0.5;
+        if (dx * dx + dy * dy < threshold * threshold) {
+          if (cf._dasCooldownUntil && now < cf._dasCooldownUntil) {
+          } else if (Math.random() < 0.7) {
+            cf._dasCooldownUntil = now + SURVIVE_COOLDOWN;
+          } else {
+            cf.isDying = true;
+          }
+        }
+      }
+    }
+    // ─── Glitch ──────────────────────────────────────────────────────────────
+    _updateGlitch(dt) {
+      const g = this._glitch;
+      if (g.effect) {
+        g.timer -= dt;
+        if (g.effect === "freeze") g.data.elapsed = (g.data.elapsed || 0) + dt;
+        if (g.effect === "tear" || g.effect === "tearV") {
+          g.data.offsetRefresh = (g.data.offsetRefresh || 0) - dt;
+          if (g.data.offsetRefresh <= 0) {
+            this._refreshGlitchSlices(g);
+          }
+        }
+        if (g.timer <= 0) {
+          g.effect = null;
+          g.speedMul = 1;
+          g.data = {};
+          g.cooldown = 1e3 + Math.random() * 2e3;
+        }
+      } else {
+        g.cooldown -= dt;
+        if (g.cooldown <= 0) this._triggerGlitch();
+      }
+    }
+    _triggerGlitch() {
+      const g = this._glitch;
+      const effects = ["freeze", "freeze", "freeze", "tear", "tear", "tearV", "tearV", "ghost", "ghost2"];
+      g.effect = effects[Math.floor(Math.random() * effects.length)];
+      g.data = {};
+      switch (g.effect) {
+        case "freeze":
+          g.timer = 700 + Math.random() * 500;
+          g.speedMul = 0.05;
+          g.data.total = g.timer;
+          break;
+        case "tear":
+          g.timer = 100 + Math.random() * 250;
+          g.speedMul = 1;
+          this._refreshGlitchSlices(g);
+          break;
+        case "tearV":
+          g.timer = 100 + Math.random() * 250;
+          g.speedMul = 1;
+          this._refreshGlitchSlices(g);
+          break;
+        case "ghost":
+          g.timer = 150 + Math.random() * 280;
+          g.speedMul = 0.4;
+          break;
+        case "ghost2":
+          g.timer = 150 + Math.random() * 280;
+          g.speedMul = 0.4;
+          break;
+      }
+    }
+    _refreshGlitchSlices(glitch) {
+      glitch.data.offsetRefresh = 48 + Math.random() * 24;
+      if (glitch.effect === "tear") {
+        glitch.data.horizontalOffsets = Array.from({ length: 3 }, (_, index) => {
+          const direction = index % 2 === 0 ? 1 : -1;
+          return direction * (3 + Math.floor(Math.random() * 10));
+        });
+        return;
+      }
+      if (glitch.effect === "tearV") {
+        glitch.data.verticalOffsets = Array.from({ length: 5 }, (_, index) => {
+          const direction = index % 2 === 0 ? 1 : -1;
+          return direction * (3 + Math.floor(Math.random() * 10));
+        });
+      }
+    }
+    // ─── Render ──────────────────────────────────────────────────────────────
+    render(ctx, currentTime, deltaTime, width, height) {
+      if (!this.enabled) return;
+      this.width = width;
+      this.height = height;
+      if (!this.fish && width > 0 && height > 0) this._spawn();
+      if (!this.fish) return;
+      this._update(deltaTime);
+      if (this._glitch.effect !== "freeze") this._checkKills();
+      const f = this.fish;
+      if (!this._imageLoaded) {
+        ctx.save();
+        ctx.fillStyle = "rgba(200,80,0,0.6)";
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.size * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return;
+      }
+      const g = this._glitch;
+      const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
+      const depthTier = height > 0 ? Math.min(3, Math.max(0, Math.floor(f.y / height * 4))) : 3;
+      const drawSrc = this._depthCache && this._depthCache[depthTier] || this._image;
+      const effectCache = this._effectCache && this._effectCache[depthTier];
+      const imgW = f.size * 2;
+      const imgH = imgW * (this._image.height / this._image.width);
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      if (f.vx < 0) ctx.scale(-1, 1);
+      switch (g.effect) {
+        case "freeze": {
+          const FADE = 400;
+          const elapsed = g.data.elapsed || 0;
+          const total = g.data.total || 700;
+          let sat;
+          if (elapsed < FADE) {
+            sat = 100 - elapsed / FADE * 100;
+          } else if (elapsed > total - FADE) {
+            sat = (elapsed - (total - FADE)) / FADE * 100;
+          } else {
+            sat = 0;
+          }
+          const freezeSrc = useHighCostEffects ? this._pickFreezeVariant(effectCache, sat) || drawSrc : drawSrc;
+          ctx.drawImage(freezeSrc, -imgW / 2, -imgH / 2, imgW, imgH);
+          break;
+        }
+        case "ghost":
+          ctx.globalAlpha = 0.35;
+          ctx.drawImage(useHighCostEffects ? effectCache?.ghost || drawSrc : drawSrc, -imgW / 2 + 9, -imgH / 2 - 5, imgW, imgH);
+          ctx.globalAlpha = 1;
+          ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2, imgW, imgH);
+          break;
+        case "ghost2":
+          ctx.globalAlpha = 0.35;
+          ctx.drawImage(useHighCostEffects ? effectCache?.ghost2 || drawSrc : drawSrc, -imgW / 2 - 7, -imgH / 2 + 8, imgW, imgH);
+          ctx.globalAlpha = 1;
+          ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2, imgW, imgH);
+          break;
+        case "tear": {
+          const sliceH = imgH / 3;
+          const offsets = g.data.horizontalOffsets || [6, -6, 6];
+          for (let i = 0; i < 3; i++) {
+            const ox = offsets[i] ?? 0;
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(-imgW / 2 + ox - 1, -imgH / 2 + i * sliceH, imgW + 2, sliceH);
+            ctx.clip();
+            ctx.drawImage(drawSrc, -imgW / 2 + ox, -imgH / 2, imgW, imgH);
+            ctx.restore();
+          }
+          break;
+        }
+        case "tearV": {
+          const sliceW = imgW / 5;
+          const offsets = g.data.verticalOffsets || [6, -6, 6, -6, 6];
+          for (let i = 0; i < 5; i++) {
+            const oy = offsets[i] ?? 0;
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(-imgW / 2 + i * sliceW, -imgH / 2 + oy - 1, sliceW, imgH + 2);
+            ctx.clip();
+            ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2 + oy, imgW, imgH);
+            ctx.restore();
+          }
+          break;
+        }
+        default:
+          ctx.drawImage(drawSrc, -imgW / 2, -imgH / 2, imgW, imgH);
+      }
+      if (g.effect === "freeze") {
+        ctx.save();
+        ctx.translate(0, imgH * 0.05);
+        const angle = currentTime % 1200 / 1200 * Math.PI * 2;
+        for (let d = 0; d < 8; d++) {
+          const a = angle + d / 8 * Math.PI * 2;
+          ctx.globalAlpha = 0.2 + d / 8 * 0.75;
+          ctx.fillStyle = "#ffffff";
+          ctx.beginPath();
+          ctx.arc(Math.cos(a) * 9, Math.sin(a) * 9, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
+      }
+      ctx.restore();
+      if (this.showDebug) {
+        const lure = this._getLurePos(f);
+        ctx.save();
+        ctx.strokeStyle = "rgba(255,0,0,0.85)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(lure.x, lure.y, lure.r, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.fillStyle = "rgba(255,0,0,0.25)";
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+    // ─── Depth cache (same pattern as FishLayer) ─────────────────────────────
+    _buildDepthCache(sourceImage) {
+      const TIERS = [
+        { sat: 30, bri: 100 },
+        { sat: 55, bri: 100 },
+        { sat: 78, bri: 100 },
+        null
+        // tier 3: original
+      ];
+      const w = sourceImage.naturalWidth || sourceImage.width;
+      const h = sourceImage.naturalHeight || sourceImage.height;
+      if (!w || !h) return TIERS.map(() => sourceImage);
+      return TIERS.map((tier) => {
+        if (!tier) return sourceImage;
+        const oc = new OffscreenCanvas(w, h);
+        const octx = oc.getContext("2d");
+        octx.filter = `saturate(${tier.sat}%) brightness(${tier.bri}%)`;
+        octx.drawImage(sourceImage, 0, 0);
+        return oc;
+      });
+    }
+    _buildEffectCache(depthCache) {
+      if (!depthCache) return null;
+      const freezeLevels = [0, 25, 50, 75, 100];
+      return depthCache.map((source) => ({
+        freeze: freezeLevels.reduce((variants, level) => {
+          variants[level] = level >= 100 ? source : this._createFilteredVariant(source, `saturate(${level}%)`);
+          return variants;
+        }, {}),
+        ghost: this._createFilteredVariant(source, "hue-rotate(120deg) saturate(300%)"),
+        ghost2: this._createFilteredVariant(source, "hue-rotate(255deg) saturate(300%)")
+      }));
+    }
+    _createFilteredVariant(source, filter) {
+      const w = source.naturalWidth || source.width;
+      const h = source.naturalHeight || source.height;
+      if (!w || !h) return source;
+      const oc = new OffscreenCanvas(w, h);
+      const octx = oc.getContext("2d");
+      if (!octx) return source;
+      octx.filter = filter;
+      octx.drawImage(source, 0, 0);
+      return oc;
+    }
+    _pickFreezeVariant(effectCache, saturation) {
+      const variants = effectCache && effectCache.freeze;
+      if (!variants) return null;
+      const levels = [0, 25, 50, 75, 100];
+      const clamped = Math.max(0, Math.min(100, saturation));
+      let nearestLevel = levels[0];
+      for (let i = 1; i < levels.length; i++) {
+        if (Math.abs(levels[i] - clamped) < Math.abs(nearestLevel - clamped)) {
+          nearestLevel = levels[i];
+        }
+      }
+      return variants[nearestLevel] || null;
+    }
+  };
+
+  // assets/canvas/layers/JellyfishLayer.js
+  var JellyfishLayer = class _JellyfishLayer {
+    // Hard cap — 1 individual per school, sparse
+    static MAX_JELLYFISH = 12;
+    static DEFAULT_CONFIG = {
+      schoolCount: null,
+      // null = auto-scale by viewport width
+      schoolDensity: 600,
+      // px of width per jellyfish
+      minSchools: 1,
+      maxSchools: 10,
+      sizeMin: 15,
+      // base radius px
+      sizeMax: 30,
+      speedMin: 0.09,
+      // px/frame horizontal
+      speedMax: 0.2,
+      riseMin: 0.156,
+      // px/frame upward — tan(60°) × speedMin = 60° angle
+      riseMax: 0.346,
+      // px/frame upward — tan(60°) × speedMax
+      pulsePerMin: 18e-4,
+      // rad/ms  → ~3.5 s period  (slower, lazier pulse)
+      pulsePerMax: 32e-4,
+      // rad/ms  → ~2 s period
+      pulseAmpMin: 12,
+      // px vertical travel per pulse
+      pulseAmpMax: 28,
+      allowHighCostEffects: true
+    };
+    constructor(options = {}) {
+      this.enabled = true;
+      this.jellyfish = [];
+      this.particles = [];
+      this._schoolsSpawned = 0;
+      this.manager = null;
+      this._qualityMultiplier = 1;
+      this.imageAspectRatio = 1.4;
+      this._tintedVariants = null;
+      this.config = { ..._JellyfishLayer.DEFAULT_CONFIG, ...options };
+      this.image = new Image();
+      this.imageLoaded = false;
+      this.tintedImage = null;
+      this.image.onload = () => {
+        this.imageLoaded = true;
+        this.imageAspectRatio = this.image.naturalHeight / this.image.naturalWidth || 1.4;
+        this._buildTintedImage();
+      };
+      this.image.onerror = () => {
+        console.warn("JellyfishLayer: failed to load medusa.webp");
+      };
+      this.image.src = "assets/images/fish/medusa.webp";
+    }
+    init(width, height, manager) {
+      this.width = width;
+      this.height = height;
+      this.manager = manager;
+      this._recalcSchoolCount(width, height);
+    }
+    destroy() {
+      this.jellyfish = [];
+      this.particles = [];
+      this._schoolsSpawned = 0;
+      this._tintedVariants = null;
+    }
+    setQuality(quality) {
+      this._qualityMultiplier = quality;
+    }
+    onResize(width, height) {
+      this.width = width;
+      this.height = height;
+      this._recalcSchoolCount(width, height);
+    }
+    _recalcSchoolCount(width, height) {
+      if (this.config.schoolCount !== null) return;
+      const density = this.config.schoolDensity;
+      this._autoSchoolCount = Math.max(
+        this.config.minSchools,
+        Math.min(this.config.maxSchools, Math.round(width / density))
+      );
+    }
+    render(ctx, currentTime, deltaTime, width, height) {
+      if (!this.enabled) return;
+      const effectiveSchoolCount = this.config.schoolCount !== null ? this.config.schoolCount : this._autoSchoolCount || 2;
+      while (this._schoolsSpawned < effectiveSchoolCount) {
+        this._spawnSchool(width, height, this._schoolsSpawned);
+        this._schoolsSpawned++;
+      }
+      if (this.jellyfish.length > _JellyfishLayer.MAX_JELLYFISH) {
+        this.jellyfish.length = _JellyfishLayer.MAX_JELLYFISH;
+      }
+      let writeIndex = 0;
+      for (let i = 0; i < this.jellyfish.length; i++) {
+        const jf = this.jellyfish[i];
+        jf.age += deltaTime;
+        jf.x += jf.speed * (deltaTime / 16);
+        jf.baseY -= jf.riseSpeed * (deltaTime / 16);
+        const phase = jf.age * jf.pulseFreq;
+        const raw = (Math.sin(phase - Math.PI * 0.5) + 1) * 0.5;
+        const yOffset = -raw * jf.pulseAmplitude;
+        const currentY = jf.baseY + yOffset;
+        const ceiling = SURFACE_Y + jf.size * 2;
+        if (jf.baseY <= ceiling) {
+          jf.baseY = ceiling;
+          if (jf.riseSpeed > 0) jf.riseSpeed = -jf.origRiseSpeed * 0.7;
+        }
+        if (jf.riseSpeed < 0 && jf.baseY >= height * 0.5) {
+          jf.riseSpeed = jf.origRiseSpeed;
+        }
+        if (jf.x > width + jf.size * 2.5) {
+          this._resetBelowBottom(jf, width, height);
+        }
+        if (this.particles.length < 50 && Math.random() < 2e-3 * deltaTime) {
+          const aspect = this.imageLoaded ? this.image.height / this.image.width || 1.4 : 1.4;
+          this.particles.push({
+            x: jf.x + (Math.random() - 0.5) * jf.size * 1.1,
+            y: currentY + jf.size * (0.6 + Math.random() * 0.9 * aspect),
+            vx: (Math.random() - 0.5) * 0.012,
+            vy: -(0.018 + Math.random() * 0.025),
+            age: 0,
+            maxAge: 700 + Math.random() * 900,
+            size: 0.7 + Math.random() * 1.6,
+            baseAlpha: 0.35 + Math.random() * 0.45
+          });
+        }
+        this._draw(ctx, jf, currentY);
+        this.jellyfish[writeIndex++] = jf;
+      }
+      this.jellyfish.length = writeIndex;
+      if (this.particles.length > 0) {
+        ctx.save();
+        ctx.fillStyle = "rgba(180, 240, 255, 1.0)";
+        let pw = 0;
+        for (let i = 0; i < this.particles.length; i++) {
+          const p = this.particles[i];
+          p.age += deltaTime;
+          if (p.age >= p.maxAge) continue;
+          p.x += p.vx * (deltaTime / 16);
+          p.y += p.vy * (deltaTime / 16);
+          const t = p.age / p.maxAge;
+          const fadeAlpha = t < 0.12 ? t / 0.12 : 1 - (t - 0.12) / 0.88;
+          ctx.globalAlpha = p.baseAlpha * fadeAlpha;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          this.particles[pw++] = p;
+        }
+        this.particles.length = pw;
+        ctx.globalAlpha = 1;
+        ctx.restore();
+      }
+    }
+    // -----------------------------------------------------------------
+    // Pre-bake the static colour transforms (sepia + saturate + hue-rotate) into an
+    // OffscreenCanvas so that per-frame we only need a cheap single brightness() filter.
+    _buildTintedImage() {
+      if (!this.config.allowHighCostEffects) return;
+      const oc = new OffscreenCanvas(this.image.naturalWidth, this.image.naturalHeight);
+      const octx = oc.getContext("2d");
+      if (!octx) return;
+      octx.filter = "sepia(1) saturate(3) hue-rotate(170deg)";
+      octx.drawImage(this.image, 0, 0);
+      this.tintedImage = oc;
+      const brightnessSteps = [1.1, 1.18, 1.26, 1.35];
+      this._tintedVariants = brightnessSteps.map((brightness) => {
+        const variant = new OffscreenCanvas(this.image.naturalWidth, this.image.naturalHeight);
+        const variantCtx = variant.getContext("2d");
+        if (!variantCtx) return oc;
+        variantCtx.filter = `brightness(${brightness})`;
+        variantCtx.drawImage(oc, 0, 0);
+        return variant;
+      });
+    }
+    // -----------------------------------------------------------------
+    _draw(ctx, jf, y) {
+      const phase = jf.age * jf.pulseFreq;
+      const sineVal = (Math.sin(phase - Math.PI * 0.5) + 1) * 0.5;
+      const velVal = Math.max(0, Math.sin(phase));
+      const aspect = this.imageAspectRatio;
+      const w = jf.size * 2;
+      const h = w * aspect;
+      const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
+      const scaleX = 1 - velVal * 0.09;
+      const scaleY = 1 + velVal * 0.18;
+      ctx.setTransform(scaleX, 0, 0, scaleY, jf.x, y);
+      ctx.globalAlpha = jf.alpha * (0.85 + sineVal * 0.15);
+      if (this.tintedImage) {
+        const drawSource = useHighCostEffects && this._tintedVariants?.length ? this._tintedVariants[Math.min(this._tintedVariants.length - 1, Math.floor(sineVal * this._tintedVariants.length))] : this.tintedImage;
+        ctx.drawImage(drawSource, -w / 2, -h / 2, w, h);
+      } else if (this.imageLoaded) {
+        if (useHighCostEffects) {
+          ctx.filter = `sepia(1) saturate(3) hue-rotate(170deg) brightness(${1.1 + sineVal * 0.25})`;
+        }
+        ctx.drawImage(this.image, -w / 2, -h / 2, w, h);
+        if (useHighCostEffects) {
+          ctx.filter = "none";
+        }
+      } else {
+        ctx.fillStyle = `rgba(100, 215, 255, ${0.5 + sineVal * 0.2})`;
+        ctx.beginPath();
+        ctx.arc(0, 0, jf.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      if (useHighCostEffects && !this.tintedImage) {
+        ctx.filter = "none";
+      }
+      ctx.globalAlpha = 1;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+    // -----------------------------------------------------------------
+    _spawnSchool(width, height, schoolIndex) {
+      const cfg = this.config;
+      const schoolSize = 1;
+      const baseSize = cfg.sizeMin + Math.random() * (cfg.sizeMax - cfg.sizeMin);
+      const speed = cfg.speedMin + Math.random() * (cfg.speedMax - cfg.speedMin);
+      const riseSpeed = cfg.riseMin + Math.random() * (cfg.riseMax - cfg.riseMin);
+      const pulseFreq = cfg.pulsePerMin + Math.random() * (cfg.pulsePerMax - cfg.pulsePerMin);
+      const pulseAmp = cfg.pulseAmpMin + Math.random() * (cfg.pulseAmpMax - cfg.pulseAmpMin);
+      const startXBase = schoolIndex / Math.max(1, this._autoSchoolCount - 1 || 0.5) * width * (0.85 + Math.random() * 0.15) + (Math.random() - 0.5) * width * 0.12;
+      const schoolY = height + baseSize + Math.random() * (height * 0.15);
+      for (let i = 0; i < schoolSize; i++) {
+        const offsetX = -(i * (baseSize * 1.8 + Math.random() * 20));
+        const offsetY = Math.random() * baseSize * 1.5;
+        const indivSize = baseSize * (0.75 + Math.random() * 0.5);
+        const phaseAge = Math.random() * Math.PI * 2 / pulseFreq;
+        this.jellyfish.push({
+          x: startXBase + (Math.random() - 0.5) * baseSize * 2,
+          baseY: schoolY + offsetY,
+          size: indivSize,
+          speed: speed * (0.88 + Math.random() * 0.24),
+          riseSpeed: riseSpeed * (0.88 + Math.random() * 0.24),
+          origRiseSpeed: riseSpeed * (0.88 + Math.random() * 0.24),
+          pulseFreq: pulseFreq * (0.9 + Math.random() * 0.2),
+          pulseAmplitude: pulseAmp * (0.8 + Math.random() * 0.4),
+          age: phaseAge,
+          alpha: 0.55 + Math.random() * 0.3
+        });
+      }
+    }
+    // Respawn a jellyfish below the bottom edge (random X) after completing its journey.
+    _resetBelowBottom(jf, width, height) {
+      jf.x = Math.random() * width;
+      jf.baseY = height + jf.size + Math.random() * (height * 0.15);
+    }
+  };
+
+  // assets/canvas/index.js
+  function createCanvasBackground(options = {}) {
+    const manager = new CanvasManager(options);
+    return manager;
+  }
+
+  // assets/core/MasterRenderer.js
+  var MasterRenderer = class {
+    /**
+     * @param {Object} [options]
+     * @param {number} [options.canvas2dFPS=45] - Target FPS for the 2D canvas throttle.
+     *   Lower values on weak devices reduce CPU load while keeping WebGL smooth.
+     */
+    constructor(options = {}) {
+      this.webglRenderer = null;
+      this.canvasManager = null;
+      this.rafId = null;
+      this.lastTime = 0;
+      this.isRunning = false;
+      this.fpsUpdateTime = 0;
+      this.frameCount = 0;
+      this.currentFPS = 60;
+      this.maxDisplayFPS = 0;
+      this.theoreticalFPS = 0;
+      this.lastRenderTime = 0;
+      this.fpsLogTime = 0;
+      this.debug = options.debug || false;
+      this.mobileLiteMode = options.mobileLiteMode === true;
+      this.baseCanvas2dFPS = options.canvas2dFPS || 45;
+      this.canvas2dInterval = 1e3 / this.baseCanvas2dFPS;
+      this.lastCanvas2dTime = 0;
+      this.tier = 0;
+      this.lowFpsSince = null;
+      this.LOW_FPS_THRESHOLD = 28;
+      this.LOW_FPS_THRESHOLD_CANVAS = 22;
+      this.LOW_FPS_THRESHOLD_FINAL = 15;
+      this.LOW_FPS_DURATION = this.mobileLiteMode ? 7e3 : 15e3;
+      this._warmupDuration = 12e3;
+      this._warmupUntil = 0;
+      this._hiddenSince = 0;
+      this.RECOVERY_HIDDEN_MIN = 6e4;
+      this._rampFactor = 1;
+      this._rampTarget = 1;
+      this._rampStep = 0.15;
+      this._rampInterval = 8e3;
+      this._lastRampTime = 0;
+      this._rampComplete = true;
+      this.debugPanel = null;
+      this._pausedByVisibility = false;
+      this._visibilityListenerAdded = false;
+      this._onVisibilityChange = null;
+      this.render = this.render.bind(this);
+    }
+    hasWebGLRenderer() {
+      return Boolean(this.webglRenderer && this.webglRenderer.canvas && this.webglRenderer.gl);
+    }
+    hasCanvasRenderer() {
+      if (!this.canvasManager) return false;
+      if (typeof this.canvasManager.canRender === "function") {
+        return this.canvasManager.canRender();
+      }
+      return Boolean(this.canvasManager.ctx);
+    }
+    getCurrentLowFpsThreshold() {
+      if (this.tier <= 1) return this.LOW_FPS_THRESHOLD;
+      if (this.tier === 2) return this.LOW_FPS_THRESHOLD_CANVAS;
+      return this.LOW_FPS_THRESHOLD_FINAL;
+    }
+    syncCanvasThrottle() {
+      let targetFPS = this.baseCanvas2dFPS;
+      if (this.tier >= 4) {
+        targetFPS = 0;
+      } else if (this.tier >= 3) {
+        targetFPS = Math.min(targetFPS, this.mobileLiteMode ? 24 : 30);
+      } else if (this.mobileLiteMode) {
+        targetFPS = Math.min(targetFPS, 28);
+      }
+      this.canvas2dInterval = targetFPS > 0 ? 1e3 / targetFPS : Number.POSITIVE_INFINITY;
+    }
+    /**
+     * Register WebGL renderer and disable its internal rAF loop
+     * @param {WebGLOceanRenderer} renderer 
+     */
+    registerWebGLRenderer(renderer) {
+      if (!renderer || !renderer.canvas) return;
+      this.webglRenderer = renderer;
+      if (renderer.rafId) {
+        cancelAnimationFrame(renderer.rafId);
+        renderer.rafId = null;
+      }
+      renderer.onContextLost = () => {
+        if (this.tier < 2) {
+          console.warn("[MasterRenderer] WebGL context lost \u2014 jumping to level 2");
+          this.lowFpsSince = null;
+          this._disableWebGL();
+        }
+      };
+    }
+    /**
+     * Register Canvas Manager and disable its internal rAF loop
+     * @param {CanvasManager} manager 
+     */
+    registerCanvasManager(manager) {
+      this.canvasManager = manager;
+      if (manager.animationId) {
+        cancelAnimationFrame(manager.animationId);
+        manager.animationId = null;
+      }
+    }
+    /**
+     * Start unified render loop
+     */
+    start() {
+      if (this.isRunning) return;
+      const hasWebGL = this.hasWebGLRenderer();
+      const hasCanvas = this.hasCanvasRenderer();
+      if (!hasWebGL && !hasCanvas) {
+        this.tier = 4;
+        document.body.classList.remove("has-webgl");
+        console.warn("[MasterRenderer] No usable render backends available \u2014 CSS-only fallback active");
+        return;
+      }
+      if (!hasWebGL && this.tier === 0) this.tier = 1;
+      this.syncCanvasThrottle();
+      this._rampFactor = 1;
+      this._rampComplete = true;
+      this._lastRampTime = 0;
+      this.isRunning = true;
+      this.lastTime = performance.now();
+      this.fpsUpdateTime = this.lastTime;
+      this.frameCount = 0;
+      this._warmupUntil = this.lastTime + this._warmupDuration;
+      if (this.debug) {
+        this.debugPanel = new DebugPanel();
+      }
+      this.rafId = requestAnimationFrame(this.render);
+      if (!this._visibilityListenerAdded) {
+        this._onVisibilityChange = () => {
+          if (document.hidden) {
+            this._hiddenSince = performance.now();
+            if (this.isRunning) {
+              this._pausedByVisibility = true;
+              this.stop();
+            }
+          } else if (this._pausedByVisibility) {
+            this._pausedByVisibility = false;
+            const hiddenDuration = performance.now() - (this._hiddenSince || 0);
+            if (hiddenDuration >= this.RECOVERY_HIDDEN_MIN && this.tier >= 3) {
+              this._stepUp();
+            }
+            this.lastTime = performance.now();
+            this.lastCanvas2dTime = this.lastTime;
+            this.start();
+          }
+        };
+        document.addEventListener("visibilitychange", this._onVisibilityChange);
+        this._visibilityListenerAdded = true;
+      }
+    }
+    /**
+     * Stop unified render loop
+     */
+    stop() {
+      if (!this.isRunning) return;
+      this.isRunning = false;
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+      this.debugPanel?.destroy();
+      this.debugPanel = null;
+    }
+    /**
+     * Fully tear down the renderer — removes all event listeners and stops the loop.
+     * Call this before discarding the instance (e.g. after WebGL context loss recovery).
+     */
+    destroy() {
+      this.stop();
+      if (this._onVisibilityChange) {
+        document.removeEventListener("visibilitychange", this._onVisibilityChange);
+        this._onVisibilityChange = null;
+        this._visibilityListenerAdded = false;
+      }
+    }
+    /**
+     * Main unified render loop
+     * Renders both WebGL and 2D Canvas in correct order with shared timing
+     * @param {number} currentTime - Timestamp from requestAnimationFrame
+     */
+    render(currentTime) {
+      if (!this.isRunning) return;
+      const rawDelta = currentTime - this.lastTime;
+      const deltaTime = Math.min(rawDelta, 100);
+      this.lastTime = currentTime;
+      const renderStart = performance.now();
+      if (this.hasWebGLRenderer()) {
+        this.webglRenderer.renderFrame(currentTime, deltaTime);
+      }
+      if (this.hasCanvasRenderer()) {
+        if (currentTime - this.lastCanvas2dTime >= this.canvas2dInterval) {
+          const canvas2dDelta = currentTime - this.lastCanvas2dTime;
+          this.lastCanvas2dTime = currentTime;
+          this.canvasManager.renderFrame(currentTime, canvas2dDelta);
+        }
+      }
+      const renderEnd = performance.now();
+      this.lastRenderTime = renderEnd - renderStart;
+      if (this.lastRenderTime > 0) {
+        this.theoreticalFPS = Math.round(1e3 / this.lastRenderTime);
+      }
+      if (deltaTime > 0) {
+        this.maxDisplayFPS = Math.round(1e3 / deltaTime);
+      }
+      this.updateFPSDisplay(currentTime, deltaTime);
+      if (this.isRunning) {
+        this.rafId = requestAnimationFrame(this.render);
+      }
+    }
+    /**
+     * Update FPS display (replaces setInterval approach)
+     * @param {number} currentTime 
+     */
+    updateFPSDisplay(currentTime, deltaTime) {
+      this.frameCount++;
+      if (currentTime - this.fpsUpdateTime >= 500) {
+        this.currentFPS = Math.round(this.frameCount * 1e3 / (currentTime - this.fpsUpdateTime));
+        this.frameCount = 0;
+        this.fpsUpdateTime = currentTime;
+        const canDegrade = currentTime >= this._warmupUntil && this.tier < 4;
+        if (canDegrade) {
+          const threshold = this.getCurrentLowFpsThreshold();
+          if (this.currentFPS < threshold) {
+            if (this.lowFpsSince === null) {
+              this.lowFpsSince = currentTime;
+            } else if (currentTime - this.lowFpsSince >= this.LOW_FPS_DURATION) {
+              this._stepDown();
+              this.lowFpsSince = null;
+            }
+          } else {
+            this.lowFpsSince = null;
+          }
+        } else if (this.lowFpsSince !== null) {
+          this.lowFpsSince = null;
+        }
+        if (currentTime - this.fpsLogTime >= 5e3) {
+          if (this.debug) console.log(`FPS: ${this.currentFPS}`);
+          this.fpsLogTime = currentTime;
+        }
+        const theoreticalFPS = this.lastRenderTime > 0 ? Math.round(1e3 / this.lastRenderTime) : 0;
+        const realMaxFPS = deltaTime > 0 ? Math.round(1e3 / deltaTime) : 0;
+        this.theoreticalFPS = theoreticalFPS;
+        this.maxDisplayFPS = realMaxFPS;
+        const idleTime = deltaTime - this.lastRenderTime;
+        const stats = {
+          fps: this.currentFPS,
+          theoreticalFPS,
+          maxDisplayFPS: realMaxFPS,
+          renderTime: this.lastRenderTime,
+          totalFrameTime: deltaTime,
+          idleTime,
+          layers: {},
+          webgl: {},
+          counts: {},
+          quality: 1,
+          resolution: ""
+        };
+        if (this.canvasManager) {
+          const profiler = this.canvasManager.performanceProfiler;
+          if (profiler && profiler.sections) {
+            stats.layers = {
+              FishLayer: profiler.sections["layer:FishLayer"],
+              CuriousFishLayer: profiler.sections["layer:CuriousFishLayer"],
+              HudLayer: profiler.sections["layer:HudLayer"]
+            };
+            if (profiler.sections.foodUpdate) {
+              stats.food = {
+                time: profiler.sections.foodUpdate.avg
+              };
+            }
+          }
+          const fishLayer = this.canvasManager.getLayer("fish");
+          if (fishLayer && fishLayer.sharks) {
+            stats.counts.fish = fishLayer.sharks.length;
+          }
+          const foodLayer = this.canvasManager.foodLayer;
+          if (foodLayer && foodLayer.getParticles) {
+            stats.counts.food = foodLayer.getParticles().length;
+          }
+          const perfMon = this.canvasManager.performanceMonitor;
+          if (perfMon) {
+            stats.quality = perfMon.qualityMultiplier || 1;
+          }
+          stats.resolution = `${this.canvasManager.canvas.width}\xD7${this.canvasManager.canvas.height}`;
+        }
+        if (this.webglRenderer) {
+          if (this.webglRenderer.lastProfileTimes) {
+            const times = this.webglRenderer.lastProfileTimes;
+            stats.webgl = {
+              gradient: times.gradient ? { time: times.gradient } : null,
+              rays: times.rays ? { time: times.rays } : null,
+              bubbles: times.bubbles ? { time: times.bubbles } : null,
+              plankton: times.plankton ? { time: times.plankton } : null
+            };
+          }
+          if (this.webglRenderer.bubblesLayer && this.webglRenderer.bubblesLayer.particleCount) {
+            stats.counts.bubbles = this.webglRenderer.bubblesLayer.particleCount;
+          }
+          if (this.webglRenderer.planktonLayer && this.webglRenderer.planktonLayer.particleCount) {
+            stats.counts.plankton = this.webglRenderer.planktonLayer.particleCount;
+          }
+        }
+        if (this.debugPanel) {
+          this.debugPanel.update(stats);
+        }
+      }
+    }
+    /**
+     * Step down one degradation level.
+     * Called automatically by updateFPSDisplay when sustained FPS threshold is missed.
+     */
+    _stepDown() {
+      this._rampComplete = true;
+      const next = this.tier + 1;
+      if (next > 4) return;
+      if (next === 1) {
+        if (this.webglRenderer) this.webglRenderer.reduceBudget(0.5);
+        this.tier = 1;
+        this.syncCanvasThrottle();
+        console.warn("[MasterRenderer] Level 1 (WEBGL_LITE): particle budget halved");
+      } else if (next === 2) {
+        this._disableWebGL();
+      } else if (next === 3) {
+        this._reduceCanvasQuality(0.4);
+        this.tier = 3;
+        this.syncCanvasThrottle();
+        console.warn("[MasterRenderer] Level 3 (CANVAS_REDUCED): quality forced to 0.4");
+      } else if (next === 4) {
+        this._stopCanvas();
+        this.tier = 4;
+        this.syncCanvasThrottle();
+        console.warn("[MasterRenderer] Level 4 (GRADIENT_ONLY): all animations stopped");
+      }
+    }
+    /**
+     * Step up one level after a long background pause.
+     * Only safe path: 4 → 3 (re-enable canvas at reduced quality).
+     * WebGL cannot be re-enabled without a full reinit (page reload required).
+     */
+    _stepUp() {
+      if (this.tier === 4) {
+        this._resumeCanvas();
+        this.tier = 3;
+        this.syncCanvasThrottle();
+        console.log("[MasterRenderer] Recovery: Level 3 (canvas resumed after background)");
+      }
+    }
+    /**
+     * Disable WebGL and transition to CANVAS_GRADIENT (level 2).
+     */
+    _disableWebGL() {
+      if (this.webglRenderer) {
+        this.webglRenderer.canvas.style.display = "none";
+        this.webglRenderer = null;
+      }
+      window.webglOceanRenderer = null;
+      document.body.classList.remove("has-webgl");
+      if (!this.hasCanvasRenderer()) {
+        this.tier = 4;
+        this.syncCanvasThrottle();
+        console.warn("[MasterRenderer] Level 4 (GRADIENT_ONLY): no usable canvas backend after WebGL loss");
+        this.stop();
+        return;
+      }
+      this.tier = 2;
+      this.syncCanvasThrottle();
+      console.warn("[MasterRenderer] Level 2 (CANVAS_GRADIENT): WebGL off \u2014 CSS gradient active");
+    }
+    /**
+     * Force canvas quality to a specific value.
+     * @param {number} quality - 0.3–1.0
+     */
+    _reduceCanvasQuality(quality) {
+      if (this.canvasManager && this.canvasManager.performanceMonitor) {
+        const mon = this.canvasManager.performanceMonitor;
+        const clamped = Math.max(mon.qualitySettings?.min ?? 0.3, quality);
+        mon.qualitySettings.current = clamped;
+        mon.notifyQualityChange(clamped);
+      }
+    }
+    /**
+     * Stop canvas animation entirely (level 4) and clear the canvas.
+     */
+    _stopCanvas() {
+      if (this.canvasManager) {
+        if (this.canvasManager.ctx) {
+          this.canvasManager.ctx.clearRect(0, 0, this.canvasManager.width, this.canvasManager.height);
+        }
+        if (this.canvasManager.canvas) {
+          this.canvasManager.canvas.style.display = "none";
+        }
+      }
+    }
+    /**
+     * Re-show canvas after recovery from level 4.
+     */
+    _resumeCanvas() {
+      if (this.canvasManager && this.canvasManager.canvas) {
+        this.canvasManager.canvas.style.display = "";
+      }
+    }
+    // ── Legacy aliases — kept for any external callers ───────────────────────────────────
+    /** @deprecated Use _disableWebGL() */
+    disableWebGL() {
+      this._disableWebGL();
+    }
+    /** @deprecated Use _reduceCanvasQuality() */
+    reduceCanvasQuality() {
+      const cur = this.canvasManager?.performanceMonitor?.qualitySettings?.current ?? 1;
+      this._reduceCanvasQuality(Math.max(0.3, cur - 0.2));
+    }
+    /**
+     * Apply a budget factor to both WebGL particle counts and canvas entity quality.
+     * Used exclusively by the progressive ramp-up system.
+     * @param {number} factor - 0.0–1.0
+     */
+    _applyRampBudget(factor) {
+      if (this.webglRenderer) this.webglRenderer.reduceBudget(factor);
+      this._reduceCanvasQuality(factor);
+    }
+    /**
+     * Get current FPS
+     * @returns {number}
+     */
+    getFPS() {
+      return this.currentFPS;
+    }
+  };
+
+  // assets/canvas/init.js
+  function isRenderDebugEnabled() {
+    if (typeof window === "undefined") return false;
+    return new URLSearchParams(window.location.search).get("debug-render") === "1";
+  }
+  function supportsCanvasFilters() {
+    const probe = document.createElement("canvas");
+    const ctx = probe.getContext("2d");
+    if (!ctx) return false;
+    const testFilter = "brightness(1.05)";
+    ctx.filter = "none";
+    ctx.filter = testFilter;
+    return ctx.filter === testFilter;
+  }
+  function getCanvasRuntimeBudget(baseBudget, profile) {
+    const viewportArea = window.innerWidth * window.innerHeight;
+    const webglStatus = window.blueOrcaRenderBootstrap?.webglStatus;
+    const preferLiteCanvasEffects = window.blueOrcaRenderBootstrap?.preferLiteCanvasEffects === true;
+    const canvasOnlyMode = webglStatus !== "active";
+    const mobileLiteMode = profile.isMobile || profile.isLowPower || profile.tier <= 1;
+    const runtimeBudget = {
+      canvas2dFPS: baseBudget.canvas2dFPS,
+      schoolDensity: baseBudget.schoolDensity,
+      jellyfishSchoolDensity: 600,
+      resolutionScale: 1,
+      mobileLiteMode,
+      enableBob: !mobileLiteMode,
+      enableIcons: !mobileLiteMode,
+      enableRipples: !mobileLiteMode,
+      allowHighCostEffects: !mobileLiteMode && !preferLiteCanvasEffects && baseBudget.canvas2dFPS >= 40 && supportsCanvasFilters()
+    };
+    if (mobileLiteMode) {
+      runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, profile.tier === 0 ? 24 : 28);
+      runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, profile.tier === 0 ? 75e4 : 55e4);
+      runtimeBudget.jellyfishSchoolDensity = profile.tier === 0 ? 1200 : 950;
+      runtimeBudget.resolutionScale = 0.9;
+    }
+    if (!canvasOnlyMode) {
+      return runtimeBudget;
+    }
+    runtimeBudget.allowHighCostEffects = false;
+    if (viewportArea >= 4e6) {
+      runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, 30);
+      runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, 12e5);
+      runtimeBudget.jellyfishSchoolDensity = 1400;
+      runtimeBudget.resolutionScale = 0.67;
+    } else if (viewportArea >= 25e5) {
+      runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, 35);
+      runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, 9e5);
+      runtimeBudget.jellyfishSchoolDensity = 1e3;
+      runtimeBudget.resolutionScale = 0.8;
+    } else if (viewportArea >= 15e5) {
+      runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, 40);
+      runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, 65e4);
+      runtimeBudget.jellyfishSchoolDensity = 850;
+      runtimeBudget.resolutionScale = 0.9;
+    }
+    return runtimeBudget;
+  }
+  function scheduleCuriousFishPrewarm(manager) {
+    if (typeof window === "undefined") return;
+    const prewarm = () => {
+      if (manager.getLayer("curiousFish")) return;
+      const curiousFishLayer = new CuriousFishLayer(manager.config.curiousFishConfig || {});
+      manager.addLayer("curiousFish", curiousFishLayer);
+      curiousFishLayer.enabled = false;
+      curiousFishLayer.gameState = "idle";
+    };
+    if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(prewarm, { timeout: 1500 });
+    } else {
+      window.setTimeout(prewarm, 200);
+    }
+  }
+  function initCanvasBackground() {
+    const renderDebugEnabled = isRenderDebugEnabled();
+    const deviceProfile = getDeviceProfile();
+    const { entityBudget: budget } = deviceProfile;
+    const canvasRuntimeBudget = getCanvasRuntimeBudget(budget, deviceProfile);
+    const allowHighCostEffects = canvasRuntimeBudget.allowHighCostEffects;
+    const manager = createCanvasBackground({
+      zIndex: 0,
+      showStats: renderDebugEnabled,
+      targetFPS: canvasRuntimeBudget.canvas2dFPS,
+      debug: renderDebugEnabled,
+      errorHandling: false,
+      // Disable error handling for max performance
+      profilePerformance: false,
+      // Disabled: triggers CpuProfiler overhead every session
+      resolutionScale: canvasRuntimeBudget.resolutionScale,
+      skipDefaultLayers: true,
+      // Layer configurations - optional overrides of DEFAULT_CONFIG
+      foodConfig: {
+        settledLifetime: canvasRuntimeBudget.mobileLiteMode ? 1400 : 0
+        // count: 6,        // Number of food particles (FoodLayer.DEFAULT_CONFIG)
+        // size: 5,         // Size of food particles
+        // fallSpeed: 0.25, // Fall speed
+        // spread: 30,      // Horizontal spread
+        // shrinkRate: 0.05 // Shrink rate in px/second
+      },
+      fishConfig: {
+        schoolDensity: canvasRuntimeBudget.schoolDensity
+        // schoolCount: 6,      // Number of schools — set null to use density-based auto-scaling
+        // size: 1.2,           // Size multiplier (0.5-2x)
+        // avoidRadius: 100,    // Radius to avoid mouse cursor
+        // showDebug: false     // Debug visualization
+      },
+      curiousFishConfig: {
+        allowHighCostEffects,
+        mobileLiteMode: canvasRuntimeBudget.mobileLiteMode,
+        enableBob: canvasRuntimeBudget.enableBob,
+        enableIcons: canvasRuntimeBudget.enableIcons,
+        enableRipples: canvasRuntimeBudget.enableRipples
+        // speed: 5.0,          // Fish movement speed (CuriousFishLayer.DEFAULT_CONFIG)
+        // maxSpeed: 2.0,       // Maximum speed
+        // size: 30,            // Initial fish size
+        // maxFishSize: 150,    // Maximum fish size
+        // followDistance: 60   // Distance to follow cursor
+      }
+    });
+    const fishLayer = new FishLayer(manager.config.fishConfig || {});
+    manager.addLayer("fish", fishLayer);
+    const dasFishLayer = new DasFishLayer({ allowHighCostEffects });
+    manager.addLayer("das", dasFishLayer);
+    const jellyfishLayer = new JellyfishLayer({
+      allowHighCostEffects,
+      schoolDensity: canvasRuntimeBudget.jellyfishSchoolDensity
+    });
+    manager.addLayer("jellyfish", jellyfishLayer);
+    const masterRenderer = new MasterRenderer({
+      canvas2dFPS: canvasRuntimeBudget.canvas2dFPS,
+      mobileLiteMode: canvasRuntimeBudget.mobileLiteMode,
+      debug: renderDebugEnabled
+    });
+    if (window.webglOceanRenderer) {
+      masterRenderer.registerWebGLRenderer(window.webglOceanRenderer);
+    }
+    manager.start();
+    masterRenderer.registerCanvasManager(manager);
+    manager.performanceMonitor.onQualityChange((q) => {
+      window.webglOceanRenderer?.setQuality(q);
+    });
+    scheduleCuriousFishPrewarm(manager);
+    masterRenderer.start();
+    window.blueOrcaCanvas = manager;
+    window.blueOrcaMasterRenderer = masterRenderer;
+    return manager;
+  }
+  if (typeof window !== "undefined" && !window.blueOrcaCanvas) {
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        initCanvasBackground();
+      });
+    } else {
+      initCanvasBackground();
+    }
+  }
+})();
