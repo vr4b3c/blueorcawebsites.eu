@@ -469,7 +469,7 @@ footer {
 .site-page-nav-link {
     display: inline-block;
     padding: 0.3rem 0.65rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
     font-size: 0.78rem;
     font-weight: 500;
     text-decoration: none;
@@ -1294,6 +1294,12 @@ body.drawer-open {
     border: 1px solid rgba(60, 164, 197, 0.25);
 }
 
+.ref-type-badge.custom {
+    background: rgba(245, 215, 117, 0.08);
+    color: var(--cta);
+    border: 1px solid rgba(245, 215, 117, 0.25);
+}
+
 .ref-pages-count {
     font-size: 0.8rem;
     color: var(--text-muted);
@@ -1425,6 +1431,19 @@ body.drawer-open {
 
 .ref-thumb.active::after {
     transform: translateX(-50%) scaleY(1);
+}
+
+/* Custom-tier thumb — gold active state mirrors premium cenik card */
+.ref-thumb[data-type="custom"]:not(.active):hover {
+    border-color: rgba(245, 215, 117, 0.35);
+}
+
+.ref-thumb[data-type="custom"].active {
+    border-color: var(--cta);
+}
+
+.ref-thumb[data-type="custom"].active::after {
+    border-top-color: var(--cta);
 }
 
 .ref-thumb-img {
@@ -1712,7 +1731,7 @@ body.drawer-open {
 
 .ref-card {
     overflow: hidden;
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
     display: grid;
     grid-template-columns: minmax(500px, 3fr) minmax(450px, 1fr);
     isolation: isolate;
@@ -1723,8 +1742,38 @@ body.drawer-open {
 }
 
 .ref-card:hover {
-    box-shadow: 0 12px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(142, 210, 232, 0.15);
-    border-color: rgba(142, 210, 232, 0.35);
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(60, 164, 197, 0.28), inset 0 1px 0 rgba(142, 210, 232, 0.3);
+}
+
+/* Tier-based border colors + hover glows — mirrors .cenik-card--featured / --premium */
+.ref-card[data-type="multi"] {
+    border-color: rgba(60, 164, 197, 0.8);
+}
+
+.ref-card[data-type="multi"]:hover {
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(60, 164, 197, 0.28), inset 0 1px 0 rgba(142, 210, 232, 0.3);
+    border-color: rgba(60, 164, 197, 0.8);
+}
+
+.ref-card[data-type="custom"] {
+    border-color: rgba(255, 213, 73, 0.45);
+}
+
+.ref-card[data-type="custom"]:hover {
+    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(245, 215, 117, 0.25), inset 0 1px 0 rgba(245, 215, 117, 0.18);
+    border-color: rgba(255, 213, 73, 0.75);
+}
+
+.ref-card[data-type="custom"] .ref-price {
+    border-left-color: var(--cta);
+    background: linear-gradient(135deg, rgba(245, 215, 117, 0.08) 0%, rgba(245, 215, 117, 0.04) 100%);
+    border-color: rgba(245, 215, 117, 0.3);
+    border-left: 3px solid var(--cta);
+}
+
+.ref-card[data-type="custom"] .ref-price-label,
+.ref-card[data-type="custom"] .ref-price-value {
+    color: var(--cta);
 }
 
 /* Obrázek reference – scrollovatelný full screenshot 16:9 */
