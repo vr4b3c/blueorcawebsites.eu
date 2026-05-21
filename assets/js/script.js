@@ -1671,9 +1671,80 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
     wrap.querySelectorAll('[data-cenik-toggle-target]').forEach(function (btn) {
         btn.addEventListener('click', function () {
-            setDesignMode(btn.getAttribute('data-cenik-toggle-target') === 'true');
+            var target = btn.getAttribute('data-cenik-toggle-target') === 'true';
+            if (target === (toggle.getAttribute('aria-checked') === 'true')) return;
+            setDesignMode(target);
         });
     });
 
     setDesignMode(false);
-})();
+}());
+
+// ===================== FAQ ACCORDION =====================
+(function () {
+    var items = document.querySelectorAll('.faq-item');
+    if (!items.length) return;
+
+    // Silently measure tallest answer (scrollHeight works even on grid-collapsed elements)
+    // and store as CSS custom property — zero layout shift, responsive via resize
+    var list = document.querySelector('.faq-list');
+    function calibrateFaqHeight() {
+        var maxH = 0;
+        items.forEach(function (item) {
+            var inner = item.querySelector('.faq-body-inner');
+            if (inner) maxH = Math.max(maxH, inner.scrollHeight);
+        });
+        if (list && maxH > 0) list.style.setProperty('--faq-body-min-h', maxH + 'px');
+    }
+    calibrateFaqHeight();
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(calibrateFaqHeight, 150);
+    });
+
+    items.forEach(function (item) {
+        var btn  = item.querySelector('.faq-q');
+        var body = item.querySelector('.faq-body');
+        if (!btn || !body) return;
+
+        btn.addEventListener('click', function () {
+            var isOpen = item.classList.contains('is-open');
+
+            // Pause float animation on ALL cards during transition — prevents
+            // the closing card restarting its float while still mid-transition
+            items.forEach(function (i) { i.classList.add('is-transitioning'); });
+
+            // Lock faq-list min-height to current rendered height before any class change.
+            if (list) list.style.minHeight = list.offsetHeight + 'px';
+
+            // Disable mandatory scroll-snap for the duration of the height transition.
+            var html = document.documentElement;
+            html.style.scrollSnapType = 'none';
+
+            var snapTimer;
+            var reEnable = function () {
+                clearTimeout(snapTimer);
+                body.removeEventListener('transitionend', reEnable);
+                html.style.scrollSnapType = '';
+                if (list) list.style.minHeight = '';
+                items.forEach(function (i) { i.classList.remove('is-transitioning'); });
+            };
+            body.addEventListener('transitionend', reEnable, { once: true });
+            snapTimer = setTimeout(reEnable, 700);
+
+            // Close all items
+            items.forEach(function (other) {
+                other.classList.remove('is-open');
+                var ob = other.querySelector('.faq-q');
+                if (ob) ob.setAttribute('aria-expanded', 'false');
+            });
+
+            // Toggle clicked item (open unless it was already open)
+            if (!isOpen) {
+                item.classList.add('is-open');
+                btn.setAttribute('aria-expanded', 'true');
+            }
+        });
+    });
+}());

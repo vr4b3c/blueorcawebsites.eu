@@ -39,6 +39,7 @@
 
     <!-- JSON-LD -->
     <script type="application/ld+json">
+    [
     {
       "@context": "https://schema.org",
       "@type": "LocalBusiness",
@@ -62,7 +63,59 @@
       "sameAs": [],
       "priceRange": "$$",
       "areaServed": "CZ"
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Kdy dává smysl upravená šablona a kdy design na míru?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Upravená šablona je rychlejší a cenově dostupnější řešení pro menší a střední projekty. I tak ji výrazně přizpůsobujeme značce, obsahu i identitě firmy, aby web nepůsobil genericky. Design na míru je pro projekty, kde je důležitá originalita, silnější práce se značkou nebo specifický uživatelský zážitek." }
+        },
+        {
+          "@type": "Question",
+          "name": "Co všechno upravujeme i u šablonového řešení?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Nejde jen o výměnu loga a barev. Upravujeme strukturu webu, přidáváme nové sekce i podstránky a celý web důkladně optimalizujeme pro maximální výkon." }
+        },
+        {
+          "@type": "Question",
+          "name": "Co všechno je zahrnuto v ceně webu?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Grafika, vývoj, administrace BlueOrca, optimalizace výkonu, základní SEO, naplnění obsahu, hosting, doména i technická podpora během prvního roku. Web je připravený tak, aby po spuštění nebylo potřeba nic dalšího řešit." }
+        },
+        {
+          "@type": "Question",
+          "name": "Co když budeme chtít na webu něco upravit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Stačí se přihlásit do administrace a kliknout na obsah, který chcete upravit. Texty, obrázky, články i další obsah zvládnete změnit během pár kliknutí bez programátora nebo složité administrace." }
+        },
+        {
+          "@type": "Question",
+          "name": "Co všechno lze upravovat přímo v administraci?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Prakticky celý web. Texty, obrázky, články, menu, patičku, SEO metadata, kontakty, odkazy na sociální sítě, dynamické kolekce i obsah jednotlivých stránek. Součástí administrace je také správa zpráv z formulářů, uživatelů, rolí a oprávnění, zálohování webu nebo obnova záloh. Přestože lze upravit téměř vše, administrace je navržená tak, aby nebylo možné jednoduše rozbít design nebo fungování webu." }
+        },
+        {
+          "@type": "Question",
+          "name": "Co když budu chtít web časem rozšířit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Web lze kdykoliv rozšířit o nové stránky, funkce, jazykové verze nebo další možnosti. Jednotlivé varianty na sebe navazují, takže není problém postupně přejít i na rozsáhlejší řešení." }
+        },
+        {
+          "@type": "Question",
+          "name": "Jak to, že vaše weby načítají skoro okamžitě?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Protože výkon řešíme od úplného základu a máme maximální kontrolu nad tím, co a jak na webu funguje. Není to o jednom tajném triku. Je to 20 let know-how, zkušeností a poctivé práce s každým detailem, který má vliv na rychlost, plynulost a celkový pocit z webu." }
+        },
+        {
+          "@type": "Question",
+          "name": "Využíváte při tvorbě webů umělou inteligenci?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ano — ale jako nástroj, ne náhradu člověka. AI nám pomáhá zrychlit některé části práce, hledat nové nápady nebo automatizovat rutinní činnosti. Samotný návrh webu, UX, technická architektura, optimalizace nebo finální rozhodnutí ale vždy řeší člověk. Právě nekontrolované používání AI je dnes jeden z důvodů, proč vzniká tolik zaměnitelných a nekvalitních webů." }
+        },
+        {
+          "@type": "Question",
+          "name": "Proč ukazujeme reálné výsledky Lighthouse a SpeedVitals?",
+          "acceptedAnswer": { "@type": "Answer", "text": "BlueOrca vznikla mimo jiné jako reakce na přemnožené nekvalitní weby a nekalé praktiky ve webové branži. Plná hodnocení v Lighthouse pro nás nejsou nic výjimečného. Bereme je jako naprostý základ a vždy jdeme mnohem dál, než dokážou podobné nástroje vůbec změřit." }
+        }
+      ]
     }
+    ]
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -149,6 +202,7 @@
                 <a href="#reference" class="site-page-nav-link">Reference</a>
                 <a href="#cenik" class="site-page-nav-link">Ceník</a>           
                 <a href="#vyhody" class="site-page-nav-link">Proč&nbsp;my?</a>
+                <a href="#faq" class="site-page-nav-link">FAQ</a>
                 <a href="#kontakt" class="site-page-nav-link">Kontakt</a>
             </nav>
             <nav class="site-header-nav" aria-label="Kontakt">
@@ -178,6 +232,10 @@
         <a href="#reference" class="mobile-drawer-link">Reference</a>
         <a href="#cenik" class="mobile-drawer-link">Ceník</a>      
         <a href="#vyhody" class="mobile-drawer-link">Proč BlueOrca</a>
+        <a href="#faq" class="mobile-drawer-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            FAQ
+        </a>
         <a href="#kontakt" class="mobile-drawer-link">Kontakt</a>
         <hr class="mobile-drawer-sep">
         <a href="tel:+420773202288" class="mobile-drawer-link">
@@ -1204,6 +1262,130 @@
                     </div>
                     <h3>Důraz na rychlost a technickou kvalitu</h3>
                     <p>Rychlost a optimalizace neřešíme až po dokončení webu. Čistý kód, výkon a technická kvalita jsou součástí návrhu už od začátku vývoje. 🚀</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+        <div class="section-inner">
+            <header class="section-header">
+                <p class="section-label section-eyebrow">Časté dotazy</p>
+                <h2 class="section-heading">Máte <strong>otázky</strong>? Máme odpovědi.</h2>
+                <p class="section-sub">Nejčastější dotazy ke službám, cenám i procesu spolupráce.</p>
+            </header>
+
+            <div class="faq-list">
+
+                <div class="faq-item glass-panel is-open">
+                    <button class="faq-q" aria-expanded="true">
+                        <span>Kdy dává smysl upravená šablona a kdy design na míru?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p><strong class="text-white"><u>Upravená šablona</u></strong> je <span class="text-white">rychlejší</span> a <span class="text-white">levnější</span> řešení pro nenáročné weby. I ze šablony však dokážeme vytvořit web, který nepůsobí tuctově, ale dýchá <span class="text-white">identitou vaší značky</span>.</p>
+
+                            <p><strong class="text-white"><u>Design na míru</u></strong> je vhodný pro projekty, kde nestačí běžné šablonové řešení, ale je potřeba vytvořit <span class="text-white">originální web</span> s vlastním <span class="text-white">charakterem</span>, <span class="text-white">atmosférou</span> a výraznou <span class="text-white">identitou značky</span>.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-panel">
+                    <button class="faq-q" aria-expanded="false">
+                        <span>Co všechno upravujeme i u šablonového řešení?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p>Nejde jen o výměnu loga a barev. U šablonového řešení běžně upravujeme <span class="text-white">strukturu webu</span>, přidáváme nové <span class="text-white">sekce</span> i <span class="text-white">podstránky</span> a celý web přizpůsobujeme stylu dané značky.</p>
+                            <p>Měníme <span class="text-white">barvy</span>, <span class="text-white">typografii</span>, <span class="text-white">rozložení obsahu</span> i <span class="text-white">jemné designové prvky</span> tak, aby web působil jako profesionální prezentace konkrétní firmy. Samozřejmostí je také <span class="text-white">důkladná optimalizace</span>.</p>       
+                      
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-panel">
+                    <button class="faq-q" aria-expanded="false">
+                        <span>Co když budeme chtít na webu něco upravit?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p>S námi <span class="text-white">máte nad svým webem plnou kontrolu</span>. Ke každému webu <span class="text-white">dodáváme administraci BlueOrca</span>, pomocí které můžete kdykoliv a odkudkoliv upravovat prakticky celý web.</p>
+
+                            <p>Texty, obrázky, články, kontakty, menu i další obsah upravíte jednoduše kliknutím přímo na to, co chcete změnit. Rychle, intuitivně a bez strachu, že něco rozbijete!</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-panel">
+                    <button class="faq-q" aria-expanded="false">
+                        <span>Co když budu chtít web časem rozšířit?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p>Web lze kdykoliv rozšířit o nové <span class="text-white">stránky</span>, <span class="text-white">funkce</span>, <span class="text-white">interaktivní formuláře</span>, <span class="text-white">jazykové mutace</span> nebo téměř cokoliv dalšího. Veškeré vícepráce naceňujeme individuálně s hodinovou sazbou <strong class="text-white">900 Kč / hod</strong>.</p>
+
+                            <p>Jednotlivé balíčky na sebe navazují, takže není problém postupně přejít z <strong class="text-white">jednostránkového webu</strong> na rozsáhlý <strong class="text-white">firemní web</strong> nebo komplexnější řešení. Web tak může růst společně s vaším projektem.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-panel">
+                    <button class="faq-q" aria-expanded="false">
+                        <span>Jak to, že vaše weby načítají skoro okamžitě?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p><span class="text-white">Výkon</span> a <span class="text-white">optimalizace</span> jsou pro nás jednou z hlavních priorit. Weby ladíme do <span class="text-white">posledního detailu</span> tak, aby byly maximálně <span class="text-white">rychlé</span>, <span class="text-white">plynulé</span> a <span class="text-white">technicky čisté</span> — často i o řád rychlejší než weby konkurence!</p>
+
+                            <p>Není to o jednom triku ani kouzelném nastavení. Je to kombinace <span class="text-white">20 let zkušeností</span>, <span class="text-white">know-how</span> a <span class="text-white">poctivé práce</span> od samotného základu webu. Bereme to jako známku <span class="text-white">kvalitního webového řemesla</span>.</p>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="faq-item glass-panel">
+                    <button class="faq-q" aria-expanded="false">
+                        <span>Využíváte při tvorbě webů umělou inteligenci?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p><span class="text-white">Ano, ale hlavně tam, kde to není vidět.</span> AI je skvělý pomocník pro <strong class="text-white">urychlení práce</strong> a <strong class="text-white">automatizaci rutinních úkolů</strong>. Pořád je to ale jen algoritmus bez <span class="text-white">kreativity</span> a širšího chápání.</p>
+
+                            <p>Právě bezhlavé používání AI je důvod, proč dnes vzniká tolik <span class="text-white">zaměnitelných webů</span>. <strong class="text-white">Kvalitní web</strong> však stále vyžaduje <strong class="text-white">lidské zkušenosti</strong> a <strong class="text-white">cit</strong>, proto věci děláme <strong class="text-white">poctivě</strong> a s <strong class="text-white">maximální péčí o detail</strong>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-item glass-panel">
+                    <button class="faq-q" aria-expanded="false">
+                        <span>Proč ukazujeme reálné výsledky Lighthouse a SpeedVitals?</span>
+                        <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+                    </button>
+
+                    <div class="faq-body" role="region">
+                        <div class="faq-body-inner">
+                            <p>BlueOrca vznikla mimo jiné jako reakce na <a href="https://blog.blueorcawebsites.eu/kvalitni-web/5-tichych-zabijaku-uspesneho-webu" target="_blank" rel="noopener noreferrer">přemnožené nekvalitní weby</a> a <a href="https://blog.blueorcawebsites.eu/wordpress-bez-obalu/wordpress-nejvetsi-duvod-proc-se-mu-dnes-radeji-vyhnout" target="_blank" rel="noopener noreferrer">nekalé praktiky ve webové branži</a>. Této problematice se podrobněji věnujeme i na <a href="https://blog.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer">našem blogu</a>.</p>
+
+                            <p><strong class="text-white">Maximální hodnocení</strong> v <span class="text-white">PageSpeed Insights</span> nebo <span class="text-white">SpeedVitals</span> pro nás nejsou nic výjimečného. Bereme je jako <span class="text-white">naprostý základ</span> a vždy jdeme mnohem dál, než dokážou podobné nástroje vůbec změřit!</p>
+                        </div>
+                    </div>
                 </div>
 
             </div>
