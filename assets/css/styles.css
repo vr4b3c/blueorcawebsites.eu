@@ -97,9 +97,22 @@ a {
     text-decoration: none;
 }
 
-a:hover {
-    /*color: var(--cta);*/
-    text-decoration: underline;
+.link {
+    background-image: linear-gradient(var(--cta), var(--cta));
+    background-size: 0% 1px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition: background-size 0.25s ease, color 0.25s ease;
+}
+
+.link:hover {
+    color: var(--cta);
+    background-size: 100% 1px;
+}
+
+/* External links have an icon (~1.1em) — stop underline before it */
+a[target="_blank"]:not(.no-ext-icon).link:hover {
+    background-size: calc(100% - 1.1em) 1px;
 }
 
 strong { font-weight: 600; }
@@ -381,9 +394,21 @@ footer {
     white-space: nowrap;
 }
 
+.site-header-link span {
+    background-image: linear-gradient(var(--cta), var(--cta));
+    background-size: 0% 1px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition: background-size 0.25s ease;
+}
+
 .site-header-link:hover {
-    color: var(--text-primary);
+    color: var(--cta);
     text-decoration: none;
+}
+
+.site-header-link:hover span {
+    background-size: 100% 1px;
 }
 
 .site-header-link svg {
@@ -432,9 +457,9 @@ footer {
 }
 
 .btn-primary:hover {
-    background: #22cee8;
-    color: #fff;
-    box-shadow: 0 0 16px rgba(34,206,232,0.55), inset 0 1px 0 rgba(255,255,255,0.2);
+    background: var(--cta);
+    color: #031A2A;
+    box-shadow: 0 0 16px rgba(245,215,117,0.45), inset 0 1px 0 rgba(255,255,255,0.2);
     text-decoration: none;
 }
 
@@ -520,13 +545,15 @@ footer {
     text-decoration: none;
 }
 
-.site-page-nav-link:hover::after,
 .site-page-nav-link.is-active::after {
     transform: scaleX(1);
 }
+.site-page-nav-link.is-active::after {
+    background: var(--cta);
+}
 
 .site-page-nav-link.is-active {
-    color: var(--accent);
+    color: var(--cta); 
 }
 
 @media (max-width: 900px) {
@@ -688,9 +715,21 @@ footer {
 }
 
 .mobile-drawer-link:hover {
-    color: var(--accent);
+    color: var(--cta);
     background: rgba(142, 210, 232, 0.05);
     text-decoration: none;
+}
+
+.mobile-drawer-link span {
+    background-image: linear-gradient(var(--cta), var(--cta));
+    background-size: 0% 1px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition: background-size 0.25s ease;
+}
+
+.mobile-drawer-link:hover span {
+    background-size: 100% 1px;
 }
 
 .mobile-drawer-link svg {
@@ -1988,21 +2027,17 @@ body.drawer-open {
 .ref-body h3 a {
     color: inherit;
     text-decoration: none;
-    transition: color 0.3s ease;
 }
 
-.ref-body h3 a:hover {
-    color: var(--accent);
-}
-
-a[target="_blank"]::after {
+a[target="_blank"]:not(.btn-primary):not(.btn-secondary):not(.btn-tertiary):not(.no-ext-icon)::after {
     content: '';
     display: inline-block;
-    width: 0.9em;
-    height: 0.9em;
-    margin-left: 0.3em;
-    margin-bottom: 0.1em;
+    width: 0.75em;
+    height: 0.75em;
+    margin-left: 0.25em;
+    margin-right: 0.1em;
     vertical-align: middle;
+    flex-shrink: 0;
     background-color: currentColor;
     opacity: 0.5;
     -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Cpath d='M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6'/%3E%3Cpolyline points='15 3 21 3 21 9'/%3E%3Cline x1='10' y1='14' x2='21' y2='3'/%3E%3C/svg%3E");
@@ -2014,9 +2049,15 @@ a[target="_blank"]::after {
     transition: opacity 0.2s ease;
 }
 
-a[target="_blank"]:hover::after {
+a[target="_blank"]:not(.btn-primary):not(.btn-secondary):not(.btn-tertiary):not(.no-ext-icon):hover::after {
     opacity: 1;
 }
+
+.no-ext-icon::after {
+    display: none;
+}
+
+
 
 /* ===================== NOVÁ STRUKTURA REF KARTY ===================== */
 .ref-body {
@@ -2053,16 +2094,6 @@ a[target="_blank"]:hover::after {
 .ref-header-top h3 a::after,
 .ref-header-top h3 a:hover::after {
     display: none;
-}
-
-.ref-header-top h3 a {
-    color: var(--accent);
-    text-decoration: none;
-}
-
-.ref-header-top h3 a:hover {
-    color: var(--accent-mid);  
-    text-decoration: underline;
 }
 
 .ref-header-top .btn {
@@ -2119,19 +2150,7 @@ a[target="_blank"]:hover::after {
     font-weight: 500;
 }
 
-.ref-inline-link {
-    color: var(--accent);
-    text-decoration: none;
-    border-bottom: 1px solid rgba(142, 210, 232, 0.3);
-    transition: border-color 0.2s ease, color 0.2s ease;
-}
 
-
-.ref-inline-link:hover {
-    color: #fff;
-    border-color: rgba(142, 210, 232, 0.7);
-    text-decoration: none;
-}
 
 .ref-tags {
     display: flex;
@@ -2432,8 +2451,9 @@ a[target="_blank"]:hover::after {
 }
 
 .btn-tertiary:hover {
-    background: rgba(142, 210, 232, 0.18);
-    border-color: rgba(142, 210, 232, 0.5);
+    background: rgba(245, 215, 117, 0.12);
+    border-color: rgba(245, 215, 117, 0.5);
+    color: var(--cta);
 }
 
 /* ===================== KONTAKT ===================== */
@@ -2788,16 +2808,6 @@ a[target="_blank"]:hover::after {
     color: var(--text-secondary);
 }
 
-.cenik-footer-note a {
-    color: var(--accent);
-    text-decoration: underline;
-    text-decoration-color: transparent;
-    transition: text-decoration-color 0.2s;
-}
-
-.cenik-footer-note a:hover {
-    text-decoration-color: var(--accent);
-}
 
 /* ── Design toggle ── */
 .cenik-toggle-wrap {
@@ -3187,54 +3197,13 @@ a[target="_blank"]:hover::after {
     margin: 0 0 0.5rem;
 }
 
-/* Submit button */
+/* Submit button – layout only; visuals via btn-primary */
 .contact-submit {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.65rem;
     width: 100%;
+    gap: 0.65rem;
     padding: 0.9rem 1.5rem;
-    background: linear-gradient(120deg, #1ab8d8 0%, #0fa8c5 100%);
-    color: #fff;
-    font-family: 'Inter', sans-serif;
     font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    border: none;
-    border-radius: 2px;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-    box-shadow: 0 4px 24px rgba(26, 184, 216, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.15);
     margin-top: 0.2rem;
-}
-
-.contact-submit::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
-    transform: translateX(-120%);
-    transition: transform 0.55s ease;
-}
-
-.contact-submit:hover {
-    background: linear-gradient(120deg, #22cee8 0%, #1ab8d8 100%);
-    box-shadow: 0 6px 36px rgba(26, 184, 216, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transform: translateY(-1px);
-}
-
-.contact-submit:hover::after {
-    transform: translateX(267%);
-}
-
-.contact-submit:active {
-    transform: translateY(0);
-    box-shadow: 0 2px 12px rgba(26, 184, 216, 0.3);
-    background: linear-gradient(120deg, #0fa8c5 0%, #0a96b0 100%);
 }
 
 .contact-submit svg {
@@ -3295,9 +3264,20 @@ a[target="_blank"]:hover::after {
 }
 
 .footer-contact-link:hover {
-    color: var(--accent);
-    background: rgba(142, 210, 232, 0.07);
+    color: var(--cta);
     text-decoration: none;
+}
+
+.footer-contact-link span {
+    background-image: linear-gradient(var(--cta), var(--cta));
+    background-size: 0% 1px;
+    background-position: left bottom;
+    background-repeat: no-repeat;
+    transition: background-size 0.25s ease;
+}
+
+.footer-contact-link:hover span {
+    background-size: 100% 1px;
 }
 
 .footer-contact-link svg {
@@ -3584,7 +3564,7 @@ a[target="_blank"]:hover::after {
 }
 
 .info-panel-links-row .footer-contact-link:hover {
-    color: var(--accent);
+    color: var(--cta);
     text-decoration: none;
 }
 
@@ -4085,7 +4065,7 @@ a[target="_blank"]:hover::after {
 }
 
 .faq-item.is-open .faq-q {
-    color: var(--accent);
+    color: var(--cta);
 }
 
 .faq-item.is-open .faq-chevron {
