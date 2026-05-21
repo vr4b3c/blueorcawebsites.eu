@@ -107,7 +107,7 @@
         },
         {
           "@type": "Question",
-          "name": "Proč ukazujeme reálné výsledky Lighthouse a SpeedVitals?",
+          "name": "Proč ukazujeme reálné výsledky PageSpeed Insights a SpeedVitals?",
                     "acceptedAnswer": { "@type": "Answer", "text": "BlueOrca vznikla mimo jiné jako reakce na přemnožené nekvalitní weby a nekalé praktiky ve webové branži. Této problematice se podrobněji věnujeme i na našem blogu. Maximální hodnocení v PageSpeed Insights nebo SpeedVitals pro nás nejsou nic výjimečného. Bereme je jako naprostý základ a vždy jdeme mnohem dál, než dokážou podobné nástroje vůbec změřit." }
         }
       ]
@@ -130,6 +130,32 @@
         <div class="site-header-inner">
             <a href="/" class="site-header-logo" aria-label="BlueOrca Websites – domů">
                 <svg id="orca_logo" class="site-header-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="50 100 750 800" width="100" height="100" aria-hidden="true" focusable="false">
+                    <style>
+                        #orca_logo .color1 { fill: #061824; }
+                        #orca_logo .color2 { fill: #0b2a3f; }
+                        #orca_logo .color3 { fill: #0f4a6b; }
+                        #orca_logo .color4 { fill: #1f7fa6; }
+                        #orca_logo .color5 { fill: #4fc3dd; }
+                        #orca_logo .color6 { fill: #bdefff; }
+                        #orca_logo #tail { transform-origin: 260px 560px; will-change: transform; animation: orcaTailSwim 3.2s ease-in-out infinite; }
+                        #orca_logo #body { transform-origin: 380px 520px; will-change: transform; animation: orcaBodySwim 3.2s ease-in-out infinite; }
+                        #orca_logo #fin-left,
+                        #orca_logo #fin-right { transform-box: fill-box; transform-origin: 50% 50%; will-change: transform; animation: orcaFinFlap 3.2s ease-in-out infinite; }
+                        #orca_logo #fin-left { animation-delay: 0.7s; }
+                        #orca_logo #fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
+                        #orca_logo #mouth { transform-box: fill-box; transform-origin: 50% 20%; transform: rotate(0deg); transition: transform 0.35s ease-out; }
+                        #orca_logo:hover #mouth { transform: rotate(10deg) translateY(-2px) translateX(-3px); }
+                        @keyframes orcaTailSwim { 0% { transform: rotate(0deg); } 50% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes orcaBodySwim { 0% { transform: rotate(0deg); } 50% { transform: rotate(3deg); } 100% { transform: rotate(0deg); } }
+                        @keyframes orcaFinFlap { 0% { transform: rotate(0deg); } 40% { transform: rotate(-5deg); } 70% { transform: rotate(1deg); } 100% { transform: rotate(0deg); } }
+                        @media (max-width: 700px), (prefers-reduced-motion: reduce) {
+                            #orca_logo #tail,
+                            #orca_logo #body,
+                            #orca_logo #fin-left,
+                            #orca_logo #fin-right { animation: none; will-change: auto; }
+                            #orca_logo #mouth { transition: none; }
+                        }
+                    </style>
                     <g id="tail">
                         <path class="color1" d="M188.42,542.96c9.22-20.28,21.4-35.78,32.66-47.13l-88.41,76.36s2.64,46.25,26.67,77.53l16.6-64.93c1.83-11.68,5.39-26.21,12.49-41.83Z"/>
                         <path class="color1" d="M175.93,584.79c-1.35,10.13,20.05,47.79,22.1,62.85,2.05,15.06,3.52,45.73,3.52,45.73,0,0,9.46-41.38,7.42-59.08-.03-.22-.04-.44-.06-.66-1.71-17.49,8.82-35.76,12.26-39.43,2.38-6.11,14.26-36.88,20.11-56.9-31.21,17.06-62.55,36.58-65.33,47.5Z"/>
@@ -197,7 +223,7 @@
                 <a href="#uvod" class="site-page-nav-link">Úvod</a>
                 <a href="#reference" class="site-page-nav-link">Reference</a>
                 <a href="#cenik" class="site-page-nav-link">Ceník</a>           
-                <a href="#vyhody" class="site-page-nav-link">Proč&nbsp;my?</a>
+                <a href="#vyhody" class="site-page-nav-link">Proč my?</a>
                 <a href="#faq" class="site-page-nav-link">FAQ</a>
                 <a href="#kontakt" class="site-page-nav-link">Kontakt</a>
             </nav>
@@ -227,11 +253,8 @@
         <a href="#uvod" class="mobile-drawer-link">Úvod</a>
         <a href="#reference" class="mobile-drawer-link">Reference</a>
         <a href="#cenik" class="mobile-drawer-link">Ceník</a>      
-        <a href="#vyhody" class="mobile-drawer-link">Proč BlueOrca</a>
-        <a href="#faq" class="mobile-drawer-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            FAQ
-        </a>
+        <a href="#vyhody" class="mobile-drawer-link">Proč my?</a>
+        <a href="#faq" class="mobile-drawer-link">FAQ</a>
         <a href="#kontakt" class="mobile-drawer-link">Kontakt</a>
         <hr class="mobile-drawer-sep">
         <a href="tel:+420773202288" class="mobile-drawer-link">
@@ -644,7 +667,7 @@
                                     <a href="https://blog.blueorcawebsites.eu/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web • Upravená šablona</p>
-                                <p class="ref-desc">Náš vlastní jednoduchý, ale vysoce optimalizovaný blog sloužící k budování SEO, marketingu a návštěvnosti hlavního webu.</p>
+                                <p class="ref-desc">Náš vlastní jednoduchý, ale vysoce optimalizovaný blog sloužící k budování SEO, marketingu a návštěvnosti hlavního webu. Jde o k nepoznání upravenou a na kost zoptimalizovanou šablonu <a href="https://html5up.net/uploads/demos/future-imperfect/" target="_blank" rel="noopener noreferrer" class="link">Future Imperfect</a>.</p>
                             </div>
                         </div>
 
@@ -849,7 +872,7 @@
                                     <a href="https://ivetasommerova.cz/" target="_blank" rel="noopener noreferrer" class="btn btn-tertiary btn-sm external">Navštívit web</a>
                                 </div>
                                 <p class="ref-subtitle">Vícestránkový web • Upravená šablona</p>
-                                <p class="ref-desc">Web specialistky na mzdovou a personální agendu postavený na silně přizpůsobené <strong><a href="https://themeforest.net/item/dennis-tailwind-css-personal-portfolio-html-template-dark-rtl/45994463?srsltid=AfmBOooNs_DhWGC0N90qxLbU8NhrHk2pmvExPr3L0N6p3rKnIpWlxJHc" target="_blank" rel="noopener noreferrer" class="external link">šabloně Dennis</a></strong>, která prošla důkladnou optimalizací. K tomu přibyla sekce novinek a sada <strong>podstránek</strong> jednotlivých služeb.</p>
+                                <p class="ref-desc">Web specialistky na mzdovou a personální agendu postavený na silně přizpůsobené <a href="https://shreethemes.in/dennis/layouts/index.html" target="_blank" rel="noopener noreferrer" class="external link">šabloně Dennis</a>, která prošla důkladnou optimalizací. K tomu přibyla <span class="text-white">sekce novinek</span> a <span class="text-white">sada podstránek</span> jednotlivých služeb.</p>
                             </div>
                         </div>
 
@@ -1372,7 +1395,7 @@
                 <div class="faq-item glass-panel">
                     <h3 class="faq-heading">
                         <button class="faq-q" aria-expanded="false" aria-controls="faq-panel-7" id="faq-btn-7">
-                            <span>Proč ukazujeme reálné výsledky Lighthouse a SpeedVitals?</span>
+                            <span>Proč ukazujeme reálné výsledky PageSpeed Insights a SpeedVitals?</span>
                             <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
                         </button>
                     </h3>
@@ -1569,6 +1592,32 @@
                 <!--p class="footer-copy">&copy; 2026 BlueOrca Websites. Všechna práva vyhrazena.</p-->          
                 <a href="/" class="footer-logo-link footer-logo-link--strip" aria-label="BlueOrca Websites – domů">
                     <svg id="orca_footer" class="footer-logo-mark" xmlns="http://www.w3.org/2000/svg" viewBox="50 100 750 800" aria-hidden="true" focusable="false">
+                        <style>
+                            #orca_footer .color1 { fill: #061824; }
+                            #orca_footer .color2 { fill: #0b2a3f; }
+                            #orca_footer .color3 { fill: #0f4a6b; }
+                            #orca_footer .color4 { fill: #1f7fa6; }
+                            #orca_footer .color5 { fill: #4fc3dd; }
+                            #orca_footer .color6 { fill: #bdefff; }
+                            #orca_footer #ft-tail { transform-origin: 260px 560px; will-change: transform; animation: orcaFooterTailSwim 3.2s ease-in-out infinite; }
+                            #orca_footer #ft-body { transform-origin: 380px 520px; will-change: transform; animation: orcaFooterBodySwim 3.2s ease-in-out infinite; }
+                            #orca_footer #ft-fin-left,
+                            #orca_footer #ft-fin-right { transform-box: fill-box; transform-origin: 50% 50%; will-change: transform; animation: orcaFooterFinFlap 3.2s ease-in-out infinite; }
+                            #orca_footer #ft-fin-left { animation-delay: 0.7s; }
+                            #orca_footer #ft-fin-right { animation-delay: 0.4s; transform-origin: 50% 5%; }
+                            #orca_footer #ft-mouth { transform-box: fill-box; transform-origin: 50% 20%; transform: rotate(0deg); transition: transform 0.35s ease-out; }
+                            #orca_footer:hover #ft-mouth { transform: rotate(10deg) translateY(-2px) translateX(-3px); }
+                            @keyframes orcaFooterTailSwim { 0% { transform: rotate(0deg); } 50% { transform: rotate(10deg); } 100% { transform: rotate(0deg); } }
+                            @keyframes orcaFooterBodySwim { 0% { transform: rotate(0deg); } 50% { transform: rotate(3deg); } 100% { transform: rotate(0deg); } }
+                            @keyframes orcaFooterFinFlap { 0% { transform: rotate(0deg); } 40% { transform: rotate(-5deg); } 70% { transform: rotate(1deg); } 100% { transform: rotate(0deg); } }
+                            @media (max-width: 700px), (prefers-reduced-motion: reduce) {
+                                #orca_footer #ft-tail,
+                                #orca_footer #ft-body,
+                                #orca_footer #ft-fin-left,
+                                #orca_footer #ft-fin-right { animation: none; will-change: auto; }
+                                #orca_footer #ft-mouth { transition: none; }
+                            }
+                        </style>
                         <g id="ft-tail">
                             <path class="color1" d="M188.42,542.96c9.22-20.28,21.4-35.78,32.66-47.13l-88.41,76.36s2.64,46.25,26.67,77.53l16.6-64.93c1.83-11.68,5.39-26.21,12.49-41.83Z"/>
                             <path class="color1" d="M175.93,584.79c-1.35,10.13,20.05,47.79,22.1,62.85,2.05,15.06,3.52,45.73,3.52,45.73,0,0,9.46-41.38,7.42-59.08-.03-.22-.04-.44-.06-.66-1.71-17.49,8.82-35.76,12.26-39.43,2.38-6.11,14.26-36.88,20.11-56.9-31.21,17.06-62.55,36.58-65.33,47.5Z"/>

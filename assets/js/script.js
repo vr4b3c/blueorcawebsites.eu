@@ -9,6 +9,48 @@ var afterNextPaint = BlueOrca.afterNextPaint || function (fn) {
 
 BlueOrca.afterNextPaint = afterNextPaint;
 
+function prefersSimpleTransitions() {
+    return window.innerWidth < 700 ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        navigator.connection?.saveData === true;
+}
+
+function getSnapSections() {
+    var navLinks = document.querySelectorAll('.site-page-nav-link[href^="#"]');
+    if (navLinks.length) {
+        return Array.from(navLinks)
+            .map(function (link) { return document.getElementById(link.getAttribute('href').slice(1)); })
+            .filter(Boolean);
+    }
+    return Array.from(document.querySelectorAll('.cta-cms, .references, .cenik, .vyhody, .faq, .site-footer'));
+}
+
+function isDesktopSnapMode() {
+    return window.matchMedia('(min-width: 701px) and (hover: hover) and (pointer: fine)').matches &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches &&
+        navigator.connection?.saveData !== true;
+}
+
+function snapSectionsHaveEqualHeight() {
+    var sections = getSnapSections();
+    if (sections.length < 2) return false;
+    var heights = sections.map(function (sec) {
+        return Math.round(sec.getBoundingClientRect().height);
+    });
+    var min = Math.min.apply(Math, heights);
+    var max = Math.max.apply(Math, heights);
+    return min > 0 && (max - min) <= 2;
+}
+
+function canUseScrollRuler() {
+    return window.matchMedia('(min-width: 1500px) and (min-height: 720px) and (hover: hover) and (pointer: fine)').matches &&
+        isDesktopSnapMode() &&
+        snapSectionsHaveEqualHeight();
+}
+
+BlueOrca.isDesktopSnapMode = isDesktopSnapMode;
+BlueOrca.canUseScrollRuler = canUseScrollRuler;
+
 // ===================== REFERENCE THUMB & FILTER =====================
 (function () {
     var pills  = document.querySelectorAll('.filter-pill');
@@ -38,6 +80,14 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
         if (!currentCard) {
             newCard.classList.add('active');
+            return;
+        }
+
+        if (prefersSimpleTransitions()) {
+            currentCard.classList.remove('active');
+            currentCard.style.cssText = '';
+            newCard.classList.add('active');
+            newCard.style.cssText = '';
             return;
         }
 
@@ -962,10 +1012,8 @@ BlueOrca.afterNextPaint = afterNextPaint;
             if (!target) return;
             e.preventDefault();
             // Use JS navigator if available (gives custom duration), else fallback
-            if (BlueOrca.navigateTo && BlueOrca.nearestSectionIdx) {
-                var snapSections = Array.from(document.querySelectorAll(
-                    '.cta-cms, .references, .vyhody, .cenik, .contact'
-                ));
+            if (BlueOrca.navigateTo && BlueOrca.nearestSectionIdx && BlueOrca.isDesktopSnapMode()) {
+                var snapSections = getSnapSections();
                 var idx = snapSections.indexOf(target);
                 if (idx !== -1) { BlueOrca.navigateTo(idx); return; }
             }
@@ -1050,7 +1098,7 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
     var el = document.createElement('div');
     el.id = 'fps-counter';
-    el.textContent = '-- FPS (--)';
+    el.textContent = '--';
     document.body.appendChild(el);
     var lastText = el.textContent;
 
@@ -1060,11 +1108,7 @@ BlueOrca.afterNextPaint = afterNextPaint;
     setInterval(function () {
         var master = window.blueOrcaMasterRenderer || null;
         var fps = master ? Math.round(master.currentFPS) : null;
-        var maxPossible = master && Number.isFinite(master.maxDisplayFPS) && master.maxDisplayFPS > 0
-            ? Math.round(master.maxDisplayFPS)
-            : fps;
-        var nextText = (fps !== null ? fps : '--')
-            + ' FPS (' + (maxPossible !== null ? maxPossible : '--') + ')';
+        var nextText = String(fps !== null ? fps : '--');
         if (nextText === lastText) return;
         lastText = nextText;
         el.textContent = nextText;
@@ -1075,6 +1119,7 @@ BlueOrca.afterNextPaint = afterNextPaint;
 (function () {
     var navLinks = document.querySelectorAll('.site-page-nav-link[href^="#"]');
     if (!navLinks.length) return;
+    if (!BlueOrca.canUseScrollRuler()) return;
 
     var ruler = document.createElement('nav');
     ruler.className = 'scroll-ruler';
@@ -1124,7 +1169,18 @@ BlueOrca.afterNextPaint = afterNextPaint;
     var sectionIds = Array.from(navLinks).map(function (l) { return l.getAttribute('href').slice(1); });
     var sections = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
 
+    function updateRulerVisibility() {
+        var visible = BlueOrca.canUseScrollRuler();
+        ruler.style.display = visible ? '' : 'none';
+        if (visible) positionItems();
+    }
+
     function positionItems() {
+        if (!BlueOrca.canUseScrollRuler()) {
+            ruler.style.display = 'none';
+            return;
+        }
+        ruler.style.display = '';
         var rulerH = ruler.offsetHeight;
         if (rulerH <= 0 || !sections.length) return;
 
@@ -1193,7 +1249,8 @@ BlueOrca.afterNextPaint = afterNextPaint;
     }
 
     positionItems();
-    window.addEventListener('resize', positionItems);
+    window.addEventListener('resize', updateRulerVisibility);
+    window.addEventListener('load', updateRulerVisibility, { once: true });
 
     // animated scroll on click — routes through section navigator when possible
     rulerItems.forEach(function (item) {
@@ -1202,10 +1259,8 @@ BlueOrca.afterNextPaint = afterNextPaint;
             var target = document.getElementById(id);
             if (!target) return;
             e.preventDefault();
-            if (BlueOrca.navigateTo) {
-                var snapSections = Array.from(document.querySelectorAll(
-                    '.cta-cms, .references, .vyhody, .cenik, .contact'
-                ));
+            if (BlueOrca.navigateTo && BlueOrca.isDesktopSnapMode()) {
+                var snapSections = getSnapSections();
                 var idx = snapSections.indexOf(target);
                 if (idx !== -1) { BlueOrca.navigateTo(idx); return; }
             }
@@ -1240,9 +1295,7 @@ BlueOrca.afterNextPaint = afterNextPaint;
 // ===================== HORIZONTAL KEYBOARD NAV (CTA slider / References carousel) =====================
 (function () {
     var HEADER_H = 72;
-    var snapSections = Array.from(document.querySelectorAll(
-        '.cta-cms, .references, .vyhody, .cenik, .contact'
-    ));
+    var snapSections = getSnapSections();
     if (!snapSections.length) return;
 
     function nearestIdx() {
@@ -1257,6 +1310,7 @@ BlueOrca.afterNextPaint = afterNextPaint;
     }
 
     document.addEventListener('keydown', function (e) {
+        if (!BlueOrca.isDesktopSnapMode()) return;
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' ||
             e.target.isContentEditable) return;
         var isLeft  = e.key === 'ArrowLeft'  || e.key === 'a' || e.key === 'A';
@@ -1342,6 +1396,14 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
         if (!prev) {
             next.classList.add('is-active');
+            return;
+        }
+
+        if (prefersSimpleTransitions()) {
+            prev.classList.remove('is-active');
+            prev.style.cssText = '';
+            next.classList.add('is-active');
+            next.style.cssText = '';
             return;
         }
 

@@ -35,19 +35,31 @@ function supportsCanvasFilters() {
     return ctx.filter === testFilter;
 }
 
-function getCanvasRuntimeBudget(baseBudget) {
+function getCanvasRuntimeBudget(baseBudget, profile) {
     const viewportArea = window.innerWidth * window.innerHeight;
     const webglStatus = window.blueOrcaRenderBootstrap?.webglStatus;
     const preferLiteCanvasEffects = window.blueOrcaRenderBootstrap?.preferLiteCanvasEffects === true;
     const canvasOnlyMode = webglStatus !== 'active';
+    const mobileLiteMode = profile.isMobile || profile.isLowPower || profile.tier <= 1;
 
     const runtimeBudget = {
         canvas2dFPS: baseBudget.canvas2dFPS,
         schoolDensity: baseBudget.schoolDensity,
         jellyfishSchoolDensity: 600,
         resolutionScale: 1,
-        allowHighCostEffects: !preferLiteCanvasEffects && baseBudget.canvas2dFPS >= 40 && supportsCanvasFilters(),
+        mobileLiteMode,
+        enableBob: !mobileLiteMode,
+        enableIcons: !mobileLiteMode,
+        enableRipples: !mobileLiteMode,
+        allowHighCostEffects: !mobileLiteMode && !preferLiteCanvasEffects && baseBudget.canvas2dFPS >= 40 && supportsCanvasFilters(),
     };
+
+    if (mobileLiteMode) {
+        runtimeBudget.canvas2dFPS = Math.min(baseBudget.canvas2dFPS, profile.tier === 0 ? 24 : 28);
+        runtimeBudget.schoolDensity = Math.max(baseBudget.schoolDensity, profile.tier === 0 ? 750_000 : 550_000);
+        runtimeBudget.jellyfishSchoolDensity = profile.tier === 0 ? 1_200 : 950;
+        runtimeBudget.resolutionScale = 0.9;
+    }
 
     if (!canvasOnlyMode) {
         return runtimeBudget;
@@ -98,8 +110,9 @@ export function initCanvasBackground() {
 
     const renderDebugEnabled = isRenderDebugEnabled();
 
-    const { entityBudget: budget } = getDeviceProfile();
-    const canvasRuntimeBudget = getCanvasRuntimeBudget(budget);
+    const deviceProfile = getDeviceProfile();
+    const { entityBudget: budget } = deviceProfile;
+    const canvasRuntimeBudget = getCanvasRuntimeBudget(budget, deviceProfile);
     const allowHighCostEffects = canvasRuntimeBudget.allowHighCostEffects;
 
     const manager = createCanvasBackground({
@@ -113,6 +126,7 @@ export function initCanvasBackground() {
         skipDefaultLayers: true,
         // Layer configurations - optional overrides of DEFAULT_CONFIG
         foodConfig: {
+            settledLifetime: canvasRuntimeBudget.mobileLiteMode ? 1400 : 0,
             // count: 6,        // Number of food particles (FoodLayer.DEFAULT_CONFIG)
             // size: 5,         // Size of food particles
             // fallSpeed: 0.25, // Fall speed
@@ -128,6 +142,10 @@ export function initCanvasBackground() {
         },
         curiousFishConfig: {
             allowHighCostEffects,
+            mobileLiteMode: canvasRuntimeBudget.mobileLiteMode,
+            enableBob: canvasRuntimeBudget.enableBob,
+            enableIcons: canvasRuntimeBudget.enableIcons,
+            enableRipples: canvasRuntimeBudget.enableRipples,
             // speed: 5.0,          // Fish movement speed (CuriousFishLayer.DEFAULT_CONFIG)
             // maxSpeed: 2.0,       // Maximum speed
             // size: 30,            // Initial fish size
@@ -156,6 +174,7 @@ export function initCanvasBackground() {
     // CPU load while keeping WebGL visuals smooth.
     const masterRenderer = new MasterRenderer({
         canvas2dFPS: canvasRuntimeBudget.canvas2dFPS,
+        mobileLiteMode: canvasRuntimeBudget.mobileLiteMode,
         debug: renderDebugEnabled
     });
     

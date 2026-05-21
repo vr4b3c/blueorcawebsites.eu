@@ -8,13 +8,16 @@ document.querySelectorAll('.score-circle-wrap').forEach(function (wrap) {
     var circumference = 2 * Math.PI * 40; // r=40, viewBox 100×100
     fill.style.strokeDashoffset = ((1 - val / 100) * circumference).toFixed(3);
 });
-// Respect prefers-reduced-motion
-const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// Mark document as JS-animated (used by CSS to safely pre-hide elements)
-document.documentElement.classList.add('motion-ready');
+// Respect reduced-motion and keep mobile UI static for smoother scrolling.
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    window.innerWidth < 700 ||
+    navigator.connection?.saveData === true;
 
 if (!reduced) {
+    // Mark document as JS-animated (used by CSS to safely pre-hide elements).
+    // Do not add it in reduced/mobile mode; otherwise pre-hidden content would
+    // remain invisible because the animations below are intentionally skipped.
+    document.documentElement.classList.add('motion-ready');
 
     // ── Scroll-triggered ──────────────────────────────────────────────────
 

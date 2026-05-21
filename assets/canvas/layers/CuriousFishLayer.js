@@ -78,6 +78,9 @@ export class CuriousFishLayer {
         showDebug: false,
         swimAwaySpeed: 3,
         enableBob: true,
+        enableIcons: true,
+        enableRipples: true,
+        mobileLiteMode: false,
         allowHighCostEffects: true
     };
 
@@ -227,7 +230,7 @@ export class CuriousFishLayer {
                     fishLayer._spawnBloodBurst(this.fish.x, this.fish.y, this.fish.currentSize, null, currentTime);
                 }
                 // Red death ripple — slow, big, strong
-                if (this.manager && this.manager._ripples) {
+                if (this.config.enableRipples && this.manager && this.manager._ripples) {
                     this.manager._ripples.push({
                         x: this.fish.x, y: this.fish.y,
                         startTime: performance.now(),
@@ -269,7 +272,7 @@ export class CuriousFishLayer {
             }
             
             // Draw big heart if in phase 2 (kiss phase) and danceState still exists
-            if (this.danceState && this.danceState.phase === 2 && this.danceState.bigHeart) {
+            if (this.config.enableIcons && this.danceState && this.danceState.phase === 2 && this.danceState.bigHeart) {
                 const useHighCostEffects = this.config.allowHighCostEffects && this._qualityMultiplier >= 0.6;
                 ctx.save();
                 ctx.globalAlpha = this.danceState.bigHeart.opacity;
@@ -540,9 +543,11 @@ export class CuriousFishLayer {
      */
     spawnIcon(type) {
         if (!this.fish) return;
+        if (!this.config.enableIcons) return;
         // Under quality pressure, suppress purely decorative icons to cut GC churn.
         // Hearts are kept because they appear during mating (gameplay feedback).
-        if (this._qualityMultiplier < 0.5 && type !== 'heart') return;
+        const qualityCutoff = this.config.mobileLiteMode ? 0.85 : 0.5;
+        if (this._qualityMultiplier < qualityCutoff && type !== 'heart') return;
 
         const config = ICON_SPAWN_CONFIG[type] || ICON_SPAWN_CONFIG.default;
 
@@ -760,6 +765,7 @@ export class CuriousFishLayer {
     }
     
     drawHearts(ctx) {
+        if (!this.config.enableIcons || this.hearts.length === 0) return;
         ctx.save();
         for (const heart of this.hearts) {
             const ageRatio = heart.age / heart.maxAge;

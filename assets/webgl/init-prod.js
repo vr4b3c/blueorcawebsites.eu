@@ -27,14 +27,29 @@ if (canvas) {
         }
     };
 
-    const { tier, label, entityBudget: budget } = getDeviceProfile();
+    const {
+        tier,
+        label,
+        entityBudget: budget,
+        isMobile,
+        isLowPower,
+        prefersReducedMotion,
+        saveData
+    } = getDeviceProfile();
 
-    // Tier 0 (mobile-low): skip WebGL entirely — CSS gradient fallback visible.
-    // MasterRenderer will start at Tier 1 (Canvas only).
-    if (tier === 0) {
-        enableCssFallback(`Skipping WebGL on ${label} device — CSS fallback active`, null, {
+    const skipWebGL = tier === 0 || isMobile || isLowPower;
+    const skipReason = prefersReducedMotion ? 'reduced-motion'
+        : saveData ? 'save-data'
+        : isMobile ? 'mobile-lite'
+        : isLowPower ? 'low-power'
+        : 'skipped-low-tier';
+
+    // Mobile/low-power devices prefer the CSS ocean gradient. It is cheaper and
+    // more predictable than WebGL particles on phones with unknown GPU drivers.
+    if (skipWebGL) {
+        enableCssFallback(`Skipping WebGL on ${label} device (${skipReason}) — CSS fallback active`, null, {
             preferLiteCanvasEffects: true,
-            webglStatus: 'skipped-low-tier'
+            webglStatus: skipReason
         });
     } else {
         canvas.style.display = '';

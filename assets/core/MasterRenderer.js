@@ -29,6 +29,7 @@ export class MasterRenderer {
         this.lastRenderTime = 0;
         this.fpsLogTime = 0;
         this.debug = options.debug || false;
+        this.mobileLiteMode = options.mobileLiteMode === true;
 
         // 2D canvas is throttled — fish AI doesn't need full display rate.
         // With both canvases rendering every frame (no throttle), 100% of Commits are
@@ -50,7 +51,7 @@ export class MasterRenderer {
         this.LOW_FPS_THRESHOLD        = 28;   // FPS threshold for levels 0 and 1
         this.LOW_FPS_THRESHOLD_CANVAS = 22;   // FPS threshold for level 2
         this.LOW_FPS_THRESHOLD_FINAL  = 15;   // FPS threshold for level 3
-        this.LOW_FPS_DURATION         = 15000; // ms sustained below threshold before stepping down
+        this.LOW_FPS_DURATION         = this.mobileLiteMode ? 7000 : 15000; // ms sustained below threshold before stepping down
         // WebGL shader compilation + JS parse can spike load-time FPS for 10-15s.
         // Degradation is inhibited during this warmup window to prevent false triggers.
         this._warmupDuration = 12000; // ms after start() before degradation is allowed
@@ -104,7 +105,9 @@ export class MasterRenderer {
         if (this.tier >= 4) {
             targetFPS = 0;
         } else if (this.tier >= 3) {
-            targetFPS = Math.min(targetFPS, 30);
+            targetFPS = Math.min(targetFPS, this.mobileLiteMode ? 24 : 30);
+        } else if (this.mobileLiteMode) {
+            targetFPS = Math.min(targetFPS, 28);
         }
 
         this.canvas2dInterval = targetFPS > 0 ? 1000 / targetFPS : Number.POSITIVE_INFINITY;

@@ -14,7 +14,8 @@ export class FoodLayer {
         size: 5,
         fallSpeed: 0.08,
         spread: 30,
-        shrinkRate: 0.05 // pixels per second (5px takes ~100 seconds to vanish)
+        shrinkRate: 0.05, // pixels per second (5px takes ~100 seconds to vanish)
+        settledLifetime: 0 // ms; 0 keeps legacy bottom dwell behavior
     };
 
     constructor(mathUtils, configRef = {}) {
@@ -99,7 +100,7 @@ export class FoodLayer {
         return this._particlePool.pop() || {
             x: 0, y: 0, vx: 0, vy: 0, size: 0, initialSize: 0,
             opacity: 1, eaten: false, age: 0, lifetime: 0,
-            glimmerPhase: 0, isTargeted: false,
+            bottomAge: 0, glimmerPhase: 0, isTargeted: false,
             glimmer: 0.5, currentSize: 0
         };
     }
@@ -147,6 +148,7 @@ export class FoodLayer {
             particle.opacity = 1;
             particle.eaten = false;
             particle.age = 0;
+            particle.bottomAge = 0;
             particle.glimmerPhase = Math.random() * Math.PI * 2;
             particle.isTargeted = false;
             particle.glimmer = 0.5;
@@ -224,6 +226,16 @@ export class FoodLayer {
                 food.y = height - 20;
                 food.vy = 0;
                 food.vx *= 0.95;
+                if (this.config.settledLifetime > 0) {
+                    food.bottomAge = (food.bottomAge || 0) + dt;
+                    if (food.bottomAge >= this.config.settledLifetime) {
+                        this.returnToPool(food);
+                        continue;
+                    }
+                    food.opacity *= 1 - (food.bottomAge / this.config.settledLifetime);
+                }
+            } else {
+                food.bottomAge = 0;
             }
             
             // Skip off-screen particles

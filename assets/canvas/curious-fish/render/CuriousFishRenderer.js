@@ -34,22 +34,26 @@ export function drawFish(ctx, fish, fishImage, config, isAttackingSchoolFish, ta
     if (fish && fish.hidden) return;
     
     const currentSpeed = Math.sqrt(fish.velocityX * fish.velocityX + fish.velocityY * fish.velocityY);
-    const maxSpeed = config.maxSpeed;
-    const speedRatio = Math.min(currentSpeed / maxSpeed, 1.0);
-    // Scale vertical bob with fish size for more natural large fish movement
-    const sizeScale = fish.currentSize / 30; // 30 is base size
-    // Slow down bobbing frequency for larger fish (inverse scaling) - made even slower
-    const bobFrequency = 0.0008 / Math.sqrt(sizeScale);
-    // Gradual fade-in of bob effect as fish slows down (smooth transition from 0.5 to 0.1 speed)
-    const fadeThreshold = 0.5; // Start fading at 50% speed
-    const fadeStart = 0.1; // Full bob at 10% speed
-    const fadeAmount = speedRatio < fadeStart ? 1.0 : 
-                      speedRatio > fadeThreshold ? 0.0 :
-                      1.0 - ((speedRatio - fadeStart) / (fadeThreshold - fadeStart));
-    const bobActive = config.enableBob ? fadeAmount : 0;
-    const verticalBob = bobActive * Math.sin(fish.age * bobFrequency) * 6 * sizeScale;
-    // Add gentle rotation bob (±3 degrees) with slightly different frequency for natural movement
-    const rotationBob = bobActive * Math.sin(fish.age * bobFrequency * 0.7) * 0.05;
+    let verticalBob = 0;
+    let rotationBob = 0;
+
+    if (config.enableBob) {
+        const maxSpeed = config.maxSpeed;
+        const speedRatio = Math.min(currentSpeed / maxSpeed, 1.0);
+        // Scale vertical bob with fish size for more natural large fish movement
+        const sizeScale = fish.currentSize / 30; // 30 is base size
+        // Slow down bobbing frequency for larger fish (inverse scaling) - made even slower
+        const bobFrequency = 0.0008 / Math.sqrt(sizeScale);
+        // Gradual fade-in of bob effect as fish slows down (smooth transition from 0.5 to 0.1 speed)
+        const fadeThreshold = 0.5; // Start fading at 50% speed
+        const fadeStart = 0.1; // Full bob at 10% speed
+        const fadeAmount = speedRatio < fadeStart ? 1.0 : 
+                          speedRatio > fadeThreshold ? 0.0 :
+                          1.0 - ((speedRatio - fadeStart) / (fadeThreshold - fadeStart));
+        verticalBob = fadeAmount * Math.sin(fish.age * bobFrequency) * 6 * sizeScale;
+        // Add gentle rotation bob (±3 degrees) with slightly different frequency for natural movement
+        rotationBob = fadeAmount * Math.sin(fish.age * bobFrequency * 0.7) * 0.05;
+    }
 
     ctx.save();
     ctx.translate(fish.x, fish.y + verticalBob);

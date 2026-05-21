@@ -31,27 +31,27 @@
 const BUDGETS = [
     // Tier 0 — mobile-low
     {
-        swarmCount: 5,
-        particlesPerSwarm: 15,
-        fineCount: 150,
-        microCount: 50,
-        lightRayCount: 2,
-        bubbleSourceWidthBase: 900,
-        schoolDensity: 350000,
-        canvas2dFPS: 30,
+        swarmCount: 3,
+        particlesPerSwarm: 8,
+        fineCount: 60,
+        microCount: 20,
+        lightRayCount: 1,
+        bubbleSourceWidthBase: 1400,
+        schoolDensity: 650000,
+        canvas2dFPS: 24,
         dprCap: 1.0,
     },
     // Tier 1 — mobile-medium
     {
-        swarmCount: 12,
-        particlesPerSwarm: 30,
-        fineCount: 400,
-        microCount: 150,
-        lightRayCount: 3,
-        bubbleSourceWidthBase: 700,
-        schoolDensity: 250000,
-        canvas2dFPS: 35,
-        dprCap: 1.25,
+        swarmCount: 6,
+        particlesPerSwarm: 16,
+        fineCount: 180,
+        microCount: 60,
+        lightRayCount: 2,
+        bubbleSourceWidthBase: 1000,
+        schoolDensity: 450000,
+        canvas2dFPS: 28,
+        dprCap: 1.0,
     },
     // Tier 2 — desktop-light
     {
@@ -87,6 +87,10 @@ const TIER_LABELS = ['mobile-low', 'mobile-medium', 'desktop-light', 'desktop-fu
  * @property {number} tier
  * @property {TierLabel} label
  * @property {EntityBudget} entityBudget
+ * @property {boolean} isMobile
+ * @property {boolean} isLowPower
+ * @property {boolean} prefersReducedMotion
+ * @property {boolean} saveData
  */
 
 /** @type {DeviceProfile|null} */
@@ -144,18 +148,27 @@ export function getDeviceProfile() {
     const area = vw * vh;
     const cores = navigator.hardwareConcurrency || 4;
     const dpr = window.devicePixelRatio || 1;
+    const memory = navigator.deviceMemory || 4;
     const connType = navigator.connection?.effectiveType ?? '';
+    const saveData = navigator.connection?.saveData === true;
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+    const isMobile = vw < 700 || (navigator.maxTouchPoints > 0 && Math.min(vw, vh) < 700);
+    const slowConnection = connType === '2g' || connType === 'slow-2g';
+    const constrainedPhone = isMobile && (cores <= 4 || dpr >= 2 || memory <= 4);
+    const isLowPower = prefersReducedMotion || saveData || slowConnection || constrainedPhone || memory <= 2;
 
     let tier;
 
     if (
         area < 350_000 ||
-        connType === '2g' ||
-        connType === 'slow-2g' ||
+        prefersReducedMotion ||
+        saveData ||
+        slowConnection ||
+        constrainedPhone ||
         (cores <= 2 && dpr > 1.5)
     ) {
         tier = 0;
-    } else if (area < 600_000 || cores <= 2) {
+    } else if (isMobile || area < 700_000 || cores <= 2) {
         tier = 1;
     } else if (area < 1_500_000 || cores <= 4) {
         tier = 2;
@@ -167,6 +180,10 @@ export function getDeviceProfile() {
         tier,
         label: TIER_LABELS[tier],
         entityBudget: getViewportScaledBudget(BUDGETS[tier], area),
+        isMobile,
+        isLowPower,
+        prefersReducedMotion,
+        saveData,
     };
 
     return _cached;
