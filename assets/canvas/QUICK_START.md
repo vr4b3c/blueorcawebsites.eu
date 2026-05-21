@@ -123,18 +123,14 @@ python3 -m http.server 8000
 # Nebo Node.js
 npx serve
 
-# Otevřete prohlížeč
-open http://localhost:8000/canvas/demo.html
+# Otevřete hlavní web
+open http://localhost:8000/
 ```
 
 ## 🔧 Spuštění testů
 
-```html
-<!-- Otevřete demo.html a v konzoli: -->
-<script>
-    import('./canvas/test.js')
-        .then(() => console.log('✅ Testy dokončeny'));
-</script>
+```bash
+node test.js
 ```
 
 ## 📝 Nejčastější úlohy
@@ -218,9 +214,8 @@ const manager = createCanvasBackground({
 ## 📚 Další kroky
 
 1. **Přečtěte si README.md** - Kompletní dokumentace
-2. **Vyzkoušejte demo.html** - Interaktivní ukázka
-3. **Podívejte se na MIGRATION.md** - Migrace ze starého kódu
-4. **Experimentujte s vrstvami** - Přidávejte vlastní efekty
+2. **Podívejte se na MIGRATION.md** - Migrace ze starého kódu
+3. **Experimentujte s vrstvami** - Přidávejte vlastní efekty
 
 ## 🎉 Hotovo!
 
@@ -232,5 +227,4 @@ Nyní máte funkční canvas background systém.
 
 **Potřebujete pomoc?** Podívejte se do:
 - `canvas/README.md` - Dokumentace
-- `canvas/demo.html` - Příklad
 - `canvas/test.js` - Testy

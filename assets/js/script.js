@@ -1671,6 +1671,12 @@ BlueOrca.afterNextPaint = afterNextPaint;
         setDesignMode(!isActive);
     });
 
+    document.querySelectorAll('.cenik-design-switch').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            toggle.click();
+        });
+    });
+
     wrap.querySelectorAll('[data-cenik-toggle-target]').forEach(function (btn) {
         btn.addEventListener('click', function () {
             var target = btn.getAttribute('data-cenik-toggle-target') === 'true';

@@ -18,8 +18,7 @@ canvas/
 ├── utils/         # MathUtils, PerformanceMonitor  
 ├── layers/        # WaterGradient, Bubbles, LightRays
 ├── index.js       # Hlavní export
-├── integration.js # Auto-init helper
-└── demo.html      # Live demo
+└── integration.js # Auto-init helper
 ```
 
 ## 🎨 Použití
@@ -97,15 +96,13 @@ manager.foodSystem.spawn(x, y, quality)
 ## 🧪 Test
 
 ```bash
-python3 -m http.server 8000
-# http://localhost:8000/canvas/demo.html
+node test.js
 ```
 
 ## 📚 Dokumentace
 
 - **QUICK_START.md** - Rychlý průvodce
 - **MIGRATION.md** - Migrace ze starého kódu
-- **demo.html** - Živá ukázka
 
 ---
 
