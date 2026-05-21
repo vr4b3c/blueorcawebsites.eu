@@ -159,7 +159,9 @@ $body .= "Odesláno z blueorcawebsites.eu\n";
 
 $headers  = "From: BlueOrca Websites <info@blueorcawebsites.eu>\r\n";
 if ($isEmail) {
-    $headers .= "Reply-To: {$name} <{$contact}>\r\n";
+    // Strip line terminators from name to prevent email header injection
+    $headerSafeName = preg_replace('/[\r\n\t]/', ' ', $name);
+    $headers .= "Reply-To: {$headerSafeName} <{$contact}>\r\n";
 }
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
