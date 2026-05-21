@@ -215,11 +215,14 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
     var _animating    = false;
     var _queued       = null;   // last requested idx received during animation lock
     var _restoreTransitionRaf = 0;
-    var _zIndexDelayMs = Math.round(1050 / 5);
+    var _zIndexTimers = [];
+    var _zIndexDelayMs = 420;
 
     // Transition string used for animated moves
+    var CF_EASE = 'cubic-bezier(0.33,0,0.2,1)';
     var CF_BASE_MS = 1000;
-    var CF_TRANSITION = 'transform ' + CF_BASE_MS + 'ms cubic-bezier(0.4,0,0.2,1)';
+    var CF_STEP_MS = 360;
+    var CF_TRANSITION = 'transform ' + CF_BASE_MS + 'ms ' + CF_EASE;
 
     // 3-D config per relative position; rel=±(range+1) shares position with ±range
     // but sits one z-index layer below — always ready behind the boundary items.
@@ -261,18 +264,37 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         return prevRel >= edgeSlot - steps + 1;
     }
 
+    function isEdgeReveal(prevRel, rel, range, edgeSlot, moveDelta) {
+        // The underlaid edge card becomes the visible edge card. It must stay
+        // underneath until the outgoing edge card has moved away, otherwise it
+        // briefly flashes over the card on the boundary.
+        if (moveDelta > 0) return prevRel === edgeSlot && rel === range;
+        if (moveDelta < 0) return prevRel === -edgeSlot && rel === -range;
+        return false;
+    }
+
+    function clearZIndexTimers() {
+        _zIndexTimers.forEach(function (timer) { clearTimeout(timer); });
+        _zIndexTimers = [];
+    }
+
     function getMoveMs(delta) {
         var steps = Math.max(1, Math.min(Math.abs(delta || 1), 3));
-        return CF_BASE_MS + (steps - 1) * 420;
+        return CF_BASE_MS + (steps - 1) * CF_STEP_MS;
     }
 
     function getMoveTransition(delta) {
-        return 'transform ' + getMoveMs(delta) + 'ms cubic-bezier(0.4,0,0.2,1)';
+        return 'transform ' + getMoveMs(delta) + 'ms ' + CF_EASE;
     }
 
-    // How many items to show each side of centre (responsive)
-    // Desktop ≥1024: range 2 (5 visible); tablet <1024: range 1 (3 visible)
-    function getRange() { return window.innerWidth < 1024 ? 1 : 2; }
+    function getSlotConfig() {
+        var range = window.innerWidth < 1024 ? 1 : 2;
+        return {
+            range: range,
+            edgeSlot: range + 1,
+            overlapRatio: window.innerWidth >= 1024 ? 0.60 : 0.72
+        };
+    }
 
     // rel=0 → 20, rel=+1 → 18, rel=-1 → 17, rel=+2 → 16, rel=-2 → 15,
     // rel=+3 → 14 (under +2), rel=-3 → 13 (under -2) ...
@@ -280,15 +302,30 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         return rel >= 0 ? (20 - rel * 2) : (20 + rel * 2 - 1);
     }
 
+    function cfUnderlayZIndex(rel, edgeSlot) {
+        return rel >= 0 ? cfZIndex(edgeSlot) : cfZIndex(-edgeSlot);
+    }
+
+    function cfRevealZIndex(rel, edgeSlot) {
+        return cfUnderlayZIndex(rel, edgeSlot) + 1;
+    }
+
     // Apply all positional inline styles to a thumb in one place.
     // delayZIndex: defer z-index change to 1/3 through the animation so items
     // don't pop stacking layers at the very start of their move.
-    function applyStyle(t, tx, cfg, rel, half, transition, delayZIndex) {
+    function applyStyle(t, tx, cfg, rel, half, transition, delayZIndex, zOverride) {
         t.style.transition = transition || 'none';
         t.style.transform  = 'perspective(900px) translateX(' + tx + 'px) rotateY(' + cfg.ry + 'deg) scale(' + cfg.scale + ')';
-        if (delayZIndex) {
-            var newZ = String(cfZIndex(rel));
-            setTimeout(function () { t.style.zIndex = newZ; }, _zIndexDelayMs);
+        if (zOverride !== undefined) {
+            t.style.zIndex = String(zOverride);
+        } else if (delayZIndex) {
+            var newZ = cfZIndex(rel);
+            var currentZ = parseInt(t.style.zIndex || window.getComputedStyle(t).zIndex || '0', 10);
+            if (newZ <= currentZ) {
+                t.style.zIndex = String(newZ);
+            } else {
+                _zIndexTimers.push(setTimeout(function () { t.style.zIndex = String(newZ); }, _zIndexDelayMs));
+            }
         } else {
             t.style.zIndex = String(cfZIndex(rel));
         }
@@ -296,6 +333,8 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         t.style.left       = 'calc(50% - ' + half + 'px)';
         t.style.setProperty('--cf-overlay', String(cfg.overlay));
         t.style.visibility = 'visible';
+        t.dataset.cfSlot = String(rel);
+        t.dataset.cfZ = String(zOverride !== undefined ? zOverride : cfZIndex(rel));
     }
 
     // ── Position functions ─────────────────────────────────────────────────
@@ -339,13 +378,14 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
             cancelAnimationFrame(_restoreTransitionRaf);
             _restoreTransitionRaf = 0;
         }
+        clearZIndexTimers();
 
         activeIdx = wrapIdx(activeIdx, n);
 
-        var range        = getRange();
-        var edgeSlot     = range + 1;          // ±edgeSlot are underlaid but still occupied
-        var vw           = window.innerWidth;
-        var overlapRatio = vw >= 1024 ? 0.60 : 0.72; // tablet: wider spacing between 3 items
+        var slotCfg      = getSlotConfig();
+        var range        = slotCfg.range;
+        var edgeSlot     = slotCfg.edgeSlot;   // ±edgeSlot are underlaid but still occupied
+        var overlapRatio = slotCfg.overlapRatio;
         var cardW        = thumbs[0].offsetWidth;
         var half         = Math.round(cardW / 2);
         var step         = cardW * overlapRatio;
@@ -363,6 +403,8 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
             if (Math.abs(rel) > edgeSlot) {
                 t.style.visibility = 'hidden';
                 t.setAttribute('data-cf-rel', String(rel));
+                t.dataset.cfSlot = 'hidden';
+                t.dataset.cfZ = '';
                 return;
             }
 
@@ -378,14 +420,17 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
             var prevRel = parseInt(t.getAttribute('data-cf-rel') || String(rel), 10);
             var wasHidden = Math.abs(prevRel) > edgeSlot;
             var wrapsUnderlay = isUnderlayWrap(prevRel, rel, edgeSlot, moveDelta);
+            var revealsEdge = isEdgeReveal(prevRel, rel, range, edgeSlot, moveDelta);
 
             t.setAttribute('data-cf-rel', String(rel));
 
-            if (wasHidden || wrapsUnderlay) {
-                // Snap only the parked/underlaid spare card. All occupied slots
-                // remain filled; the user never sees a card flying across the row.
-                applyStyle(t, tx, cfg, rel, half, null);
-                snapToSlot.push(t);
+            if (wasHidden || wrapsUnderlay || revealsEdge) {
+                // Snap only the parked/underlaid spare card. It must land under
+                // the current edge stack first; otherwise it briefly flashes over
+                // the card that is already there. Restore its final layer after
+                // the visible move has finished.
+                applyStyle(t, tx, cfg, rel, half, revealsEdge ? moveTransition : null, false, revealsEdge ? cfRevealZIndex(rel, edgeSlot) : cfUnderlayZIndex(rel, edgeSlot));
+                snapToSlot.push({ thumb: t, rel: rel, finalZ: cfZIndex(rel) });
             } else {
                 // Normal animated move — delay z-index swap so stacking order
                 // changes at 1/3 through the animation, not at its start
@@ -394,9 +439,17 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         });
 
         if (snapToSlot.length) {
+            setTimeout(function () {
+                snapToSlot.forEach(function (item) {
+                    if (parseInt(item.thumb.getAttribute('data-cf-rel') || '0', 10) !== item.rel) return;
+                    item.thumb.style.zIndex = String(item.finalZ);
+                    item.thumb.dataset.cfZ = String(item.finalZ);
+                });
+            }, getMoveMs(moveDelta) + 20);
+
             _restoreTransitionRaf = requestAnimationFrame(function () {
-                snapToSlot.forEach(function (thumb) {
-                    thumb.style.transition = moveTransition;
+                snapToSlot.forEach(function (item) {
+                    item.thumb.style.transition = moveTransition;
                 });
                 _restoreTransitionRaf = 0;
             });
@@ -441,7 +494,7 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         var dir = delta >= 0 ? 'right' : 'left';
         var moveMs = getMoveMs(delta);
         var moveTransition = getMoveTransition(delta);
-        _zIndexDelayMs = Math.round(moveMs / 5);
+        _zIndexDelayMs = Math.round(moveMs * 0.42);
 
         activeIdx = wrapIdx(newIdx, n);
 
@@ -566,8 +619,8 @@ BlueOrca.canUseScrollRuler = canUseScrollRuler;
         if (!thumbs.length) return;
         var preActive = thumbs.findIndex(function (t) { return t.classList.contains('active'); });
         activeIdx = preActive !== -1 ? preActive : 0;
+        thumbs.forEach(function (t, i) { t.classList.toggle('active', i === activeIdx); });
         if (preActive === -1) {
-            thumbs[0].classList.add('active');
             if (BlueOrca.carousel.activateRef) BlueOrca.carousel.activateRef(thumbs[0].getAttribute('data-ref'));
         }
         updatePositions();
