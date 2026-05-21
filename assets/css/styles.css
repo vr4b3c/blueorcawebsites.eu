@@ -26,8 +26,8 @@
     --text-secondary: #8ba8b8;
     --text-muted: #5a7a8a;
     --green: #0cce6b;
-    --orange: #ffd549;
-    --cta: #ffd549;
+    --orange: #f5d775; /*#ffd549*/
+    --cta: #f5d775;
     --red: #ff4e42;
     --radius: 0px;
     --scrollbar-button-h: 12px; /* explicit arrow height – read by JS ruler */
@@ -74,6 +74,7 @@ a {
 }
 
 a:hover {
+    /*color: var(--cta);*/
     text-decoration: underline;
 }
 
@@ -2719,6 +2720,17 @@ a[target="_blank"]:hover::after {
     color: var(--text-secondary);
 }
 
+.cenik-footer-note a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.2s;
+}
+
+.cenik-footer-note a:hover {
+    text-decoration-color: var(--accent);
+}
+
 /* ── Design toggle ── */
 .cenik-toggle-wrap {
     display: flex;
@@ -3905,17 +3917,19 @@ a[target="_blank"]:hover::after {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    contain: layout;
 }
 
 /* Each FAQ card floats independently */
 @keyframes faqFloat {
-    0%,100% { transform: translateY(0); }
-    50%      { transform: translateY(-7px); }
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-7px); }
 }
 
 .faq-item {
-    animation: faqFloat linear infinite;
-    /* individual durations + delays via nth-child below */
+    animation: faqFloat ease-in-out infinite;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .faq-item:nth-child(1) { animation-duration: 4.8s; animation-delay: 0s;    }
@@ -3944,6 +3958,12 @@ a[target="_blank"]:hover::after {
 }
 
 /* Question button */
+.faq-heading {
+    margin: 0;
+    font-size: inherit;
+    font-weight: inherit;
+}
+
 .faq-q {
     display: flex;
     align-items: center;
@@ -3975,11 +3995,14 @@ a[target="_blank"]:hover::after {
     flex-shrink: 0;
     color: var(--accent-mid);
     transition: transform 0.32s ease, color 0.2s;
-    will-change: transform;
+}
+
+.faq-item.is-open .faq-q {
+    color: var(--accent);
 }
 
 .faq-item.is-open .faq-chevron {
-    transform: rotate(135deg);
+    transform: rotate(180deg);
     color: var(--accent);
 }
 
@@ -3987,7 +4010,7 @@ a[target="_blank"]:hover::after {
 .faq-body {
     display: grid;
     grid-template-rows: 0fr;
-    transition: grid-template-rows 0.35s linear;
+    transition: grid-template-rows 0.35s ease;
 }
 
 .faq-item.is-open .faq-body {
@@ -3998,7 +4021,7 @@ a[target="_blank"]:hover::after {
     overflow: hidden;
     padding: 0 1.5rem 0;
     min-height: 0;
-    transition: padding-bottom 0.35s linear, min-height 0.35s linear;
+    transition: padding-bottom 0.35s ease, min-height 0.35s ease;
 }
 
 .faq-item.is-open .faq-body-inner {

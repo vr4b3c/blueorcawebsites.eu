@@ -976,10 +976,12 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
 // ===================== SCROLLSPY =====================
 (function () {
-    var sectionIds = ['uvod', 'reference', 'vyhody', 'cenik', 'kontakt'];
-    var sections = sectionIds.map(function (id) { return document.getElementById(id); }).filter(Boolean);
     var navLinks = document.querySelectorAll('.site-page-nav-link[href^="#"]');
-    if (!navLinks.length || !sections.length) return;
+    if (!navLinks.length) return;
+    var sections = Array.from(navLinks)
+        .map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); })
+        .filter(Boolean);
+    if (!sections.length) return;
 
     var ratios = {};
     var activeId = null;
@@ -1682,19 +1684,25 @@ BlueOrca.afterNextPaint = afterNextPaint;
 
 // ===================== FAQ ACCORDION =====================
 (function () {
-    var items = document.querySelectorAll('.faq-item');
-    if (!items.length) return;
-
-    // Silently measure tallest answer (scrollHeight works even on grid-collapsed elements)
-    // and store as CSS custom property — zero layout shift, responsive via resize
     var list = document.querySelector('.faq-list');
+    if (!list) return;
+
+    // Cache item/btn/body references once — avoids repeated DOM queries
+    var panels = [];
+    list.querySelectorAll('.faq-item').forEach(function (item) {
+        var btn  = item.querySelector('.faq-q');
+        var body = item.querySelector('.faq-body');
+        if (btn && body) panels.push({ item: item, btn: btn, body: body });
+    });
+    if (!panels.length) return;
+
+    // Measure tallest answer and store as CSS custom property
     function calibrateFaqHeight() {
         var maxH = 0;
-        items.forEach(function (item) {
-            var inner = item.querySelector('.faq-body-inner');
-            if (inner) maxH = Math.max(maxH, inner.scrollHeight);
+        panels.forEach(function (p) {
+            maxH = Math.max(maxH, p.body.querySelector('.faq-body-inner').scrollHeight);
         });
-        if (list && maxH > 0) list.style.setProperty('--faq-body-min-h', maxH + 'px');
+        if (maxH > 0) list.style.setProperty('--faq-body-min-h', maxH + 'px');
     }
     calibrateFaqHeight();
     var resizeTimer;
@@ -1703,47 +1711,36 @@ BlueOrca.afterNextPaint = afterNextPaint;
         resizeTimer = setTimeout(calibrateFaqHeight, 150);
     });
 
-    items.forEach(function (item) {
-        var btn  = item.querySelector('.faq-q');
-        var body = item.querySelector('.faq-body');
-        if (!btn || !body) return;
+    panels.forEach(function (p) {
+        p.btn.addEventListener('click', function () {
+            var isOpen = p.item.classList.contains('is-open');
 
-        btn.addEventListener('click', function () {
-            var isOpen = item.classList.contains('is-open');
+            // Pause float on all cards during transition
+            panels.forEach(function (q) { q.item.classList.add('is-transitioning'); });
 
-            // Pause float animation on ALL cards during transition — prevents
-            // the closing card restarting its float while still mid-transition
-            items.forEach(function (i) { i.classList.add('is-transitioning'); });
-
-            // Lock faq-list min-height to current rendered height before any class change.
-            if (list) list.style.minHeight = list.offsetHeight + 'px';
-
-            // Disable mandatory scroll-snap for the duration of the height transition.
+            // Lock list height to prevent scroll-snap jump
+            list.style.minHeight = list.offsetHeight + 'px';
             var html = document.documentElement;
             html.style.scrollSnapType = 'none';
 
             var snapTimer;
             var reEnable = function () {
                 clearTimeout(snapTimer);
-                body.removeEventListener('transitionend', reEnable);
                 html.style.scrollSnapType = '';
-                if (list) list.style.minHeight = '';
-                items.forEach(function (i) { i.classList.remove('is-transitioning'); });
+                list.style.minHeight = '';
+                panels.forEach(function (q) { q.item.classList.remove('is-transitioning'); });
             };
-            body.addEventListener('transitionend', reEnable, { once: true });
+            p.body.addEventListener('transitionend', reEnable, { once: true });
             snapTimer = setTimeout(reEnable, 700);
 
-            // Close all items
-            items.forEach(function (other) {
-                other.classList.remove('is-open');
-                var ob = other.querySelector('.faq-q');
-                if (ob) ob.setAttribute('aria-expanded', 'false');
+            // Close all, then conditionally open clicked
+            panels.forEach(function (q) {
+                q.item.classList.remove('is-open');
+                q.btn.setAttribute('aria-expanded', 'false');
             });
-
-            // Toggle clicked item (open unless it was already open)
             if (!isOpen) {
-                item.classList.add('is-open');
-                btn.setAttribute('aria-expanded', 'true');
+                p.item.classList.add('is-open');
+                p.btn.setAttribute('aria-expanded', 'true');
             }
         });
     });
