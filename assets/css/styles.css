@@ -51,6 +51,10 @@
     --red: #ff4e42;
     --radius: 0px;
     --scrollbar-button-h: 12px; /* explicit arrow height – read by JS ruler */
+    /* Unified glass card hover system */
+    --shadow-card-hover:      0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(60, 164, 197, 0.28), inset 0 1px 0 rgba(142, 210, 232, 0.3);
+    --shadow-card-hover-gold: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(245, 215, 117, 0.25), inset 0 1px 0 rgba(245, 215, 117, 0.18);
+    --border-card-hover:      rgba(60, 164, 197, 0.28);
 }
 
 html {
@@ -1206,8 +1210,8 @@ body.drawer-open {
 }
 
 .vyhody-box:hover {
-    border-color: rgba(142, 210, 232, 0.35);
-    box-shadow: 0 16px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(142, 210, 232, 0.15);
+    border-color: var(--border-card-hover);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .vyhody-box:hover::before {
@@ -1761,7 +1765,7 @@ body.drawer-open {
 
 .ref-card {
     overflow: hidden;
-    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transition: box-shadow 0.3s ease;
     display: grid;
     grid-template-columns: minmax(500px, 3fr) minmax(450px, 1fr);
     isolation: isolate;
@@ -1772,38 +1776,8 @@ body.drawer-open {
 }
 
 .ref-card:hover {
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(60, 164, 197, 0.28), inset 0 1px 0 rgba(142, 210, 232, 0.3);
-}
-
-/* Tier-based border colors + hover glows — mirrors .cenik-card--featured / --premium */
-.ref-card[data-type="multi"] {
-    border-color: rgba(60, 164, 197, 0.8);
-}
-
-.ref-card[data-type="multi"]:hover {
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(60, 164, 197, 0.28), inset 0 1px 0 rgba(142, 210, 232, 0.3);
-    border-color: rgba(60, 164, 197, 0.8);
-}
-
-.ref-card[data-type="custom"] {
-    border-color: rgba(255, 213, 73, 0.45);
-}
-
-.ref-card[data-type="custom"]:hover {
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 48px rgba(245, 215, 117, 0.25), inset 0 1px 0 rgba(245, 215, 117, 0.18);
-    border-color: rgba(255, 213, 73, 0.75);
-}
-
-.ref-card[data-type="custom"] .ref-price {
-    border-left-color: var(--cta);
-    background: linear-gradient(135deg, rgba(245, 215, 117, 0.08) 0%, rgba(245, 215, 117, 0.04) 100%);
-    border-color: rgba(245, 215, 117, 0.3);
-    border-left: 3px solid var(--cta);
-}
-
-.ref-card[data-type="custom"] .ref-price-label,
-.ref-card[data-type="custom"] .ref-price-value {
-    color: var(--cta);
+    box-shadow: 0 12px 56px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(142, 210, 232, 0.15);
+    border-color: rgba(142, 210, 232, 0.35);
 }
 
 /* Obrázek reference – scrollovatelný full screenshot 16:9 */
@@ -2665,22 +2639,38 @@ a[target="_blank"]:hover::after {
     flex-direction: column;
     padding: 2rem 1.75rem 1.75rem;
     position: relative;
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, border-color 0.25s ease;
+    animation: faqFloat ease-in-out infinite;
+    will-change: transform;
+    backface-visibility: hidden;
 }
+
+.cenik-card:nth-child(1) { animation-duration: 5.0s; animation-delay: -1.2s; }
+.cenik-card:nth-child(2) { animation-duration: 4.5s; animation-delay: -2.9s; }
+.cenik-card:nth-child(3) { animation-duration: 5.4s; animation-delay: -0.6s; }
+
 .cenik-card:hover {
-    box-shadow:
-        0 8px 48px rgba(0, 0, 0, 0.45),
-        0 0 48px rgba(60, 164, 197, 0.28),
-        inset 0 1px 0 rgba(142, 210, 232, 0.3);
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-card-hover);
 }
 /* Featured card (karta 2) — accent blue border + glow */
 .cenik-card--featured {
     border-color: rgba(60, 164, 197, 0.8);
 }
 
+.cenik-card--featured:hover {
+    box-shadow: var(--shadow-card-hover);
+    border-color: rgba(60, 164, 197, 1);
+}
+
 /* Premium card (karta 3) — gold border + glow */
 .cenik-card--premium {
     border-color: rgba(255, 213, 73, 0.45);
+}
+
+.cenik-card--premium:hover {
+    box-shadow: var(--shadow-card-hover-gold);
+    border-color: rgba(255, 213, 73, 0.75);
 }
 
 /* Badge: "Nejoblíbenější" */
@@ -3093,10 +3083,23 @@ a[target="_blank"]:hover::after {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    transition: box-shadow 0.3s ease, border-color 0.25s ease;
+    animation: faqFloat ease-in-out infinite;
+    animation-duration: 5.3s;
+    animation-delay: -1.7s;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .contact-form-label {
     margin-bottom: 1.5rem;
+}
+
+.contact-form-panel:hover,
+.contact-info-panel:hover {
+    box-shadow: var(--shadow-card-hover);
+    border-color: var(--border-card-hover);
+    transition: box-shadow 0.3s ease, border-color 0.25s ease;
 }
 
 /* Form */
@@ -3426,6 +3429,12 @@ a[target="_blank"]:hover::after {
     gap: 0rem;
     min-height: 0;
     position: relative;
+    transition: box-shadow 0.3s ease, border-color 0.25s ease;
+    animation: faqFloat ease-in-out infinite;
+    animation-duration: 4.8s;
+    animation-delay: -3.2s;
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 /* Panel slots wrapper */
@@ -4027,8 +4036,8 @@ a[target="_blank"]:hover::after {
 /* Open state: anchor the card, brighten border + shimmer */
 .faq-item.is-open {
     animation-play-state: paused;
-    border-color: rgba(142, 210, 232, 0.45);
-    box-shadow: 0 8px 48px rgba(0, 0, 0, 0.45), 0 0 40px rgba(60, 164, 197, 0.18), inset 0 1px 0 rgba(142, 210, 232, 0.15);
+    border-color: var(--border-card-hover);
+    box-shadow: var(--shadow-card-hover);
 }
 
 .faq-item.is-open::before {
@@ -4122,7 +4131,10 @@ a[target="_blank"]:hover::after {
 /* Motion preference */
 @media (prefers-reduced-motion: reduce) {
     .faq-item,
-    .vyhody-box {
+    .vyhody-box,
+    .cenik-card,
+    .contact-form-panel,
+    .contact-info-panel {
         animation: none;
     }
     .faq-chevron,

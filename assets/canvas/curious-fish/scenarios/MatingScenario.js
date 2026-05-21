@@ -18,8 +18,6 @@
  * @returns {Object} Dance state object
  */
 export function initiateMatingDance(fish, partner, currentTime = performance.now()) {
-    console.log('Starting romantic dance with partner!');
-
     // Mark partner as dancing so FishLayer skips schooling/flocking for it
     partner.isDancing = true;
     if (partner.velocityX !== undefined) partner.velocityX = 0;

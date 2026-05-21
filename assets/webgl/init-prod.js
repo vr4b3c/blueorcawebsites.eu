@@ -78,7 +78,6 @@ if (canvas) {
             window.webglOceanRenderer = renderer;
             bootstrapState.webglStatus = 'active';
             bootstrapState.preferLiteCanvasEffects = false;
-            console.log(`[WebGL] Ocean Renderer initialized (tier=${tier} ${label}, awaiting MasterRenderer)`);
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
             enableCssFallback('WebGL init failed, falling back to CSS background', error, {

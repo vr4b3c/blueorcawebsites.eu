@@ -161,7 +161,6 @@ export class WebGLOceanRenderer {
     }
 
     handleContextRestored() {
-        console.log('WebGL context restored — reinitialising');
         const gl = this.canvas.getContext('webgl2', {
             alpha: false,
             antialias: false,
@@ -251,8 +250,6 @@ export class WebGLOceanRenderer {
         this.lastFrameTime = this.startTime;
         this.fpsUpdateTime = this.startTime;
         this.frameCount = 0;
-        
-        console.log('WebGL renderer ready (controlled by MasterRenderer)');
     }
     
     stop() {
